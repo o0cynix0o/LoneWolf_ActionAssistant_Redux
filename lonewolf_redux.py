@@ -894,6 +894,8 @@ def default_automation() -> dict[str, Any]:
         "Stored": {},
         "LastRoll": None,
         "AppliedRollEffects": [],
+        "AppliedHealing": [],
+        "AppliedLossChoices": [],
         "Ending": None,
         "DeathState": {"Active": False},
         "DeathHistory": [],
@@ -1087,6 +1089,8 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         ("Achievements", "Recent"),
         ("Automation", "AppliedVisitEffects"),
         ("Automation", "AppliedRollEffects"),
+        ("Automation", "AppliedHealing"),
+        ("Automation", "AppliedLossChoices"),
         ("Automation", "Journal"),
         ("Automation", "DeathHistory"),
         ("Automation", "SectionCheckpoints"),
@@ -2983,6 +2987,186 @@ class LoneWolfReduxAssistant:
             "Messages": as_list(journal_entry.get("Messages")) if journal_entry else [],
         }
 
+    def healing_visit_key(self) -> str:
+        return f"{self.current_visit_key()}:healing"
+
+    def current_healing_payload(self) -> dict[str, Any]:
+        current = int(self.character["EnduranceCurrent"])
+        maximum = int(self.character["EnduranceMax"])
+        applied = self.healing_visit_key() in as_list(self.automation.get("AppliedHealing"))
+        combat_present = bool(self.flow_combat_entries())
+
+        blocked_reason = ""
+        if not self.has_power("Healing"):
+            blocked_reason = "Healing is not one of your Kai Disciplines."
+        elif self.death_active():
+            blocked_reason = "Healing is unavailable during death recovery."
+        elif combat_present:
+            blocked_reason = "This section has combat; apply Healing only in non-combat sections."
+        elif current >= maximum:
+            blocked_reason = "Endurance is already at maximum."
+        elif applied:
+            blocked_reason = "Healing already applied for this section visit."
+
+        return {
+            "Available": self.has_power("Healing"),
+            "Ready": blocked_reason == "",
+            "Applied": applied,
+            "BlockedReason": blocked_reason,
+            "CurrentEndurance": current,
+            "MaximumEndurance": maximum,
+            "Amount": 1,
+            "Summary": "Kai Healing restores 1 END in an eligible non-combat section.",
+        }
+
+    def apply_healing(self) -> None:
+        payload = self.current_healing_payload()
+        if not bool(payload.get("Ready")):
+            reason = str(payload.get("BlockedReason") or "Healing is not available.")
+            print(f"Healing not available: {reason}")
+            return
+
+        message = self.change_endurance(1)
+        applied = as_list(self.automation.get("AppliedHealing"))
+        applied.append(self.healing_visit_key())
+        self.automation["AppliedHealing"] = applied[-500:]
+        journal = as_list(self.automation.get("Journal"))
+        journal.append(
+            {
+                "Kind": "healing",
+                "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                "VisitKey": self.current_visit_key(),
+                "BookNumber": int(self.character["BookNumber"]),
+                "Section": int(self.state["CurrentSection"]),
+                "Summary": "Kai Healing",
+                "Messages": [message],
+            }
+        )
+        self.automation["Journal"] = journal[-100:]
+        self.autosave()
+        print(f"Healing: {message}")
+
+    def loss_choice_entries(self, entry: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+        flow = entry if isinstance(entry, dict) else (self.current_section_flow_entry() or {})
+        return [choice for choice in as_list(flow.get("lossChoices")) if isinstance(choice, dict)]
+
+    def loss_choice_candidates(self, choice: dict[str, Any]) -> tuple[list[dict[str, Any]], str]:
+        def candidates_for(containers: Any) -> list[dict[str, Any]]:
+            candidates: list[dict[str, Any]] = []
+            for key in self.automation_containers(containers):
+                if key == "BackpackItems" and not bool(self.automation_flags.get("backpackAvailable", True)):
+                    continue
+                if key == "Weapons" and not bool(self.automation_flags.get("weaponsAvailable", True)):
+                    continue
+                item_type = self.inventory_type_from_key(key)
+                if not item_type:
+                    continue
+                for index, item in enumerate(as_list(self.inventory.get(key)), 1):
+                    candidates.append(
+                        {
+                            "Type": item_type,
+                            "Key": key,
+                            "Slot": index,
+                            "Item": str(item),
+                        }
+                    )
+            return candidates
+
+        primary = candidates_for(choice.get("containers"))
+        if primary:
+            return primary, "primary"
+        fallback = candidates_for(choice.get("fallbackContainers"))
+        if fallback:
+            return fallback, "fallback"
+        return [], ""
+
+    def loss_choice_payload(self, choice: dict[str, Any]) -> dict[str, Any]:
+        choice_id = str(choice.get("id") or "")
+        applied_key = f"{self.current_visit_key()}:{choice_id}"
+        applied = applied_key in as_list(self.automation.get("AppliedLossChoices"))
+        candidates, source = self.loss_choice_candidates(choice)
+        blocked_reason = ""
+        if applied:
+            blocked_reason = "Loss choice already applied for this section visit."
+        elif not candidates:
+            blocked_reason = "No eligible carried item is available for this loss."
+
+        return {
+            "Id": choice_id,
+            "Label": str(choice.get("label") or choice_id),
+            "Summary": str(choice.get("summary") or ""),
+            "Ready": blocked_reason == "",
+            "Applied": applied,
+            "BlockedReason": blocked_reason,
+            "Source": source,
+            "Candidates": candidates,
+        }
+
+    def current_loss_choices_payload(self, entry: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+        return [self.loss_choice_payload(choice) for choice in self.loss_choice_entries(entry)]
+
+    def resolve_loss_candidate(
+        self, candidates: list[dict[str, Any]], item_type: str, selection: str
+    ) -> dict[str, Any] | None:
+        resolved_type = self.resolve_inventory_type(item_type)
+        if not resolved_type:
+            return None
+        typed = [candidate for candidate in candidates if candidate.get("Type") == resolved_type]
+        if not typed:
+            return None
+        text = str(selection or "").strip()
+        if text.isdigit():
+            slot = int(text)
+            matches = [candidate for candidate in typed if int(candidate.get("Slot") or 0) == slot]
+            return matches[0] if matches else None
+        exact = [candidate for candidate in typed if str(candidate.get("Item") or "").lower() == text.lower()]
+        if exact:
+            return exact[0]
+        prefix = [candidate for candidate in typed if str(candidate.get("Item") or "").lower().startswith(text.lower())]
+        return prefix[0] if len(prefix) == 1 else None
+
+    def apply_section_loss(self, choice_id: str, item_type: str, selection: str) -> None:
+        entries = self.loss_choice_entries()
+        choice = next((item for item in entries if str(item.get("id") or "") == str(choice_id)), None)
+        if choice is None:
+            print("Loss choice not found for this section.")
+            return
+
+        payload = self.loss_choice_payload(choice)
+        if not bool(payload.get("Ready")):
+            print(f"Loss choice not available: {payload.get('BlockedReason')}")
+            return
+
+        candidate = self.resolve_loss_candidate(as_list(payload.get("Candidates")), item_type, selection)
+        if candidate is None:
+            print(f"Item not eligible for this loss: {selection}")
+            return
+
+        removed = self.remove_inventory_item_by_index(str(candidate["Key"]), int(candidate["Slot"]) - 1)
+        if not removed:
+            print(f"Item not found: {selection}")
+            return
+
+        applied = as_list(self.automation.get("AppliedLossChoices"))
+        applied_key = f"{self.current_visit_key()}:{choice_id}"
+        applied.append(applied_key)
+        self.automation["AppliedLossChoices"] = applied[-500:]
+        journal = as_list(self.automation.get("Journal"))
+        journal.append(
+            {
+                "Kind": "loss",
+                "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                "VisitKey": self.current_visit_key(),
+                "BookNumber": int(self.character["BookNumber"]),
+                "Section": int(self.state["CurrentSection"]),
+                "Summary": str(choice.get("summary") or choice_id),
+                "Messages": [f"removed {removed}"],
+            }
+        )
+        self.automation["Journal"] = journal[-100:]
+        self.autosave()
+        print(f"Loss choice: removed {removed}")
+
     def current_section_flow_payload(self) -> dict[str, Any]:
         book_number = int(self.character["BookNumber"])
         section = int(self.state["CurrentSection"])
@@ -3016,6 +3200,8 @@ class LoneWolfReduxAssistant:
             },
             "LastRoll": last_roll,
             "RouteChecks": self.evaluate_route_checks(entry, automation),
+            "Healing": self.current_healing_payload(),
+            "LossChoices": self.current_loss_choices_payload(entry),
             "Automation": automation,
         }
 
@@ -3621,6 +3807,33 @@ class LoneWolfReduxAssistant:
                 if first:
                     stats = f"CS {first.get('cs', '?')} END {first.get('endurance', first.get('end', '?'))}"
                 panel_row(f"{index}. {preset.get('id', '')}", f"{label} {stats}".strip(), label_width=18, value_color="White")
+            panel_footer()
+
+        healing = flow.get("Healing") if isinstance(flow.get("Healing"), dict) else {}
+        if bool(healing.get("Available")):
+            panel_header("Kai Healing", accent="Green")
+            status = "ready" if healing.get("Ready") else ("applied" if healing.get("Applied") else "wait")
+            detail = healing.get("Summary") if healing.get("Ready") else healing.get("BlockedReason")
+            panel_row(status, detail or "Healing not available.", label_width=12)
+            panel_footer()
+
+        loss_choices = [choice for choice in as_list(flow.get("LossChoices")) if isinstance(choice, dict)]
+        if loss_choices:
+            panel_header("Choose Lost Item", accent=SCREEN_ACCENTS["inventory"])
+            for choice in loss_choices:
+                label = str(choice.get("Label") or choice.get("Id") or "Loss choice")
+                if not bool(choice.get("Ready")):
+                    panel_row("Wait", f"{label}: {choice.get('BlockedReason')}", label_width=12)
+                    continue
+                panel_row("Choice", f"{label}: {choice.get('Summary')}", label_width=12)
+                for candidate in as_list(choice.get("Candidates")):
+                    if isinstance(candidate, dict):
+                        item_type = str(candidate.get("Type") or "")
+                        panel_row(
+                            f"{item_type} {candidate.get('Slot')}",
+                            str(candidate.get("Item") or ""),
+                            label_width=14,
+                        )
             panel_footer()
 
         if self.flow_loot_options():
@@ -5697,6 +5910,14 @@ class LoneWolfReduxAssistant:
                     self.show_death_screen()
             elif command == "loot":
                 self.loot_command(tokens)
+            elif command in {"healing", "heal"}:
+                self.apply_healing()
+            elif command == "loss":
+                if len(tokens) < 4:
+                    print("Use: loss <choice-id> <weapon|backpack> <slot-or-item>")
+                    self.show_choices_screen()
+                else:
+                    self.apply_section_loss(tokens[1], tokens[2], rest_of_line(tokens, 3))
             elif command in {"roll", "random"}:
                 result = self.roll_current_section()
                 print(f"Random digit: {result['Raw']}")

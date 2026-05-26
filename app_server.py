@@ -280,6 +280,16 @@ def handle_action(payload: dict) -> str:
         return capture_output(lambda: ASSISTANT.follow_route(int(payload.get("section") or 1)))
     if action == "flow_loot":
         return capture_output(lambda: ASSISTANT.apply_flow_loot(str(payload.get("id") or "")))
+    if action == "healing":
+        return capture_output(lambda: ASSISTANT.apply_healing())
+    if action == "section_loss":
+        return capture_output(
+            lambda: ASSISTANT.apply_section_loss(
+                str(payload.get("id") or ""),
+                str(payload.get("type") or ""),
+                str(payload.get("item") or payload.get("slot") or ""),
+            )
+        )
     if action == "status_flag":
         return capture_output(lambda: ASSISTANT.set_status_flag(str(payload.get("key") or ""), payload.get("value")))
     if action == "wp_cost":

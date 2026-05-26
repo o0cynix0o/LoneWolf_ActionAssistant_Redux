@@ -1473,6 +1473,18 @@
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
         details.push(receiptDetail('What I would do', compactAdviceSummary(actions, text(option?.label, 'Record the loot choice'))));
         actions.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
+      } else if (kind === 'healing') {
+        const healing = flow.Healing || {};
+        summary = 'Manual Advice - Kai Healing';
+        title = 'Manual Healing';
+        details.push(receiptDetail('Why', text(healing.Summary, 'Kai Healing can restore 1 END in an eligible non-combat section.')));
+        details.push(receiptDetail('How to do it', 'Vitals card: add 1 END, capped at maximum END. Apply it only once for this numbered section visit.'));
+      } else if (kind === 'section loss') {
+        const choice = arr(flow.LossChoices).find((item) => text(item.Id) === text(options.id)) || arr(flow.LossChoices)[0];
+        summary = `Manual Advice - ${text(choice?.Label, 'Choose lost item')}`;
+        title = 'Manual Loss Choice';
+        details.push(receiptDetail('Why', text(choice?.Summary, 'The section asks you to choose which carried item is lost.')));
+        details.push(receiptDetail('How to do it', 'Inventory tab: click Drop beside the Weapon or Backpack Item you choose to lose.'));
       } else if (kind === 'section costs') {
         summary = 'Manual Advice - Section cost';
         title = 'Manual Section Cost';
@@ -1837,6 +1849,36 @@
             ...changes.details,
             receiptDetail('Why', 'This section offers an audited loot or item choice.'),
             receiptDetail('How', 'You clicked the loot Apply button. The assistant updated inventory or flags and saved.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'healing') {
+        return {
+          summary: `Healing - ${changes.short || text(afterSnapshot?.message, 'Applied')}`,
+          title: 'Healing Receipt',
+          details: [
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', 'Kai Healing can restore 1 END in an eligible non-combat section.'),
+            receiptDetail('How', 'You clicked Apply in the Kai Healing helper. The assistant capped END at maximum and saved.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'section_loss') {
+        return {
+          summary: `Loss Choice - ${changes.itemShort || changes.short || text(afterSnapshot?.message, 'Updated')}`,
+          title: 'Loss Choice Receipt',
+          details: [
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', 'The section asked you to choose which carried item was lost.'),
+            receiptDetail('How', 'You clicked Remove beside the item you chose. The assistant removed that item and saved.'),
             output,
             ...achievements
           ].filter(Boolean)
@@ -3490,6 +3532,7 @@
       const lastRoll = flow.LastRoll;
       const sourceRoutes = arr(flow.SourceRoutes);
       const automation = flow.Automation || {};
+      const healing = flow.Healing || {};
       const automationMessages = arr(automation.Messages);
       const routeRows = sourceRoutes.map((route) => (
         `<button type="button" data-route="${escapeHtml(route.Section)}">${escapeHtml(route.Label || `Go to ${route.Section}`)}</button>`
@@ -3533,6 +3576,29 @@
           ${modeActionButton(`data-flow-loot="${escapeHtml(text(loot.id))}"`, 'Apply', 'section loot')}
         </div>
       `).join('');
+      const healingRows = healing.Available ? `
+        <div class="item-row">
+          <small>${healing.Applied ? 'Applied' : (healing.Ready ? 'Ready' : 'Wait')}</small>
+          <span class="wrap">${escapeHtml(healing.Ready ? text(healing.Summary, 'Kai Healing') : text(healing.BlockedReason, 'Healing not available'))}</span>
+          ${healing.Ready ? modeActionButton('data-healing', 'Apply', 'healing') : ''}
+        </div>
+      ` : '';
+      const lossRows = arr(flow.LossChoices).map((choice) => {
+        const candidateRows = arr(choice.Candidates).map((candidate) => `
+          <div class="item-row">
+            <small>${escapeHtml(candidate.Type === 'weapon' ? 'W' : 'B')}${escapeHtml(candidate.Slot)}</small>
+            <span>${escapeHtml(candidate.Item)}</span>
+            ${choice.Ready ? modeActionButton(`data-section-loss="${escapeHtml(choice.Id)}:${escapeHtml(candidate.Type)}:${escapeHtml(candidate.Slot)}"`, 'Remove', 'section loss') : ''}
+          </div>
+        `).join('');
+        return `
+          <div class="item-row">
+            <small>${choice.Applied ? 'Applied' : (choice.Ready ? 'Choose' : 'Wait')}</small>
+            <span class="wrap">${escapeHtml(text(choice.Label, 'Loss choice'))}: ${escapeHtml(text(choice.Summary || choice.BlockedReason, 'Choose an item to lose'))}</span>
+          </div>
+          ${candidateRows || `<p class="muted">${escapeHtml(text(choice.BlockedReason, 'No eligible carried item.'))}</p>`}
+        `;
+      }).join('');
       const statusRows = arr(entry.status).map((status) => {
         const current = app.state.Automation?.Flags?.[status.key] === true;
         return `
@@ -3559,6 +3625,8 @@
         </div>
         ${combatRows ? `<div class="panel"><h2>Section Combat</h2>${combatRows}</div>` : ''}
         ${lootRows ? `<div class="panel"><h2>Loot And Section Items</h2>${lootRows}</div>` : ''}
+        ${healingRows ? `<div class="panel"><h2>Kai Healing</h2>${healingRows}</div>` : ''}
+        ${lossRows ? `<div class="panel"><h2>Choose Lost Item</h2>${lossRows}</div>` : ''}
         ${statusRows ? `<div class="panel"><h2>Status Flags</h2>${statusRows}</div>` : ''}
         ${wpPanel}
       `;
@@ -4133,6 +4201,15 @@
         manualSectionAdvice('section loot', { id: button.dataset.flowLoot });
         return;
       }
+      if (isManualMode() && button.dataset.healing !== undefined) {
+        manualSectionAdvice('healing');
+        return;
+      }
+      if (isManualMode() && button.dataset.sectionLoss) {
+        const [id] = button.dataset.sectionLoss.split(':');
+        manualSectionAdvice('section loss', { id });
+        return;
+      }
       if (isManualMode() && button.dataset.wpCost) {
         const [cost, mode] = button.dataset.wpCost.split(':');
         manualSectionAdvice('section costs', { cost: Number(cost), mode });
@@ -4153,6 +4230,11 @@
       if (button.dataset.route) await action({ action: 'route', section: Number(button.dataset.route) });
       if (button.dataset.sectionCombatStart !== undefined) await action({ action: 'section_combat_start', id: button.dataset.sectionCombatStart });
       if (button.dataset.flowLoot) await action({ action: 'flow_loot', id: button.dataset.flowLoot });
+      if (button.dataset.healing !== undefined) await action({ action: 'healing' });
+      if (button.dataset.sectionLoss) {
+        const [id, type, slot] = button.dataset.sectionLoss.split(':');
+        await action({ action: 'section_loss', id, type, slot });
+      }
       if (button.dataset.statusFlag) {
         const [key, value] = button.dataset.statusFlag.split(':');
         await action({ action: 'status_flag', key, value });

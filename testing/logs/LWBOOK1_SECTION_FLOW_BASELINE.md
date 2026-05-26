@@ -45,6 +45,7 @@ This report records section numbers, graph counts, and audit classifications onl
 - `sourceRoutes` is the compact legal-link baseline used by the assistant.
 - `classification` is heuristic and marks candidates for the later human section automation audit.
 - 18 sections include confirmed optional loot buttons.
+- 2 sections include confirmed explicit loss-choice helpers.
 - 29 sections include confirmed combat presets.
 - 20 sections include confirmed roll helpers.
 - 11 sections include confirmed route checks.
@@ -53,4 +54,4 @@ This report records section numbers, graph counts, and audit classifications onl
 
 - Continue route-check audit for optional discipline choices and route-specific side effects.
 - Expand simple automations only after each additional section effect is confirmed by the audit.
-- Continue combat/random audit for staged multi-roll sections and player-choice aftermath effects.
+- Continue combat/random audit for staged multi-roll sections and remaining player-choice aftermath effects.

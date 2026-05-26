@@ -56,6 +56,24 @@ def section_roll(summary: str, outcomes: list[dict[str, Any]]) -> dict[str, Any]
     return {"roll": {"summary": summary, "outcomes": outcomes}}
 
 
+def loss_choice(
+    choice_id: str,
+    label: str,
+    summary: str,
+    containers: list[str],
+    fallback_containers: list[str] | None = None,
+) -> dict[str, Any]:
+    choice = {
+        "id": choice_id,
+        "label": label,
+        "summary": summary,
+        "containers": containers,
+    }
+    if fallback_containers:
+        choice["fallbackContainers"] = fallback_containers
+    return choice
+
+
 def condition_outcome(
     label: str,
     route: int,
@@ -218,6 +236,17 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ]
     },
+    "144": {
+        "lossChoices": [
+            loss_choice(
+                "144-stolen-item",
+                "Choose stolen item",
+                "One Backpack Item is stolen; if no Backpack Item is available, lose one Weapon.",
+                ["backpack"],
+                ["weapon"],
+            )
+        ]
+    },
     "148": {"loot": [{"id": "148-warhammer", "label": "Take Warhammer", "actions": [{"type": "add_item", "container": "weapon", "name": "Warhammer"}]}]},
     "164": {"loot": [{"id": "164-alether", "label": "Take Potion of Alether", "actions": [{"type": "add_item", "container": "backpack", "name": "Potion of Alether"}]}]},
     "184": {
@@ -251,6 +280,16 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "199": {"loot": [{"id": "199-meal", "label": "Take 1 Meal", "actions": [{"type": "add_item", "container": "backpack", "name": "Meal"}]}]},
     "243": {"loot": [{"id": "243-mace", "label": "Take Mace", "actions": [{"type": "add_item", "container": "weapon", "name": "Mace"}]}]},
     "263": {"loot": [{"id": "263-gold", "label": "Take 3 Gold Crowns", "actions": [{"type": "stat", "stat": "gold", "delta": 3}]}]},
+    "277": {
+        "lossChoices": [
+            loss_choice(
+                "277-broken-weapon",
+                "Choose broken Weapon",
+                "One Weapon is broken; if carrying more than one, choose which Weapon to lose.",
+                ["weapon"],
+            )
+        ]
+    },
     "290": {"loot": [{"id": "290-quarterstaff", "label": "Take Quarterstaff", "actions": [{"type": "add_item", "container": "weapon", "name": "Quarterstaff"}]}]},
     "291": {
         "loot": [
@@ -1018,6 +1057,8 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "branchSections": branch_sections,
         "classificationCounts": dict(sorted(classified_counts.items())),
         "manualFlowAuditCount": len(MANUAL_FLOW_AUDIT),
+        "manualLootAuditCount": sum(1 for entry in MANUAL_FLOW_AUDIT.values() if "loot" in entry),
+        "manualLossChoiceAuditCount": sum(1 for entry in MANUAL_FLOW_AUDIT.values() if "lossChoices" in entry),
         "manualCombatAuditCount": len(MANUAL_COMBAT_AUDIT),
         "manualRouteAuditCount": len(MANUAL_ROUTE_AUDIT),
         "manualRollAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "roll" in entry),
@@ -1073,7 +1114,8 @@ def render_report(artifact: dict[str, Any]) -> str:
             "- `data/book1-section-flows.json` now contains one entry for every discovered section.",
             "- `sourceRoutes` is the compact legal-link baseline used by the assistant.",
             "- `classification` is heuristic and marks candidates for the later human section automation audit.",
-            f"- {artifact['manualFlowAuditCount']} sections include confirmed optional loot buttons.",
+            f"- {artifact['manualLootAuditCount']} sections include confirmed optional loot buttons.",
+            f"- {artifact['manualLossChoiceAuditCount']} sections include confirmed explicit loss-choice helpers.",
             f"- {artifact['manualCombatAuditCount']} sections include confirmed combat presets.",
             f"- {artifact['manualRollAuditCount']} sections include confirmed roll helpers.",
             f"- {artifact['manualRouteCheckAuditCount']} sections include confirmed route checks.",
@@ -1082,7 +1124,7 @@ def render_report(artifact: dict[str, Any]) -> str:
             "",
             "- Continue route-check audit for optional discipline choices and route-specific side effects.",
             "- Expand simple automations only after each additional section effect is confirmed by the audit.",
-            "- Continue combat/random audit for staged multi-roll sections and player-choice aftermath effects.",
+            "- Continue combat/random audit for staged multi-roll sections and remaining player-choice aftermath effects.",
         ]
     )
     return "\n".join(lines) + "\n"

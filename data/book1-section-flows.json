@@ -2966,7 +2966,20 @@
           "Section": 217
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "lossChoices": [
+        {
+          "id": "144-stolen-item",
+          "label": "Choose stolen item",
+          "summary": "One Backpack Item is stolen; if no Backpack Item is available, lose one Weapon.",
+          "containers": [
+            "backpack"
+          ],
+          "fallbackContainers": [
+            "weapon"
+          ]
+        }
+      ]
     },
     "145": {
       "auditStatus": "source-link-baseline",
@@ -5640,7 +5653,17 @@
           "Section": 113
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "lossChoices": [
+        {
+          "id": "277-broken-weapon",
+          "label": "Choose broken Weapon",
+          "summary": "One Weapon is broken; if carrying more than one, choose which Weapon to lose.",
+          "containers": [
+            "weapon"
+          ]
+        }
+      ]
     },
     "278": {
       "auditStatus": "source-link-baseline",
