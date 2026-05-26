@@ -26,11 +26,11 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Unaudited route-check math for random/stat/item/Kai Discipline branches.
+- Multi-roll sections and route-specific random side effects.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -79,6 +79,14 @@ Issue #4 changed the combat preset baseline:
 - Mindblast immunity, forced unarmed combat, multi-enemy queues, evasion routes, round-limit outcomes, and section 227 flawless/wounded victory routes are represented where confirmed.
 - `testing\lwbook1_combat_smoke.py` verifies representative combat presets and exceptions.
 - `testing\logs\LWBOOK1_COMBAT_AND_RANDOM_AUDIT.md` records coverage and remaining combat/random risk.
+
+Issue #5 changed the route/random baseline:
+
+- `data\book1-section-flows.json` includes 17 confirmed roll helpers and 11 confirmed route checks.
+- The first route checks cover representative Kai Discipline, item, Gold Crown, and END branches.
+- Roll helpers cover straightforward one-roll route outcomes; multi-roll sections and random outcomes with immediate same-section side effects remain manual.
+- `testing\lwbook1_route_random_smoke.py` verifies representative route and random helpers.
+- `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` records coverage and remaining route/random risk.
 
 ## GitHub Workflow
 

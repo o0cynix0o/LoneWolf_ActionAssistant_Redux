@@ -50,7 +50,26 @@
           "Section": 276
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random route from the falling branch.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 343,
+            "label": "Bad landing"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 276,
+            "label": "Less severe fall"
+          }
+        ]
+      }
     },
     "3": {
       "auditStatus": "source-link-baseline",
@@ -132,7 +151,26 @@
           "Section": 25
         }
       ],
-      "incomingRouteCount": 8
+      "incomingRouteCount": 8,
+      "roll": {
+        "summary": "Random route while escaping the shop.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 2,
+            "route": 108,
+            "label": "Caught by the crowd"
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 9,
+            "route": 25,
+            "label": "Escape through the crowd"
+          }
+        ]
+      }
     },
     "8": {
       "auditStatus": "source-link-baseline",
@@ -162,7 +200,46 @@
           "Section": 292
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "9-vordak-gem",
+          "label": "Vordak Gem possession",
+          "summary": "Checks whether Lone Wolf has Vordak Gem.",
+          "outcomes": [
+            {
+              "label": "Vordak Gem available",
+              "route": 236,
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Vordak Gem",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ],
+              "testLabel": "Has Vordak Gem"
+            },
+            {
+              "label": "No Vordak Gem",
+              "route": 292,
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Vordak Gem",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ],
+              "testLabel": "No Vordak Gem"
+            }
+          ]
+        }
+      ]
     },
     "10": {
       "auditStatus": "source-link-baseline",
@@ -208,7 +285,37 @@
           "Section": 247
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "12-gold-gte-10",
+          "label": "Ferryman fare",
+          "summary": "Checks current Gold Crowns.",
+          "requiresAutomationApplied": false,
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          },
+          "outcomes": [
+            {
+              "label": "Gold Crowns 10 or more",
+              "test": "gte",
+              "value": 10,
+              "route": 262
+            },
+            {
+              "label": "Gold Crowns less than 10",
+              "test": "lt",
+              "value": 10,
+              "route": 247
+            }
+          ]
+        }
+      ]
     },
     "13": {
       "auditStatus": "source-link-baseline",
@@ -316,7 +423,33 @@
             316
           ]
         }
-      ]
+      ],
+      "roll": {
+        "summary": "Random route after killing the Kraan.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 0,
+            "route": 53,
+            "label": "Kraan fall"
+          },
+          {
+            "test": "range",
+            "min": 1,
+            "max": 2,
+            "route": 274,
+            "label": "Lose weapons while escaping"
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 9,
+            "route": 316,
+            "label": "Clean escape"
+          }
+        ]
+      }
     },
     "18": {
       "auditStatus": "source-link-baseline",
@@ -432,7 +565,26 @@
           "Section": 145
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random route after evading the bandits.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 181,
+            "label": "Arrow misses"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 145,
+            "label": "Arrow hits"
+          }
+        ]
+      }
     },
     "23": {
       "auditStatus": "source-link-baseline",
@@ -844,7 +996,26 @@
           "Section": 338
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route after the Kraan attack.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 277,
+            "label": "Weapon broken"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 338,
+            "label": "Weapon survives"
+          }
+        ]
+      }
     },
     "45": {
       "auditStatus": "source-link-baseline",
@@ -926,7 +1097,26 @@
           "Section": 60
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route in the shop.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 339,
+            "label": "Robber attacks"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 60,
+            "label": "Fatal trap"
+          }
+        ]
+      }
     },
     "50": {
       "auditStatus": "source-link-baseline",
@@ -975,7 +1165,39 @@
           "Section": 250
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "52-animal-kinship",
+          "label": "Animal Kinship tree route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 225,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ],
+              "testLabel": "Has Animal Kinship"
+            },
+            {
+              "label": "No Animal Kinship",
+              "route": 250,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Animal Kinship"
+                }
+              ],
+              "testLabel": "No Animal Kinship"
+            }
+          ]
+        }
+      ]
     },
     "53": {
       "auditStatus": "source-link-baseline",
@@ -1602,7 +1824,39 @@
           "Section": 31
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "88-healing",
+          "label": "Healing route",
+          "summary": "Checks whether Lone Wolf has Healing.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Healing available",
+              "route": 216,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Healing"
+                }
+              ],
+              "testLabel": "Has Healing"
+            },
+            {
+              "label": "No Healing or decline",
+              "route": 31,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Healing"
+                }
+              ],
+              "testLabel": "No Healing"
+            }
+          ]
+        }
+      ]
     },
     "89": {
       "auditStatus": "source-link-baseline",
@@ -1622,7 +1876,33 @@
           "Section": 316
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route while fleeing the Kraan.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 1,
+            "route": 53,
+            "label": "Fatal fall"
+          },
+          {
+            "test": "range",
+            "min": 2,
+            "max": 4,
+            "route": 274,
+            "label": "Lose weapons while escaping"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 316,
+            "label": "Clean escape"
+          }
+        ]
+      }
     },
     "90": {
       "auditStatus": "source-link-baseline",
@@ -1865,7 +2145,39 @@
           "Section": 335
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "105-animal-kinship",
+          "label": "Animal Kinship bird route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 298,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ],
+              "testLabel": "Has Animal Kinship"
+            },
+            {
+              "label": "No Animal Kinship or decline",
+              "route": 335,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Animal Kinship"
+                }
+              ],
+              "testLabel": "No Animal Kinship"
+            }
+          ]
+        }
+      ]
     },
     "106": {
       "auditStatus": "source-link-baseline",
@@ -2281,7 +2593,39 @@
           "Section": 336
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "128-hunting",
+          "label": "Hunting ambush route",
+          "summary": "Checks whether Lone Wolf has Hunting.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Hunting available",
+              "route": 297,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Hunting"
+                }
+              ],
+              "testLabel": "Has Hunting"
+            },
+            {
+              "label": "No Hunting",
+              "route": 336,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Hunting"
+                }
+              ],
+              "testLabel": "No Hunting"
+            }
+          ]
+        }
+      ]
     },
     "129": {
       "auditStatus": "source-link-baseline",
@@ -2857,7 +3201,26 @@
           "Section": 10
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route while hiding from Giaks.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 286,
+            "label": "Detected"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 10,
+            "label": "Not spotted"
+          }
+        ]
+      }
     },
     "161": {
       "auditStatus": "source-link-baseline",
@@ -2890,7 +3253,39 @@
           "Section": 127
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "162-mind-over-matter",
+          "label": "Mind Over Matter escape route",
+          "summary": "Checks whether Lone Wolf has Mind Over Matter.",
+          "requiresAutomationApplied": true,
+          "outcomes": [
+            {
+              "label": "Mind Over Matter available",
+              "route": 258,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ],
+              "testLabel": "Has Mind Over Matter"
+            },
+            {
+              "label": "No Mind Over Matter",
+              "route": 127,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Mind Over Matter"
+                }
+              ],
+              "testLabel": "No Mind Over Matter"
+            }
+          ]
+        }
+      ]
     },
     "163": {
       "auditStatus": "source-link-baseline",
@@ -3117,7 +3512,46 @@
           "Section": 259
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "173-silver-key",
+          "label": "Silver Key door route",
+          "summary": "Checks whether Lone Wolf has Silver Key.",
+          "outcomes": [
+            {
+              "label": "Silver Key available",
+              "route": 158,
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Silver Key",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ],
+              "testLabel": "Has Silver Key"
+            },
+            {
+              "label": "No Silver Key",
+              "route": 259,
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Silver Key",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ],
+              "testLabel": "No Silver Key"
+            }
+          ]
+        }
+      ]
     },
     "174": {
       "auditStatus": "source-link-baseline",
@@ -3690,7 +4124,37 @@
           "Section": 344
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "203-end-gte-10",
+          "label": "END after the explosion",
+          "summary": "Checks current END.",
+          "requiresAutomationApplied": true,
+          "formula": {
+            "label": "END",
+            "terms": [
+              {
+                "stat": "end"
+              }
+            ]
+          },
+          "outcomes": [
+            {
+              "label": "END 10 or more",
+              "test": "gte",
+              "value": 10,
+              "route": 80
+            },
+            {
+              "label": "END less than 10",
+              "test": "lt",
+              "value": 10,
+              "route": 344
+            }
+          ]
+        }
+      ]
     },
     "204": {
       "auditStatus": "source-link-baseline",
@@ -3721,7 +4185,26 @@
           "Section": 145
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route while fleeing the disguised Drakkarim.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 181,
+            "label": "Arrow misses"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 145,
+            "label": "Arrow hits"
+          }
+        ]
+      }
     },
     "206": {
       "auditStatus": "source-link-baseline",
@@ -4064,7 +4547,26 @@
           "Section": 338
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route after the Kraan attack.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 277,
+            "label": "Weapon broken"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 338,
+            "label": "Weapon survives"
+          }
+        ]
+      }
     },
     "227": {
       "auditStatus": "source-link-baseline",
@@ -4293,7 +4795,26 @@
           "Section": 72
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route while sneaking past the Giaks.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 265,
+            "label": "Pass undetected"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 72,
+            "label": "Detected"
+          }
+        ]
+      }
     },
     "238": {
       "auditStatus": "source-link-baseline",
@@ -4368,7 +4889,39 @@
           "Section": 9
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "242-mindshield",
+          "label": "Mindshield psychic route",
+          "summary": "Checks whether Lone Wolf has Mindshield.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Mindshield available",
+              "route": 166,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mindshield"
+                }
+              ],
+              "testLabel": "Has Mindshield"
+            },
+            {
+              "label": "No Mindshield",
+              "route": 9,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Mindshield"
+                }
+              ],
+              "testLabel": "No Mindshield"
+            }
+          ]
+        }
+      ]
     },
     "243": {
       "auditStatus": "source-link-baseline",
@@ -4955,7 +5508,26 @@
           "Section": 74
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route on the left-hand track.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 345,
+            "label": "Lose your footing"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 74,
+            "label": "Keep moving"
+          }
+        ]
+      }
     },
     "276": {
       "auditStatus": "source-link-baseline",
@@ -5014,7 +5586,26 @@
           "Section": 96
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route inside the cave.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "route": 112,
+            "label": "Giaks enter the cave"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 96,
+            "label": "Cave remains quiet"
+          }
+        ]
+      }
     },
     "280": {
       "auditStatus": "source-link-baseline",
@@ -5305,7 +5896,33 @@
           "Section": 321
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route after escaping the river.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 2,
+            "route": 230,
+            "label": "Riverbank route"
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 6,
+            "route": 190,
+            "label": "Forest route"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 321,
+            "label": "High bank route"
+          }
+        ]
+      }
     },
     "295": {
       "auditStatus": "source-link-baseline",
@@ -5427,7 +6044,26 @@
           "Section": 285
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route in the forest.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 2,
+            "route": 110,
+            "label": "Encounter ahead"
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 9,
+            "route": 285,
+            "label": "Clear path"
+          }
+        ]
+      }
     },
     "303": {
       "auditStatus": "source-link-baseline",
@@ -5444,7 +6080,39 @@
           "Section": 72
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "303-camouflage",
+          "label": "Camouflage patrol route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 237,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            },
+            {
+              "label": "No Camouflage",
+              "route": 72,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "No Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "304": {
       "auditStatus": "source-link-baseline",
@@ -5639,7 +6307,26 @@
           "Section": 98
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route into Holmgard.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "route": 341,
+            "label": "Reach the guildhall area"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 98,
+            "label": "Alternative city route"
+          }
+        ]
+      }
     },
     "315": {
       "auditStatus": "source-link-baseline",
@@ -6024,7 +6711,26 @@
           "Section": 317
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random route after opening the gate.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 219,
+            "label": "Discovered"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 317,
+            "label": "Slip through"
+          }
+        ]
+      }
     },
     "338": {
       "auditStatus": "source-link-baseline",

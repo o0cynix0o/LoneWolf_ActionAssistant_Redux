@@ -35,6 +35,6 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 ## Remaining Work
 
-- Route-check math for random, stat, item, and Kai Discipline branches is still separate work.
-- Non-combat random outcomes are not automated by this combat pass.
+- Route-check and single-roll helper baseline started in `LWBOOK1_ROUTE_RANDOM_AUDIT.md`.
+- Multi-roll sections and same-section random side effects still need later work.
 - More end-to-end playtesting is needed before packaging or release.

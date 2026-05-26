@@ -39,6 +39,122 @@ def combat_enemy(name: str, cs: int, endurance: int) -> dict[str, Any]:
     return {"name": name, "cs": cs, "endurance": endurance}
 
 
+def roll_range(minimum: int, maximum: int, route: int, label: str) -> dict[str, Any]:
+    return {"test": "range", "min": minimum, "max": maximum, "route": route, "label": label}
+
+
+def section_roll(summary: str, outcomes: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"roll": {"summary": summary, "outcomes": outcomes}}
+
+
+def condition_outcome(
+    label: str,
+    route: int,
+    condition: dict[str, Any],
+    test_label: str,
+) -> dict[str, Any]:
+    return {"label": label, "route": route, "conditions": [condition], "testLabel": test_label}
+
+
+def power_route_check(
+    section: int,
+    power: str,
+    power_route: int,
+    no_power_route: int,
+    *,
+    label: str | None = None,
+    optional: bool = False,
+    requires_automation: bool = False,
+) -> dict[str, Any]:
+    no_power_label = f"No {power}" if not optional else f"No {power} or decline"
+    return {
+        "routeChecks": [
+            {
+                "id": f"{section}-{power.lower().replace(' ', '-')}",
+                "label": label or f"{power} route",
+                "summary": f"Checks whether Lone Wolf has {power}.",
+                "requiresAutomationApplied": requires_automation,
+                "outcomes": [
+                    condition_outcome(
+                        f"{power} available",
+                        power_route,
+                        {"type": "power", "name": power},
+                        f"Has {power}",
+                    ),
+                    condition_outcome(
+                        no_power_label,
+                        no_power_route,
+                        {"type": "no_power", "name": power},
+                        f"No {power}",
+                    ),
+                ],
+            }
+        ]
+    }
+
+
+def item_route_check(
+    section: int,
+    item: str,
+    item_route: int,
+    no_item_route: int,
+    *,
+    label: str | None = None,
+    container: str = "backpack",
+) -> dict[str, Any]:
+    return {
+        "routeChecks": [
+            {
+                "id": f"{section}-{item.lower().replace(' ', '-')}",
+                "label": label or f"{item} route",
+                "summary": f"Checks whether Lone Wolf has {item}.",
+                "outcomes": [
+                    condition_outcome(
+                        f"{item} available",
+                        item_route,
+                        {"type": "item", "name": item, "containers": [container], "match": "exact"},
+                        f"Has {item}",
+                    ),
+                    condition_outcome(
+                        f"No {item}",
+                        no_item_route,
+                        {"type": "no_item", "name": item, "containers": [container], "match": "exact"},
+                        f"No {item}",
+                    ),
+                ],
+            }
+        ]
+    }
+
+
+def stat_route_check(
+    section: int,
+    stat: str,
+    threshold: int,
+    gte_route: int,
+    lt_route: int,
+    *,
+    label: str,
+    requires_automation: bool = False,
+) -> dict[str, Any]:
+    stat_label = "Gold Crowns" if stat == "gold" else stat.upper()
+    return {
+        "routeChecks": [
+            {
+                "id": f"{section}-{stat}-gte-{threshold}",
+                "label": label,
+                "summary": f"Checks current {stat_label}.",
+                "requiresAutomationApplied": requires_automation,
+                "formula": {"label": stat_label, "terms": [{"stat": stat}]},
+                "outcomes": [
+                    {"label": f"{stat_label} {threshold} or more", "test": "gte", "value": threshold, "route": gte_route},
+                    {"label": f"{stat_label} less than {threshold}", "test": "lt", "value": threshold, "route": lt_route},
+                ],
+            }
+        ]
+    }
+
+
 MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "20": {
         "loot": [
@@ -548,6 +664,158 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
 }
 
 
+MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
+    "2": section_roll(
+        "Random route from the falling branch.",
+        [
+            roll_range(0, 4, 343, "Bad landing"),
+            roll_range(5, 9, 276, "Less severe fall"),
+        ],
+    ),
+    "7": section_roll(
+        "Random route while escaping the shop.",
+        [
+            roll_range(0, 2, 108, "Caught by the crowd"),
+            roll_range(3, 9, 25, "Escape through the crowd"),
+        ],
+    ),
+    "9": item_route_check(9, "Vordak Gem", 236, 292, label="Vordak Gem possession"),
+    "12": stat_route_check(12, "gold", 10, 262, 247, label="Ferryman fare"),
+    "17": section_roll(
+        "Random route after killing the Kraan.",
+        [
+            roll_range(0, 0, 53, "Kraan fall"),
+            roll_range(1, 2, 274, "Lose weapons while escaping"),
+            roll_range(3, 9, 316, "Clean escape"),
+        ],
+    ),
+    "22": section_roll(
+        "Random route after evading the bandits.",
+        [
+            roll_range(0, 4, 181, "Arrow misses"),
+            roll_range(5, 9, 145, "Arrow hits"),
+        ],
+    ),
+    "44": section_roll(
+        "Random route after the Kraan attack.",
+        [
+            roll_range(0, 4, 277, "Weapon broken"),
+            roll_range(5, 9, 338, "Weapon survives"),
+        ],
+    ),
+    "49": section_roll(
+        "Random route in the shop.",
+        [
+            roll_range(0, 4, 339, "Robber attacks"),
+            roll_range(5, 9, 60, "Fatal trap"),
+        ],
+    ),
+    "52": power_route_check(52, "Animal Kinship", 225, 250, label="Animal Kinship tree route"),
+    "88": power_route_check(88, "Healing", 216, 31, label="Healing route", optional=True),
+    "89": section_roll(
+        "Random route while fleeing the Kraan.",
+        [
+            roll_range(0, 1, 53, "Fatal fall"),
+            roll_range(2, 4, 274, "Lose weapons while escaping"),
+            roll_range(5, 9, 316, "Clean escape"),
+        ],
+    ),
+    "105": power_route_check(105, "Animal Kinship", 298, 335, label="Animal Kinship bird route", optional=True),
+    "128": power_route_check(128, "Hunting", 297, 336, label="Hunting ambush route"),
+    "160": section_roll(
+        "Random route while hiding from Giaks.",
+        [
+            roll_range(0, 4, 286, "Detected"),
+            roll_range(5, 9, 10, "Not spotted"),
+        ],
+    ),
+    "162": power_route_check(
+        162,
+        "Mind Over Matter",
+        258,
+        127,
+        label="Mind Over Matter escape route",
+        requires_automation=True,
+    ),
+    "173": item_route_check(173, "Silver Key", 158, 259, label="Silver Key door route", container="special"),
+    "203": stat_route_check(
+        203,
+        "end",
+        10,
+        80,
+        344,
+        label="END after the explosion",
+        requires_automation=True,
+    ),
+    "205": section_roll(
+        "Random route while fleeing the disguised Drakkarim.",
+        [
+            roll_range(0, 4, 181, "Arrow misses"),
+            roll_range(5, 9, 145, "Arrow hits"),
+        ],
+    ),
+    "226": section_roll(
+        "Random route after the Kraan attack.",
+        [
+            roll_range(0, 4, 277, "Weapon broken"),
+            roll_range(5, 9, 338, "Weapon survives"),
+        ],
+    ),
+    "237": section_roll(
+        "Random route while sneaking past the Giaks.",
+        [
+            roll_range(0, 4, 265, "Pass undetected"),
+            roll_range(5, 9, 72, "Detected"),
+        ],
+    ),
+    "242": power_route_check(242, "Mindshield", 166, 9, label="Mindshield psychic route"),
+    "275": section_roll(
+        "Random route on the left-hand track.",
+        [
+            roll_range(0, 4, 345, "Lose your footing"),
+            roll_range(5, 9, 74, "Keep moving"),
+        ],
+    ),
+    "279": section_roll(
+        "Random route inside the cave.",
+        [
+            roll_range(0, 6, 112, "Giaks enter the cave"),
+            roll_range(7, 9, 96, "Cave remains quiet"),
+        ],
+    ),
+    "294": section_roll(
+        "Random route after escaping the river.",
+        [
+            roll_range(0, 2, 230, "Riverbank route"),
+            roll_range(3, 6, 190, "Forest route"),
+            roll_range(7, 9, 321, "High bank route"),
+        ],
+    ),
+    "302": section_roll(
+        "Random route in the forest.",
+        [
+            roll_range(0, 2, 110, "Encounter ahead"),
+            roll_range(3, 9, 285, "Clear path"),
+        ],
+    ),
+    "303": power_route_check(303, "Camouflage", 237, 72, label="Camouflage patrol route"),
+    "314": section_roll(
+        "Random route into Holmgard.",
+        [
+            roll_range(0, 6, 341, "Reach the guildhall area"),
+            roll_range(7, 9, 98, "Alternative city route"),
+        ],
+    ),
+    "337": section_roll(
+        "Random route after opening the gate.",
+        [
+            roll_range(0, 4, 219, "Discovered"),
+            roll_range(5, 9, 317, "Slip through"),
+        ],
+    ),
+}
+
+
 def clean_text(source: str) -> str:
     text = re.sub(r"<[^>]+>", " ", source)
     text = html.unescape(text)
@@ -656,7 +924,7 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         sources = incoming.get(section, [])
         entry["incomingRouteCount"] = len(sources)
 
-    for manual_audit in (MANUAL_FLOW_AUDIT, MANUAL_COMBAT_AUDIT):
+    for manual_audit in (MANUAL_FLOW_AUDIT, MANUAL_COMBAT_AUDIT, MANUAL_ROUTE_AUDIT):
         for section, override in manual_audit.items():
             if int(section) in sections:
                 sections[int(section)].update(override)
@@ -721,6 +989,9 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "classificationCounts": dict(sorted(classified_counts.items())),
         "manualFlowAuditCount": len(MANUAL_FLOW_AUDIT),
         "manualCombatAuditCount": len(MANUAL_COMBAT_AUDIT),
+        "manualRouteAuditCount": len(MANUAL_ROUTE_AUDIT),
+        "manualRollAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "roll" in entry),
+        "manualRouteCheckAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "routeChecks" in entry),
         "section1Routes": [route["Section"] for route in sections.get(1, {}).get("sourceRoutes", [])],
         "section350Classes": sections.get(350, {}).get("classification", []),
     }
@@ -774,12 +1045,14 @@ def render_report(artifact: dict[str, Any]) -> str:
             "- `classification` is heuristic and marks candidates for the later human section automation audit.",
             f"- {artifact['manualFlowAuditCount']} sections include confirmed optional loot buttons.",
             f"- {artifact['manualCombatAuditCount']} sections include confirmed combat presets.",
+            f"- {artifact['manualRollAuditCount']} sections include confirmed roll helpers.",
+            f"- {artifact['manualRouteCheckAuditCount']} sections include confirmed route checks.",
             "",
             "## Remaining Work",
             "",
-            "- Confirm route checks that depend on Kai Disciplines, items, END, Gold Crowns, or random digits.",
+            "- Continue route-check audit for optional discipline choices and route-specific side effects.",
             "- Expand simple automations only after each additional section effect is confirmed by the audit.",
-            "- Continue combat/random audit for route checks and non-combat random outcomes.",
+            "- Continue combat/random audit for multi-roll sections and roll outcomes with immediate item/stat effects.",
         ]
     )
     return "\n".join(lines) + "\n"
