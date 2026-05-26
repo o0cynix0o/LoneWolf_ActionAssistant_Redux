@@ -26,11 +26,12 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
 - Multi-roll sections and route-specific random side effects.
+- Broader route coverage outside the checked successful Book 1 path.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -87,6 +88,14 @@ Issue #5 changed the route/random baseline:
 - Roll helpers cover straightforward one-roll route outcomes; multi-roll sections and random outcomes with immediate same-section side effects remain manual.
 - `testing\lwbook1_route_random_smoke.py` verifies representative route and random helpers.
 - `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` records coverage and remaining route/random risk.
+
+Issue #6 changed the playtest baseline:
+
+- `testing\lwbook1_end_to_end_playtest.py` follows a deterministic legal route from section 1 to section 350:
+  `1 -> 141 -> 56 -> 222 -> 252 -> 70 -> 157 -> 30 -> 261 -> 264 -> 6 -> 200 -> 168 -> 64 -> 16 -> 192 -> 171 -> 303 -> 237 -> 265 -> 142 -> 135 -> 223 -> 75 -> 163 -> 321 -> 273 -> 51 -> 288 -> 129 -> 3 -> 196 -> 332 -> 350`.
+- The route uses a Book 1 character with Camouflage, Sixth Sense, Tracking, Hunting, and Healing.
+- The test verifies the section 303 Camouflage route check, the section 237 roll helper, Hunting preserving the Meal at section 168, mid-route save/load, Book 1 completion at section 350, and death checkpoint rewind behavior.
+- `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` records the checked route and remaining playtest risk.
 
 ## GitHub Workflow
 
