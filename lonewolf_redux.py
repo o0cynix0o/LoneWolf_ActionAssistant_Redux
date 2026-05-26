@@ -56,7 +56,7 @@ ANSI_COLORS = {
 SCREEN_ACCENTS = {
     "sheet": "Cyan",
     "inventory": "DarkYellow",
-    "magicks": "Magenta",
+    "disciplines": "Magenta",
     "sections": "Cyan",
     "combat": "Red",
     "death": "Red",
@@ -73,23 +73,72 @@ BOOKS = {
     1: {"Title": "Flight from the Dark", "Folder": "01fftd", "MaxSection": 350},
 }
 
-LESSER_MAGICKS = [
-    "Sorcery",
-    "Enchantment",
-    "Elementalism",
-    "Alchemy",
-    "Prophecy",
-    "Psychomancy",
-    "Evocation",
+KAI_DISCIPLINES = [
+    "Camouflage",
+    "Hunting",
+    "Sixth Sense",
+    "Tracking",
+    "Healing",
+    "Weaponskill",
+    "Mindshield",
+    "Mindblast",
+    "Animal Kinship",
+    "Mind Over Matter",
 ]
 
-HIGHER_MAGICKS = [
-    "Thaumaturgy",
-    "Telergy",
-    "Physiurgy",
-    "Theurgy",
-    "Visionary",
-    "Necromancy",
+WEAPONSKILL_MAP = {
+    0: "Dagger",
+    1: "Spear",
+    2: "Mace",
+    3: "Short Sword",
+    4: "Warhammer",
+    5: "Sword",
+    6: "Axe",
+    7: "Sword",
+    8: "Quarterstaff",
+    9: "Broadsword",
+}
+
+BOOK1_STARTING_FIND = {
+    0: {"Type": "weapon", "Name": "Broadsword", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    1: {"Type": "weapon", "Name": "Sword", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    2: {"Type": "special", "Name": "Helmet", "Quantity": 1, "Gold": 0, "EnduranceBonus": 2},
+    3: {"Type": "backpack", "Name": "Meal", "Quantity": 2, "Gold": 0, "EnduranceBonus": 0},
+    4: {"Type": "special", "Name": "Chainmail Waistcoat", "Quantity": 1, "Gold": 0, "EnduranceBonus": 4},
+    5: {"Type": "weapon", "Name": "Mace", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    6: {"Type": "backpack", "Name": "Healing Potion", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    7: {"Type": "weapon", "Name": "Quarterstaff", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    8: {"Type": "weapon", "Name": "Spear", "Quantity": 1, "Gold": 0, "EnduranceBonus": 0},
+    9: {"Type": "gold", "Name": "12 Gold Crowns", "Quantity": 0, "Gold": 12, "EnduranceBonus": 0},
+}
+
+# Legacy constants are kept only so older save/transition code can normalize without
+# raising NameError. Book 1 character creation and UI use KAI_DISCIPLINES instead.
+LESSER_MAGICKS: list[str] = []
+HIGHER_MAGICKS: list[str] = []
+
+LONE_WOLF_BOOK1_ACHIEVEMENTS = [
+    {
+        "Id": "lw1_complete",
+        "Name": "Flight from the Dark Complete",
+        "BookNumber": 1,
+        "Category": "Journey",
+        "Description": "Complete Book 1.",
+    },
+    {
+        "Id": "lw1_first_blood",
+        "Name": "First Blood",
+        "BookNumber": 1,
+        "Category": "Combat",
+        "Description": "Win your first recorded Book 1 combat.",
+    },
+    {
+        "Id": "lw1_long_road",
+        "Name": "Long Road to Holmgard",
+        "BookNumber": 1,
+        "Category": "Exploration",
+        "Description": "Visit 75 or more unique Book 1 sections.",
+    },
 ]
 
 ACHIEVEMENT_DEFINITIONS = [
@@ -812,9 +861,11 @@ ACHIEVEMENT_DEFINITIONS = [
 
 def default_inventory() -> dict[str, Any]:
     return {
-        "Weapons": ["Wizard's Staff"],
-        "BackpackItems": ["Meal", "Meal", "Meal", "Meal"],
-        "SpecialItems": ["Map of the Shadakine Empire"],
+        "Weapons": ["Axe"],
+        "BackpackItems": ["Meal"],
+        "SpecialItems": ["Map of Sommerlund"],
+        "GoldCrowns": 0,
+        "HasBackpack": True,
         "HasHerbPouch": False,
         "HerbPouchItems": [],
         "Nobles": 0,
@@ -835,18 +886,10 @@ def default_automation() -> dict[str, Any]:
         "AppliedVisitEffects": [],
         "Journal": [],
         "Flags": {
-            "staffAvailable": True,
+            "weaponsAvailable": True,
             "backpackAvailable": True,
             "backpackItemsAvailable": True,
-            "shanStatus": "available",
-            "tanithStatus": "available",
-            "yabariOintmentApplied": False,
             "litTorch": False,
-            "sorceryShieldActiveFor149": False,
-            "evocationAttempted": False,
-            "karmoPotionActive": False,
-            "karmoSideEffectPending": False,
-            "karmoSideEffectApplied": False,
         },
         "Stored": {},
         "LastRoll": None,
@@ -863,11 +906,11 @@ def default_state() -> dict[str, Any]:
         "RuleSet": "Lone Wolf",
         "CurrentSection": 1,
         "SectionHistory": [
-            {"BookNumber": 1, "BookTitle": "Lone Wolf the Wizard", "Section": 1}
+            {"BookNumber": 1, "BookTitle": "Flight from the Dark", "Section": 1}
         ],
         "CurrentBookStats": {
             "BookNumber": 1,
-            "BookTitle": "Lone Wolf the Wizard",
+            "BookTitle": "Flight from the Dark",
             "StartSection": 1,
             "LastSection": 1,
             "SectionsVisited": 1,
@@ -879,10 +922,12 @@ def default_state() -> dict[str, Any]:
             "BookNumber": 1,
             "CombatSkillBase": 10,
             "CombatSkillCurrent": 10,
+            "EnduranceBase": 20,
             "EnduranceMax": 20,
             "EnduranceCurrent": 20,
-            "WillpowerBase": 20,
-            "WillpowerCurrent": 20,
+            "KaiDisciplines": [],
+            "WeaponskillWeapon": "",
+            "CreationRolls": {},
             "LesserMagicks": [],
             "HigherMagicks": [],
             "CompletedBooks": [],
@@ -897,10 +942,11 @@ def default_state() -> dict[str, Any]:
             "EnemyEnduranceCurrent": 0,
             "Modifier": 0,
             "ActiveWeapon": "",
-            "UseStaff": True,
-        "ForceUnarmed": False,
-        "IgnorePlayerLossIfEnemyLossGreater": False,
-        "StaffWillpower": 1,
+            "UseStaff": False,
+            "ForceUnarmed": False,
+            "IgnorePlayerLossIfEnemyLossGreater": False,
+            "StaffWillpower": 0,
+            "EnemyImmune": False,
             "CanEvade": False,
             "EvadeAfterRounds": 0,
             "VictoryRoute": None,
@@ -957,6 +1003,7 @@ def migrate_grey_star_branding(value: Any) -> Any:
         .replace("GrayStar", "LoneWolfRedux")
         .replace("Gary Star", "Lone Wolf")
         .replace("Gray Star", "Lone Wolf")
+        .replace("Lone Wolf the Wizard", "Flight from the Dark")
     )
 
 
@@ -973,15 +1020,25 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         state["CurrentBookStats"] = base["CurrentBookStats"]
     state["BookHistory"] = as_list(state.get("BookHistory"))
 
-    character_had_willpower_base = "WillpowerBase" in state["Character"]
     for key, value in base["Character"].items():
         state["Character"].setdefault(key, value)
-    if not character_had_willpower_base:
-        state["Character"]["WillpowerBase"] = int(state["Character"].get("WillpowerCurrent") or 0)
     state["RuleSet"] = migrate_grey_star_branding(state.get("RuleSet")) or base["RuleSet"]
     state["Character"]["Name"] = migrate_grey_star_branding(state["Character"].get("Name")) or base["Character"]["Name"]
+    state["Character"]["KaiDisciplines"] = [
+        item
+        for item in as_list(state["Character"].get("KaiDisciplines"))
+        if item in KAI_DISCIPLINES
+    ]
+    if state["Character"].get("WeaponskillWeapon") not in set(WEAPONSKILL_MAP.values()):
+        state["Character"]["WeaponskillWeapon"] = ""
     for key, value in base["Inventory"].items():
         state["Inventory"].setdefault(key, value)
+    legacy_nobles = int(state["Inventory"].get("Nobles") or 0)
+    if not int(state["Inventory"].get("GoldCrowns") or 0) and legacy_nobles:
+        state["Inventory"]["GoldCrowns"] = legacy_nobles
+    state["Inventory"]["GoldCrowns"] = max(0, min(50, int(state["Inventory"].get("GoldCrowns") or 0)))
+    state["Inventory"]["Nobles"] = int(state["Inventory"]["GoldCrowns"])
+    state["Inventory"]["HasBackpack"] = bool(state["Inventory"].get("HasBackpack", True))
     for key, value in base["Combat"].items():
         state["Combat"].setdefault(key, value)
     for key, value in base["Settings"].items():
@@ -1007,6 +1064,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
     for path in [
         ("Character", "LesserMagicks"),
         ("Character", "HigherMagicks"),
+        ("Character", "KaiDisciplines"),
         ("Character", "CompletedBooks"),
         ("Character", "Notes"),
         ("Inventory", "Weapons"),
@@ -1042,7 +1100,9 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
 
     flags = state["Automation"]["Flags"]
     stored = state["Automation"]["Stored"]
-    staff_unavailable = not bool(flags.get("staffAvailable", True))
+    if "staffAvailable" in flags and "weaponsAvailable" not in flags:
+        flags["weaponsAvailable"] = bool(flags.get("staffAvailable", True))
+    staff_unavailable = not bool(flags.get("weaponsAvailable", True))
     backpack_unavailable = (
         not bool(flags.get("backpackAvailable", True))
         or not bool(flags.get("backpackItemsAvailable", True))
@@ -1059,11 +1119,9 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
 
         if staff_unavailable:
             for item in active_weapons:
-                if str(item).lower() == "wizard's staff" and item not in stored_weapons:
+                if item not in stored_weapons:
                     stored_weapons.append(item)
-            state["Inventory"]["Weapons"] = [
-                item for item in active_weapons if str(item).lower() != "wizard's staff"
-            ]
+            state["Inventory"]["Weapons"] = []
         if backpack_unavailable:
             legacy_backpack = as_list(stored.get("confiscatedBackpackItems"))
             if not stored_backpack:
@@ -1107,15 +1165,133 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
     stats.setdefault("LastSection", int(state.get("CurrentSection", 1)))
     stats.setdefault("SectionsVisited", len(as_list(stats.get("VisitedSections"))))
     stats.setdefault("StartingEnduranceMax", int(state["Character"].get("EnduranceMax") or 0))
-    stats.setdefault("StartingWillpower", int(state["Character"].get("WillpowerBase") or state["Character"].get("WillpowerCurrent") or 0))
-    if not int(state["Character"].get("WillpowerBase") or 0):
-        state["Character"]["WillpowerBase"] = int(state["Character"].get("WillpowerCurrent") or 0)
+    stats.setdefault("StartingGoldCrowns", int(state["Inventory"].get("GoldCrowns") or 0))
 
     return state
 
 
 def random_digit() -> int:
     return random.randint(0, 9)
+
+
+def coerce_random_digit(value: Any | None = None) -> int:
+    if value is None or str(value).strip() == "":
+        return random_digit()
+    return max(0, min(9, int(value)))
+
+
+def clean_kai_disciplines(values: Any) -> list[str]:
+    selected: list[str] = []
+    for item in as_list(values):
+        name = str(item or "").strip()
+        exact = [discipline for discipline in KAI_DISCIPLINES if discipline.lower() == name.lower()]
+        if exact and exact[0] not in selected:
+            selected.append(exact[0])
+    return selected
+
+
+def weaponskill_weapon_for_roll(roll: int) -> str:
+    return WEAPONSKILL_MAP[coerce_random_digit(roll)]
+
+
+def book1_starting_find_for_roll(roll: int) -> dict[str, Any]:
+    return dict(BOOK1_STARTING_FIND[coerce_random_digit(roll)])
+
+
+def create_book1_character_state(
+    *,
+    name: str = "Lone Wolf",
+    kai_disciplines: Any = None,
+    section: int = 1,
+    combat_skill_roll: Any | None = None,
+    endurance_roll: Any | None = None,
+    gold_roll: Any | None = None,
+    starting_find_roll: Any | None = None,
+    weaponskill_roll: Any | None = None,
+) -> dict[str, Any]:
+    disciplines = clean_kai_disciplines(kai_disciplines)
+    if len(disciplines) != 5:
+        raise ValueError("Book 1 requires exactly five Kai Disciplines.")
+
+    cs_roll = coerce_random_digit(combat_skill_roll)
+    end_roll = coerce_random_digit(endurance_roll)
+    crowns_roll = coerce_random_digit(gold_roll)
+    find_roll = coerce_random_digit(starting_find_roll)
+    find = book1_starting_find_for_roll(find_roll)
+
+    state = normalize_state(default_state())
+    state["RuleSet"] = "Lone Wolf Kai"
+    state["CurrentSection"] = max(1, min(BOOKS[1]["MaxSection"], int(section or 1)))
+
+    character = state["Character"]
+    character["Name"] = str(name or "Lone Wolf").strip() or "Lone Wolf"
+    character["BookNumber"] = 1
+    character["CombatSkillBase"] = 10 + cs_roll
+    character["CombatSkillCurrent"] = 10 + cs_roll
+    character["EnduranceBase"] = 20 + end_roll
+    character["EnduranceMax"] = 20 + end_roll
+    character["EnduranceCurrent"] = 20 + end_roll
+    character["KaiDisciplines"] = disciplines
+    character["WeaponskillWeapon"] = ""
+    character["LesserMagicks"] = []
+    character["HigherMagicks"] = []
+    character.pop("WillpowerBase", None)
+    character.pop("WillpowerCurrent", None)
+
+    if "Weaponskill" in disciplines:
+        ws_roll = coerce_random_digit(weaponskill_roll)
+        character["WeaponskillWeapon"] = weaponskill_weapon_for_roll(ws_roll)
+    else:
+        ws_roll = None
+
+    inventory = state["Inventory"]
+    inventory["Weapons"] = ["Axe"]
+    inventory["BackpackItems"] = ["Meal"]
+    inventory["SpecialItems"] = ["Map of Sommerlund"]
+    inventory["GoldCrowns"] = crowns_roll
+    inventory["Nobles"] = crowns_roll
+    inventory["HasBackpack"] = True
+    inventory["HasHerbPouch"] = False
+    inventory["HerbPouchItems"] = []
+
+    item_type = str(find.get("Type") or "")
+    for _ in range(int(find.get("Quantity") or 0)):
+        if item_type == "weapon":
+            inventory["Weapons"].append(str(find["Name"]))
+        elif item_type == "backpack":
+            inventory["BackpackItems"].append(str(find["Name"]))
+        elif item_type == "special":
+            inventory["SpecialItems"].append(str(find["Name"]))
+    if item_type == "gold":
+        inventory["GoldCrowns"] = min(50, int(inventory["GoldCrowns"]) + int(find.get("Gold") or 0))
+        inventory["Nobles"] = inventory["GoldCrowns"]
+
+    endurance_bonus = int(find.get("EnduranceBonus") or 0)
+    if endurance_bonus:
+        character["EnduranceMax"] += endurance_bonus
+        character["EnduranceCurrent"] += endurance_bonus
+
+    character["CreationRolls"] = {
+        "CombatSkill": cs_roll,
+        "Endurance": end_roll,
+        "GoldCrowns": crowns_roll,
+        "StartingFind": find_roll,
+        "Weaponskill": ws_roll,
+        "StartingFindName": str(find.get("Name") or ""),
+    }
+
+    state["SectionHistory"] = []
+    state["CurrentBookStats"] = {
+        "BookNumber": 1,
+        "BookTitle": BOOKS[1]["Title"],
+        "StartSection": int(state["CurrentSection"]),
+        "LastSection": int(state["CurrentSection"]),
+        "SectionsVisited": 0,
+        "VisitedSections": [],
+        "StartingEnduranceMax": int(character["EnduranceMax"]),
+        "StartingGoldCrowns": int(inventory["GoldCrowns"]),
+    }
+    return normalize_state(state)
 
 
 def format_list(items: Any) -> str:
@@ -1488,7 +1664,7 @@ class LoneWolfReduxAssistant:
                 "SectionsVisited": 1,
                 "VisitedSections": [section],
                 "StartingEnduranceMax": int(self.character["EnduranceMax"]),
-                "StartingWillpower": int(self.character.get("WillpowerBase") or self.character["WillpowerCurrent"]),
+                "StartingGoldCrowns": int(self.inventory.get("GoldCrowns") or 0),
             }
         visited = [int(item) for item in as_list(stats.get("VisitedSections")) if str(item).strip()]
         if section not in visited:
@@ -1500,7 +1676,7 @@ class LoneWolfReduxAssistant:
         stats["SectionsVisited"] = len(visited)
         stats.setdefault("StartSection", visited[0] if visited else section)
         stats.setdefault("StartingEnduranceMax", int(self.character["EnduranceMax"]))
-        stats.setdefault("StartingWillpower", int(self.character.get("WillpowerBase") or self.character["WillpowerCurrent"]))
+        stats.setdefault("StartingGoldCrowns", int(self.inventory.get("GoldCrowns") or 0))
         self.state["CurrentBookStats"] = stats
         return appended
 
@@ -1580,14 +1756,13 @@ class LoneWolfReduxAssistant:
             "VisitedSections": visited,
             "EnduranceCurrent": int(self.character["EnduranceCurrent"]),
             "EnduranceMax": int(self.character["EnduranceMax"]),
-            "WillpowerCurrent": int(self.character["WillpowerCurrent"]),
             "CombatSkill": int(self.character["CombatSkillCurrent"]),
-            "Nobles": int(self.inventory["Nobles"]),
+            "KaiDisciplines": as_list(self.character.get("KaiDisciplines")),
+            "WeaponskillWeapon": str(self.character.get("WeaponskillWeapon") or ""),
+            "GoldCrowns": int(self.inventory.get("GoldCrowns") or 0),
             "Weapons": as_list(inventory.get("Weapons")),
             "BackpackItems": as_list(inventory.get("BackpackItems")),
             "SpecialItems": as_list(inventory.get("SpecialItems")),
-            "HerbPouchItems": as_list(inventory.get("HerbPouchItems")),
-            "HasHerbPouch": bool(inventory.get("HasHerbPouch")),
             "NotesCount": len(as_list(self.character.get("Notes"))),
             "DeathCount": self.death_count_for_book(book_number),
         }
@@ -1632,16 +1807,14 @@ class LoneWolfReduxAssistant:
             summary = self.book_summary(book_number)
 
         next_book = book_number + 1 if book_number < max(BOOKS) else None
-        missing_lesser = [item for item in LESSER_MAGICKS if item not in as_list(self.character.get("LesserMagicks"))]
-        missing_higher = [item for item in HIGHER_MAGICKS if item not in as_list(self.character.get("HigherMagicks"))]
+        missing_kai = [item for item in KAI_DISCIPLINES if item not in as_list(self.character.get("KaiDisciplines"))]
         return {
             "Active": True,
             "Summary": summary,
             "NextBookNumber": next_book,
             "NextBookTitle": BOOKS[next_book]["Title"] if next_book else "",
             "CanContinue": next_book is not None,
-            "LesserMagickChoices": missing_lesser,
-            "HigherMagickChoices": missing_higher,
+            "KaiDisciplineChoices": missing_kai,
         }
 
     def achievement_state(self) -> dict[str, Any]:
@@ -1656,7 +1829,7 @@ class LoneWolfReduxAssistant:
         return state
 
     def achievement_definitions(self) -> list[dict[str, Any]]:
-        return json_clone(ACHIEVEMENT_DEFINITIONS)
+        return json_clone(LONE_WOLF_BOOK1_ACHIEVEMENTS)
 
     def achievement_unlocked_ids(self) -> set[str]:
         unlocked_ids: set[str] = set()
@@ -1753,6 +1926,13 @@ class LoneWolfReduxAssistant:
             self.summary_metric_for_book(book_number, "RoundsFought"),
         )
         death_count = max(self.death_count_for_book(book_number), self.summary_metric_for_book(book_number, "DeathCount"))
+
+        if achievement_id == "lw1_complete":
+            return self.book_completed(1)
+        if achievement_id == "lw1_first_blood":
+            return victory_count >= 1
+        if achievement_id == "lw1_long_road":
+            return max(len(sections), self.summary_metric_for_book(1, "UniqueSectionsVisited")) >= 75
 
         if achievement_id == "gs1_complete":
             return self.book_completed(1)
@@ -1988,7 +2168,7 @@ class LoneWolfReduxAssistant:
         ]
         unlocked_ids = self.achievement_unlocked_ids()
         new_unlocks: list[dict[str, Any]] = []
-        for definition in ACHIEVEMENT_DEFINITIONS:
+        for definition in self.achievement_definitions():
             achievement_id = str(definition.get("Id") or "")
             if not achievement_id or achievement_id in unlocked_ids:
                 continue
@@ -2146,9 +2326,8 @@ class LoneWolfReduxAssistant:
             "CharacterName": str(self.character.get("Name") or "Lone Wolf"),
             "EnduranceCurrent": int(self.character["EnduranceCurrent"]),
             "EnduranceMax": int(self.character["EnduranceMax"]),
-            "WillpowerCurrent": int(self.character["WillpowerCurrent"]),
             "CombatSkill": int(self.character["CombatSkillCurrent"]),
-            "Nobles": int(self.inventory["Nobles"]),
+            "GoldCrowns": int(self.inventory.get("GoldCrowns") or 0),
         }
         recovery = self.death_recovery_payload()
         entry["CanRepeat"] = bool(recovery.get("CanRepeat"))
@@ -2323,15 +2502,13 @@ class LoneWolfReduxAssistant:
         return self.count_items(name, containers, match_mode) > 0
 
     def has_power(self, name: str) -> bool:
-        return name in as_list(self.character.get("LesserMagicks")) or name in as_list(
-            self.character.get("HigherMagicks")
-        )
+        return name in as_list(self.character.get("KaiDisciplines"))
 
     def section_source_routes(self, book_number: int | None = None, section: int | None = None) -> list[int]:
         book_number = int(book_number or self.character["BookNumber"])
         section = int(section or self.state["CurrentSection"])
         book = BOOKS.get(book_number, BOOKS[1])
-        section_path = ROOT / "books" / "gs" / book["Folder"] / f"sect{section}.htm"
+        section_path = ROOT / "books" / "lw" / book["Folder"] / f"sect{section}.htm"
         if not section_path.exists():
             return []
         try:
@@ -2351,7 +2528,7 @@ class LoneWolfReduxAssistant:
         book_number = int(book_number or self.character["BookNumber"])
         section = int(section or self.state["CurrentSection"])
         book = BOOKS.get(book_number, BOOKS[1])
-        section_path = ROOT / "books" / "gs" / book["Folder"] / f"sect{section}.htm"
+        section_path = ROOT / "books" / "lw" / book["Folder"] / f"sect{section}.htm"
         if not section_path.exists():
             return []
         try:
@@ -2427,8 +2604,8 @@ class LoneWolfReduxAssistant:
             return int(self.character["EnduranceCurrent"])
         if key in {"cs", "combatskill"}:
             return int(self.character["CombatSkillCurrent"])
-        if key == "nobles":
-            return int(self.inventory.get("Nobles") or 0)
+        if key in {"gold", "goldcrowns", "crowns", "nobles"}:
+            return int(self.inventory.get("GoldCrowns") or self.inventory.get("Nobles") or 0)
         return 0
 
     def evaluate_route_check_formula(self, formula: dict[str, Any] | None) -> int | None:
@@ -2690,7 +2867,7 @@ class LoneWolfReduxAssistant:
         stored_backpack = as_list(equipment.get("BackpackItems"))
 
         for item in current_weapons:
-            if str(item).lower() == "wizard's staff" and item not in stored_weapons:
+            if item not in stored_weapons:
                 stored_weapons.append(item)
 
         if current_backpack:
@@ -2707,11 +2884,9 @@ class LoneWolfReduxAssistant:
         stored["confiscatedEquipment"] = equipment
         stored["confiscatedBackpackItems"] = stored_backpack
 
-        self.inventory["Weapons"] = [
-            item for item in current_weapons if str(item).lower() != "wizard's staff"
-        ]
+        self.inventory["Weapons"] = []
         self.inventory["BackpackItems"] = []
-        self.automation_flags["staffAvailable"] = False
+        self.automation_flags["weaponsAvailable"] = False
         self.automation_flags["backpackAvailable"] = False
         self.automation_flags["backpackItemsAvailable"] = False
 
@@ -2742,7 +2917,7 @@ class LoneWolfReduxAssistant:
         current_backpack = as_list(self.inventory.get("BackpackItems"))
         self.inventory["BackpackItems"] = stored_backpack + current_backpack
 
-        self.automation_flags["staffAvailable"] = True
+        self.automation_flags["weaponsAvailable"] = True
         self.automation_flags["backpackAvailable"] = True
         self.automation_flags["backpackItemsAvailable"] = True
 
@@ -2761,8 +2936,7 @@ class LoneWolfReduxAssistant:
                 stored_weapons.append(item)
         stored["confiscatedWeapons"] = stored_weapons
         self.inventory["Weapons"] = []
-        if any(str(item).lower() == "wizard's staff" for item in stored_weapons):
-            self.automation_flags["staffAvailable"] = False
+        self.automation_flags["weaponsAvailable"] = False
         return f"weapons stored: {format_list(stored_weapons)}"
 
     def restore_unavailable_weapons(self) -> str:
@@ -2773,7 +2947,7 @@ class LoneWolfReduxAssistant:
             if item not in current_weapons:
                 current_weapons.append(item)
         self.inventory["Weapons"] = current_weapons
-        self.automation_flags["staffAvailable"] = True
+        self.automation_flags["weaponsAvailable"] = True
         return f"weapons restored: {format_list(stored_weapons)}"
 
     def store_unavailable_backpack_items(self) -> str:
@@ -2810,26 +2984,18 @@ class LoneWolfReduxAssistant:
         return f"backpackAvailable={bool(available)}"
 
     def has_available_staff(self) -> bool:
-        return bool(self.automation_flags.get("staffAvailable", True)) and (
-            "Wizard's Staff" in as_list(self.inventory["Weapons"])
-        )
+        return False
 
     def available_combat_weapons(self, include_jewelled_dagger: bool = True) -> list[str]:
         weapons: list[str] = []
         for item in as_list(self.inventory.get("Weapons")):
             name = str(item)
-            if name.lower() == "wizard's staff" and not bool(self.automation_flags.get("staffAvailable", True)):
-                continue
             if name not in weapons:
                 weapons.append(name)
-        if include_jewelled_dagger and "Jewelled Dagger" in as_list(self.inventory.get("SpecialItems")):
-            weapons.append("Jewelled Dagger")
         return weapons
 
     def default_combat_weapon(self) -> str:
         weapons = self.available_combat_weapons(include_jewelled_dagger=False)
-        if "Wizard's Staff" in weapons:
-            return "Wizard's Staff"
         return weapons[0] if weapons else ""
 
     def resolve_combat_weapon(self, weapon: str) -> str | None:
@@ -2866,35 +3032,31 @@ class LoneWolfReduxAssistant:
             return False
         self.combat["ForceUnarmed"] = False
         self.combat["ActiveWeapon"] = resolved
-        self.combat["UseStaff"] = bool(
-            resolved == "Wizard's Staff" and self.has_available_staff() and int(self.character["WillpowerCurrent"]) > 0
-        )
+        self.combat["UseStaff"] = False
         if save:
             self.autosave()
             print(f"Combat weapon: {resolved or 'Unarmed'}")
         return True
 
     def combat_uses_magical_staff(self) -> bool:
-        return bool(
-            self.combat.get("UseStaff")
-            and self.combat_active_weapon() == "Wizard's Staff"
-            and self.has_available_staff()
-            and int(self.character["WillpowerCurrent"]) > 0
-        )
+        return False
 
     def combat_weapon_modifier_and_notes(self) -> tuple[int, list[str]]:
         active = self.combat_active_weapon()
         if not active:
-            return -8, ["No weapon: -8 CS"]
+            return -4, ["No weapon: -4 CS"]
 
         modifier = 0
         notes = [f"Weapon: {active}"]
-        if active == "Jewelled Dagger":
-            modifier += 1
-            notes.append("Jewelled Dagger: +1 CS")
-        if active != "Wizard's Staff" and not self.has_available_staff():
-            modifier -= 6
-            notes.append("Wizard's Staff unavailable: -6 CS")
+        if (
+            "Weaponskill" in as_list(self.character.get("KaiDisciplines"))
+            and active.lower() == str(self.character.get("WeaponskillWeapon") or "").lower()
+        ):
+            modifier += 2
+            notes.append(f"Weaponskill ({active}): +2 CS")
+        if "Mindblast" in as_list(self.character.get("KaiDisciplines")) and not bool(self.combat.get("EnemyImmune")):
+            modifier += 2
+            notes.append("Mindblast: +2 CS")
         return modifier, notes
 
     def change_endurance(self, delta: int) -> str:
@@ -2914,10 +3076,14 @@ class LoneWolfReduxAssistant:
         self.character["WillpowerCurrent"] = next_value
         return f"WP {before}->{next_value}"
 
+    def change_gold_crowns(self, delta: int) -> str:
+        before = int(self.inventory.get("GoldCrowns") or 0)
+        self.inventory["GoldCrowns"] = max(0, min(50, before + int(delta)))
+        self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+        return f"Gold Crowns {before}->{self.inventory['GoldCrowns']}"
+
     def change_nobles(self, delta: int) -> str:
-        before = int(self.inventory["Nobles"])
-        self.inventory["Nobles"] = max(0, before + int(delta))
-        return f"Nobles {before}->{self.inventory['Nobles']}"
+        return self.change_gold_crowns(delta)
 
     def apply_automation_stat(self, action: dict[str, Any]) -> str:
         stat = str(action.get("stat") or "").lower()
@@ -2953,14 +3119,15 @@ class LoneWolfReduxAssistant:
                     self.character["CombatSkillCurrent"] - before
                 )
             return f"CS {before}->{self.character['CombatSkillCurrent']}"
-        if stat == "nobles":
-            before = int(self.inventory["Nobles"])
+        if stat in {"gold", "goldcrowns", "crowns", "nobles"}:
+            before = int(self.inventory.get("GoldCrowns") or 0)
             if action.get("storeAs"):
                 self.automation["Stored"][str(action["storeAs"])] = before
             if mode == "set":
-                self.inventory["Nobles"] = max(0, int(action.get("value") or 0))
-                return f"Nobles {before}->{self.inventory['Nobles']}"
-            return self.change_nobles(int(action.get("delta") or 0))
+                self.inventory["GoldCrowns"] = max(0, min(50, int(action.get("value") or 0)))
+                self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+                return f"Gold Crowns {before}->{self.inventory['GoldCrowns']}"
+            return self.change_gold_crowns(int(action.get("delta") or 0))
         return "unknown stat action"
 
     def apply_automation_meal(self, action: dict[str, Any]) -> str:
@@ -3013,12 +3180,13 @@ class LoneWolfReduxAssistant:
             self.automation_flags[key] = action.get("value")
             return f"{key}={action.get('value')}"
         if action_type == "restore_stored_nobles":
-            key = str(action.get("key") or "stolenNobles")
+            key = str(action.get("key") or "stolenGoldCrowns")
             stored = int(self.automation["Stored"].pop(key, 0) or 0)
             extra = int(action.get("extra") or 0)
-            before = int(self.inventory["Nobles"])
-            self.inventory["Nobles"] = max(0, before + stored + extra)
-            return f"Nobles {before}->{self.inventory['Nobles']}"
+            before = int(self.inventory.get("GoldCrowns") or 0)
+            self.inventory["GoldCrowns"] = max(0, min(50, before + stored + extra))
+            self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+            return f"Gold Crowns {before}->{self.inventory['GoldCrowns']}"
         if action_type == "gear":
             available = bool(action.get("available"))
             if available:
@@ -3254,7 +3422,7 @@ class LoneWolfReduxAssistant:
         cause = str(death.get("Cause") or "A fatal choice ended this path.")
         panel_header(str(death.get("Type") or "Death"), accent=SCREEN_ACCENTS["death"])
         panel_pair_row("Character", death.get("CharacterName", self.character.get("Name")), "Book / Section", f"{death.get('BookNumber')} / {death.get('Section')}", left_color="White", right_color="Gray")
-        panel_pair_row("Endurance", f"{death.get('EnduranceCurrent')} / {death.get('EnduranceMax')}", "Willpower", death.get("WillpowerCurrent"), left_color=endurance_color(death.get("EnduranceCurrent"), death.get("EnduranceMax")), right_color="Magenta")
+        panel_pair_row("Endurance", f"{death.get('EnduranceCurrent')} / {death.get('EnduranceMax')}", "Gold Crowns", death.get("GoldCrowns", 0), left_color=endurance_color(death.get("EnduranceCurrent"), death.get("EnduranceMax")), right_color="Yellow")
         panel_row("Cause", cause, label_width=12)
         panel_footer()
 
@@ -3317,13 +3485,11 @@ class LoneWolfReduxAssistant:
     def use_item(self, item_type: str, item: str) -> None:
         mapping = {
             "backpack": "BackpackItems",
-            "herb": "HerbPouchItems",
-            "herbpouch": "HerbPouchItems",
         }
         resolved_type = self.resolve_inventory_type(item_type) or str(item_type).lower()
         key = mapping.get(resolved_type)
         if not key:
-            print("Only Backpack and Herb Pouch consumables can be used here.")
+            print("Only Backpack consumables can be used here.")
             return
 
         index, resolved_item = self.resolve_inventory_selection(key, item)
@@ -3421,11 +3587,9 @@ class LoneWolfReduxAssistant:
     def use_item_command(self, tokens: list[str]) -> None:
         if len(tokens) < 2:
             panel_header("Use Item", accent=SCREEN_ACCENTS["inventory"])
-            panel_text("Use consumables from the Backpack or Herb Pouch. Enter a numbered slot or item name.", color="Gray")
+            panel_text("Use consumables from the Backpack. Enter a numbered slot or item name.", color="Gray")
             panel_footer()
             self.show_inventory_slots("Backpack", self.inventory["BackpackItems"], 8)
-            if self.inventory.get("HasHerbPouch"):
-                self.show_inventory_slots("Herb Pouch", self.inventory["HerbPouchItems"], 8)
             item_type = input("Container [backpack]: ").strip() or "backpack"
             item = input("Slot or item to use: ").strip()
             if not item:
@@ -3434,7 +3598,7 @@ class LoneWolfReduxAssistant:
             self.use_item(item_type, item)
             return
 
-        if len(tokens) >= 3 and self.resolve_inventory_type(tokens[1]) in {"backpack", "herb"}:
+        if len(tokens) >= 3 and self.resolve_inventory_type(tokens[1]) in {"backpack"}:
             self.use_item(tokens[1], rest_of_line(tokens, 2))
             return
 
@@ -3444,11 +3608,6 @@ class LoneWolfReduxAssistant:
         if backpack_index is not None and backpack_item is not None:
             self.use_item("backpack", selection)
             return
-        if self.inventory.get("HasHerbPouch"):
-            herb_index, herb_item = self.resolve_inventory_selection("HerbPouchItems", selection)
-            if herb_index is not None and herb_item is not None:
-                self.use_item("herb", selection)
-                return
         print(f"Item not found: {selection}")
 
     def set_status_flag(self, key: str, value: Any) -> None:
@@ -3562,13 +3721,14 @@ class LoneWolfReduxAssistant:
                 "BookTitle": "",
                 "Section": "?",
                 "Endurance": "?",
-                "Willpower": "?",
+                "GoldCrowns": "?",
                 "Modified": datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M"),
             }
             try:
                 with path.open("r", encoding="utf-8") as handle:
                     data = json.load(handle)
                 character = data.get("Character", {})
+                inventory = data.get("Inventory", {})
                 book_number = int(character.get("BookNumber", 1))
                 entry.update(
                     {
@@ -3577,7 +3737,7 @@ class LoneWolfReduxAssistant:
                         "BookTitle": book_title(book_number),
                         "Section": int(data.get("CurrentSection", 1)),
                         "Endurance": f"{character.get('EnduranceCurrent', '?')}/{character.get('EnduranceMax', '?')}",
-                        "Willpower": character.get("WillpowerCurrent", "?"),
+                        "GoldCrowns": inventory.get("GoldCrowns", inventory.get("Nobles", "?")),
                     }
                 )
             except Exception:
@@ -3587,8 +3747,8 @@ class LoneWolfReduxAssistant:
 
     def show_banner(self) -> None:
         panel_header("Lone Wolf Action Assistant Redux", accent="Cyan")
-        panel_pair_row("Rules", "World of Lone Wolf", "Engine", "Python")
-        panel_pair_row("Books", "1-4", "Saves", str(self.save_dir))
+        panel_pair_row("Rules", "Lone Wolf Kai", "Engine", "Python")
+        panel_pair_row("Books", "Book 1", "Saves", str(self.save_dir))
         panel_footer()
 
     def show_helpful_commands(self, screen: str = "sheet") -> None:
@@ -3604,17 +3764,17 @@ class LoneWolfReduxAssistant:
                 ("choices", "show book links from this section"),
                 ("loot", "open section loot picker"),
                 ("inv", "inventory screen"),
-                ("magicks", "powers screen"),
+                ("disciplines", "Kai Disciplines"),
             ],
             "inventory": [
                 ("add <type> <item>", "add an item"),
                 ("drop", "remove by numbered slot"),
-                ("use", "use a Backpack or Herb item"),
+                ("use", "use a Backpack item"),
                 ("meal", "consume one Meal"),
             ],
-            "magicks": [
-                ("power add <name>", "add a Magick"),
-                ("wp +/-n", "adjust Willpower"),
+            "disciplines": [
+                ("discipline add <name>", "add a Kai Discipline"),
+                ("discipline remove <name>", "remove a Kai Discipline"),
                 ("combat", "combat status"),
                 ("sheet", "return to action chart"),
             ],
@@ -3631,8 +3791,8 @@ class LoneWolfReduxAssistant:
                 ("quit", "exit"),
             ],
             "combat": [
-                ("combat round [wp]", "resolve a round"),
-                ("combat evade [wp]", "evade one round"),
+                ("combat round [roll]", "resolve a round"),
+                ("combat evade [roll]", "evade one round"),
                 ("combat weapon <name>", "change active weapon"),
                 ("combat stop", "end combat tracking"),
             ],
@@ -3670,7 +3830,7 @@ class LoneWolfReduxAssistant:
 
         panel_header("Quick Start", accent="DarkYellow")
         panel_text("1. Load a save or create a new Lone Wolf character.")
-        panel_text("2. Use sheet, inv, magicks, sections, notes, stats, and campaign to review state.")
+        panel_text("2. Use sheet, inv, disciplines, sections, notes, stats, and campaign to review state.")
         panel_text("3. Use section <n> as you read. Web book links also update this state.")
         panel_footer()
         self.show_helpful_commands("welcome")
@@ -3684,7 +3844,7 @@ class LoneWolfReduxAssistant:
             for index, entry in enumerate(entries, 1):
                 panel_row(
                     f"{index}. {entry['Name']}",
-                    f"Book {entry['BookNumber']} sec {entry['Section']} | END {entry['Endurance']} | WP {entry['Willpower']}",
+                    f"Book {entry['BookNumber']} sec {entry['Section']} | END {entry['Endurance']} | Gold {entry['GoldCrowns']}",
                     label_width=20,
                 )
                 panel_row("Modified", entry["Modified"], label_width=20)
@@ -3792,11 +3952,7 @@ class LoneWolfReduxAssistant:
         return result
 
     def resolve_power_name(self, name: str, kind: str = "Any") -> str | None:
-        pool: list[str] = []
-        if kind in {"Any", "Lesser"}:
-            pool.extend(LESSER_MAGICKS)
-        if kind in {"Any", "Higher"}:
-            pool.extend(HIGHER_MAGICKS)
+        pool = list(KAI_DISCIPLINES)
 
         exact = [item for item in pool if item.lower() == name.lower()]
         if len(exact) == 1:
@@ -3807,124 +3963,40 @@ class LoneWolfReduxAssistant:
         return None
 
     def ensure_herb_pouch(self) -> None:
-        has_alchemy = "Alchemy" in as_list(self.character["LesserMagicks"])
-        has_theurgy = "Theurgy" in as_list(self.character["HigherMagicks"])
-        if (has_alchemy or has_theurgy) and not self.inventory.get("HasHerbPouch"):
-            self.inventory["HasHerbPouch"] = True
-            if not as_list(self.inventory.get("HerbPouchItems")):
-                self.inventory["HerbPouchItems"] = [
-                    "Empty Vial",
-                    "Empty Vial",
-                    "Vial of Saltpetre",
-                    "Vial of Sulphur",
-                ]
-            print("Added Herb Pouch with starting alchemical items.")
+        self.inventory["HasHerbPouch"] = False
+        self.inventory["HerbPouchItems"] = []
 
     def add_special_item(self, item: str) -> None:
         if item not in as_list(self.inventory["SpecialItems"]):
             self.inventory["SpecialItems"] = as_list(self.inventory["SpecialItems"]) + [item]
 
     def start_new_game(self) -> None:
-        self.state = normalize_state(default_state())
         print("")
-        print("New Lone Wolf character")
+        print("New Lone Wolf Book 1 character")
 
         name = input("Name [Lone Wolf]: ").strip()
-        if name:
-            self.character["Name"] = name
-
-        book_number = read_int("Starting book (1-4)", 1, 1, 4)
-        self.character["BookNumber"] = book_number
-        self.state["CurrentSection"] = 1
-
-        completed_books: list[int] = []
-        target_lesser = 5
-        target_higher = 0
-        wp_base = 20
-        wp_bonus = 0
-
-        if book_number == 2:
-            if read_yes_no("Completed Book 1 with this character?", False):
-                completed_books = [1]
-                target_lesser = 6
-                wp_bonus = 10
-        elif book_number == 3:
-            if read_yes_no("Completed Book 2 with this character?", False):
-                completed_books = [1, 2]
-                target_lesser = 6
-                wp_base = 30
-            elif read_yes_no("Completed Book 1 with this character?", False):
-                completed_books = [1]
-                target_lesser = 6
-                wp_base = 25
-        elif book_number == 4:
-            if read_yes_no("Completed an earlier Lone Wolf adventure with this character?", True):
-                target_lesser = 6
-                target_higher = 5
-                completed = read_int("Highest completed book before Book 4", 3, 1, 3)
-                completed_books = list(range(1, completed + 1))
-            else:
-                target_lesser = 5
-                target_higher = 4
-
-        cs_roll = random_digit()
-        combat_skill = 10 + cs_roll
-        self.character["CombatSkillBase"] = combat_skill
-        self.character["CombatSkillCurrent"] = combat_skill
-
-        if book_number == 4:
-            endurance = 30
-            willpower = 50
-            if target_higher == 5:
-                if read_yes_no("Add carried-over current Willpower to the Book 4 base of 50?", False):
-                    willpower += read_int("Carried-over Willpower", 0, 0)
-                if read_yes_no("Add carried-over Endurance to the Book 4 base of 30?", False):
-                    endurance += read_int("Carried-over Endurance", 0, 0)
-            self.character["EnduranceMax"] = endurance
-            self.character["EnduranceCurrent"] = endurance
-            self.character["WillpowerCurrent"] = willpower
-        else:
-            wp_roll = random_digit()
-            end_roll = random_digit()
-            self.character["WillpowerCurrent"] = wp_base + wp_roll + wp_bonus
-            self.character["EnduranceMax"] = 20 + end_roll
-            self.character["EnduranceCurrent"] = 20 + end_roll
-
-        self.character["CompletedBooks"] = completed_books
-        self.character["LesserMagicks"] = self.select_powers(
-            LESSER_MAGICKS, target_lesser, label="Lesser Magick"
+        disciplines = self.select_powers(KAI_DISCIPLINES, 5, label="Kai Discipline")
+        self.state = create_book1_character_state(
+            name=name or "Lone Wolf",
+            kai_disciplines=disciplines,
         )
-        if target_higher:
-            self.character["HigherMagicks"] = self.select_powers(
-                HIGHER_MAGICKS, target_higher, label="Higher Magick"
-            )
-            self.add_special_item("Moonstone")
-
-        if book_number == 1:
-            print("")
-            print("Choose one Shianti gift:")
-            print("  1. Jewelled Dagger (+1 CS when used in combat; Special Item)")
-            print("  2. Magic Talisman (+2 Willpower once; Special Item)")
-            print("  3. Vial of Laumspur (restores 4 END after combat; Backpack Item)")
-            gift = read_int("Gift", 1, 1, 3)
-            if gift == 1:
-                self.add_special_item("Jewelled Dagger")
-            elif gift == 2:
-                self.add_special_item("Magic Talisman")
-                self.character["WillpowerCurrent"] += 2
-            else:
-                self.inventory["BackpackItems"] = as_list(self.inventory["BackpackItems"]) + [
-                    "Vial of Laumspur"
-                ]
-
-        self.character["WillpowerBase"] = int(self.character["WillpowerCurrent"])
-        self.ensure_herb_pouch()
         self.record_section_visit()
         self.write_current_position()
+        self.save_section_checkpoint("ready")
+        rolls = self.character.get("CreationRolls", {})
         print(
             f"Rolled CS {self.character['CombatSkillCurrent']}. "
             f"END {self.character['EnduranceCurrent']}. "
-            f"WP {self.character['WillpowerCurrent']}."
+            f"Gold Crowns {self.inventory['GoldCrowns']}."
+        )
+        if self.character.get("WeaponskillWeapon"):
+            print(
+                f"Weaponskill roll: {rolls.get('Weaponskill')} -> "
+                f"{self.character['WeaponskillWeapon']}"
+            )
+        print(
+            f"Starting equipment roll: {rolls.get('StartingFind')} -> "
+            f"{rolls.get('StartingFindName')}"
         )
         self.show_sheet()
 
@@ -3935,7 +4007,7 @@ class LoneWolfReduxAssistant:
                 [
                     ("sheet", "main action chart and live state"),
                     ("inv", "inventory slots and containers"),
-                    ("magicks", "Lesser and Higher Magicks"),
+                    ("disciplines", "Kai Disciplines"),
                     ("sections", "current section and path history"),
                     ("choices", "current section links, roll help, combat presets, and loot"),
                     ("notes", "saved reminders"),
@@ -3951,12 +4023,12 @@ class LoneWolfReduxAssistant:
                     ("section <n>", "move to the section you are reading"),
                     ("book <n> [section]", "set current book, optionally section"),
                     ("roll", "roll a random digit, 0-9"),
-                    ("wp/end/cs +/-n", "adjust Willpower, Endurance, or Combat Skill"),
+                    ("end/cs/gold +/-n", "adjust Endurance, Combat Skill, or Gold Crowns"),
                     ("meal / meal missed", "consume a Meal or take starvation loss"),
                     ("add / drop", "add items or remove them by name/slot"),
-                    ("use <item|slot>", "use Backpack or Herb Pouch consumables"),
+                    ("use <item|slot>", "use Backpack consumables"),
                     ("loot [number|all]", "apply audited loot in the current section"),
-                    ("nobles +/-n", "adjust Nobles"),
+                    ("gold +/-n", "adjust Gold Crowns"),
                     ("note <text>", "add a short reminder"),
                 ],
             ),
@@ -3964,9 +4036,9 @@ class LoneWolfReduxAssistant:
                 "Combat",
                 [
                     ("combat start <name> <cs> <end>", "start tracked combat"),
-                    ("combat round [wp] [roll]", "resolve a round; staff WP multiplies enemy loss"),
-                    ("combat evade [wp] [roll]", "resolve one evasion round"),
-                    ("combat staff on|off", "toggle magical staff use"),
+                    ("combat round [roll]", "resolve a combat round"),
+                    ("combat evade [roll]", "resolve one evasion round"),
+                    ("combat weapon <name>", "choose the active weapon"),
                     ("combat mod <n>", "temporary Combat Skill modifier"),
                     ("combat status|stop", "review or stop current combat"),
                 ],
@@ -3999,15 +4071,16 @@ class LoneWolfReduxAssistant:
         panel_row("Name", self.character["Name"])
         panel_pair_row("Book", f"{self.character['BookNumber']}. {book['Title']}", "Section", self.state["CurrentSection"])
         panel_pair_row("Combat Skill", f"{self.character['CombatSkillCurrent']} (base {self.character['CombatSkillBase']})", "Endurance", f"{self.character['EnduranceCurrent']}/{self.character['EnduranceMax']}", left_color="Cyan", right_color=endurance_color(self.character["EnduranceCurrent"], self.character["EnduranceMax"]))
-        panel_pair_row("Willpower", self.character["WillpowerCurrent"], "Nobles", self.inventory["Nobles"], left_color="Magenta", right_color="Yellow")
+        panel_pair_row("Gold Crowns", self.inventory.get("GoldCrowns", 0), "Meals", as_list(self.inventory["BackpackItems"]).count("Meal"), left_color="Yellow", right_color="DarkYellow")
         panel_pair_row("Completed", format_list(self.character["CompletedBooks"]), "Autosave", "On")
         if str(self.settings.get("SavePath", "")).strip():
             panel_row("Save", self.settings["SavePath"])
         panel_footer()
 
-        panel_header("Magicks", accent=SCREEN_ACCENTS["magicks"])
-        panel_row("Lesser", format_list(self.character["LesserMagicks"]))
-        panel_row("Higher", format_list(self.character["HigherMagicks"]))
+        panel_header("Kai Disciplines", accent=SCREEN_ACCENTS["disciplines"])
+        panel_row("Known", format_list(self.character["KaiDisciplines"]))
+        if self.character.get("WeaponskillWeapon"):
+            panel_row("Weaponskill", self.character["WeaponskillWeapon"])
         panel_footer()
 
         panel_header("Inventory Summary", accent=SCREEN_ACCENTS["inventory"])
@@ -4017,21 +4090,19 @@ class LoneWolfReduxAssistant:
             else capacity_text(self.inventory["BackpackItems"], 8)
         )
         panel_pair_row("Weapons", capacity_text(self.inventory["Weapons"], 2), "Backpack", backpack_status)
-        panel_pair_row("Special Items", str(len(as_list(self.inventory["SpecialItems"]))), "Herb Pouch", capacity_text(self.inventory["HerbPouchItems"], 8) if self.inventory.get("HasHerbPouch") else "none")
+        panel_pair_row("Special Items", str(len(as_list(self.inventory["SpecialItems"]))), "Gold Crowns", self.inventory.get("GoldCrowns", 0))
         panel_row("Ready Weapon", as_list(self.inventory["Weapons"])[0] if as_list(self.inventory["Weapons"]) else "None")
         panel_footer()
         self.show_helpful_commands("sheet")
 
     def show_inventory_screen(self) -> None:
         panel_header("Inventory", accent=SCREEN_ACCENTS["inventory"])
-        panel_pair_row("Nobles", self.inventory["Nobles"], "Weapons", capacity_text(self.inventory["Weapons"], 2))
+        panel_pair_row("Gold Crowns", self.inventory.get("GoldCrowns", 0), "Weapons", capacity_text(self.inventory["Weapons"], 2))
         panel_pair_row("Backpack", capacity_text(self.inventory["BackpackItems"], 8), "Special Items", str(len(as_list(self.inventory["SpecialItems"]))))
-        panel_pair_row("Herb Pouch", capacity_text(self.inventory["HerbPouchItems"], 8) if self.inventory.get("HasHerbPouch") else "none", "Meals", as_list(self.inventory["BackpackItems"]).count("Meal"))
+        panel_row("Meals", as_list(self.inventory["BackpackItems"]).count("Meal"))
         panel_footer()
         self.show_inventory_slots("Weapons", self.inventory["Weapons"], 2)
         self.show_inventory_slots("Backpack", self.inventory["BackpackItems"], 8)
-        if self.inventory.get("HasHerbPouch"):
-            self.show_inventory_slots("Herb Pouch", self.inventory["HerbPouchItems"], 8)
         self.show_inventory_slots("Special Items", self.inventory["SpecialItems"], None)
         self.show_stored_gear()
         self.show_helpful_commands("inventory")
@@ -4046,7 +4117,7 @@ class LoneWolfReduxAssistant:
             stored.get("confiscatedBackpackItems")
         )
         gear_unavailable = (
-            not bool(self.automation_flags.get("staffAvailable", True))
+            not bool(self.automation_flags.get("weaponsAvailable", True))
             or not bool(self.automation_flags.get("backpackAvailable", True))
             or not bool(self.automation_flags.get("backpackItemsAvailable", True))
         )
@@ -4070,27 +4141,21 @@ class LoneWolfReduxAssistant:
         panel_footer()
 
     def show_powers(self) -> None:
-        self.show_magicks_screen()
+        self.show_disciplines_screen()
 
-    def show_magicks_screen(self) -> None:
-        panel_header("Magicks", accent=SCREEN_ACCENTS["magicks"])
-        panel_row("Willpower", self.character["WillpowerCurrent"])
-        panel_row("Lesser Known", f"{len(as_list(self.character['LesserMagicks']))}/7")
-        panel_row("Higher Known", f"{len(as_list(self.character['HigherMagicks']))}/6")
+    def show_disciplines_screen(self) -> None:
+        known = as_list(self.character.get("KaiDisciplines"))
+        panel_header("Kai Disciplines", accent=SCREEN_ACCENTS["disciplines"])
+        panel_row("Known", f"{len(known)}/5")
+        panel_row("Weaponskill", self.character.get("WeaponskillWeapon") or "None")
         panel_footer()
 
-        panel_header("Lesser Magicks", accent=SCREEN_ACCENTS["magicks"])
-        for name in LESSER_MAGICKS:
-            marker = "known" if name in as_list(self.character["LesserMagicks"]) else "available"
+        panel_header("Discipline List", accent=SCREEN_ACCENTS["disciplines"])
+        for name in KAI_DISCIPLINES:
+            marker = "known" if name in known else "available"
             panel_row(name, marker, label_width=18)
         panel_footer()
-
-        panel_header("Higher Magicks", accent=SCREEN_ACCENTS["magicks"])
-        for name in HIGHER_MAGICKS:
-            marker = "known" if name in as_list(self.character["HigherMagicks"]) else "Book 4"
-            panel_row(name, marker, label_width=18)
-        panel_footer()
-        self.show_helpful_commands("magicks")
+        self.show_helpful_commands("disciplines")
 
     def show_sections_screen(self) -> None:
         book_number = int(self.character["BookNumber"])
@@ -4136,14 +4201,14 @@ class LoneWolfReduxAssistant:
         panel_row("Book", f"{stats.get('BookNumber', self.character['BookNumber'])}. {stats.get('BookTitle', book_title(int(self.character['BookNumber'])))}")
         panel_pair_row("Start Section", stats.get("StartSection", 1), "Last Section", stats.get("LastSection", self.state["CurrentSection"]))
         panel_pair_row("Unique Sections", stats.get("SectionsVisited", 0), "Combat Rounds", len(combat_log))
-        panel_pair_row("END", f"{self.character['EnduranceCurrent']}/{self.character['EnduranceMax']}", "WP", self.character["WillpowerCurrent"])
+        panel_pair_row("END", f"{self.character['EnduranceCurrent']}/{self.character['EnduranceMax']}", "Gold Crowns", self.inventory.get("GoldCrowns", 0))
         panel_footer()
         self.show_helpful_commands("sheet")
 
     def show_campaign_screen(self) -> None:
         completed = [int(item) for item in as_list(self.character["CompletedBooks"]) if str(item).strip()]
         panel_header("Campaign", accent=SCREEN_ACCENTS["campaign"])
-        for number in range(1, 5):
+        for number in sorted(BOOKS):
             status = "current" if number == int(self.character["BookNumber"]) else ("complete" if number in completed else "not started")
             panel_row(f"Book {number}", f"{BOOKS[number]['Title']} :: {status}", label_width=10)
         panel_footer()
@@ -4286,15 +4351,16 @@ class LoneWolfReduxAssistant:
     def adjust_nobles(self, tokens: list[str]) -> None:
         change = self.number_change(tokens)
         if not change:
-            print("Use: nobles +/-n or nobles set <n>")
+            print("Use: gold +/-n or gold set <n>")
             return
         mode, value = change
         if mode == "set":
-            self.inventory["Nobles"] = max(0, value)
+            self.inventory["GoldCrowns"] = max(0, min(50, value))
         else:
-            self.inventory["Nobles"] = max(0, self.inventory["Nobles"] + value)
+            self.inventory["GoldCrowns"] = max(0, min(50, int(self.inventory.get("GoldCrowns") or 0) + value))
+        self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
         self.autosave()
-        print(f"Nobles: {self.inventory['Nobles']}")
+        print(f"Gold Crowns: {self.inventory['GoldCrowns']}")
 
     def meal_command(self, tokens: list[str]) -> None:
         if len(tokens) > 1 and tokens[1].lower() == "missed":
@@ -4318,7 +4384,6 @@ class LoneWolfReduxAssistant:
             "weapon": {"key": "Weapons", "label": "Weapons", "capacity": 2},
             "backpack": {"key": "BackpackItems", "label": "Backpack", "capacity": 8},
             "special": {"key": "SpecialItems", "label": "Special Items", "capacity": None},
-            "herb": {"key": "HerbPouchItems", "label": "Herb Pouch", "capacity": 8},
         }
 
     def resolve_inventory_type(self, value: str) -> str | None:
@@ -4336,11 +4401,6 @@ class LoneWolfReduxAssistant:
             "special": "special",
             "specials": "special",
             "specialitems": "special",
-            "h": "herb",
-            "herb": "herb",
-            "herbs": "herb",
-            "herbpouch": "herb",
-            "herbpouchitems": "herb",
         }
         return aliases.get(text)
 
@@ -4355,16 +4415,14 @@ class LoneWolfReduxAssistant:
             "Weapons": "weapon",
             "BackpackItems": "backpack",
             "SpecialItems": "special",
-            "HerbPouchItems": "herb",
         }
         return reverse.get(key, "")
 
     def inventory_capacity_line(self) -> str:
         backpack = "unavailable" if not bool(self.automation_flags.get("backpackAvailable", True)) else capacity_text(self.inventory["BackpackItems"], 8)
-        herb = capacity_text(self.inventory["HerbPouchItems"], 8) if self.inventory.get("HasHerbPouch") else "none"
         return (
             f"Weapons {capacity_text(self.inventory['Weapons'], 2)} | "
-            f"Backpack {backpack} | Herb Pouch {herb} | "
+            f"Backpack {backpack} | "
             f"Special {len(as_list(self.inventory['SpecialItems']))}"
         )
 
@@ -4399,7 +4457,7 @@ class LoneWolfReduxAssistant:
     def show_inventory_type_slots(self, item_type: str) -> None:
         spec = self.inventory_type_spec(item_type)
         if not spec:
-            write_warn("Type must be weapon, backpack, special, or herb.")
+            write_warn("Type must be weapon, backpack, or special.")
             return
         self.show_inventory_slots(str(spec["label"]), self.inventory.get(str(spec["key"])), spec.get("capacity"))
 
@@ -4408,23 +4466,18 @@ class LoneWolfReduxAssistant:
         if not resolved:
             panel_header("Drop Item", accent=SCREEN_ACCENTS["inventory"])
             panel_text("Choose a container to remove from.", color="Gray")
-            for index, key in enumerate(["weapon", "backpack", "special", "herb"], 1):
+            for index, key in enumerate(["weapon", "backpack", "special"], 1):
                 spec = self.inventory_type_choices()[key]
-                if key == "herb" and not self.inventory.get("HasHerbPouch"):
-                    continue
                 panel_row(str(index), spec["label"], label_width=4)
             panel_footer()
-            raw = input("Container (weapon/backpack/special/herb): ").strip()
+            raw = input("Container (weapon/backpack/special): ").strip()
             resolved = self.resolve_inventory_type(raw)
         if not resolved:
-            write_warn("Type must be weapon, backpack, special, or herb.")
+            write_warn("Type must be weapon, backpack, or special.")
             return
 
         spec = self.inventory_type_choices()[resolved]
         key = str(spec["key"])
-        if key == "HerbPouchItems" and not self.inventory.get("HasHerbPouch"):
-            write_warn("No Herb Pouch is available.")
-            return
         self.show_inventory_type_slots(resolved)
         items = as_list(self.inventory.get(key))
         if not items:
@@ -4444,7 +4497,7 @@ class LoneWolfReduxAssistant:
 
     def add_item(self, tokens: list[str]) -> None:
         if len(tokens) < 3:
-            print("Use: add <weapon|backpack|special|herb> <item>")
+            print("Use: add <weapon|backpack|special> <item>")
             return
         item_type = tokens[1].lower()
         item = rest_of_line(tokens, 2)
@@ -4463,14 +4516,6 @@ class LoneWolfReduxAssistant:
             self.inventory["BackpackItems"] = as_list(self.inventory["BackpackItems"]) + [item]
         elif item_type == "special":
             self.inventory["SpecialItems"] = as_list(self.inventory["SpecialItems"]) + [item]
-        elif item_type == "herb":
-            if not self.inventory.get("HasHerbPouch"):
-                print("No Herb Pouch. Alchemy or Theurgy grants one.")
-                return
-            if len(as_list(self.inventory["HerbPouchItems"])) >= 8:
-                print("Herb Pouch limit is 8 items. Drop an item first.")
-                return
-            self.inventory["HerbPouchItems"] = as_list(self.inventory["HerbPouchItems"]) + [item]
         else:
             print(f"Unknown item type: {item_type}")
             return
@@ -4501,35 +4546,39 @@ class LoneWolfReduxAssistant:
     def power_command(self, tokens: list[str]) -> None:
         if len(tokens) < 3:
             self.show_powers()
-            print("Use: power add <name> or power remove <name>")
+            print("Use: discipline add <name> or discipline remove <name>")
             return
         action = tokens[1].lower()
         name_text = rest_of_line(tokens, 2)
         power = self.resolve_power_name(name_text)
         if not power:
-            print(f"Unknown Magick: {name_text}")
+            print(f"Unknown Kai Discipline: {name_text}")
             return
-        is_lesser = power in LESSER_MAGICKS
-        target_key = "LesserMagicks" if is_lesser else "HigherMagicks"
+        target_key = "KaiDisciplines"
         if action == "add":
-            if not is_lesser and int(self.character["BookNumber"]) < 4:
-                print("Higher Magicks appear in Book 4.")
+            if len(as_list(self.character[target_key])) >= 5 and power not in as_list(self.character[target_key]):
+                print("Book 1 characters may choose five Kai Disciplines.")
                 return
             if power not in as_list(self.character[target_key]):
                 self.character[target_key] = as_list(self.character[target_key]) + [power]
-            self.ensure_herb_pouch()
+            if power == "Weaponskill" and not str(self.character.get("WeaponskillWeapon") or ""):
+                roll = random_digit()
+                self.character["WeaponskillWeapon"] = weaponskill_weapon_for_roll(roll)
+                self.character.setdefault("CreationRolls", {})["Weaponskill"] = roll
             self.autosave()
-            print(f"Added Magick: {power}")
+            print(f"Added Kai Discipline: {power}")
         elif action == "remove":
             removed, items = remove_first_matching(self.character[target_key], power)
             if not removed:
-                print(f"Power not found on sheet: {power}")
+                print(f"Kai Discipline not found on sheet: {power}")
                 return
             self.character[target_key] = items
+            if power == "Weaponskill":
+                self.character["WeaponskillWeapon"] = ""
             self.autosave()
-            print(f"Removed Magick: {power}")
+            print(f"Removed Kai Discipline: {power}")
         else:
-            print("Use: power add <name> or power remove <name>")
+            print("Use: discipline add <name> or discipline remove <name>")
 
     def combat_round_count(self) -> int:
         return len(as_list(self.combat.get("Log")))
@@ -4566,10 +4615,6 @@ class LoneWolfReduxAssistant:
                 notes.append("Ignore Lone Wolf END loss when enemy loss is higher.")
             _, weapon_notes = self.combat_weapon_modifier_and_notes()
             notes.extend(weapon_notes)
-            if self.combat_uses_magical_staff():
-                notes.append(f"Staff WP per round: {int(self.combat.get('StaffWillpower') or 1)}")
-            elif self.combat_active_weapon() == "Wizard's Staff":
-                notes.append("Wizard's Staff used as a normal weapon.")
             if bool(self.combat.get("CanEvade")):
                 after_rounds = int(self.combat.get("EvadeAfterRounds") or 0)
                 notes.append("Evade available" if after_rounds <= 0 else f"Evade after round {after_rounds}")
@@ -4694,15 +4739,16 @@ class LoneWolfReduxAssistant:
 
         fixed_cs = preset.get("fixedPlayerCombatSkill")
         if fixed_cs == "wp_plus_end":
-            fixed_cs = int(self.character["WillpowerCurrent"]) + int(self.character["EnduranceCurrent"])
+            fixed_cs = int(self.character["EnduranceCurrent"])
         elif fixed_cs is not None:
             fixed_cs = int(fixed_cs)
 
         self.combat.update(
             {
                 "Modifier": int(preset.get("modifier") or 0),
-                "UseStaff": bool(preset.get("useStaff", self.combat.get("UseStaff"))),
+                "UseStaff": False,
                 "ForceUnarmed": bool(preset.get("forceUnarmed", False)),
+                "EnemyImmune": bool(preset.get("enemyImmune", False)),
                 "IgnorePlayerLossIfEnemyLossGreater": bool(
                     preset.get("ignorePlayerLossIfEnemyLossGreater", False)
                 ),
@@ -4718,7 +4764,7 @@ class LoneWolfReduxAssistant:
                 "WinWithinRounds": max(0, int(preset.get("winWithinRounds") or 0)),
                 "WinWithinRoute": preset.get("winWithinRoute"),
                 "TooLateRoute": preset.get("tooLateRoute"),
-                "PostRoundWpThreshold": preset.get("postRoundWpThreshold"),
+                "PostRoundWpThreshold": None,
                 "PerRoundActions": as_list(preset.get("perRoundActions")),
                 "TimedModifiers": as_list(preset.get("timedModifiers")),
                 "IgnorePlayerLossRounds": max(0, int(preset.get("ignorePlayerLossRounds") or 0)),
@@ -4771,11 +4817,12 @@ class LoneWolfReduxAssistant:
         round_count = self.combat_round_count()
         threshold = self.combat.get("PostRoundWpThreshold")
         if isinstance(threshold, dict) and round_count >= int(threshold.get("round") or 1):
-            route = int(threshold.get("gteRoute") if int(self.character["WillpowerCurrent"]) >= int(threshold.get("gte") or 0) else threshold.get("ltRoute"))
+            route = int(threshold.get("ltRoute") or threshold.get("gteRoute") or 0)
             self.archive_current_combat("Completed")
             self.combat["Active"] = False
-            print(f"Post-round Willpower route: section {route}.")
-            self.set_section(route)
+            print(f"Post-round route: section {route}.")
+            if route:
+                self.set_section(route)
             return True
 
         if int(self.character["EnduranceCurrent"]) <= 0:
@@ -4861,7 +4908,6 @@ class LoneWolfReduxAssistant:
             enemy_end = read_int("Enemy Endurance", 10, 1, 999)
 
         active_weapon = self.default_combat_weapon()
-        use_staff = active_weapon == "Wizard's Staff" and int(self.character["WillpowerCurrent"]) > 0
         self.combat.update(
             {
                 "Active": True,
@@ -4871,10 +4917,11 @@ class LoneWolfReduxAssistant:
                 "EnemyEnduranceCurrent": enemy_end,
                 "Modifier": 0,
                 "ActiveWeapon": active_weapon,
-                "UseStaff": use_staff,
+                "UseStaff": False,
                 "ForceUnarmed": False,
                 "IgnorePlayerLossIfEnemyLossGreater": False,
-                "StaffWillpower": 1,
+                "StaffWillpower": 0,
+                "EnemyImmune": False,
                 "CanEvade": False,
                 "EvadeAfterRounds": 0,
                 "VictoryRoute": None,
@@ -4905,8 +4952,6 @@ class LoneWolfReduxAssistant:
         weapon_modifier, weapon_notes = self.combat_weapon_modifier_and_notes()
         if weapon_modifier:
             print("; ".join(weapon_notes))
-        if active_weapon == "Wizard's Staff" and not use_staff:
-            print("Wizard's Staff is being used as a normal weapon; no Staff WP multiplier applies.")
         print(f"Combat started: {name} CS {enemy_cs} END {enemy_end}")
         self.show_combat_status()
 
@@ -4922,9 +4967,8 @@ class LoneWolfReduxAssistant:
         panel_header("Combat", accent=SCREEN_ACCENTS["combat"])
         panel_row("Enemy", self.combat["EnemyName"])
         panel_pair_row("Enemy CS", self.combat["EnemyCombatSkill"], "Enemy END", f"{self.combat['EnemyEnduranceCurrent']}/{self.combat['EnemyEnduranceMax']}")
-        panel_pair_row("Lone Wolf CS", player_cs, "END / WP", f"{self.character['EnduranceCurrent']}/{self.character['EnduranceMax']} / {self.character['WillpowerCurrent']}", left_color="Cyan", right_color=endurance_color(self.character["EnduranceCurrent"], self.character["EnduranceMax"]))
+        panel_pair_row("Lone Wolf CS", player_cs, "END", f"{self.character['EnduranceCurrent']}/{self.character['EnduranceMax']}", left_color="Cyan", right_color=endurance_color(self.character["EnduranceCurrent"], self.character["EnduranceMax"]))
         panel_pair_row("Ratio", ratio, "Weapon", self.combat_active_weapon() or "Unarmed", left_color="Yellow" if ratio < 0 else "Green", right_color="White")
-        panel_row("Staff Magic", self.combat_uses_magical_staff())
         panel_row("Modifier", self.combat["Modifier"])
         panel_footer()
         self.show_helpful_commands("combat")
@@ -4987,9 +5031,6 @@ class LoneWolfReduxAssistant:
             ignored_player_loss = player_loss
             player_loss = 0
 
-        if use_staff:
-            self.character["WillpowerCurrent"] -= wp_spend
-
         self.combat["EnemyEnduranceCurrent"] = max(0, int(self.combat["EnemyEnduranceCurrent"]) - enemy_loss)
         self.character["EnduranceCurrent"] = max(0, int(self.character["EnduranceCurrent"]) - player_loss)
         self.combat["Log"] = as_list(self.combat["Log"]) + [
@@ -4999,7 +5040,6 @@ class LoneWolfReduxAssistant:
                 "Ratio": ratio,
                 "CRTColumn": column,
                 "ActiveWeapon": self.combat_active_weapon() or "Unarmed",
-                "StaffWillpower": wp_spend,
                 "EnemyLoss": enemy_loss,
                 "IgnoredPlayerLoss": ignored_player_loss,
                 "LoneWolfReduxLoss": player_loss,
@@ -5012,9 +5052,7 @@ class LoneWolfReduxAssistant:
 
         print("")
         print(f"Roll {roll}, ratio {ratio} (CRT {column})")
-        if use_staff:
-            print(f"Staff WP spent: {wp_spend}; enemy loss {base_enemy_loss} x WP => {enemy_loss}")
-        elif not evade:
+        if not evade:
             print(f"Enemy loss: {enemy_loss}")
         else:
             print("Evading: enemy loss ignored.")
@@ -5023,15 +5061,14 @@ class LoneWolfReduxAssistant:
         print(f"Lone Wolf loss: {player_loss}")
         print(f"Enemy END: {self.combat['EnemyEnduranceCurrent']}/{self.combat['EnemyEnduranceMax']}")
         print(
-            f"Lone Wolf END/WP: {self.character['EnduranceCurrent']}/"
-            f"{self.character['EnduranceMax']} / {self.character['WillpowerCurrent']}"
+            f"Lone Wolf END: {self.character['EnduranceCurrent']}/"
+            f"{self.character['EnduranceMax']}"
         )
 
         special_messages = self.apply_combat_per_round_actions()
         if special_messages and self.combat.get("Log"):
             self.combat["Log"][-1]["SpecialEffects"] = special_messages
             self.combat["Log"][-1]["FinalPlayerEnd"] = int(self.character["EnduranceCurrent"])
-            self.combat["Log"][-1]["FinalWillpower"] = int(self.character["WillpowerCurrent"])
 
         for message in special_messages:
             print(message)
@@ -5109,22 +5146,7 @@ class LoneWolfReduxAssistant:
         elif sub == "stop":
             self.stop_combat()
         elif sub == "staff":
-            if len(tokens) < 3:
-                print("Use: combat staff on|off")
-                return
-            value = tokens[2].lower()
-            if value == "on":
-                if not self.has_available_staff():
-                    print("Wizard's Staff is not currently available.")
-                    return
-                self.combat["ActiveWeapon"] = "Wizard's Staff"
-                self.combat["UseStaff"] = True
-                print("Wizard's Staff enabled.")
-            elif value == "off":
-                self.combat["UseStaff"] = False
-                print("Staff magic disabled; active weapon is unchanged.")
-            else:
-                print("Use: combat staff on|off")
+            print("Book 1 combat uses carried Weapons. Use: combat weapon <name|unarmed>")
         elif sub == "weapon":
             if len(tokens) < 3:
                 print("Use: combat weapon <name|unarmed>")
@@ -5417,7 +5439,7 @@ class LoneWolfReduxAssistant:
                 if result.get("Route"):
                     print(f"Route: section {result['Route']}")
             elif command in {"wp", "will", "willpower"}:
-                self.adjust_willpower(tokens)
+                print("Book 1 does not use Willpower.")
             elif command in {"end", "endurance"}:
                 self.adjust_endurance(tokens)
             elif command == "maxend":
@@ -5436,7 +5458,7 @@ class LoneWolfReduxAssistant:
                         print(f"Maximum Endurance: {value}")
             elif command in {"cs", "combatskill"}:
                 self.adjust_combat_skill(tokens)
-            elif command == "nobles":
+            elif command in {"gold", "crowns", "gc", "nobles"}:
                 self.adjust_nobles(tokens)
             elif command == "meal":
                 self.meal_command(tokens)
@@ -5450,7 +5472,7 @@ class LoneWolfReduxAssistant:
                 self.use_item_command(tokens)
             elif command in {"powers", "magicks", "disciplines"}:
                 self.show_powers()
-            elif command in {"power", "magick"}:
+            elif command in {"power", "magick", "discipline"}:
                 self.power_command(tokens)
             elif command == "combat":
                 self.combat_command(tokens)
@@ -5509,7 +5531,7 @@ class LoneWolfReduxAssistant:
 
         while True:
             try:
-                line = input("GS> ")
+                line = input("LW> ")
             except (EOFError, KeyboardInterrupt):
                 print("")
                 break

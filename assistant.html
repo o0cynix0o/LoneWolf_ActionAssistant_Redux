@@ -1079,12 +1079,11 @@
     const books = [
       { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 }
     ];
-    const lesserMagicks = ['Sorcery', 'Enchantment', 'Elementalism', 'Alchemy', 'Prophecy', 'Psychomancy', 'Evocation'];
-    const higherMagicks = ['Thaumaturgy', 'Telergy', 'Physiurgy', 'Theurgy', 'Visionary', 'Necromancy'];
+    const kaiDisciplines = ['Camouflage', 'Hunting', 'Sixth Sense', 'Tracking', 'Healing', 'Weaponskill', 'Mindshield', 'Mindblast', 'Animal Kinship', 'Mind Over Matter'];
     const views = [
       ['sheet', 'Sheet'],
       ['inventory', 'Inventory'],
-      ['magicks', 'Magicks'],
+      ['disciplines', 'Disciplines'],
       ['sections', 'Sections'],
       ['combat', 'Combat'],
       ['achievements', 'Achievements'],
@@ -1140,7 +1139,7 @@
       ['status-book', 'Book'],
       ['status-section', 'Section'],
       ['status-end', 'END'],
-      ['status-wp', 'WP'],
+      ['status-gold', 'Gold'],
       ['status-cs', 'CS'],
       ['quick-section', 'Section Actions'],
       ['quick-vitals', 'Vitals'],
@@ -1187,15 +1186,15 @@
     function statControlName(stat) {
       const key = text(stat).toLowerCase();
       if (['end', 'endurance'].includes(key)) return 'END';
-      if (['wp', 'willpower'].includes(key)) return 'WP';
+      if (['wp', 'willpower'].includes(key)) return 'Unsupported';
       if (['cs', 'combat_skill', 'combat skill'].includes(key)) return 'CS';
-      if (key === 'nobles') return 'Nobles';
+      if (['gold', 'crowns', 'goldcrowns', 'nobles'].includes(key)) return 'Gold Crowns';
       return text(stat, 'Stat');
     }
 
     function statControlLocation(stat) {
       const key = text(stat).toLowerCase();
-      if (key === 'nobles') return 'Inventory tab > Nobles controls';
+      if (['gold', 'crowns', 'goldcrowns', 'nobles'].includes(key)) return 'Inventory tab > Gold Crowns controls';
       return `Vitals card > ${statControlName(stat)}`;
     }
 
@@ -1203,8 +1202,6 @@
       const key = text(container, 'backpack').toLowerCase();
       if (key === 'weapon') return 'Weapon';
       if (key === 'special') return 'Special';
-      if (key === 'herb') return 'Herb';
-      if (key === 'herb_or_backpack') return 'Herb if the Herb Pouch exists, otherwise Backpack';
       return 'Backpack';
     }
 
@@ -1213,13 +1210,12 @@
       const kind = text(condition.type).toLowerCase();
       if (kind === 'flag') return `if ${friendlyFlagName(condition.key)} is ${condition.value === false ? 'off' : 'on'}`;
       if (kind === 'item') return `if you have ${text(condition.name, 'the required item')}`;
-      if (kind === 'power') return `if you have ${text(condition.name, 'the required Power')}`;
-      if (kind === 'no_power') return `if you do not have ${text(condition.name, 'the required Power')}`;
-      if (kind === 'wp_gt') return `if WP is greater than ${text(condition.value, 'the listed value')}`;
-      if (kind === 'wp_gte') return `if WP is at least ${text(condition.value, 'the listed value')}`;
+      if (kind === 'power') return `if you have ${text(condition.name, 'the required Kai Discipline')}`;
+      if (kind === 'no_power') return `if you do not have ${text(condition.name, 'the required Kai Discipline')}`;
+      if (kind === 'wp_gt' || kind === 'wp_gte') return '';
       if (kind === 'end_lt') return `if END is less than ${text(condition.value, 'the listed value')}`;
       if (kind === 'end_gte') return `if END is at least ${text(condition.value, 'the listed value')}`;
-      if (kind === 'staff_available') return 'if the Wizard\'s Staff is available';
+      if (kind === 'staff_available') return '';
       return '';
     }
 
@@ -1310,8 +1306,8 @@
       if (kind === 'restore_stored_nobles') {
         const extra = Number(action.extra || 0);
         return {
-          summary: `Restore stored Nobles${extra ? ` and add ${extra}` : ''}`,
-          how: 'Inventory tab > Nobles controls: add the stored Nobles total, plus any listed extra, then update the value with Set.'
+          summary: `Restore stored Gold Crowns${extra ? ` and add ${extra}` : ''}`,
+          how: 'Inventory tab > Gold Crowns controls: add the stored Gold Crown total, plus any listed extra, then update the value with Set.'
         };
       }
       if (kind === 'gear') {
@@ -1385,7 +1381,7 @@
         return `This is a pick-up or section choice the guide team pulled forward because inventory decisions are easy to skip while following the story.`;
       }
       if (kind === 'section costs') {
-        return `The text is asking Lone Wolf to spend Willpower here. Manual Mode keeps the choice with you, while the guide keeps the cost visible.`;
+        return `Manual Mode keeps the choice with you, while the guide keeps the cost visible.`;
       }
       if (kind === 'combat auto-resolve') {
         return 'Auto-resolve would play the fight forward for you. Manual Mode keeps the duel in your hands, one combat round at a time.';
@@ -1478,24 +1474,15 @@
         details.push(receiptDetail('What I would do', compactAdviceSummary(actions, text(option?.label, 'Record the loot choice'))));
         actions.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
       } else if (kind === 'section costs') {
-        const cost = Number(options.cost || 0);
-        const mode = text(options.mode, 'negative');
-        const costs = arr(entry.wpCosts);
-        if (entry.wpCost) costs.unshift(entry.wpCost);
-        const costEntry = costs.find((item) => Number(item.cost || 0) === cost) || {};
-        summary = `Manual Advice - Spend ${cost} WP`;
-        title = 'Manual Willpower Cost';
+        summary = 'Manual Advice - Section cost';
+        title = 'Manual Section Cost';
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
-        details.push(receiptDetail('Cost', text(costEntry.label, `${cost} Willpower`)));
-        const costClicks = cost === 1 ? 'once' : `${cost} times`;
-        details.push(receiptDetail('How to do it', mode === 'endurance_for_missing'
-          ? `Vitals card > WP: subtract up to ${cost}. If WP is short, Vitals card > END: subtract 2 END for each missing WP.`
-          : `Vitals card > WP: click -1 ${costClicks}, or type the new WP in Set and click Set.`));
+        details.push(receiptDetail('How to do it', 'Use the matching sheet controls to apply the cost the book lists.'));
       } else if (kind === 'combat auto-resolve') {
         summary = 'Manual Advice - Resolve combat by hand';
         title = 'Manual Combat Rounds';
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
-        details.push(receiptDetail('How to do it', 'Combat tab: choose Active combat weapon, Staff magic on/off, WP spend, and Roll. Click Resolve Round once per combat round.'));
+        details.push(receiptDetail('How to do it', 'Combat tab: choose Active combat weapon and Roll. Click Resolve Round once per combat round.'));
       } else {
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
         details.push(receiptDetail('How to do it', 'Use the matching card controls to update the sheet manually.'));
@@ -1609,9 +1596,8 @@
     function statValue(character, inventory, key) {
       if (key === 'END') return asNumber(character.EnduranceCurrent);
       if (key === 'END Max') return asNumber(character.EnduranceMax);
-      if (key === 'WP') return asNumber(character.WillpowerCurrent);
       if (key === 'CS') return asNumber(character.CombatSkillCurrent);
-      if (key === 'Nobles') return asNumber(inventory.Nobles);
+      if (key === 'Gold') return asNumber(inventory.GoldCrowns ?? inventory.Nobles);
       return 0;
     }
 
@@ -1641,13 +1627,7 @@
 
     function friendlyFlagName(key) {
       const labels = {
-        karmoPotionActive: 'Karmo Potion active',
-        karmoSideEffectPending: 'Karmo side effect pending',
-        karmoSideEffectApplied: 'Karmo side effect applied',
-        yabariOintmentApplied: 'Yabari Ointment protection',
-        invulnerabilityActive: 'Invulnerability protection',
-        taramaSeedReady: 'Tarama Seed ready',
-        staffAvailable: 'Wizard\'s Staff available',
+        weaponsAvailable: 'Weapons available',
         backpackAvailable: 'Backpack available',
         backpackItemsAvailable: 'Backpack items available'
       };
@@ -1667,9 +1647,8 @@
 
       [
         ['END', 'Endurance'],
-        ['WP', 'Willpower'],
         ['CS', 'Combat Skill'],
-        ['Nobles', 'Nobles']
+        ['Gold', 'Gold Crowns']
       ].forEach(([key, label]) => {
         const before = statValue(beforeCharacter, beforeInventory, key);
         const after = statValue(afterCharacter, afterInventory, key);
@@ -1690,7 +1669,6 @@
       [
         ['Weapons', 'Weapons'],
         ['BackpackItems', 'Backpack'],
-        ['HerbPouchItems', 'Herb Pouch'],
         ['SpecialItems', 'Special Items']
       ].forEach(([key, label]) => {
         const diff = inventoryDiffs(beforeInventory[key], afterInventory[key]);
@@ -1773,8 +1751,8 @@
       if (round) {
         details.unshift(receiptDetail('Round', String(round.Round || combat.RoundCount || '?')));
         details.push(receiptDetail('Roll', `${text(round.Roll, '?')} at ratio ${text(round.Ratio, '?')}`));
-        details.push(receiptDetail('Result', `Lone Wolf -${text(round.PlayerLoss ?? round.LoneWolfReduxLoss, '0')} END; ${enemy} -${text(round.EnemyLoss, '0')} END${asNumber(round.StaffWillpower) ? `; ${round.StaffWillpower} WP spent` : ''}`));
-        details.push(receiptDetail('Current', `Lone Wolf END ${text(round.FinalPlayerEnd ?? round.PlayerEnd ?? combat.PlayerEnduranceCurrent, '?')}/${text(combat.PlayerEnduranceMax, '?')}; WP ${text(round.FinalWillpower ?? characterFrom(afterSnapshot).WillpowerCurrent, '?')}; ${enemy} END ${text(round.EnemyEnd ?? combat.EnemyEnduranceCurrent, '?')}/${text(combat.EnemyEnduranceMax, '?')}`));
+        details.push(receiptDetail('Result', `Lone Wolf -${text(round.PlayerLoss ?? round.LoneWolfReduxLoss, '0')} END; ${enemy} -${text(round.EnemyLoss, '0')} END`));
+        details.push(receiptDetail('Current', `Lone Wolf END ${text(round.FinalPlayerEnd ?? round.PlayerEnd ?? combat.PlayerEnduranceCurrent, '?')}/${text(combat.PlayerEnduranceMax, '?')}; ${enemy} END ${text(round.EnemyEnd ?? combat.EnemyEnduranceCurrent, '?')}/${text(combat.EnemyEnduranceMax, '?')}`));
         details.push(receiptDetail('Why', 'The Combat Results Table used the current combat ratio and roll.'));
         return {
           summary: actionName === 'combat_evade' ? `Combat - Evade round resolved` : `Combat - Round ${text(round.Round || combat.RoundCount, '?')} resolved`,
@@ -1990,7 +1968,7 @@
     }
 
     function sectionTargetFromUrl(url) {
-      const match = url.pathname.match(/\/books\/gs\/([^/]+)\/sect(\d+)\.htm$/i);
+      const match = url.pathname.match(/\/books\/lw\/([^/]+)\/sect(\d+)\.htm$/i);
       if (!match) return null;
       const book = books.find((item) => item.folder === match[1]);
       const section = Number(match[2]);
@@ -2075,7 +2053,7 @@
       const renderers = {
         sheet: renderSheet,
         inventory: renderInventory,
-        magicks: renderMagicks,
+        disciplines: renderDisciplines,
         sections: renderSections,
         combat: renderCombat,
         achievements: renderAchievements,
@@ -2094,7 +2072,7 @@
         ['Book', `${c.BookNumber}. ${book.title}`, 'status-book'],
         ['Section', app.state.CurrentSection, 'status-section'],
         ['END', `${c.EnduranceCurrent}/${c.EnduranceMax}`, 'status-end'],
-        ['WP', c.WillpowerCurrent, 'status-wp'],
+        ['Gold', currentInventory().GoldCrowns ?? currentInventory().Nobles ?? 0, 'status-gold'],
         ['CS', c.CombatSkillCurrent, 'status-cs']
       ].map(([label, value, className]) => `<div class="stat-card ${className}"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
     }
@@ -2251,7 +2229,7 @@
       const ending = automation.Ending;
       const flags = automation.Flags || {};
       const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
-      const staffUnavailable = flags.staffAvailable === false;
+      const weaponsUnavailable = flags.weaponsAvailable === false;
       const flow = currentFlow();
       const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
       const successEnding = ending && String(ending.Type || '').toLowerCase() === 'success';
@@ -2262,21 +2240,20 @@
           <button type="button" data-automation-apply ${manualDisabledAttributes('section effects')} title="${isManualMode() ? 'Manual mode: click for section effect advice. No sheet changes will be applied.' : 'Apply the audited effect for the current section, such as stat changes, gear loss, meals, or book-completion flags.'}">Apply Effects</button>
           <button type="button" data-roll ${manualDisabledAttributes('roll helper')} title="${isManualMode() ? 'Manual mode: click for roll advice. No roll will be recorded.' : 'Roll a random number from 0 to 9. If this section has a special roll rule, the assistant applies it.'}">${rollLabel}</button>
           ${successEnding ? '<button type="button" data-complete-book>Finalize Book</button>' : ''}
-          ${karmoControls(flags)}
           <div class="quick-note">${ending ? `Ending marked: ${ending.Type}` : `Book ${currentCharacter().BookNumber}, section ${app.state.CurrentSection}`}</div>
           ${missingBookFiles ? '<div class="mode-note">Book HTML files are not installed. Open the Install Project Aon Books page from Home.</div>' : ''}
           ${isManualMode() ? '<div class="mode-note">Manual mode is tracking your sheet only. Click section helpers for advice, then apply the math by hand.</div>' : ''}
-          ${staffUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
+          ${weaponsUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
         </div>
         <div class="quick-column quick-card">
           <div class="quick-title">Vitals</div>
           ${statButtons('end', 'END', true)}
-          ${statButtons('wp', 'WP', true)}
+          ${statButtons('gold', 'Gold', true)}
         </div>
         <div class="quick-column quick-card">
           <div class="quick-title">Add Item</div>
           <form id="quickItemForm" class="controls">
-            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option></select>
             <input name="item" placeholder="Item name">
             <button type="submit">Add</button>
           </form>
@@ -2297,33 +2274,11 @@
       const summary = completion.Summary || {};
       const nextBook = Number(completion.NextBookNumber || 0);
       const nextTitle = text(completion.NextBookTitle, '');
-      const lesserChoices = arr(completion.LesserMagickChoices);
-      const higherChoices = arr(completion.HigherMagickChoices).length ? arr(completion.HigherMagickChoices) : higherMagicks;
-      const higherChoiceControls = higherChoices.map((name) => `
-        <label class="check-option">
-          <input type="checkbox" name="higherMagicks" value="${escapeHtml(name)}">
-          <span>${escapeHtml(name)}</span>
-        </label>
-      `).join('');
       const continueControls = completion.CanContinue ? `
         <form id="continueBookForm" class="grid">
-          ${nextBook === 2 ? `
-            <label class="field">Additional Lesser Magick
-              <select name="lesserMagick">
-                ${lesserChoices.map((power) => `<option value="${escapeHtml(power)}">${escapeHtml(power)}</option>`).join('')}
-              </select>
-            </label>
-          ` : ''}
-          ${nextBook === 3 ? '<label class="field">Willpower Roll<input name="willpowerRoll" type="number" min="0" max="9" placeholder="Blank = random"></label>' : ''}
-          ${nextBook === 4 ? `
-            <div class="check-field">
-              <span>Higher Magicks - choose exactly 5</span>
-              <div class="check-grid">${higherChoiceControls}</div>
-            </div>
-          ` : ''}
           <button type="submit">Continue to Book ${escapeHtml(nextBook)}</button>
         </form>
-      ` : '<p class="muted">The supported Lone Wolf campaign is complete.</p>';
+      ` : '<p class="muted">The supported Book 1 rebuild is complete.</p>';
 
       view.innerHTML = `
         <div class="panel">
@@ -2332,9 +2287,8 @@
             ${field('Book', `${escapeHtml(text(summary.BookNumber, currentCharacter().BookNumber))}. ${escapeHtml(text(summary.BookTitle, bookByNumber(currentCharacter().BookNumber).title))}`)}
             ${field('Character', escapeHtml(text(summary.CharacterName, currentCharacter().Name)))}
             ${field('Final END', `${escapeHtml(text(summary.EnduranceCurrent, currentCharacter().EnduranceCurrent))}/${escapeHtml(text(summary.EnduranceMax, currentCharacter().EnduranceMax))}`)}
-            ${field('Final WP', escapeHtml(text(summary.WillpowerCurrent, currentCharacter().WillpowerCurrent)))}
             ${field('Combat Skill', escapeHtml(text(summary.CombatSkill, currentCharacter().CombatSkillCurrent)))}
-            ${field('Nobles', escapeHtml(text(summary.Nobles, currentInventory().Nobles)))}
+            ${field('Gold Crowns', escapeHtml(text(summary.GoldCrowns, currentInventory().GoldCrowns ?? currentInventory().Nobles ?? 0)))}
           </div>
         </div>
         <div class="panel">
@@ -2356,7 +2310,6 @@
             ${field('Weapons', escapeHtml(list(summary.Weapons)))}
             ${field('Backpack', escapeHtml(list(summary.BackpackItems)))}
             ${field('Special Items', escapeHtml(list(summary.SpecialItems)))}
-            ${field('Herb Pouch', escapeHtml(list(summary.HerbPouchItems)))}
           </div>
         </div>
         <div class="panel">
@@ -2366,7 +2319,6 @@
         </div>
         <div class="panel">
           <h2>Repeat This Book</h2>
-          <p class="muted">Start this same book again with this character. END resets to maximum, WP resets to the character's book-start value, and unlocked achievements stay unlocked.</p>
           <button type="button" data-repeat-book>Repeat Book ${escapeHtml(text(summary.BookNumber, currentCharacter().BookNumber))}</button>
         </div>
       `;
@@ -2389,7 +2341,7 @@
       const repeatTarget = targetLabel(death.RepeatTarget);
       const rewindTarget = targetLabel(death.RewindTarget);
       const repeatCopy = death.CanRepeat
-        ? 'Try this section again. END, WP, combat, and inventory return to the checkpoint from entering this section, so items used during the failed attempt come back.'
+        ? 'Try this section again. END, combat, and inventory return to the checkpoint from entering this section, so items used during the failed attempt come back.'
         : 'Repeat is mainly for combat or recoverable attempts inside a section. This death happened too early in the section, so rewind is the useful recovery.';
       const rewindCopy = death.CanRewind
         ? 'Step back before this section. Use this when a route choice led to the death and you want to pick a different path.'
@@ -2401,7 +2353,6 @@
           <div class="grid">
             ${field('Section', escapeHtml(text(death.Section, app.state.CurrentSection)))}
             ${field('Final END', `${escapeHtml(text(death.EnduranceCurrent, '0'))}/${escapeHtml(text(death.EnduranceMax, currentCharacter().EnduranceMax))}`)}
-            ${field('Final WP', escapeHtml(text(death.WillpowerCurrent, currentCharacter().WillpowerCurrent)))}
             ${field('Recorded', escapeHtml(text(death.RecordedAt, 'Now')))}
           </div>
         </div>
@@ -2616,12 +2567,12 @@
       const key = slugCardTitle(title, '');
       const help = {
         choices: 'This card shows assistant actions found in the current book section: loot, costs, status flags, combat, route checks, and section-aware rolls.',
-        map: 'Shows the local Project Aon map image for Lone Wolf the Wizard. Open it full-size when you want to inspect the route detail.',
+        map: 'Shows the local Project Aon map image for Flight from the Dark. Open it full-size when you want to inspect the route detail.',
         'section-assistant': 'Use this when a section has rolls, loot, special costs, or combat presets that are not handled by the book link itself.',
         'stored-gear': 'This keeps the inventory record for gear the book has taken away and may return later.',
-        'start-tracked-combat': 'Use this for fights that are not started by a section preset. Staff WP controls how much Willpower you spend with the Wizard’s Staff each round.',
-        'combat-controls': 'Resolve rounds here. Pick the active weapon, choose Staff magic when allowed, and enter the section’s roll if the book gives one.',
-        'recent-combat-rounds': 'This is the round-by-round audit trail for the current fight, including END loss, WP spend, and ignored-loss rules.',
+        'start-tracked-combat': 'Use this for fights that are not started by a section preset.',
+        'combat-controls': 'Resolve rounds here. Pick the active weapon and enter the section’s roll if the book gives one.',
+        'recent-combat-rounds': 'This is the round-by-round audit trail for the current fight, including END loss and ignored-loss rules.',
         'section': 'Apply section effects and section-aware rolls from the audit data.',
         'drop-item': 'Quickly remove carried items without opening the full Inventory tab.'
       };
@@ -2996,7 +2947,7 @@
         'status-book': [`${c.BookNumber}. ${book.title}`, ''],
         'status-section': [app.state.CurrentSection, ''],
         'status-end': [`${c.EnduranceCurrent}/${c.EnduranceMax}`, ''],
-        'status-wp': [c.WillpowerCurrent, ''],
+        'status-gold': [currentInventory().GoldCrowns ?? currentInventory().Nobles ?? 0, ''],
         'status-cs': [c.CombatSkillCurrent, '']
       };
       const [value, subvalue] = values[id] || ['', ''];
@@ -3011,7 +2962,7 @@
       const ending = automation.Ending;
       const flags = automation.Flags || {};
       const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
-      const staffUnavailable = flags.staffAvailable === false;
+      const weaponsUnavailable = flags.weaponsAvailable === false;
       const flow = currentFlow();
       const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
       const missingBookFiles = !currentBookFilesInstalled();
@@ -3023,21 +2974,21 @@
         <div class="quick-note">${ending ? `Ending marked: ${escapeHtml(ending.Type)}` : `Book ${escapeHtml(currentCharacter().BookNumber)}, section ${escapeHtml(app.state.CurrentSection)}`}</div>
         ${missingBookFiles ? '<div class="mode-note">Book HTML files are not installed. Open the Install Project Aon Books page from Home.</div>' : ''}
         ${isManualMode() ? '<div class="mode-note">Manual mode is tracking your sheet only. Click section helpers for advice, then apply the math by hand.</div>' : ''}
-        ${staffUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
+        ${weaponsUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
       `;
     }
 
     function quickVitalsBody() {
       return `
         ${statButtons('end', 'END', true)}
-        ${statButtons('wp', 'WP', true)}
+        ${statButtons('gold', 'Gold', true)}
       `;
     }
 
     function quickAddBody() {
       return `
         <form id="quickItemForm" class="controls">
-          <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+          <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option></select>
           <input name="item" placeholder="Item name">
           <button type="submit">Add</button>
         </form>
@@ -3251,18 +3202,8 @@
       }).join('');
     }
 
-    function sectionWillpowerRows(entry) {
-      const costs = arr(entry.wpCosts);
-      if (entry.wpCost) costs.unshift(entry.wpCost);
-      if (!costs.length) return '';
-      return costs.map((wp) => `
-        <div class="item-row">
-          <small>${escapeHtml(text(wp.cost, '0'))} WP</small>
-          <span class="wrap">${escapeHtml(text(wp.label, 'Section Willpower cost'))}</span>
-          ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:negative"`, 'Spend WP', 'section costs')}
-          ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:endurance_for_missing"`, 'Use END', 'section costs')}
-        </div>
-      `).join('');
+    function sectionCostRows(entry) {
+      return '';
     }
 
     function sectionRollRows(entry) {
@@ -3340,7 +3281,7 @@
       const groups = [
         choiceGroup('Entry Effect', sectionAutomationRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
-        choiceGroup('Willpower Cost', sectionWillpowerRows(entry)),
+        '',
         choiceGroup('Section Combat', sectionCombatRows(entry)),
         choiceGroup('Status Flags', sectionStatusRows(entry)),
         choiceGroup('Route Check', sectionRouteCheckRows()),
@@ -3387,20 +3328,22 @@
       return `
         <div class="grid">
           ${field('Name', c.Name)}
-          ${field('Nobles', inv.Nobles)}
+          ${field('Gold Crowns', inv.GoldCrowns ?? inv.Nobles ?? 0)}
           ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
           ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
-          ${field('Willpower', c.WillpowerCurrent)}
+          ${field('Meals', arr(inv.BackpackItems).filter((item) => text(item).toLowerCase() === 'meal').length)}
+          ${field('Kai Disciplines', list(c.KaiDisciplines))}
+          ${field('Weaponskill', c.WeaponskillWeapon || 'None')}
           ${field('Completed Books', list(c.CompletedBooks))}
         </div>
       `;
     }
 
     function newCharacterBody() {
-      const defaultLesser = new Set(lesserMagicks.slice(0, 5));
-      const lesserChoices = lesserMagicks.map((name) => `
+      const defaultDisciplines = new Set(kaiDisciplines.slice(0, 5));
+      const disciplineChoices = kaiDisciplines.map((name) => `
         <label class="check-option">
-          <input type="checkbox" name="lesserMagicks" value="${escapeHtml(name)}" ${defaultLesser.has(name) ? 'checked' : ''}>
+          <input type="checkbox" name="kaiDisciplines" value="${escapeHtml(name)}" ${defaultDisciplines.has(name) ? 'checked' : ''}>
           <span>${escapeHtml(name)}</span>
         </label>
       `).join('');
@@ -3408,23 +3351,22 @@
         <form id="newForm" class="grid">
           <label class="field">Name<input name="name" value="Lone Wolf"></label>
           <label class="field">Book<select name="bookNumber" data-new-book>${books.map((b) => `<option value="${b.number}">${b.number}. ${b.title}</option>`).join('')}</select></label>
-          <label class="field">Gift<select name="gift"><option value="">None</option><option value="dagger">Jewelled Dagger</option><option value="talisman">Magic Talisman</option><option value="laumspur">Vial of Laumspur</option></select></label>
           <div class="check-field">
-            <span data-lesser-help>Lesser Magicks - choose 5 for Book 1</span>
-            <div class="check-grid">${lesserChoices}</div>
+            <span data-discipline-help>Kai Disciplines - choose 5</span>
+            <div class="check-grid">${disciplineChoices}</div>
           </div>
           <button type="submit">Create</button>
         </form>
       `;
     }
 
-    function adjustNewCharacterMagicks(form) {
-      const bookNumber = Number(form?.querySelector('[name="bookNumber"]')?.value || 1);
-      const target = bookNumber > 1 ? 6 : 5;
-      const help = form?.querySelector('[data-lesser-help]');
-      if (help) help.textContent = `Lesser Magicks - choose ${target}`;
-      const boxes = Array.from(form?.querySelectorAll('input[name="lesserMagicks"]') || []);
-      boxes.forEach((box, index) => { box.checked = index < target; });
+    function adjustNewCharacterDisciplines(form) {
+      const help = form?.querySelector('[data-discipline-help]');
+      if (help) help.textContent = 'Kai Disciplines - choose 5';
+      const boxes = Array.from(form?.querySelectorAll('input[name="kaiDisciplines"]') || []);
+      const checked = boxes.filter((box) => box.checked);
+      if (checked.length <= 5) return;
+      checked.slice(5).forEach((box) => { box.checked = false; });
     }
 
     function renderSheetWidget(id, layout) {
@@ -3453,10 +3395,12 @@
           <h2>Action Chart</h2>
           <div class="grid">
             ${field('Name', c.Name)}
-            ${field('Nobles', inv.Nobles)}
+            ${field('Gold Crowns', inv.GoldCrowns ?? inv.Nobles ?? 0)}
             ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
             ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
-            ${field('Willpower', c.WillpowerCurrent)}
+            ${field('Meals', arr(inv.BackpackItems).filter((item) => text(item).toLowerCase() === 'meal').length)}
+            ${field('Kai Disciplines', list(c.KaiDisciplines))}
+            ${field('Weaponskill', c.WeaponskillWeapon || 'None')}
             ${field('Completed Books', list(c.CompletedBooks))}
           </div>
         </div>
@@ -3479,23 +3423,22 @@
           <div class="grid">
             ${field('Weapons', `${arr(inv.Weapons).length}/2`)}
             ${field('Backpack', backpackLabel)}
-            ${field('Herb Pouch', inv.HasHerbPouch ? `${arr(inv.HerbPouchItems).length}/8` : 'None')}
             ${field('Special Items', arr(inv.SpecialItems).length)}
+            ${field('Meals', arr(inv.BackpackItems).filter((item) => text(item).toLowerCase() === 'meal').length)}
           </div>
         </div>
         <div class="panel">
-          <h2>Nobles</h2>
-          ${statButtons('nobles', 'Nobles')}
+          <h2>Gold Crowns</h2>
+          ${statButtons('gold', 'Gold Crowns')}
         </div>
         ${storedGearPanel()}
         ${itemList('Weapons', 'weapon', inv.Weapons)}
         ${itemList('Backpack', 'backpack', inv.BackpackItems)}
-        ${inv.HasHerbPouch ? itemList('Herb Pouch', 'herb', inv.HerbPouchItems) : ''}
         ${itemList('Special Items', 'special', inv.SpecialItems)}
         <div class="panel">
           <h2>Add Item</h2>
           <form id="itemForm" class="controls">
-            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option></select>
             <input name="item" placeholder="Item name">
             <button type="submit">Add</button>
           </form>
@@ -3507,12 +3450,11 @@
       `;
     }
 
-    function renderMagicks() {
+    function renderDisciplines() {
       const c = currentCharacter();
       view.innerHTML = `
-        <div class="panel"><h2>Willpower</h2>${statButtons('wp', 'Willpower')}</div>
-        ${powerPanel('Lesser Magicks', lesserMagicks, c.LesserMagicks)}
-        ${powerPanel('Higher Magicks', higherMagicks, c.HigherMagicks)}
+        ${powerPanel('Kai Disciplines', kaiDisciplines, c.KaiDisciplines)}
+        <div class="panel"><h2>Weaponskill</h2><div class="grid">${field('Weapon', c.WeaponskillWeapon || 'None')}</div></div>
       `;
     }
 
@@ -3589,18 +3531,7 @@
           </div>
         `;
       }).join('');
-      const wp = entry.wpCost;
-      const wpPanel = wp ? `
-        <div class="panel">
-          <h2>Willpower Cost</h2>
-          <div class="item-row">
-            <small>${escapeHtml(text(wp.cost, '0'))} WP</small>
-            <span>${escapeHtml(text(wp.label, 'Section Willpower cost'))}</span>
-            ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:negative"`, 'Spend WP', 'section costs')}
-            ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:endurance_for_missing"`, 'Use END', 'section costs')}
-          </div>
-        </div>
-      ` : '';
+      const wpPanel = '';
       return `
         <div class="panel">
           <h2>Section Assistant</h2>
@@ -3638,8 +3569,6 @@
         ['Lone Wolf END', playerEnd],
         ['Enemy END', enemyEnd],
         ['Weapon', text(combat.ActiveWeapon, 'Unarmed')],
-        ['Staff Magic', combat.UseStaff ? 'On' : 'Off'],
-        ['Staff WP', text(combat.StaffWillpower, '1')],
         ['Modifier', formatSigned(combat.Modifier || 0)],
         ['Evade', combat.CanEvade ? 'Available' : 'No'],
         ['Rounds', String(arr(combat.Log).length)]
@@ -3650,8 +3579,6 @@
           ${active ? `
             <form id="roundForm" class="controls combat-actions">
               <select name="activeWeapon" title="Active combat weapon">${combatWeaponOptions(combat)}</select>
-              <select name="useStaff" title="Use Wizard's Staff magic when the Staff is the active weapon"><option value="true" ${combat.UseStaff ? 'selected' : ''}>Staff magic on</option><option value="false" ${combat.UseStaff ? '' : 'selected'}>Staff magic off</option></select>
-              <input name="wp" type="number" min="1" placeholder="WP spend">
               <input name="roll" type="number" min="0" max="9" placeholder="Roll">
               <button type="submit">Resolve Round</button>
               <button type="button" data-combat-auto ${manualDisabledAttributes('combat auto-resolve')} title="${isManualMode() ? 'Manual mode: click for combat round advice. No combat rounds will be resolved.' : 'Resolve the fight automatically using the current combat setup.'}">Auto Resolve</button>
@@ -3665,8 +3592,6 @@
               <label class="field">END<input name="endurance" type="number" value="10"></label>
               <label class="field" title="Optional temporary Combat Skill modifier for this fight only. Use this when the section gives a combat bonus or penalty.">CS Modifier<input name="modifier" type="number" value="0" title="Temporary CS modifier for this fight."></label>
               <label class="field">Active Weapon<select name="activeWeapon">${combatWeaponOptions(combat)}</select></label>
-              <label class="field" title="Use Wizard's Staff magic when the Staff is the active weapon. Staff magic spends Willpower during combat.">Staff Magic<select name="useStaff" title="Turn Staff magic on only when the Staff is the active weapon and the fight allows normal Staff use."><option value="true">On</option><option value="false">Off</option></select></label>
-              <label class="field" title="Default Willpower spent with the Wizard's Staff each combat round. The round form can override it.">Default Staff WP Spend<input name="staffWillpower" type="number" min="1" value="1" title="Minimum 1 when using the Wizard's Staff. Enemy END loss is multiplied by this value."></label>
               <label class="field" title="Optional. If the book says you can evade only after a certain number of rounds, put that number here.">Evade After Rounds<input name="evadeAfterRounds" type="number" min="0" value="0" title="Minimum combat rounds before the Evade button should be used."></label>
               <label class="field" title="Optional. Use this when the book says where to turn after winning this fight. The assistant can offer that section after victory.">Victory Section<input name="victoryRoute" type="number" min="1" placeholder="Optional" title="Section number to use after winning, if the book gives one."></label>
               <label class="field" title="Optional. Use this when the book gives a section for evading the fight. The assistant can use this target when you press Evade.">Evade Section<input name="evadeRoute" type="number" min="1" placeholder="Optional" title="Section number to use after evading, if the book gives one."></label>
@@ -3930,14 +3855,10 @@
     function list(value) { const values = arr(value); return values.length ? values.join(', ') : 'None'; }
     function itemUseHelp(item) {
       const name = text(item).toLowerCase();
-      if (name.includes('karmo potion')) return 'Drink before combat: doubles current END and WP. Use the Karmo controls to apply the side-effect roll and finish the potion after combat.';
-      if (name.includes('senara potion')) return 'Use: restore 5 Willpower.';
-      if (name.includes('senara bud')) return 'Use: restore 1 Willpower.';
       if (name.includes('potion of healing') || name.includes('healing potion')) return 'Use: restore 4 Endurance.';
       if (name.includes('rendalim')) return 'Use: restore 6 Endurance.';
       if (name.includes('potion of invulnerability')) return 'Use: mark invulnerability protection active and return an Empty Vial.';
       if (name.includes('potion of alether')) return 'Use: add 2 Combat Skill.';
-      if (name.includes('tarama seed')) return 'Use: mark a Tarama Seed as ready for a no-Willpower spell or Staff use.';
       if (name.includes('laumspur')) return 'Use: restore the Endurance amount recorded by this Laumspur item.';
       return '';
     }
@@ -3982,7 +3903,6 @@
       const groups = [
         ['W', 'weapon', inv.Weapons],
         ['B', 'backpack', inv.BackpackItems],
-        ['H', 'herb', inv.HerbPouchItems],
         ['S', 'special', inv.SpecialItems]
       ];
       const rows = groups.flatMap(([label, type, items]) => arr(items).map((item) => (
@@ -3991,19 +3911,7 @@
       return rows.join('') || '<div class="item-row"><span>Inventory empty.</span></div>';
     }
     function karmoControls(flags) {
-      const active = flags.karmoPotionActive === true;
-      const pending = flags.karmoSideEffectPending === true;
-      if (!active && !pending) return '';
-      const lastRoll = app.state.Automation?.LastRoll || {};
-      const hasKarmoRoll = Number(lastRoll.BookNumber) === 2 && Number(lastRoll.Section) === 45 && Number.isInteger(Number(lastRoll.Raw));
-      const sideLabel = hasKarmoRoll ? `Apply Karmo Side Effect (-${Number(lastRoll.Raw)} END)` : 'Apply Karmo Side Effect';
-      return `
-        <div class="controls" style="margin-top:.35rem">
-          ${pending ? `<button type="button" data-karmo-side-effect title="Apply the section 45 side-effect END loss. You may do this before or after finishing the potion, as the Project Aon footnote leaves that timing to the player.">${escapeHtml(sideLabel)}</button>` : ''}
-          ${active ? '<button type="button" data-karmo-finish title="After the Karmo-assisted combat, halve current END and WP, rounded down.">Finish Karmo</button>' : ''}
-        </div>
-        <div class="quick-note">Karmo Potion: doubled END/WP is ${active ? 'active' : 'finished'}${pending ? '; side-effect still pending' : ''}.</div>
-      `;
+      return '';
     }
     function storedEquipment() {
       const stored = app.state.Automation?.Stored || {};
@@ -4017,7 +3925,7 @@
     }
     function storedGearPanel() {
       const flags = app.state.Automation?.Flags || {};
-      const gearUnavailable = flags.staffAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
       const stored = storedEquipment();
       if (!gearUnavailable && !stored.Weapons.length && !stored.BackpackItems.length) return '';
       return `
@@ -4029,13 +3937,13 @@
     }
     function storedGearBody(showEmpty = true) {
       const flags = app.state.Automation?.Flags || {};
-      const gearUnavailable = flags.staffAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
       const stored = storedEquipment();
       const weaponRows = stored.Weapons.map((item) => `<div class="item-row"><small>W</small><span>${escapeHtml(item)}</span></div>`);
       const backpackRows = stored.BackpackItems.map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span></div>`);
       const rows = weaponRows.concat(backpackRows).join('');
       return `
-        <p class="muted">${gearUnavailable ? 'Unavailable until the book restores your Staff and Backpack.' : 'Recovered gear record.'}</p>
+        <p class="muted">${gearUnavailable ? 'Unavailable until the book restores your gear.' : 'Recovered gear record.'}</p>
         ${rows || (showEmpty ? '<div class="item-row"><span>No stored gear recorded.</span></div>' : '')}
       `;
     }
@@ -4277,7 +4185,7 @@
       if (button.dataset.combatAuto !== undefined) await action({ action: 'combat_auto' });
       if (button.dataset.combatEvade !== undefined) {
         const form = document.getElementById('roundForm');
-        await action({ action: 'combat_evade', activeWeapon: form?.activeWeapon.value, useStaff: form?.useStaff.value, wp: form?.wp.value, roll: form?.roll.value });
+        await action({ action: 'combat_evade', activeWeapon: form?.activeWeapon.value, roll: form?.roll.value });
       }
     });
 
@@ -4323,8 +4231,8 @@
     });
 
     document.addEventListener('change', (event) => {
-      if (event.target.matches?.('[data-new-book]')) {
-        adjustNewCharacterMagicks(event.target.closest('form'));
+      if (event.target.matches?.('input[name="kaiDisciplines"], [data-new-book]')) {
+        adjustNewCharacterDisciplines(event.target.closest('form'));
       }
     });
 
@@ -4338,24 +4246,7 @@
       if (form.id === 'noteForm') await action({ action: 'note', text: data.text });
       if (form.id === 'saveForm') await action({ action: 'save', path: data.path });
       if (form.id === 'continueBookForm') {
-        const higherMagickSelections = formData.getAll('higherMagicks');
-        if (form.querySelectorAll('input[name="higherMagicks"]').length && higherMagickSelections.length !== 5) {
-          setReceipt({
-            summary: 'Book - Choose exactly 5 Higher Magicks.',
-            details: [
-              receiptDetail('Selected', `${higherMagickSelections.length}/5`),
-              receiptDetail('Why', 'Book 4 begins after you choose five Higher Magicks. The assistant needs your picks before it can advance the campaign.'),
-              receiptDetail('How', 'Check exactly five Higher Magick boxes, then press Continue to Book 4.')
-            ]
-          });
-          return;
-        }
-        await action({
-          action: 'continue_book',
-          lesserMagick: data.lesserMagick || '',
-          willpowerRoll: data.willpowerRoll || '',
-          higherMagicks: higherMagickSelections
-        });
+        await action({ action: 'continue_book' });
       }
       if (form.id === 'combatForm') await action({
         action: 'combat_start',
@@ -4364,21 +4255,28 @@
         endurance: Number(data.endurance),
         modifier: Number(data.modifier || 0),
         activeWeapon: data.activeWeapon,
-        useStaff: data.useStaff,
-        staffWillpower: Number(data.staffWillpower || 1),
         canEvade: data.canEvade === 'true',
         evadeAfterRounds: Number(data.evadeAfterRounds || 0),
         victoryRoute: data.victoryRoute,
         evadeRoute: data.evadeRoute
       });
-      if (form.id === 'roundForm') await action({ action: 'combat_round', activeWeapon: data.activeWeapon, useStaff: data.useStaff, wp: data.wp, roll: data.roll });
-      if (form.id === 'newForm') await action({
-        action: 'new',
-        name: data.name,
-        bookNumber: Number(data.bookNumber),
-        gift: data.gift,
-        lesserMagicks: formData.getAll('lesserMagicks')
-      });
+      if (form.id === 'roundForm') await action({ action: 'combat_round', activeWeapon: data.activeWeapon, roll: data.roll });
+      if (form.id === 'newForm') {
+        const kaiSelections = formData.getAll('kaiDisciplines');
+        if (kaiSelections.length !== 5) {
+          setReceipt({
+            summary: 'Character - Choose exactly 5 Kai Disciplines.',
+            details: [receiptDetail('Selected', `${kaiSelections.length}/5`)]
+          });
+          return;
+        }
+        await action({
+          action: 'new',
+          name: data.name,
+          bookNumber: Number(data.bookNumber),
+          kaiDisciplines: kaiSelections
+        });
+      }
       form.reset?.();
     });
 

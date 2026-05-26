@@ -2,9 +2,9 @@
 
 Lone Wolf Action Assistant Redux is the clean AA2 rebuild of the Lone Wolf play assistant. This repository starts from the proven Grey Star Action Assistant workflow and rebuilds the rules, audit data, testing, docs, packaging, issues, and release process around *Flight from the Dark*.
 
-Current status: **pre-alpha scaffold**
+Current status: **pre-alpha Book 1 character rebuild**
 
-The modern web dashboard, card layout, receipt drawer, launcher shape, release tooling, and workflow docs are in place. The remaining Grey Star rule assumptions in the Python and web assistant are intentional scaffolding markers for the next build pass. They must be replaced with Lone Wolf rules before this becomes a playable release.
+The modern web dashboard, card layout, receipt drawer, launcher shape, release tooling, and workflow docs are in place. The first Book 1 pass now creates a legal *Flight from the Dark* character and shows the Lone Wolf action-chart fields for Kai Disciplines, Weapons, Backpack, Special Items, Meals, and Gold Crowns. Section audit data is still placeholder-level, so this is not a public playable release yet.
 
 ## Book Files Are Not Included
 
@@ -26,7 +26,7 @@ Project Aon links:
 - Flight from the Dark: https://www.projectaon.org/en/Main/FlightFromTheDark
 - Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip
 
-## What This Scaffold Contains
+## What This Rebuild Contains
 
 - Grey Star AA card-dashboard web shell adapted for Lone Wolf Redux.
 - Local Python web server and launcher skeleton.
@@ -36,18 +36,20 @@ Project Aon links:
   - Kai Disciplines
   - Magnakai references
   - Weaponskill map
+- Book 1 character creation from *Flight from the Dark* rules:
+  - Combat Skill = random digit + 10
+  - Endurance = random digit + 20
+  - exactly five Kai Disciplines
+  - Weaponskill random weapon mapping
+  - Axe, Backpack with one Meal, Map of Sommerlund, Gold Crown roll, and monastery-find roll
 - Book 1 placeholder audit data files.
 - Agent handoff docs for continuing the rebuild in a fresh chat.
 - Grey Star-style audit, playtest, docs, release, wiki, issue, and packaging workflow.
 
 ## What Still Needs Rebuilt
 
-- Character creation for *Flight from the Dark*.
-- Kai Discipline picker and rules.
-- Combat Skill / Endurance rolls and equipment rules.
-- Weapons, Backpack Items, Special Items, Meals, Gold Crowns.
 - Healing and Kai Discipline effects.
-- Lone Wolf combat rules and CRT integration.
+- Full Lone Wolf combat audit for all Book 1 special cases.
 - Book 1 section audit and automation data.
 - Achievements, route audits, playtests, and strategy guide.
 - Public release notes and package once Book 1 support is real.
@@ -64,4 +66,4 @@ Then open:
 http://localhost:8797/assistant.html
 ```
 
-This is a scaffold. The next work should begin with [AGENT.md](AGENT.md).
+The next work should begin with [AGENT.md](AGENT.md) and the Book 1 audit logs under `testing\logs`.

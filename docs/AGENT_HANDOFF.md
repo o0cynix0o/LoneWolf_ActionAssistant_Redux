@@ -26,16 +26,12 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The following are expected and must be removed during the first real build pass:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The following debt remains for later passes:
 
-- Magicks UI.
-- Willpower.
-- Herb Pouch.
 - Grey Star combat exceptions.
-- Grey Star achievements.
 - Book 2-4 Grey Star completion assumptions.
-- Wizard's Staff language.
-- Any `gs*` achievement IDs or Grey Star route references.
+- Legacy compatibility code for older Grey Star-derived save fields.
+- Book 1 route, section, and combat automation placeholders.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -50,6 +46,14 @@ A successful first milestone is:
 5. The sheet has correct Lone Wolf fields.
 6. No Magicks/Willpower/Herb Pouch controls are visible.
 7. `python -m py_compile app_server.py lonewolf_redux.py launch_lonewolf_redux.py ws_server.py` passes.
+
+Issue #1 changed the default character model to Book 1 Kai rules:
+
+- Combat Skill and Endurance use the Book 1 random digit formulas.
+- New characters choose exactly five Kai Disciplines.
+- Weaponskill rolls against the Book 1 weapon table.
+- Starting gear is Axe, one Meal, Map of Sommerlund, Gold Crowns, plus the monastery-find roll.
+- The web sheet now exposes Gold Crowns, Meals, Kai Disciplines, Weapons, Backpack Items, and Special Items.
 
 ## GitHub Workflow
 

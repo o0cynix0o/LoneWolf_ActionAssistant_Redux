@@ -175,6 +175,12 @@ def state_payload(message: str = "", achievement_unlocks: list[dict] | None = No
         ASSISTANT.save_game(quiet=True)
     state = json.loads(json.dumps(ASSISTANT.state))
     state["Combat"] = ASSISTANT.combat_status_payload()
+    for key in ("LesserMagicks", "HigherMagicks", "WillpowerBase", "WillpowerCurrent"):
+        state.get("Character", {}).pop(key, None)
+    for key in ("HasHerbPouch", "HerbPouchItems", "Nobles"):
+        state.get("Inventory", {}).pop(key, None)
+    for key in ("UseStaff", "StaffWillpower"):
+        state.get("Combat", {}).pop(key, None)
     for checkpoint in lonewolf_redux.as_list(state.get("Automation", {}).get("SectionCheckpoints")):
         if isinstance(checkpoint, dict):
             checkpoint.pop("Snapshot", None)
@@ -224,89 +230,25 @@ def book_files_payload() -> dict:
 
 def apply_new_game(payload: dict) -> str:
     name = str(payload.get("name") or "Lone Wolf").strip() or "Lone Wolf"
-    book_number = int(payload.get("bookNumber") or 1)
-    book_number = max(1, min(4, book_number))
+    disciplines = payload.get("kaiDisciplines")
+    if not isinstance(disciplines, list):
+        disciplines = lonewolf_redux.KAI_DISCIPLINES[:5]
 
-    lesser = payload.get("lesserMagicks")
-    higher = payload.get("higherMagicks")
-    lesser_count = 6 if book_number > 1 else 5
-    lesser_was_supplied = isinstance(lesser, list)
-    if lesser_was_supplied:
-        cleaned_lesser = []
-        for item in lesser:
-            if item in lonewolf_redux.LESSER_MAGICKS and item not in cleaned_lesser:
-                cleaned_lesser.append(item)
-        if len(cleaned_lesser) != lesser_count:
-            raise ValueError(f"Book {book_number} requires exactly {lesser_count} Lesser Magicks.")
-        lesser = cleaned_lesser
-    else:
-        lesser = lonewolf_redux.LESSER_MAGICKS[:lesser_count]
-    if not isinstance(higher, list):
-        higher = lonewolf_redux.HIGHER_MAGICKS[: (5 if book_number == 4 else 0)]
-
-    state = lonewolf_redux.normalize_state(lonewolf_redux.default_state())
-    ASSISTANT.state = state
-
-    ASSISTANT.character["Name"] = name
-    ASSISTANT.character["BookNumber"] = book_number
-    ASSISTANT.state["CurrentSection"] = int(payload.get("section") or 1)
-
-    cs_roll = lonewolf_redux.random_digit()
-    ASSISTANT.character["CombatSkillBase"] = 10 + cs_roll
-    ASSISTANT.character["CombatSkillCurrent"] = 10 + cs_roll
-
-    if book_number == 4:
-        ASSISTANT.character["EnduranceMax"] = int(payload.get("endurance") or 30)
-        ASSISTANT.character["EnduranceCurrent"] = ASSISTANT.character["EnduranceMax"]
-        ASSISTANT.character["WillpowerCurrent"] = int(payload.get("willpower") or 50)
-    else:
-        end_value = int(payload.get("endurance") or (20 + lonewolf_redux.random_digit()))
-        wp_base = 20
-        if book_number == 3:
-            wp_base = 30
-        ASSISTANT.character["EnduranceMax"] = end_value
-        ASSISTANT.character["EnduranceCurrent"] = end_value
-        ASSISTANT.character["WillpowerCurrent"] = int(payload.get("willpower") or (wp_base + lonewolf_redux.random_digit()))
-
-    ASSISTANT.character["LesserMagicks"] = [
-        item for item in lesser if item in lonewolf_redux.LESSER_MAGICKS
-    ]
-    ASSISTANT.character["HigherMagicks"] = [
-        item for item in higher if item in lonewolf_redux.HIGHER_MAGICKS
-    ]
-
-    if book_number == 4:
-        ASSISTANT.add_special_item("Moonstone")
-
-    gift = str(payload.get("gift") or "").strip()
-    if gift == "dagger":
-        ASSISTANT.add_special_item("Jewelled Dagger")
-    elif gift == "talisman":
-        ASSISTANT.add_special_item("Magic Talisman")
-        ASSISTANT.character["WillpowerCurrent"] += 2
-    elif gift == "laumspur":
-        ASSISTANT.inventory["BackpackItems"] = lonewolf_redux.as_list(ASSISTANT.inventory["BackpackItems"]) + [
-            "Vial of Laumspur"
-        ]
-
-    ASSISTANT.character["WillpowerBase"] = int(ASSISTANT.character["WillpowerCurrent"])
-    book = lonewolf_redux.BOOKS[book_number]
-    ASSISTANT.state["CurrentBookStats"] = {
-        "BookNumber": book_number,
-        "BookTitle": book["Title"],
-        "StartSection": int(ASSISTANT.state["CurrentSection"]),
-        "LastSection": int(ASSISTANT.state["CurrentSection"]),
-        "SectionsVisited": 0,
-        "VisitedSections": [],
-        "StartingEnduranceMax": int(ASSISTANT.character["EnduranceMax"]),
-        "StartingWillpower": int(ASSISTANT.character["WillpowerBase"]),
-    }
-    ASSISTANT.ensure_herb_pouch()
+    ASSISTANT.state = lonewolf_redux.create_book1_character_state(
+        name=name,
+        kai_disciplines=disciplines,
+        section=int(payload.get("section") or 1),
+        combat_skill_roll=payload.get("combatSkillRoll"),
+        endurance_roll=payload.get("enduranceRoll"),
+        gold_roll=payload.get("goldRoll"),
+        starting_find_roll=payload.get("startingFindRoll"),
+        weaponskill_roll=payload.get("weaponskillRoll"),
+    )
     ASSISTANT.record_section_visit()
     ASSISTANT.save_section_checkpoint("ready")
     ASSISTANT.write_current_position()
     ASSISTANT.autosave()
-    return f"Created {name}, Book {book_number}."
+    return f"Created {name}, Book 1."
 
 
 def handle_action(payload: dict) -> str:
@@ -338,7 +280,7 @@ def handle_action(payload: dict) -> str:
     if action == "status_flag":
         return capture_output(lambda: ASSISTANT.set_status_flag(str(payload.get("key") or ""), payload.get("value")))
     if action == "wp_cost":
-        return capture_output(lambda: ASSISTANT.pay_willpower_cost(int(payload.get("cost") or 0), str(payload.get("mode") or "negative")))
+        return "Book 1 has no action for that stat."
     if action == "section_combat_start":
         return capture_output(lambda: ASSISTANT.start_section_combat(str(payload.get("id") or "")))
     if action == "adjust":
@@ -347,12 +289,12 @@ def handle_action(payload: dict) -> str:
         value = int(payload.get("value") or 0)
         token = ["x", "set", str(value)] if mode == "set" else ["x", str(value)]
         if stat == "wp":
-            return capture_output(lambda: ASSISTANT.adjust_willpower(token))
+            return "Book 1 has no action for that stat."
         if stat == "end":
             return capture_output(lambda: ASSISTANT.adjust_endurance(token))
         if stat == "cs":
             return capture_output(lambda: ASSISTANT.adjust_combat_skill(token))
-        if stat == "nobles":
+        if stat in {"gold", "nobles"}:
             return capture_output(lambda: ASSISTANT.adjust_nobles(token))
     if action == "add_item":
         return capture_output(lambda: ASSISTANT.add_item(["add", str(payload.get("type") or ""), str(payload.get("item") or "")]))
@@ -394,13 +336,7 @@ def handle_action(payload: dict) -> str:
             print(f"Book {summary['BookNumber']} complete: {summary['BookTitle']}.")
         return capture_output(complete)
     if action == "continue_book":
-        return capture_output(
-            lambda: ASSISTANT.continue_completed_book(
-                lesser_magick=str(payload.get("lesserMagick") or ""),
-                higher_magicks=payload.get("higherMagicks"),
-                willpower_roll=int(payload["willpowerRoll"]) if str(payload.get("willpowerRoll") or "").strip() else None,
-            )
-        )
+        return "No later books are enabled in this Book 1 rebuild yet."
     if action == "repeat_book":
         return capture_output(lambda: ASSISTANT.repeat_completed_book())
     if action == "combat_start":
@@ -413,9 +349,8 @@ def handle_action(payload: dict) -> str:
                 if "activeWeapon" in payload:
                     ASSISTANT.set_combat_weapon(str(payload.get("activeWeapon") or ""), save=False)
                 ASSISTANT.combat["Modifier"] = int(payload.get("modifier") or 0)
-                ASSISTANT.combat["StaffWillpower"] = max(1, int(payload.get("staffWillpower") or 1))
-                if "useStaff" in payload:
-                    ASSISTANT.combat["UseStaff"] = truthy(payload.get("useStaff")) and ASSISTANT.combat_active_weapon() == "Wizard's Staff"
+                ASSISTANT.combat["StaffWillpower"] = 0
+                ASSISTANT.combat["UseStaff"] = False
                 ASSISTANT.combat["CanEvade"] = truthy(payload.get("canEvade"))
                 ASSISTANT.combat["EvadeAfterRounds"] = max(0, int(payload.get("evadeAfterRounds") or 0))
                 victory_route = payload.get("victoryRoute")
@@ -427,8 +362,7 @@ def handle_action(payload: dict) -> str:
     if action == "combat_round":
         if "activeWeapon" in payload:
             ASSISTANT.set_combat_weapon(str(payload.get("activeWeapon") or ""), save=False)
-        if "useStaff" in payload:
-            ASSISTANT.combat["UseStaff"] = truthy(payload.get("useStaff")) and ASSISTANT.combat_active_weapon() == "Wizard's Staff"
+        ASSISTANT.combat["UseStaff"] = False
         tokens = ["combat", "evade" if payload.get("evade") else "round"]
         if payload.get("wp"):
             tokens.append(str(payload.get("wp")))
@@ -440,8 +374,7 @@ def handle_action(payload: dict) -> str:
     if action == "combat_evade":
         if "activeWeapon" in payload:
             ASSISTANT.set_combat_weapon(str(payload.get("activeWeapon") or ""), save=False)
-        if "useStaff" in payload:
-            ASSISTANT.combat["UseStaff"] = truthy(payload.get("useStaff")) and ASSISTANT.combat_active_weapon() == "Wizard's Staff"
+        ASSISTANT.combat["UseStaff"] = False
         tokens = ["combat", "evade"]
         if payload.get("wp"):
             tokens.append(str(payload.get("wp")))

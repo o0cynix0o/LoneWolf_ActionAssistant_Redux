@@ -1,6 +1,6 @@
 # Lone Wolf Full Book Audit Workflow
 
-> AA2 bootstrap note: this file was carried over from the Grey Star workflow and lightly rebranded. Use it as the workflow standard, but replace any remaining Grey Star-specific examples, Willpower language, Magicks language, or Herb Pouch assumptions with Lone Wolf rules as the Book 1 audit progresses.
+> AA2 note: this workflow is now aimed at Lone Wolf Book 1 first. Use Book 1's Kai Disciplines, Gold Crowns, Meals, Backpack, Weapons, Special Items, Endurance, Combat Skill, and random-number rules as the vocabulary for new audit work.
 
 This is the Lone Wolf AA2 version of the full book audit standard.
 
@@ -8,7 +8,7 @@ Use this when the task is to:
 
 - read a Lone Wolf book from the local corpus
 - map routes and endings
-- find missing item, Magick, combat, and random-number rules
+- find missing item, Kai Discipline, combat, and random-number rules
 - create structured automation ledgers
 - propose route, exploration, story, and item achievements
 - leave repeatable local reports for later implementation work
@@ -41,7 +41,7 @@ For Lone Wolf book audits, the preferred source order is:
 1. local corpus under `books/lw/<book-code>/`
 2. local supporting pages in the same folder:
    - `gamerulz.htm`
-   - `powers.htm`
+   - `discplnz.htm`
    - `footnotz.htm`
    - `equipmnt.htm`
    - `action.htm`
@@ -65,16 +65,16 @@ See also:
 
 For each book, the audit should usually produce:
 
-- `GSBOOKX_AUTOMATION_LEDGER.md`
-- `GSBOOKX_ENDINGS_AND_ROUTE_FAMILIES.md`
-- `GSBOOKX_ROUTE_AUDIT.md`
-- `GSBOOKX_RULES_AND_ITEMS_AUDIT.md`
-- `GSBOOKX_COMBAT_AND_RANDOM_AUDIT.md`
-- `GSBOOKX_ACHIEVEMENT_CANDIDATES.md`
+- `LWBOOKX_AUTOMATION_LEDGER.md`
+- `LWBOOKX_ENDINGS_AND_ROUTE_FAMILIES.md`
+- `LWBOOKX_ROUTE_AUDIT.md`
+- `LWBOOKX_RULES_AND_ITEMS_AUDIT.md`
+- `LWBOOKX_COMBAT_AND_RANDOM_AUDIT.md`
+- `LWBOOKX_ACHIEVEMENT_CANDIDATES.md`
 
-These are local working reports and normally stay in `testing/lolw/`.
+These are local working reports and normally stay in `testing/logs/`.
 
-`GSBOOKX_AUTOMATION_LEDGER.md` is the build handoff. It should be structured enough that implementation can work from it without rereading the whole book.
+`LWBOOKX_AUTOMATION_LEDGER.md` is the build handoff. It should be structured enough that implementation can work from it without rereading the whole book.
 
 Generated sweep artifacts belong in `testing/tmp/`.
 
@@ -97,21 +97,21 @@ Start in the local corpus:
 
 - confirm the book with `title.htm`
 - read `gamerulz.htm`, `equipmnt.htm`, `action.htm`, `cmbtrulz.htm`, `crtable.htm`, `footnotz.htm`, and `errata.htm`
-- read `powers.htm`, `sage.htm`, and `crsumary.htm` when present
+- read `discplnz.htm`, `sage.htm`, and `crsumary.htm` when present
 - trace the adventure from `sect1.htm`
 
 Review the book with an eye toward:
 
 - branch points
-- Magick checks
+- Kai Discipline checks
 - item pickups
 - forced item loss or inventory constraints
-- Willpower and Endurance changes
+- Endurance, Combat Skill, Gold Crown, and inventory changes
 - special combat rules
 - random-number rolls
 - permanent penalties or bonuses
 - unique endings
-- route-check math that decides a legal destination, such as `END + WP`, `CS + WP`, a current-stat threshold, or a random roll plus current stats
+- route-check math that decides a legal destination, such as current END, current CS, a current-stat threshold, or a random roll plus current stats
 
 ### 2. Map Endings And Route Families
 
@@ -120,13 +120,13 @@ Identify:
 - the success ending
 - hard failure endings
 - major winning route families
-- important companion, item, or Magick dependencies
+- important item or Kai Discipline dependencies
 
 The goal is to understand the meaningful route families first, then fill in the smaller branches.
 
 ### 3. Run The Route Audit
 
-Create `GSBOOKX_ROUTE_AUDIT.md` as a required report, separate from the shorter endings summary.
+Create `LWBOOKX_ROUTE_AUDIT.md` as a required report, separate from the shorter endings summary.
 
 The route audit should record:
 
@@ -159,15 +159,17 @@ Useful Lone Wolf search terms include:
 - `erase`
 - `discard`
 - `Meal`
-- `Willpower`
 - `ENDURANCE`
 - `COMBAT SKILL`
+- `Gold Crowns`
+- `Meal`
+- `Kai Discipline`
+- `Weaponskill`
 - `Random Number Table`
 - `if you possess`
 - `if you have`
 - `if you lack`
 - `if you know`
-- `Wizard's Staff`
 - `turn to`
 
 Treat the sweep as a candidate generator, not as truth. The human audit must confirm context, timing, and whether the text describes an actual state change.
@@ -175,7 +177,7 @@ Treat the sweep as a candidate generator, not as truth. The human audit must con
 Before leaving each section, run the route-check pass:
 
 - Does the section ask the player to calculate a total, final score, or current-stat threshold before choosing a route?
-- Does the section ask for a random number and then add current END, WP, CS, item bonuses, or Magick bonuses?
+- Does the section ask for a random number and then add current END, CS, Gold Crowns, item bonuses, or Kai Discipline bonuses?
 - Does a same-section entry effect happen before the route check? If so, mark the route check as needing the entry effect applied first.
 - Can the result be represented in `data/book-route-checks.json` as a Choices-card route check, or is it already covered as a Section Roll helper?
 - Record the route-check formula, thresholds, legal destinations, timing, and app support status in the section audit or automation ledger.
@@ -214,8 +216,8 @@ Use consistent trigger timing labels:
 
 Scan for high-value automation candidates:
 
-- Magick-gated branches
-- Willpower spending and restoration
+- Kai Discipline-gated branches
+- Gold Crown, Meal, and inventory spending
 - item bonuses or special item behavior
 - section entry damage or healing
 - forced gains and losses
@@ -241,7 +243,7 @@ Recommended columns:
 - enemy name
 - enemy Combat Skill
 - enemy Endurance
-- Willpower/staff rules
+- Kai Discipline modifiers
 - weapon restrictions
 - evade rules
 - auto-win or auto-loss conditions
@@ -378,7 +380,7 @@ The repeat-book option should:
 - keep completed-book records and unlocked achievements
 - reset current section to section 1 of the completed book
 - reset Endurance to current maximum
-- reset Willpower to the stored book-start Willpower value
+- reset book-start resources such as Gold Crowns only when the book rules require it
 - reset current combat, death state, section checkpoints, and current-book stats for the new pass
 - preserve the ability to continue to the next book from the completed-book screen before repeating
 
@@ -402,7 +404,7 @@ Confirm the book and app data are structurally sound:
 
 Confirm every section has been accounted for:
 
-- every section is classified by type: story, route choice, loot, combat, stat change, meal, random roll, Magick check, gear loss/restore, death/failure, book completion, or special case
+- every section is classified by type: story, route choice, loot, combat, stat change, meal, random roll, Kai Discipline check, gear loss/restore, death/failure, book completion, or special case
 - every mechanical effect is recorded in the section audit or automation ledger
 - every ambiguity is either resolved with a user ruling or marked as manual/undecided
 - every combat and random-number section appears in the combat/random audit
@@ -417,12 +419,12 @@ For every recorded mechanic, confirm it has one of three outcomes:
 
 This includes:
 
-- END, WP, CS, Nobles changes
+- END, CS, Gold Crown changes
 - Meal rules
 - item gain/loss/use
-- Herb Pouch and Backpack handling
+- Backpack handling
 - status flags
-- Magick gates and costs
+- Kai Discipline gates and costs
 - random roll helpers
 - combat presets
 - death/recovery
@@ -449,7 +451,7 @@ Test every non-trivial mechanic outcome:
 - every random roll result band
 - every loot picker option
 - every status toggle
-- every WP-cost mode, including book-approved negative WP or END substitution when applicable
+- every book-approved payment, loss, or substitution mode
 - every death/failure ending style
 - every gear loss and gear restore path
 - every combat preset start
@@ -469,9 +471,8 @@ Run a small set of realistic full-route dry runs:
 - one route that exercises death/recovery
 - one route that exercises gear loss/restoration
 - one route that earns a story or discovery achievement
-- one low-Willpower route
 - one low-Endurance route
-- one important item/Magick-gated route
+- one important item/Kai Discipline-gated route
 - one repeat-book cleanup run from a completed-book state
 - book-specific edge-case routes found during the audit
 
@@ -497,7 +498,7 @@ Use a public guide structure like:
 3. Best first playthrough
 4. Paths worth knowing
 5. Items worth chasing or respecting
-6. Combat, Magick, and inventory tips
+6. Combat, Kai Discipline, and inventory tips
 7. Common mistakes
 8. Achievement cleanup
 9. Final recommendation
@@ -537,9 +538,9 @@ Document them anyway so they are not lost.
 
 Highest-value automation candidates are usually:
 
-- Willpower and Endurance changes
+- Endurance, Combat Skill, Gold Crown, and inventory changes
 - item gains and forced losses
-- Magick-gated prompts
+- Kai Discipline-gated prompts
 - special combat setup rules
 - reliable story achievement triggers
 - achievement auto-backfill from durable save data
@@ -549,15 +550,15 @@ Highest-value automation candidates are usually:
 
 Reports:
 
-- `GSBOOK1_*`
-- `GSBOOK2_*`
-- `GSBOOK3_*`
-- `GSBOOK4_*`
+- `LWBOOK1_*`
+- `LWBOOK2_*`
+- `LWBOOK3_*`
+- `LWBOOK4_*`
 
 Temporary sweep artifacts:
 
-- `gsbook1_source_sweep.json`
-- `gsbook1_source_inventory.json`
+- `lwbook1_source_sweep.json`
+- `lwbook1_source_inventory.json`
 
 ## Success Condition
 
