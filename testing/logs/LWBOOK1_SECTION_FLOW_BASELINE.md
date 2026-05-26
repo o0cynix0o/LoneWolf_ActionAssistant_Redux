@@ -45,7 +45,7 @@ This report records section numbers, graph counts, and audit classifications onl
 - `sourceRoutes` is the compact legal-link baseline used by the assistant.
 - `classification` is heuristic and marks candidates for the later human section automation audit.
 - 18 sections include confirmed optional loot buttons.
-- 2 sections include confirmed explicit loss-choice helpers.
+- 3 sections include confirmed explicit loss/exchange-choice helpers.
 - 29 sections include confirmed combat presets.
 - 20 sections include confirmed roll helpers.
 - 1 sections include confirmed staged roll helpers.

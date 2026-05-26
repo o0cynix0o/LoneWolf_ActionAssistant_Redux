@@ -12,7 +12,7 @@ Scope: issue #9 Kai Healing and explicit player-choice loss helper pass.
 - Added explicit loss-choice helpers for section 144 and section 277.
 - Section 144 prefers a chosen Backpack Item; if no Backpack Item is available, it falls back to a chosen Weapon.
 - Section 277 removes the chosen broken Weapon.
-- Loss-choice helpers are explicit buttons; the assistant does not choose the lost item for the player.
+- Loss-choice helpers are explicit buttons; the assistant does not choose the lost or exchanged item for the player.
 
 ## Verification
 
@@ -27,5 +27,6 @@ Scope: issue #9 Kai Healing and explicit player-choice loss helper pass.
 ## Remaining Risk
 
 - Section 21 staged random handling is now covered by the dedicated section 21 smoke test.
+- Section 307 weapon exchange is covered by the dedicated player-choice aftermath smoke test.
 - Additional player-choice aftermaths may surface during broader route playtesting.
 - The Healing helper is explicit rather than automatic; fully automatic timing remains intentionally avoided.

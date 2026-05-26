@@ -70,6 +70,7 @@ def loss_choice(
     summary: str,
     containers: list[str],
     fallback_containers: list[str] | None = None,
+    replacement: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     choice = {
         "id": choice_id,
@@ -79,6 +80,8 @@ def loss_choice(
     }
     if fallback_containers:
         choice["fallbackContainers"] = fallback_containers
+    if replacement:
+        choice["replacement"] = replacement
     return choice
 
 
@@ -310,7 +313,15 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "307": {
         "loot": [
             {"id": "307-meal", "label": "Take 1 Meal", "actions": [{"type": "add_item", "container": "backpack", "name": "Meal"}]},
-            {"id": "307-warhammer", "label": "Take Warhammer", "actions": [{"type": "add_item", "container": "weapon", "name": "Warhammer"}]},
+        ],
+        "lossChoices": [
+            loss_choice(
+                "307-warhammer-exchange",
+                "Exchange for Warhammer",
+                "Choose one carried Weapon to exchange for the Warhammer.",
+                ["weapon"],
+                replacement={"container": "weapon", "name": "Warhammer"},
+            )
         ]
     },
     "315": {
@@ -1161,7 +1172,7 @@ def render_report(artifact: dict[str, Any]) -> str:
             "- `sourceRoutes` is the compact legal-link baseline used by the assistant.",
             "- `classification` is heuristic and marks candidates for the later human section automation audit.",
             f"- {artifact['manualLootAuditCount']} sections include confirmed optional loot buttons.",
-            f"- {artifact['manualLossChoiceAuditCount']} sections include confirmed explicit loss-choice helpers.",
+            f"- {artifact['manualLossChoiceAuditCount']} sections include confirmed explicit loss/exchange-choice helpers.",
             f"- {artifact['manualCombatAuditCount']} sections include confirmed combat presets.",
             f"- {artifact['manualRollAuditCount']} sections include confirmed roll helpers.",
             f"- {artifact['manualStagedRollAuditCount']} sections include confirmed staged roll helpers.",

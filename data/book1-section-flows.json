@@ -6365,17 +6365,20 @@
               "name": "Meal"
             }
           ]
-        },
+        }
+      ],
+      "lossChoices": [
         {
-          "id": "307-warhammer",
-          "label": "Take Warhammer",
-          "actions": [
-            {
-              "type": "add_item",
-              "container": "weapon",
-              "name": "Warhammer"
-            }
-          ]
+          "id": "307-warhammer-exchange",
+          "label": "Exchange for Warhammer",
+          "summary": "Choose one carried Weapon to exchange for the Warhammer.",
+          "containers": [
+            "weapon"
+          ],
+          "replacement": {
+            "container": "weapon",
+            "name": "Warhammer"
+          }
         }
       ]
     },

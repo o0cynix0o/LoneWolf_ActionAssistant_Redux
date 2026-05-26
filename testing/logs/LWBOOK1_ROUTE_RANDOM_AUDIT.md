@@ -50,9 +50,11 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 - `testing/lwbook1_route_random_smoke.py` verifies representative roll, Kai, item, Gold, and END branches.
 - `testing/lwbook1_random_recovery_smoke.py` verifies representative same-section roll side effects and Laumspur behavior.
 - `testing/lwbook1_section21_staged_smoke.py` verifies first-roll success, second-roll recovery, final-roll success, and final-roll death.
+- `testing/lwbook1_player_choice_aftermath_smoke.py` verifies the section 307 weapon exchange helper.
 - `testing/logs/LWBOOK1_SECTION21_STAGED_ROLL_AUDIT.md` records the dedicated section 21 staged-roll pass.
+- `testing/logs/LWBOOK1_PLAYER_CHOICE_AUDIT.md` records the issue #11 player-choice aftermath pass.
 
 ## Remaining Work
 
-- Player-choice random aftermaths remain manual where the book asks the player to pick an item or weapon to lose.
+- Additional player-choice random aftermaths may surface during broader route playtesting.
 - Optional Kai choices with several non-Kai alternatives need more nuanced availability display before broad automation.

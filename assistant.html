@@ -1506,10 +1506,11 @@
         details.push(receiptDetail('How to do it', 'Vitals card: add 1 END, capped at maximum END. Apply it only once for this numbered section visit.'));
       } else if (kind === 'section loss') {
         const choice = arr(flow.LossChoices).find((item) => text(item.Id) === text(options.id)) || arr(flow.LossChoices)[0];
+        const replacement = choice?.Replacement || null;
         summary = `Manual Advice - ${text(choice?.Label, 'Choose lost item')}`;
-        title = 'Manual Loss Choice';
-        details.push(receiptDetail('Why', text(choice?.Summary, 'The section asks you to choose which carried item is lost.')));
-        details.push(receiptDetail('How to do it', 'Inventory tab: click Drop beside the Weapon or Backpack Item you choose to lose.'));
+        title = replacement ? 'Manual Exchange Choice' : 'Manual Loss Choice';
+        details.push(receiptDetail('Why', text(choice?.Summary, replacement ? 'The section asks you to choose which carried item is exchanged.' : 'The section asks you to choose which carried item is lost.')));
+        details.push(receiptDetail('How to do it', replacement ? `Inventory tab: drop the chosen item, then add ${text(replacement.Name, 'the replacement item')}.` : 'Inventory tab: click Drop beside the Weapon or Backpack Item you choose to lose.'));
       } else if (kind === 'section costs') {
         summary = 'Manual Advice - Section cost';
         title = 'Manual Section Cost';
@@ -3614,11 +3615,13 @@
         </div>
       ` : '';
       const lossRows = arr(flow.LossChoices).map((choice) => {
+        const replacement = choice.Replacement || null;
+        const actionLabel = replacement ? 'Exchange' : 'Remove';
         const candidateRows = arr(choice.Candidates).map((candidate) => `
           <div class="item-row">
             <small>${escapeHtml(candidate.Type === 'weapon' ? 'W' : 'B')}${escapeHtml(candidate.Slot)}</small>
             <span>${escapeHtml(candidate.Item)}</span>
-            ${choice.Ready ? modeActionButton(`data-section-loss="${escapeHtml(choice.Id)}:${escapeHtml(candidate.Type)}:${escapeHtml(candidate.Slot)}"`, 'Remove', 'section loss') : ''}
+            ${choice.Ready ? modeActionButton(`data-section-loss="${escapeHtml(choice.Id)}:${escapeHtml(candidate.Type)}:${escapeHtml(candidate.Slot)}"`, actionLabel, 'section loss') : ''}
           </div>
         `).join('');
         return `
@@ -3656,7 +3659,7 @@
         ${combatRows ? `<div class="panel"><h2>Section Combat</h2>${combatRows}</div>` : ''}
         ${lootRows ? `<div class="panel"><h2>Loot And Section Items</h2>${lootRows}</div>` : ''}
         ${healingRows ? `<div class="panel"><h2>Kai Healing</h2>${healingRows}</div>` : ''}
-        ${lossRows ? `<div class="panel"><h2>Choose Lost Item</h2>${lossRows}</div>` : ''}
+        ${lossRows ? `<div class="panel"><h2>Choose Inventory Change</h2>${lossRows}</div>` : ''}
         ${statusRows ? `<div class="panel"><h2>Status Flags</h2>${statusRows}</div>` : ''}
         ${wpPanel}
       `;

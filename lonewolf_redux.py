@@ -3252,9 +3252,10 @@ class LoneWolfReduxAssistant:
         primary = candidates_for(choice.get("containers"))
         if primary:
             return primary, "primary"
-        fallback = candidates_for(choice.get("fallbackContainers"))
-        if fallback:
-            return fallback, "fallback"
+        if choice.get("fallbackContainers"):
+            fallback = candidates_for(choice.get("fallbackContainers"))
+            if fallback:
+                return fallback, "fallback"
         return [], ""
 
     def loss_choice_payload(self, choice: dict[str, Any]) -> dict[str, Any]:
@@ -3262,11 +3263,13 @@ class LoneWolfReduxAssistant:
         applied_key = f"{self.current_visit_key()}:{choice_id}"
         applied = applied_key in as_list(self.automation.get("AppliedLossChoices"))
         candidates, source = self.loss_choice_candidates(choice)
+        replacement = choice.get("replacement") if isinstance(choice.get("replacement"), dict) else {}
+        choice_kind = "exchange" if replacement else "loss"
         blocked_reason = ""
         if applied:
             blocked_reason = "Loss choice already applied for this section visit."
         elif not candidates:
-            blocked_reason = "No eligible carried item is available for this loss."
+            blocked_reason = f"No eligible carried item is available for this {choice_kind}."
 
         return {
             "Id": choice_id,
@@ -3277,6 +3280,10 @@ class LoneWolfReduxAssistant:
             "BlockedReason": blocked_reason,
             "Source": source,
             "Candidates": candidates,
+            "Replacement": {
+                "Container": str(replacement.get("container") or ""),
+                "Name": str(replacement.get("name") or ""),
+            } if replacement else None,
         }
 
     def current_loss_choices_payload(self, entry: dict[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -3324,6 +3331,16 @@ class LoneWolfReduxAssistant:
             print(f"Item not found: {selection}")
             return
 
+        messages = [f"removed {removed}"]
+        replacement = choice.get("replacement") if isinstance(choice.get("replacement"), dict) else {}
+        replacement_name = str(replacement.get("name") or "")
+        if replacement_name:
+            replacement_container = str(replacement.get("container") or candidate.get("Type") or "")
+            if self.add_inventory_item(replacement_container, replacement_name):
+                messages.append(f"added {replacement_name}")
+            else:
+                messages.append(f"could not add {replacement_name}")
+
         applied = as_list(self.automation.get("AppliedLossChoices"))
         applied_key = f"{self.current_visit_key()}:{choice_id}"
         applied.append(applied_key)
@@ -3337,12 +3354,12 @@ class LoneWolfReduxAssistant:
                 "BookNumber": int(self.character["BookNumber"]),
                 "Section": int(self.state["CurrentSection"]),
                 "Summary": str(choice.get("summary") or choice_id),
-                "Messages": [f"removed {removed}"],
+                "Messages": messages,
             }
         )
         self.automation["Journal"] = journal[-100:]
         self.autosave()
-        print(f"Loss choice: removed {removed}")
+        print(f"Loss choice: {'; '.join(messages)}")
 
     def current_section_flow_payload(self) -> dict[str, Any]:
         book_number = int(self.character["BookNumber"])
@@ -3997,9 +4014,11 @@ class LoneWolfReduxAssistant:
 
         loss_choices = [choice for choice in as_list(flow.get("LossChoices")) if isinstance(choice, dict)]
         if loss_choices:
-            panel_header("Choose Lost Item", accent=SCREEN_ACCENTS["inventory"])
+            panel_header("Choose Inventory Change", accent=SCREEN_ACCENTS["inventory"])
             for choice in loss_choices:
                 label = str(choice.get("Label") or choice.get("Id") or "Loss choice")
+                replacement = choice.get("Replacement") if isinstance(choice.get("Replacement"), dict) else {}
+                replacement_name = str(replacement.get("Name") or "")
                 if not bool(choice.get("Ready")):
                     panel_row("Wait", f"{label}: {choice.get('BlockedReason')}", label_width=12)
                     continue
@@ -4007,9 +4026,12 @@ class LoneWolfReduxAssistant:
                 for candidate in as_list(choice.get("Candidates")):
                     if isinstance(candidate, dict):
                         item_type = str(candidate.get("Type") or "")
+                        detail = str(candidate.get("Item") or "")
+                        if replacement_name:
+                            detail = f"{detail} -> {replacement_name}"
                         panel_row(
                             f"{item_type} {candidate.get('Slot')}",
-                            str(candidate.get("Item") or ""),
+                            detail,
                             label_width=14,
                         )
             panel_footer()

@@ -26,11 +26,11 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Remaining route aftermaths where the book asks the player to choose which item or weapon is lost.
+- Any remaining route aftermaths where the book asks the player to choose which item or weapon is lost or exchanged.
 - Any remaining staged random edge cases found during broader route playtesting.
 - Broader route coverage outside the checked successful and early branch paths.
 
@@ -117,7 +117,7 @@ Issue #8 changed the random/recovery baseline:
 
 Issue #9 changed the Healing/loss-choice baseline:
 
-- `data\book1-section-flows.json` includes 2 confirmed explicit loss-choice helpers, currently section 144 and section 277.
+- The issue #9 pass introduced 2 confirmed explicit loss-choice helpers, section 144 and section 277.
 - The web and CLI assistants expose a Kai Healing helper for characters with Healing; it restores 1 END, caps at maximum END, and can apply once per section visit.
 - Healing is blocked in sections with audited combat presets to avoid applying it during combat timing.
 - Section 144 lets the player choose the stolen Backpack Item, falling back to a chosen Weapon if no Backpack Item is available.
@@ -133,6 +133,15 @@ Issue #10 changed the staged roll baseline:
 - Repeated Roll clicks after the staged helper completes return the stored result instead of changing the stage or reapplying death effects.
 - `testing\lwbook1_section21_staged_smoke.py` verifies first-roll success, second-roll recovery, final-roll success, and final-roll death.
 - `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` and `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` record the issue #10 coverage.
+
+Issue #11 changed the player-choice aftermath baseline:
+
+- `data\book1-section-flows.json` includes 3 confirmed explicit loss/exchange helpers, currently section 144, section 277, and section 307.
+- Loss-choice helpers can now carry a replacement item, letting one button remove the selected carried item and add the replacement with once-per-visit protection.
+- Section 307 no longer treats the Warhammer as ordinary loot; the player chooses which carried Weapon to exchange for it.
+- The section 307 Meal remains a separate ordinary loot button.
+- `testing\lwbook1_player_choice_aftermath_smoke.py` verifies the section 307 weapon exchange, duplicate protection, and no-Weapon block.
+- `testing\logs\LWBOOK1_PLAYER_CHOICE_AUDIT.md` records the issue #11 coverage.
 
 ## GitHub Workflow
 
