@@ -26,12 +26,12 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
 - Multi-roll sections and route-specific random side effects.
-- Broader route coverage outside the checked successful Book 1 path.
+- Broader route coverage outside the checked successful and early branch paths.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -96,6 +96,14 @@ Issue #6 changed the playtest baseline:
 - The route uses a Book 1 character with Camouflage, Sixth Sense, Tracking, Hunting, and Healing.
 - The test verifies the section 303 Camouflage route check, the section 237 roll helper, Hunting preserving the Meal at section 168, mid-route save/load, Book 1 completion at section 350, and death checkpoint rewind behavior.
 - `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` records the checked route and remaining playtest risk.
+
+Issue #7 changed the branch playtest baseline:
+
+- `testing\lwbook1_branch_playtest.py` adds short legal-route playtests outside the issue #6 success path.
+- The early combat branch follows `1 -> 85 -> 229`, verifies illegal route blocking from section 85, loads the section 229 Kraan preset, resolves victory, and confirms the assistant waits for the player to choose section 267 or 125.
+- The death branch follows `1 -> 275 -> 74 -> 281 -> 311 -> 47 -> 322 -> 17 -> 53`, verifies the section 17 roll helper, triggers terminal death, and rewinds to section 17.
+- Inventory/stat branches cover legal-route Meal consumption without Hunting at section 130, Gold Crown gain at section 33, and weapon loss at section 274.
+- `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` records the branch routes and remaining playtest risk.
 
 ## GitHub Workflow
 
