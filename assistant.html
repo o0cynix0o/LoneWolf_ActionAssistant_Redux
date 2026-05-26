@@ -1,0 +1,4430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lone Wolf - Web Assistant</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: #10130e;
+      color: #efe8d0;
+      font-family: Arial, sans-serif;
+    }
+    button, input, select {
+      font: inherit;
+    }
+    button {
+      min-height: 30px;
+      border: 1px solid #6d5f35;
+      border-radius: 4px;
+      background: #202617;
+      color: #f2d27a;
+      cursor: pointer;
+    }
+    button:hover { border-color: #d1b865; background: #26301b; }
+    button.active { background: #f2d27a; color: #171b12; border-color: #f2d27a; }
+    button.danger { color: #ffb4a8; border-color: #7e4038; }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    input, select {
+      min-height: 30px;
+      border: 1px solid #6d5f35;
+      border-radius: 4px;
+      background: #10130e;
+      color: #efe8d0;
+      padding: 0.3rem 0.45rem;
+      min-width: 0;
+    }
+    header {
+      height: 50px;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: #171b12;
+      border-bottom: 1px solid #6d5f35;
+    }
+    header a {
+      color: #b8ad87;
+      text-decoration: none;
+      font-size: 0.82rem;
+    }
+    h1 {
+      margin: 0;
+      color: #f2d27a;
+      font: 700 1rem Georgia, "Times New Roman", serif;
+      text-transform: uppercase;
+    }
+    .spacer { flex: 1; }
+    .status-line {
+      color: #b8ad87;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .mode-indicator {
+      min-height: 24px;
+      padding: 0.22rem 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #4e4528;
+      border-radius: 999px;
+      background: #10130e;
+      color: #f2d27a;
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+    .workspace {
+      height: calc(100vh - 50px);
+      display: grid;
+      grid-template-columns: minmax(430px, 1fr) minmax(460px, 44vw);
+      overflow: hidden;
+    }
+    .reader-pane, .app-pane {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .reader-pane {
+      border-right: 1px solid #6d5f35;
+      background: #d8cfac;
+    }
+    .toolbar {
+      min-height: 42px;
+      padding: 0.42rem 0.55rem;
+      background: #171b12;
+      border-bottom: 1px solid #4e4528;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .toolbar button {
+      padding: 0.25rem 0.52rem;
+      font-size: 0.76rem;
+      line-height: 1;
+    }
+    .reader-title {
+      margin-left: auto;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: min(38vw, 360px);
+    }
+    #book-frame {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: #ffffe6;
+    }
+    .app-pane {
+      background: #10130e;
+      position: relative;
+    }
+    .status-grid {
+      margin: 0.65rem 2.85rem 0 0.65rem;
+      padding: 0.55rem;
+      display: grid;
+      grid-template-columns: minmax(210px, 2.3fr) repeat(4, minmax(72px, 0.65fr));
+      gap: 0.5rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #12160f;
+    }
+    .stat-card, .panel, .item-row {
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #171b12;
+    }
+    .stat-card {
+      padding: 0.55rem;
+      min-height: 58px;
+    }
+    .stat-card span {
+      display: block;
+      color: #aeb091;
+      font-size: 0.72rem;
+      margin-bottom: 0.2rem;
+    }
+    .stat-card strong {
+      display: block;
+      color: #f2d27a;
+      font-size: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .stat-card.status-book strong {
+      line-height: 1.15;
+      white-space: normal;
+    }
+    .app-menu-button,
+    .card-collapse-button,
+    .card-menu-button {
+      width: 20px;
+      height: 20px;
+      min-height: 20px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 0;
+      line-height: 0;
+    }
+    .app-menu-button::before,
+    .card-menu-button::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+    .card-collapse-button::before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid currentColor;
+    }
+    .app-menu-button:hover,
+    .card-collapse-button:hover,
+    .card-menu-button:hover {
+      background: #26301b;
+      color: #ffffff;
+    }
+    .app-menu-button {
+      position: absolute;
+      top: 0.82rem;
+      right: 0.82rem;
+      z-index: 35;
+    }
+    .menu-popover {
+      padding: 0.45rem;
+      display: grid;
+      gap: 0.35rem;
+      border: 1px solid #6d5f35;
+      border-radius: 6px;
+      background: #171b12;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      z-index: 40;
+    }
+    .menu-popover[hidden] {
+      display: none;
+    }
+    .app-menu-popover {
+      position: absolute;
+      top: 2.45rem;
+      right: 0.65rem;
+      width: min(310px, calc(100% - 1.3rem));
+    }
+    .menu-popover button {
+      width: 100%;
+      min-height: 28px;
+      padding: 0.22rem 0.45rem;
+      text-align: left;
+      font-size: 0.78rem;
+    }
+    .menu-heading {
+      color: #aeb091;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+    .menu-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.3rem;
+    }
+    .menu-row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .menu-row button {
+      text-align: center;
+    }
+    .tabs {
+      margin: 0.55rem 0.65rem 0;
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #171b12;
+    }
+    .quick-panel {
+      padding: 0.55rem 0.65rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 0.5rem;
+      background: #12160f;
+      flex-shrink: 0;
+    }
+    .top-dashboard {
+      padding: 0.55rem 0.65rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.5rem;
+      border-bottom: 1px solid #4e4528;
+      background: #12160f;
+      flex-shrink: 0;
+      max-height: 34vh;
+      overflow: auto;
+    }
+    .top-dashboard .panel {
+      margin-bottom: 0;
+      padding: 0.5rem;
+    }
+    .top-dashboard .panel-title-row {
+      margin-bottom: 0.35rem;
+      align-items: start;
+    }
+    .top-dashboard .panel-title-row h2 {
+      font: 700 0.76rem Arial, sans-serif;
+      text-transform: uppercase;
+      color: #aeb091;
+    }
+    .top-dashboard .panel-tools button {
+      min-height: 22px;
+      padding: 0.08rem 0.28rem;
+      font-size: 0.68rem;
+    }
+    .top-dashboard .wide {
+      grid-column: span 2;
+    }
+    .top-dashboard .extra-wide {
+      grid-column: span 3;
+    }
+    .top-dashboard .dashboard-card.size-compact {
+      grid-column: span 1;
+    }
+    .top-dashboard .dashboard-card.size-full {
+      grid-column: 1 / -1;
+    }
+    .status-value {
+      color: #f2d27a;
+      font-weight: 700;
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
+    .status-subvalue {
+      margin-top: 0.15rem;
+      color: #efe8d0;
+      font-size: 0.86rem;
+      overflow-wrap: anywhere;
+    }
+    .layout-controls {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .layout-controls select {
+      flex: 1 1 190px;
+    }
+    .quick-column {
+      min-width: 0;
+      display: grid;
+      align-content: start;
+      gap: 0.35rem;
+    }
+    .quick-card {
+      padding: 0.5rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #171b12;
+    }
+    .quick-title {
+      color: #aeb091;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+    .quick-panel .controls {
+      gap: 0.28rem;
+    }
+    .quick-panel input,
+    .quick-panel select {
+      min-height: 28px;
+      font-size: 0.78rem;
+    }
+    .quick-panel button {
+      min-height: 28px;
+      padding: 0.2rem 0.45rem;
+      font-size: 0.76rem;
+    }
+    .quick-stat-label {
+      min-width: 38px;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+    }
+    .quick-note {
+      color: #b8ad87;
+      font-size: 0.72rem;
+      line-height: 1.25;
+    }
+    .mode-note {
+      padding: 0.45rem 0.55rem;
+      border: 1px dashed #6d5f35;
+      border-radius: 5px;
+      background: #12160f;
+      color: #d8d0b8;
+      font-size: 0.76rem;
+      line-height: 1.3;
+    }
+    .quick-drop-list {
+      max-height: 82px;
+      overflow: auto;
+      padding-right: 0.15rem;
+    }
+    .quick-drop-list .item-row {
+      min-height: 28px;
+      margin-bottom: 0.25rem;
+      padding: 0.22rem 0.35rem;
+    }
+    .quick-drop-list .item-row button {
+      min-width: 54px;
+    }
+    .tabs button {
+      padding: 0.28rem 0.55rem;
+      font-size: 0.78rem;
+    }
+    #view {
+      flex: 1;
+      overflow: auto;
+      padding: 0.65rem;
+    }
+    #view.view-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+      gap: 0.65rem;
+    }
+    #view.view-card-grid > .panel {
+      margin-bottom: 0;
+    }
+    .dashboard-card {
+      position: relative;
+    }
+    .dashboard-card[hidden],
+    .quick-card[hidden],
+    .tabs[hidden] {
+      display: none !important;
+    }
+    .dashboard-card.card-size-small {
+      grid-column: auto;
+      padding: 0.55rem;
+    }
+    .dashboard-card.card-size-medium {
+      grid-column: auto;
+    }
+    .dashboard-card.card-size-large {
+      grid-column: 1 / -1;
+    }
+    .quick-panel .dashboard-card.card-size-large,
+    .tabs.dashboard-card.card-size-large {
+      grid-column: 1 / -1;
+    }
+    .card-menu-button {
+      position: absolute;
+      top: 0.22rem;
+      right: 0.35rem;
+      z-index: 25;
+    }
+    .card-collapse-button {
+      position: absolute;
+      top: 0.22rem;
+      right: 1.75rem;
+      z-index: 25;
+    }
+    .quick-panel .card-menu-button {
+      top: -0.08rem;
+    }
+    .quick-panel .card-collapse-button {
+      top: -0.08rem;
+    }
+    .card-menu {
+      position: absolute;
+      top: 1.9rem;
+      right: 0.35rem;
+      width: min(210px, calc(100% - 0.7rem));
+    }
+    .dashboard-card > h2,
+    .dashboard-card > .section-subtitle,
+    .dashboard-card .combat-meter-title-row {
+      padding-right: 3.35rem;
+    }
+    .dashboard-card [data-card-help] {
+      cursor: help;
+    }
+    .card-collapsed-title {
+      display: none;
+      min-height: 20px;
+      padding-right: 3.35rem;
+      color: #f2d27a;
+      font: 700 0.82rem Georgia, "Times New Roman", serif;
+      line-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .dashboard-card.card-collapsed {
+      min-height: 34px;
+    }
+    .dashboard-card.card-collapsed > :not(.card-collapse-button):not(.card-menu-button):not(.card-menu):not(.card-collapsed-title) {
+      display: none !important;
+    }
+    .dashboard-card.card-collapsed > .card-collapsed-title {
+      display: block;
+    }
+    .dashboard-card.card-collapsed > .card-collapse-button::before {
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 6px solid currentColor;
+      border-right: 0;
+    }
+    .sheet-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+      gap: 0.65rem;
+      align-items: start;
+    }
+    .sheet-layout .panel,
+    .layout-bar {
+      margin-bottom: 0;
+    }
+    .dashboard-card.wide {
+      grid-column: 1 / -1;
+    }
+    .sheet-layout .dashboard-card.size-compact {
+      grid-column: auto;
+    }
+    .sheet-layout .dashboard-card.size-full {
+      grid-column: 1 / -1;
+    }
+    .dashboard-card.is-dragging {
+      opacity: 0.55;
+    }
+    .dashboard-card.drag-over {
+      border-color: #d1b865;
+      outline: 1px solid #d1b865;
+    }
+    .layout-bar {
+      margin-bottom: 0.65rem;
+      padding: 0.45rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #171b12;
+    }
+    .layout-bar select {
+      flex: 0 1 220px;
+    }
+    .panel-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      margin-bottom: 0.65rem;
+    }
+    .panel-title-row h2 {
+      margin: 0;
+    }
+    .panel-tools {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .panel-tools button {
+      min-height: 24px;
+      padding: 0.12rem 0.35rem;
+      font-size: 0.72rem;
+    }
+    .sheet-choices {
+      min-height: 128px;
+    }
+    .sheet-map {
+      min-height: 260px;
+    }
+    .map-card-frame {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid #4e4528;
+      border-radius: 5px;
+      background: #080b06;
+    }
+    .map-card-frame img {
+      display: block;
+      width: 100%;
+      max-height: min(62vh, 680px);
+      height: auto;
+      object-fit: contain;
+    }
+    .map-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 0.55rem;
+    }
+    .map-card-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid #6e5c2d;
+      border-radius: 4px;
+      background: #202618;
+      color: #f2d27a;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .map-card-actions a:hover {
+      background: #2a321f;
+    }
+    .choice-group {
+      margin-top: 0.55rem;
+    }
+    .choice-group:first-of-type {
+      margin-top: 0;
+    }
+    .choice-title {
+      margin: 0 0 0.35rem;
+      color: #d8d0b8;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+    .panel {
+      padding: 0.7rem;
+      margin-bottom: 0.65rem;
+    }
+    .panel-danger {
+      border-color: #7e4038;
+      background: #1d1512;
+    }
+    .panel h2 {
+      margin: 0 0 0.65rem;
+      color: #f2d27a;
+      font: 700 1rem Georgia, "Times New Roman", serif;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+    .field {
+      display: grid;
+      gap: 0.25rem;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+    }
+    .check-field {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 0.35rem;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+    }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 0.35rem;
+    }
+    .check-option {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.45rem;
+      border: 1px solid #4e4528;
+      border-radius: 4px;
+      background: #10130e;
+      color: #efe8d0;
+    }
+    .check-option input {
+      min-height: 0;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+    }
+    .value {
+      color: #efe8d0;
+      font-size: 0.92rem;
+    }
+    .controls {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .controls input, .controls select { flex: 1; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 34px;
+      padding: 0.35rem 0.45rem;
+      margin-bottom: 0.35rem;
+    }
+    .item-row span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .item-row span.wrap { overflow: visible; text-overflow: clip; white-space: normal; }
+    .item-row small { color: #aeb091; }
+    .achievement-row {
+      align-items: flex-start;
+    }
+    .achievement-row.locked {
+      opacity: 0.72;
+    }
+    .achievement-row strong {
+      display: block;
+      color: #efe8d0;
+      font-size: 0.92rem;
+    }
+    .achievement-row p {
+      margin: 0.15rem 0 0;
+      color: #aeb091;
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+    .achievement-row small.unlocked {
+      color: #f2d27a;
+    }
+    .section-subtitle {
+      margin: 0 0 0.35rem;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+    .muted {
+      color: #aeb091;
+      font-size: 0.82rem;
+    }
+    .death-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+    .death-option {
+      min-width: 0;
+      padding: 0.65rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #12160f;
+    }
+    .death-option h3 {
+      margin: 0 0 0.35rem;
+      color: #efe8d0;
+      font-size: 0.95rem;
+    }
+    .death-option p {
+      margin: 0 0 0.55rem;
+      color: #aeb091;
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+    .death-option button {
+      width: 100%;
+    }
+    .combat-actions {
+      margin-bottom: 0.55rem;
+    }
+    .combat-meter-panel {
+      border-color: #7e4038;
+    }
+    .combat-meter-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+    .combat-meter-title-row h2 {
+      margin: 0;
+    }
+    .combat-meter-ratio {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #aeb091;
+      font-size: 0.78rem;
+    }
+    .combat-meter-ratio span {
+      text-transform: uppercase;
+    }
+    .combat-meter-ratio strong {
+      color: #f2d27a;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 1rem;
+    }
+    .combat-meter-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+    .combat-meter-card {
+      min-width: 0;
+      padding: 0.65rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #12160f;
+    }
+    .combat-meter-header,
+    .combat-meter-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.65rem;
+    }
+    .combat-meter-header h3 {
+      margin: 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      color: #efe8d0;
+      font-size: 0.95rem;
+    }
+    .combat-meter-cs {
+      color: #8fd0e6;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+    .combat-meter-meta {
+      margin-top: 0.45rem;
+      color: #aeb091;
+      font-size: 0.76rem;
+    }
+    .combat-meter-meta strong {
+      color: #efe8d0;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .combat-meter-track {
+      height: 0.72rem;
+      margin-top: 0.45rem;
+      overflow: hidden;
+      border: 1px solid #6d5f35;
+      border-radius: 999px;
+      background: #0c100b;
+    }
+    .combat-meter-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 160ms ease;
+    }
+    .combat-meter-fill.meter-good { background: #5f9d57; }
+    .combat-meter-fill.meter-warning { background: #d1b865; }
+    .combat-meter-fill.meter-danger { background: #b35a4b; }
+    .combat-meter-note,
+    .combat-meter-notes {
+      margin-top: 0.45rem;
+      color: #aeb091;
+      font-size: 0.78rem;
+    }
+    .combat-meter-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .combat-meter-notes span {
+      padding: 0.18rem 0.45rem;
+      border: 1px solid #4e4528;
+      border-radius: 999px;
+    }
+    .history-meta {
+      color: #aeb091;
+      font-size: 0.8rem;
+    }
+    .message {
+      min-height: 34px;
+      padding: 0.55rem 0.65rem;
+      border-top: 1px solid #4e4528;
+      color: #d8d0b8;
+      background: #171b12;
+      font-size: 0.82rem;
+    }
+    .message.event-receipt {
+      cursor: pointer;
+      outline: none;
+    }
+    .message.event-receipt:hover,
+    .message.event-receipt:focus-visible {
+      background: #202617;
+    }
+    .receipt-summary {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 18px;
+    }
+    .receipt-summary span:first-child {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .receipt-toggle {
+      width: 0;
+      height: 0;
+      border-left: 5px solid #ffffff;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      flex: 0 0 auto;
+    }
+    .message.expanded .receipt-toggle {
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #ffffff;
+      border-bottom: 0;
+    }
+    .receipt-detail {
+      margin-top: 0.55rem;
+      padding-top: 0.55rem;
+      display: grid;
+      gap: 0.38rem;
+      border-top: 1px solid #4e4528;
+    }
+    .receipt-detail-row {
+      display: grid;
+      grid-template-columns: minmax(84px, 0.28fr) minmax(0, 1fr);
+      gap: 0.55rem;
+    }
+    .receipt-detail-row strong {
+      color: #f2d27a;
+      font-weight: 700;
+    }
+    .receipt-detail-row span {
+      overflow-wrap: anywhere;
+    }
+    .toast-stack {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0 0.65rem 0.55rem;
+      pointer-events: none;
+    }
+    .achievement-toast {
+      justify-self: end;
+      width: min(420px, 100%);
+      padding: 0.55rem 0.7rem;
+      border: 1px solid #d1b865;
+      border-radius: 6px;
+      background: #202617;
+      color: #efe8d0;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      pointer-events: auto;
+    }
+    .achievement-toast small {
+      display: block;
+      margin-bottom: 0.18rem;
+      color: #f2d27a;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+    .achievement-toast strong {
+      display: block;
+      overflow-wrap: anywhere;
+      font-size: 0.95rem;
+    }
+    .cli-terminal-panel {
+      height: 100%;
+      min-height: 420px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 0.55rem;
+    }
+    .cli-terminal-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+    .cli-terminal-toolbar .mode-note {
+      flex: 1 1 260px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+    .cli-terminal-status {
+      color: #aeb091;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    #cliTerminalContainer {
+      min-height: 360px;
+      height: 100%;
+      padding: 0.45rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #050704;
+      overflow: hidden;
+    }
+    #cliTerminalContainer .xterm {
+      height: 100%;
+    }
+    .file-mode-lock {
+      width: min(820px, calc(100% - 32px));
+      margin: 12vh auto;
+      padding: 1.2rem;
+      border: 1px solid #6d5f35;
+      border-radius: 6px;
+      background: #171b12;
+      color: #efe8d0;
+      line-height: 1.5;
+    }
+    .file-mode-lock h1 {
+      margin-bottom: 0.8rem;
+      text-transform: none;
+      font-size: 1.35rem;
+    }
+    .file-mode-lock code {
+      display: block;
+      margin: 0.8rem 0;
+      padding: 0.75rem;
+      border: 1px solid #4e4528;
+      border-radius: 5px;
+      background: #10130e;
+      color: #f2d27a;
+      font-family: Consolas, "Courier New", monospace;
+      overflow-wrap: anywhere;
+    }
+    @media (max-width: 980px) {
+      body { height: auto; overflow: auto; }
+      .workspace { height: auto; min-height: calc(100vh - 50px); display: flex; flex-direction: column; }
+      .reader-pane { min-height: 50vh; border-right: 0; border-bottom: 1px solid #6d5f35; }
+      .app-pane { min-height: 50vh; }
+      .top-dashboard { grid-template-columns: 1fr; max-height: none; }
+      .top-dashboard .wide,
+      .top-dashboard .extra-wide { grid-column: auto; }
+      .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #view.view-card-grid { grid-template-columns: 1fr; }
+      .combat-meter-grid { grid-template-columns: 1fr; }
+      .death-options { grid-template-columns: 1fr; }
+      .sheet-layout { grid-template-columns: 1fr; }
+      .dashboard-card.wide { grid-column: auto; }
+      .quick-panel { grid-template-columns: 1fr; }
+      .reader-title { margin-left: 0; flex-basis: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" target="_top">Home</a>
+    <h1>Lone Wolf</h1>
+    <div class="spacer"></div>
+    <div class="mode-indicator" id="modeIndicator">Auto Mode</div>
+    <div class="status-line" id="serverStatus">Loading...</div>
+  </header>
+
+  <main class="workspace">
+    <section class="reader-pane" aria-label="Book reader">
+      <div class="toolbar">
+        <button class="book-button" type="button" data-book="1">Book 1</button>
+        <button class="book-button" type="button" data-book="2">Book 2</button>
+        <button class="book-button" type="button" data-book="3">Book 3</button>
+        <button class="book-button" type="button" data-book="4">Book 4</button>
+        <button type="button" id="currentBtn">Current</button>
+        <button type="button" id="titleBtn">Title</button>
+        <span class="reader-title" id="readerTitle">Loading...</span>
+      </div>
+      <iframe id="book-frame" name="book-frame" title="Lone Wolf book"></iframe>
+    </section>
+
+    <section class="app-pane" aria-label="Lone Wolf web assistant">
+      <button class="app-menu-button" type="button" id="appMenuButton" data-app-menu-toggle aria-label="Assistant menu" title="Assistant menu"></button>
+      <div class="menu-popover app-menu-popover" id="appMenu" hidden></div>
+      <div class="status-grid" id="statusGrid"></div>
+      <section class="quick-panel" id="quickPanel" aria-label="Quick actions"></section>
+      <nav class="tabs" id="tabs"></nav>
+      <section id="view"></section>
+      <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+      <div class="message" id="message">Ready.</div>
+    </section>
+  </main>
+
+  <script>
+    if (window.location.protocol === 'file:') {
+      window.LONEWOLF_REDUX_FILE_MODE_BLOCKED = true;
+      document.body.innerHTML = `
+        <main class="file-mode-lock">
+          <h1>Start Lone Wolf From Localhost</h1>
+          <p>This assistant is a local web app, not a standalone file page. Opening <code>assistant.html</code> directly can make browser links resolve against your drive root.</p>
+          <p>Start the server first:</p>
+          <code>powershell -ExecutionPolicy Bypass -File "C:\\Scripts\\LoneWolf_ActionAssistant_Redux\\Launch-LoneWolfRedux.ps1"</code>
+          <p>Then open:</p>
+          <code>http://localhost:8797/assistant.html</code>
+        </main>
+      `;
+      throw new Error('Lone Wolf assistant must be opened from localhost.');
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script>
+    if (window.LONEWOLF_REDUX_FILE_MODE_BLOCKED) {
+      throw new Error('Lone Wolf assistant must be opened from localhost.');
+    }
+
+    const books = [
+      { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 }
+    ];
+    const lesserMagicks = ['Sorcery', 'Enchantment', 'Elementalism', 'Alchemy', 'Prophecy', 'Psychomancy', 'Evocation'];
+    const higherMagicks = ['Thaumaturgy', 'Telergy', 'Physiurgy', 'Theurgy', 'Visionary', 'Necromancy'];
+    const views = [
+      ['sheet', 'Sheet'],
+      ['inventory', 'Inventory'],
+      ['magicks', 'Magicks'],
+      ['sections', 'Sections'],
+      ['combat', 'Combat'],
+      ['achievements', 'Achievements'],
+      ['saves', 'Saves'],
+      ['notes', 'Notes']
+    ];
+
+    const bookFrame = document.getElementById('book-frame');
+    const readerTitle = document.getElementById('readerTitle');
+    const serverStatus = document.getElementById('serverStatus');
+    const statusGrid = document.getElementById('statusGrid');
+    const quickPanel = document.getElementById('quickPanel');
+    const tabs = document.getElementById('tabs');
+    const view = document.getElementById('view');
+    const toastStack = document.getElementById('toastStack');
+    const message = document.getElementById('message');
+    const appMenu = document.getElementById('appMenu');
+    const modeIndicator = document.getElementById('modeIndicator');
+    let app = null;
+    let activeView = 'sheet';
+    let activeBook = 1;
+    let activeSection = null;
+    let draggedWidget = '';
+    let activeCardMenu = '';
+    let bookFiles = { Installed: true, Books: [] };
+    let currentReceipt = { summary: 'Ready.', details: [] };
+    let receiptExpanded = false;
+    const playModeKey = 'lonewolf_redux.mode';
+    const playModes = ['auto', 'manual', 'cli'];
+    let playMode = normalizePlayMode(localStorage.getItem(playModeKey));
+    let cliTerminal = null;
+    let cliFitAddon = null;
+    let cliSocket = null;
+    let cliResizeHandler = null;
+    const topLayoutKey = 'lonewolf_redux.top.layout.v1';
+    const topSizeKey = 'lonewolf_redux.top.sizes.v1';
+    const sheetLayoutKey = 'lonewolf_redux.sheet.layout.v1';
+    const sheetSizeKey = 'lonewolf_redux.sheet.sizes.v1';
+    const cardLayoutPrefix = 'lonewolf_redux.cards.layout.';
+    const cardSizePrefix = 'lonewolf_redux.cards.size.';
+    const cardClosedPrefix = 'lonewolf_redux.cards.closed.';
+    const cardCollapsedPrefix = 'lonewolf_redux.cards.collapsed.';
+    const cardLabelPrefix = 'lonewolf_redux.cards.labels.';
+    const uiPreferenceStaticKeys = [topLayoutKey, topSizeKey, sheetLayoutKey, sheetSizeKey];
+    const uiPreferencePrefixes = [cardLayoutPrefix, cardSizePrefix, cardClosedPrefix, cardCollapsedPrefix, cardLabelPrefix];
+    const sizeOrder = ['compact', 'normal', 'full'];
+    const sizeLabels = { compact: 'Compact', normal: 'Normal', full: 'Full' };
+    let uiPreferencesReady = false;
+    let uiPreferenceSaveTimer = null;
+    let uiPreferenceSaveSuspended = false;
+    const topWidgets = [
+      ['page-layout', 'Page Layout'],
+      ['status-book', 'Book'],
+      ['status-section', 'Section'],
+      ['status-end', 'END'],
+      ['status-wp', 'WP'],
+      ['status-cs', 'CS'],
+      ['quick-section', 'Section Actions'],
+      ['quick-vitals', 'Vitals'],
+      ['quick-add', 'Add Item'],
+      ['quick-drop', 'Drop Item'],
+      ['tabs', 'Tabs'],
+      ['sheet-layout', 'Sheet Layout']
+    ];
+    const sheetWidgets = [
+      ['action', 'Action Chart'],
+      ['choices', 'Choices'],
+      ['new', 'New Character'],
+      ['stored', 'Stored Gear']
+    ];
+
+    function bookByNumber(number) {
+      return books.find((book) => book.number === Number(number)) || books[0];
+    }
+
+    function currentCharacter() { return app.state.Character; }
+    function currentInventory() { return app.state.Inventory; }
+    function currentCombat() { return app.state.Combat; }
+    function currentFlow() { return app.sectionFlow || {}; }
+    function currentDeath() { return app.death || app.state.Automation?.DeathState || { Active: false }; }
+    function currentBookComplete() { return app.bookComplete || { Active: false }; }
+    function currentAchievements() { return app.achievements || app.state.Achievements || {}; }
+
+    function normalizePlayMode(mode) {
+      return playModes.includes(mode) ? mode : 'auto';
+    }
+
+    function playModeLabel(mode = playMode) {
+      const labels = { auto: 'Auto Mode', manual: 'Manual Mode', cli: 'CLI Mode' };
+      return labels[normalizePlayMode(mode)];
+    }
+
+    function isManualMode() { return playMode === 'manual'; }
+    function isCliMode() { return playMode === 'cli'; }
+
+    function setModeIndicator() {
+      if (modeIndicator) modeIndicator.textContent = playModeLabel();
+    }
+
+    function statControlName(stat) {
+      const key = text(stat).toLowerCase();
+      if (['end', 'endurance'].includes(key)) return 'END';
+      if (['wp', 'willpower'].includes(key)) return 'WP';
+      if (['cs', 'combat_skill', 'combat skill'].includes(key)) return 'CS';
+      if (key === 'nobles') return 'Nobles';
+      return text(stat, 'Stat');
+    }
+
+    function statControlLocation(stat) {
+      const key = text(stat).toLowerCase();
+      if (key === 'nobles') return 'Inventory tab > Nobles controls';
+      return `Vitals card > ${statControlName(stat)}`;
+    }
+
+    function itemContainerLabel(container) {
+      const key = text(container, 'backpack').toLowerCase();
+      if (key === 'weapon') return 'Weapon';
+      if (key === 'special') return 'Special';
+      if (key === 'herb') return 'Herb';
+      if (key === 'herb_or_backpack') return 'Herb if the Herb Pouch exists, otherwise Backpack';
+      return 'Backpack';
+    }
+
+    function conditionAdvice(condition) {
+      if (!condition || typeof condition !== 'object') return '';
+      const kind = text(condition.type).toLowerCase();
+      if (kind === 'flag') return `if ${friendlyFlagName(condition.key)} is ${condition.value === false ? 'off' : 'on'}`;
+      if (kind === 'item') return `if you have ${text(condition.name, 'the required item')}`;
+      if (kind === 'power') return `if you have ${text(condition.name, 'the required Power')}`;
+      if (kind === 'no_power') return `if you do not have ${text(condition.name, 'the required Power')}`;
+      if (kind === 'wp_gt') return `if WP is greater than ${text(condition.value, 'the listed value')}`;
+      if (kind === 'wp_gte') return `if WP is at least ${text(condition.value, 'the listed value')}`;
+      if (kind === 'end_lt') return `if END is less than ${text(condition.value, 'the listed value')}`;
+      if (kind === 'end_gte') return `if END is at least ${text(condition.value, 'the listed value')}`;
+      if (kind === 'staff_available') return 'if the Wizard\'s Staff is available';
+      return '';
+    }
+
+    function manualStatAdvice(action) {
+      const stat = statControlName(action.stat);
+      const location = statControlLocation(action.stat);
+      const mode = text(action.mode, 'delta').toLowerCase();
+      const condition = conditionAdvice(action.condition);
+      if (mode === 'set') {
+        const value = text(action.value, '0');
+        return {
+          summary: `Set ${stat} to ${value}`,
+          how: `${location}: type ${value} in Set, then click Set.${condition ? ` Only do this ${condition}.` : ''}`
+        };
+      }
+      if (mode === 'half_recover_floor') {
+        return {
+          summary: `Restore half current ${stat}, rounded down`,
+          how: `${location}: calculate half of the current ${stat}, rounded down, then add that amount with Set or the +1 button.${condition ? ` Only do this ${condition}.` : ''}`
+        };
+      }
+      if (mode === 'half_loss_floor') {
+        return {
+          summary: `Lose half current ${stat}, rounded down`,
+          how: `${location}: calculate half of the current ${stat}, rounded down, then subtract that amount with Set or the -1 button.${condition ? ` Only do this ${condition}.` : ''}`
+        };
+      }
+      const delta = Number(action.delta || 0);
+      const verb = delta < 0 ? 'Reduce' : 'Increase';
+      const amount = Math.abs(delta);
+      const button = delta < 0 ? '-1' : '+1';
+      const countText = amount === 1 ? 'once' : `${amount} times`;
+      return {
+        summary: `${verb} ${stat} by ${amount}`,
+        how: `${location}: click ${button} ${countText}, or type the new value in Set and click Set.${condition ? ` Only do this ${condition}.` : ''}`
+      };
+    }
+
+    function manualMealAdvice(action) {
+      const count = Math.max(0, Number(action.count || 1));
+      const mode = text(action.mode, 'per_missing').toLowerCase();
+      const loss = Number(action.enduranceLossPerMissing || action.enduranceLoss || 0);
+      if (mode === 'all_or_loss') {
+        const countText = count === 1 ? 'once' : `${count} times`;
+        return {
+          summary: `Eat ${count} Meal${count === 1 ? '' : 's'} or lose ${loss} END`,
+          how: `Inventory tab or Add Item card: click Eat Meal ${countText} if you have enough Meals. If you cannot pay all ${count}, use Vitals card > END to subtract ${loss}.`
+        };
+      }
+      return {
+        summary: `Eat up to ${count} Meal${count === 1 ? '' : 's'}; lose ${loss} END per missing Meal`,
+        how: `Inventory tab or Add Item card: click Eat Meal once for each Meal you spend. For each missing Meal, use Vitals card > END to subtract ${loss}.`
+      };
+    }
+
+    function manualActionAdvice(action) {
+      if (!action || typeof action !== 'object') return null;
+      const kind = text(action.type).toLowerCase();
+      if (kind === 'stat') return manualStatAdvice(action);
+      if (kind === 'meal') return manualMealAdvice(action);
+      if (kind === 'remove_item') {
+        const count = Math.max(1, Number(action.count || 1));
+        const name = text(action.name, 'item');
+        const condition = conditionAdvice(action.condition);
+        const countText = count === 1 ? 'once' : `${count} times`;
+        return {
+          summary: `Remove ${name}${count > 1 ? ` x${count}` : ''}`,
+          how: `Drop Item card or Inventory tab: find ${name}, then click Drop ${countText}.${condition ? ` Only do this ${condition}.` : ''}`
+        };
+      }
+      if (kind === 'add_item') {
+        const name = text(action.name, 'item');
+        const container = itemContainerLabel(action.container);
+        const condition = conditionAdvice(action.condition);
+        return {
+          summary: `Add ${name}`,
+          how: `Add Item card: choose ${container}, type ${name}, then click Add.${condition ? ` Only do this ${condition}.` : ''}`
+        };
+      }
+      if (kind === 'flag') {
+        const label = friendlyFlagName(action.key);
+        const value = action.value === false ? 'off' : 'on';
+        return {
+          summary: `Turn ${label} ${value}`,
+          how: `Choices card > Status Flags: click Set to turn ${label} on, or Clear to turn it off. If the flag is not listed, use Notes to record: ${label} ${value}.`
+        };
+      }
+      if (kind === 'restore_stored_nobles') {
+        const extra = Number(action.extra || 0);
+        return {
+          summary: `Restore stored Nobles${extra ? ` and add ${extra}` : ''}`,
+          how: 'Inventory tab > Nobles controls: add the stored Nobles total, plus any listed extra, then update the value with Set.'
+        };
+      }
+      if (kind === 'gear') {
+        const available = action.available !== false;
+        return {
+          summary: available ? 'Restore stored gear' : 'Store all carried gear',
+          how: available
+            ? 'Inventory tab > Stored Gear: move stored Weapons and Backpack Items back into inventory.'
+            : 'Inventory tab: note current Weapons and Backpack Items, then remove them from active inventory.'
+        };
+      }
+      if (kind === 'weapons') {
+        const available = action.available !== false;
+        return {
+          summary: available ? 'Restore stored Weapons' : 'Store carried Weapons',
+          how: available
+            ? 'Inventory tab > Stored Gear: move stored Weapons back into active Weapons.'
+            : 'Inventory tab > Weapons: note each Weapon, then click Drop for each active Weapon.'
+        };
+      }
+      if (kind === 'backpack_stash' || kind === 'backpack') {
+        const available = action.available !== false;
+        return {
+          summary: available ? 'Restore Backpack access' : 'Remove Backpack access',
+          how: available
+            ? 'Inventory tab > Stored Gear: move stored Backpack Items back into Backpack.'
+            : 'Inventory tab > Backpack: note the Backpack Items, then remove or mark them unavailable.'
+        };
+      }
+      if (kind === 'ending') {
+        const ending = text(action.ending, 'ending');
+        return {
+          summary: ending === 'success' ? 'Complete the book' : `Mark ${ending}`,
+          how: ending === 'success'
+            ? 'Completion screen: click Complete Book when it appears.'
+            : 'Death screen: use Repeat to retry this section, or Rewind to return to the previous checkpoint.'
+        };
+      }
+      return {
+        summary: `Handle ${text(action.type, 'section action')}`,
+        how: 'Use the matching sheet, inventory, combat, or notes controls to record this section action.'
+      };
+    }
+
+    function compactAdviceSummary(items, fallback) {
+      const summaries = arr(items).map((item) => text(item?.summary).trim()).filter(Boolean);
+      if (!summaries.length) return fallback;
+      if (summaries.length === 1) return summaries[0];
+      return `${summaries.length} manual steps`;
+    }
+
+    function manualModeControlsRow() {
+      return receiptDetail('Mode controls', 'Assistant menu > Mode: click Auto to turn automation on, Manual for advice-only play, or CLI for the terminal view.');
+    }
+
+    function manualGuideWhy(kind, label) {
+      if (kind === 'section effects') {
+        return label
+          ? `We flagged this because it is one of those easy-to-miss bookkeeping beats between paragraphs: ${label}. Manual Mode leaves the pencil in your hand, but the guide still points at the math.`
+          : 'No hidden bookkeeping on this stop. The audit does not have a simple section effect here, so you can read on and use the book links normally.';
+      }
+      if (kind === 'roll helpers') {
+        return label
+          ? `This is a random-number moment. The guide calls it out so you can see the modifiers and the possible routes before you commit to the result.`
+          : 'This section only needs a plain 0-9 random digit. Nothing special is being added by the audit.';
+      }
+      if (kind === 'combat presets') {
+        return `This fight has a prepared setup in the guide data. The preset is there so the enemy stats, special limits, and follow-up routes do not get lost once the fight starts.`;
+      }
+      if (kind === 'section loot') {
+        return `This is a pick-up or section choice the guide team pulled forward because inventory decisions are easy to skip while following the story.`;
+      }
+      if (kind === 'section costs') {
+        return `The text is asking Lone Wolf to spend Willpower here. Manual Mode keeps the choice with you, while the guide keeps the cost visible.`;
+      }
+      if (kind === 'combat auto-resolve') {
+        return 'Auto-resolve would play the fight forward for you. Manual Mode keeps the duel in your hands, one combat round at a time.';
+      }
+      return 'Manual Mode keeps the assistant from changing your sheet automatically, but it can still tell you what the audit would have done.';
+    }
+
+    function rollOutcomeText(outcome) {
+      const route = outcome.route !== undefined ? ` -> section ${outcome.route}` : '';
+      const label = text(outcome.label || outcome.outcome, 'outcome');
+      const test = text(outcome.test).toLowerCase();
+      if (test === 'range') return `${text(outcome.min, '?')}-${text(outcome.max, '?')}: ${label}${route}`;
+      if (test === 'values') return `${arr(outcome.values).join(', ')}: ${label}${route}`;
+      if (test === 'even' || test === 'odd') return `${test}: ${label}${route}`;
+      return `${label}${route}`;
+    }
+
+    function combatPresetAdvice(preset) {
+      if (!preset) return null;
+      const enemy = preset.enemy || arr(preset.enemies)[0] || {};
+      const label = text(preset.label || enemy.name, 'Section combat');
+      const parts = [
+        `Enemy=${text(enemy.name || label, 'Enemy')}`,
+        `CS=${text(enemy.cs, '?')}`,
+        `END=${text(enemy.endurance, '?')}`
+      ];
+      if (preset.modifier !== undefined) parts.push(`CS Modifier=${formatSigned(preset.modifier)}`);
+      if (preset.victoryRoute !== undefined) parts.push(`Victory Section=${preset.victoryRoute}`);
+      if (preset.evadeRoute !== undefined) parts.push(`Evade Section=${preset.evadeRoute}`);
+      return {
+        summary: `Start ${label}`,
+        how: `Combat tab > Start Tracked Combat: set ${parts.join(', ')}, then click Start Combat.`
+      };
+    }
+
+    function manualSectionAdvice(kind = 'automation', options = {}) {
+      const flow = currentFlow();
+      const entry = flow.Entry || {};
+      const automation = flow.Automation || {};
+      const details = [
+        receiptDetail('Mode', 'Manual Mode'),
+        receiptDetail('Where', locationLabel({ state: app.state }))
+      ];
+      let summary = `Manual Advice - ${kind}`;
+      let title = 'Manual Advice';
+
+      if (kind === 'section effects') {
+        const actions = arr(automation.Actions).map(manualActionAdvice).filter(Boolean);
+        const actionSummary = compactAdviceSummary(actions, 'No section automation');
+        summary = `Manual Advice - ${actionSummary}`;
+        title = 'Manual Section Effects';
+        details.push(receiptDetail('Why', manualGuideWhy(kind, text(automation.Summary || actionSummary))));
+        if (actions.length) {
+          details.push(receiptDetail('What I would do', actions.map((item) => item.summary).join('; ')));
+          actions.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
+        } else {
+          details.push(receiptDetail('How to do it', 'No control change is needed for this section effect.'));
+        }
+      } else if (kind === 'roll helpers') {
+        const roll = entry.roll || {};
+        const rollLabel = text(roll.summary, 'Roll 0-9');
+        summary = `Manual Advice - ${rollLabel}`;
+        title = 'Manual Section Roll';
+        details.push(receiptDetail('Why', manualGuideWhy(kind, rollLabel)));
+        if (arr(roll.modifiers).length) {
+          details.push(receiptDetail('Modifiers', arr(roll.modifiers).map((item) => `${text(item.label, 'Modifier')} ${formatSigned(item.value || 0)}`).join('; ')));
+        }
+        if (arr(roll.outcomes).length) {
+          details.push(receiptDetail('Outcomes', arr(roll.outcomes).map(rollOutcomeText).join('; ')));
+        }
+        details.push(receiptDetail('How to do it', 'Use a 0-9 random digit. Add listed modifiers. Follow the matching book link or enter the resulting section in the Section card.'));
+      } else if (kind === 'combat presets') {
+        const preset = arr(entry.combat).find((item) => text(item.id) === text(options.id)) || arr(entry.combat)[0];
+        const advice = combatPresetAdvice(preset);
+        summary = `Manual Advice - ${advice?.summary || 'Section combat'}`;
+        title = 'Manual Combat Setup';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        if (advice) details.push(receiptDetail('How to do it', advice.how));
+        const perRound = arr(preset?.perRoundActions).map(manualActionAdvice).filter(Boolean);
+        if (perRound.length) {
+          details.push(receiptDetail('Round upkeep', perRound.map((item) => item.summary).join('; ')));
+          perRound.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
+        }
+      } else if (kind === 'section loot') {
+        const option = arr(entry.loot).find((item) => text(item.id) === text(options.id)) || arr(entry.loot)[0];
+        const actions = arr(option?.actions).map(manualActionAdvice).filter(Boolean);
+        summary = `Manual Advice - ${text(option?.label, 'Section loot')}`;
+        title = 'Manual Loot Choice';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('What I would do', compactAdviceSummary(actions, text(option?.label, 'Record the loot choice'))));
+        actions.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
+      } else if (kind === 'section costs') {
+        const cost = Number(options.cost || 0);
+        const mode = text(options.mode, 'negative');
+        const costs = arr(entry.wpCosts);
+        if (entry.wpCost) costs.unshift(entry.wpCost);
+        const costEntry = costs.find((item) => Number(item.cost || 0) === cost) || {};
+        summary = `Manual Advice - Spend ${cost} WP`;
+        title = 'Manual Willpower Cost';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('Cost', text(costEntry.label, `${cost} Willpower`)));
+        const costClicks = cost === 1 ? 'once' : `${cost} times`;
+        details.push(receiptDetail('How to do it', mode === 'endurance_for_missing'
+          ? `Vitals card > WP: subtract up to ${cost}. If WP is short, Vitals card > END: subtract 2 END for each missing WP.`
+          : `Vitals card > WP: click -1 ${costClicks}, or type the new WP in Set and click Set.`));
+      } else if (kind === 'combat auto-resolve') {
+        summary = 'Manual Advice - Resolve combat by hand';
+        title = 'Manual Combat Rounds';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('How to do it', 'Combat tab: choose Active combat weapon, Staff magic on/off, WP spend, and Roll. Click Resolve Round once per combat round.'));
+      } else {
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('How to do it', 'Use the matching card controls to update the sheet manually.'));
+      }
+
+      details.push(manualModeControlsRow());
+      setReceipt({ summary, title, details: details.filter(Boolean) });
+    }
+
+    function manualDisabledAttributes(kind = 'automation') {
+      return isManualMode()
+        ? 'aria-disabled="true"'
+        : '';
+    }
+
+    function modeActionButton(attrs, label, kind = 'automation') {
+      const title = isManualMode()
+        ? `title="Manual mode: click for ${escapeHtml(kind)} advice. No sheet changes will be applied."`
+        : '';
+      return `<button type="button" ${attrs} ${manualDisabledAttributes(kind)} ${title}>${label}</button>`;
+    }
+
+    function cloneAppSnapshot(value) {
+      try {
+        return value ? JSON.parse(JSON.stringify(value)) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function receiptDetail(label, value) {
+      const clean = text(value).trim();
+      return clean ? { label, value: clean } : null;
+    }
+
+    function setReceipt(receipt) {
+      currentReceipt = receipt || { summary: 'Ready.', details: [] };
+      receiptExpanded = false;
+      renderReceipt();
+    }
+
+    function renderReceipt() {
+      const details = arr(currentReceipt?.details).filter(Boolean);
+      const expandable = details.length > 0;
+      const summary = text(currentReceipt?.summary, 'Ready.');
+      message.className = `message${expandable ? ' event-receipt' : ''}${receiptExpanded ? ' expanded' : ''}`;
+      message.setAttribute('role', expandable ? 'button' : 'status');
+      message.setAttribute('aria-live', 'polite');
+      if (expandable) {
+        message.tabIndex = 0;
+        message.setAttribute('aria-expanded', receiptExpanded ? 'true' : 'false');
+      } else {
+        message.removeAttribute('tabindex');
+        message.removeAttribute('aria-expanded');
+      }
+      message.innerHTML = `
+        <div class="receipt-summary">
+          <span>${escapeHtml(summary)}</span>
+          ${expandable ? '<i class="receipt-toggle" aria-hidden="true"></i>' : ''}
+        </div>
+        ${expandable && receiptExpanded ? `
+          <div class="receipt-detail">
+            ${details.map((item) => `
+              <div class="receipt-detail-row">
+                <strong>${escapeHtml(item.label || 'Detail')}</strong>
+                <span>${escapeHtml(item.value || '')}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function toggleReceipt() {
+      if (!arr(currentReceipt?.details).filter(Boolean).length) return;
+      receiptExpanded = !receiptExpanded;
+      renderReceipt();
+    }
+
+    function messageLines(value) {
+      return text(value)
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+
+    function stateFrom(snapshot) { return snapshot?.state || {}; }
+    function characterFrom(snapshot) { return stateFrom(snapshot).Character || {}; }
+    function inventoryFrom(snapshot) { return stateFrom(snapshot).Inventory || {}; }
+    function automationFrom(snapshot) { return stateFrom(snapshot).Automation || {}; }
+    function combatFrom(snapshot) { return stateFrom(snapshot).Combat || {}; }
+
+    function locationLabel(snapshot) {
+      const state = stateFrom(snapshot);
+      const character = characterFrom(snapshot);
+      const bookNumber = Number(character.BookNumber || state.CurrentBookNumber || 1);
+      const section = Number(state.CurrentSection || character.Section || 1);
+      const book = bookByNumber(bookNumber);
+      return `Book ${bookNumber}, section ${section}${book?.title ? ` (${book.title})` : ''}`;
+    }
+
+    function asNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function signedValue(delta) {
+      return `${delta > 0 ? '+' : ''}${delta}`;
+    }
+
+    function statValue(character, inventory, key) {
+      if (key === 'END') return asNumber(character.EnduranceCurrent);
+      if (key === 'END Max') return asNumber(character.EnduranceMax);
+      if (key === 'WP') return asNumber(character.WillpowerCurrent);
+      if (key === 'CS') return asNumber(character.CombatSkillCurrent);
+      if (key === 'Nobles') return asNumber(inventory.Nobles);
+      return 0;
+    }
+
+    function itemCounts(items) {
+      const counts = new Map();
+      arr(items).forEach((item) => {
+        const label = text(item).trim();
+        if (!label) return;
+        counts.set(label, (counts.get(label) || 0) + 1);
+      });
+      return counts;
+    }
+
+    function inventoryDiffs(beforeItems, afterItems) {
+      const beforeCounts = itemCounts(beforeItems);
+      const afterCounts = itemCounts(afterItems);
+      const names = new Set([...beforeCounts.keys(), ...afterCounts.keys()]);
+      const added = [];
+      const removed = [];
+      names.forEach((name) => {
+        const diff = (afterCounts.get(name) || 0) - (beforeCounts.get(name) || 0);
+        if (diff > 0) added.push(`${name}${diff > 1 ? ` x${diff}` : ''}`);
+        if (diff < 0) removed.push(`${name}${diff < -1 ? ` x${Math.abs(diff)}` : ''}`);
+      });
+      return { added, removed };
+    }
+
+    function friendlyFlagName(key) {
+      const labels = {
+        karmoPotionActive: 'Karmo Potion active',
+        karmoSideEffectPending: 'Karmo side effect pending',
+        karmoSideEffectApplied: 'Karmo side effect applied',
+        yabariOintmentApplied: 'Yabari Ointment protection',
+        invulnerabilityActive: 'Invulnerability protection',
+        taramaSeedReady: 'Tarama Seed ready',
+        staffAvailable: 'Wizard\'s Staff available',
+        backpackAvailable: 'Backpack available',
+        backpackItemsAvailable: 'Backpack items available'
+      };
+      return labels[key] || key;
+    }
+
+    function stateChangeDetails(beforeSnapshot, afterSnapshot) {
+      const beforeCharacter = characterFrom(beforeSnapshot);
+      const afterCharacter = characterFrom(afterSnapshot);
+      const beforeInventory = inventoryFrom(beforeSnapshot);
+      const afterInventory = inventoryFrom(afterSnapshot);
+      const beforeFlags = automationFrom(beforeSnapshot).Flags || {};
+      const afterFlags = automationFrom(afterSnapshot).Flags || {};
+      const details = [];
+      let short = '';
+      let itemShort = '';
+
+      [
+        ['END', 'Endurance'],
+        ['WP', 'Willpower'],
+        ['CS', 'Combat Skill'],
+        ['Nobles', 'Nobles']
+      ].forEach(([key, label]) => {
+        const before = statValue(beforeCharacter, beforeInventory, key);
+        const after = statValue(afterCharacter, afterInventory, key);
+        if (before === after) return;
+        const delta = after - before;
+        if (!short) short = `Applied ${signedValue(delta)} ${key}`;
+        const suffix = key === 'END'
+          ? `/${asNumber(beforeCharacter.EnduranceMax)} -> ${after}/${asNumber(afterCharacter.EnduranceMax)}`
+          : ` -> ${after}`;
+        details.push(receiptDetail(label, key === 'END' ? `${before}${suffix}` : `${before}${suffix}`));
+      });
+
+      if (asNumber(beforeCharacter.EnduranceMax) !== asNumber(afterCharacter.EnduranceMax) && asNumber(beforeCharacter.EnduranceCurrent) === asNumber(afterCharacter.EnduranceCurrent)) {
+        details.push(receiptDetail('Endurance Max', `${asNumber(beforeCharacter.EnduranceMax)} -> ${asNumber(afterCharacter.EnduranceMax)}`));
+        if (!short) short = 'Updated END maximum';
+      }
+
+      [
+        ['Weapons', 'Weapons'],
+        ['BackpackItems', 'Backpack'],
+        ['HerbPouchItems', 'Herb Pouch'],
+        ['SpecialItems', 'Special Items']
+      ].forEach(([key, label]) => {
+        const diff = inventoryDiffs(beforeInventory[key], afterInventory[key]);
+        if (diff.added.length) {
+          const value = diff.added.join(', ');
+          details.push(receiptDetail(label, `Added ${value}`));
+          if (!itemShort) itemShort = `Added ${value}`;
+        }
+        if (diff.removed.length) {
+          const value = diff.removed.join(', ');
+          details.push(receiptDetail(label, `Removed ${value}`));
+          if (!itemShort) itemShort = `Removed ${value}`;
+        }
+      });
+      if (!short && itemShort) short = itemShort;
+
+      const flagKeys = new Set([...Object.keys(beforeFlags || {}), ...Object.keys(afterFlags || {})]);
+      flagKeys.forEach((key) => {
+        if (beforeFlags?.[key] === afterFlags?.[key]) return;
+        const before = beforeFlags?.[key] === true ? 'on' : (beforeFlags?.[key] === false ? 'off' : text(beforeFlags?.[key], 'unset'));
+        const after = afterFlags?.[key] === true ? 'on' : (afterFlags?.[key] === false ? 'off' : text(afterFlags?.[key], 'unset'));
+        details.push(receiptDetail('Flag', `${friendlyFlagName(key)}: ${before} -> ${after}`));
+        if (!short) short = `${friendlyFlagName(key)} ${after}`;
+      });
+
+      const beforeState = stateFrom(beforeSnapshot);
+      const afterState = stateFrom(afterSnapshot);
+      const beforeBook = asNumber(beforeCharacter.BookNumber || beforeState.CurrentBookNumber || 1);
+      const afterBook = asNumber(afterCharacter.BookNumber || afterState.CurrentBookNumber || 1);
+      const beforeSection = asNumber(beforeState.CurrentSection || 1);
+      const afterSection = asNumber(afterState.CurrentSection || 1);
+      if (beforeBook !== afterBook || beforeSection !== afterSection) {
+        details.push(receiptDetail('Position', `Book ${beforeBook}, section ${beforeSection} -> Book ${afterBook}, section ${afterSection}`));
+      }
+
+      return { short, itemShort, details: details.filter(Boolean) };
+    }
+
+    function achievementDetails(snapshot) {
+      const unlocks = arr(snapshot?.achievementUnlocks);
+      if (!unlocks.length) return [];
+      const achievements = snapshot?.achievements || {};
+      const rows = [
+        receiptDetail('Unlocked', unlocks.map((entry) => text(entry.Name, 'Achievement')).join(', '))
+      ];
+      if (achievements.UnlockedCount !== undefined && achievements.TotalCount !== undefined) {
+        rows.push(receiptDetail('Progress', `${achievements.UnlockedCount}/${achievements.TotalCount}`));
+      }
+      return rows.filter(Boolean);
+    }
+
+    function assistantOutputDetail(snapshot) {
+      const lines = messageLines(snapshot?.message);
+      return lines.length ? receiptDetail('Assistant', lines.join(' | ')) : null;
+    }
+
+    function flowLootLabel(snapshot, id) {
+      const entry = snapshot?.sectionFlow?.Entry || {};
+      const option = arr(entry.loot).find((item) => text(item?.id) === text(id));
+      return text(option?.label || id, 'Loot');
+    }
+
+    function lastNewCombatRound(beforeSnapshot, afterSnapshot) {
+      const beforeLog = arr(combatFrom(beforeSnapshot).Log);
+      const afterLog = arr(combatFrom(afterSnapshot).Log);
+      return afterLog.length > beforeLog.length ? afterLog[afterLog.length - 1] : null;
+    }
+
+    function combatReceipt(payload, beforeSnapshot, afterSnapshot, changes) {
+      const actionName = text(payload.action);
+      const combat = combatFrom(afterSnapshot);
+      const beforeCombat = combatFrom(beforeSnapshot);
+      const enemy = text(combat.EnemyName || beforeCombat.EnemyName, 'Enemy');
+      const details = [
+        receiptDetail('Enemy', enemy),
+        receiptDetail('Weapon', text(combat.ActiveWeapon || beforeCombat.ActiveWeapon || 'Unarmed')),
+        ...changes.details
+      ];
+      const round = lastNewCombatRound(beforeSnapshot, afterSnapshot);
+      if (round) {
+        details.unshift(receiptDetail('Round', String(round.Round || combat.RoundCount || '?')));
+        details.push(receiptDetail('Roll', `${text(round.Roll, '?')} at ratio ${text(round.Ratio, '?')}`));
+        details.push(receiptDetail('Result', `Lone Wolf -${text(round.PlayerLoss ?? round.LoneWolfReduxLoss, '0')} END; ${enemy} -${text(round.EnemyLoss, '0')} END${asNumber(round.StaffWillpower) ? `; ${round.StaffWillpower} WP spent` : ''}`));
+        details.push(receiptDetail('Current', `Lone Wolf END ${text(round.FinalPlayerEnd ?? round.PlayerEnd ?? combat.PlayerEnduranceCurrent, '?')}/${text(combat.PlayerEnduranceMax, '?')}; WP ${text(round.FinalWillpower ?? characterFrom(afterSnapshot).WillpowerCurrent, '?')}; ${enemy} END ${text(round.EnemyEnd ?? combat.EnemyEnduranceCurrent, '?')}/${text(combat.EnemyEnduranceMax, '?')}`));
+        details.push(receiptDetail('Why', 'The Combat Results Table used the current combat ratio and roll.'));
+        return {
+          summary: actionName === 'combat_evade' ? `Combat - Evade round resolved` : `Combat - Round ${text(round.Round || combat.RoundCount, '?')} resolved`,
+          title: 'Combat Receipt',
+          details: details.filter(Boolean)
+        };
+      }
+      if (actionName === 'combat_start' || actionName === 'section_combat_start') {
+        details.push(receiptDetail('Stats', `Lone Wolf CS ${text(combat.PlayerCombatSkill, '?')} vs ${enemy} CS ${text(combat.EnemyCombatSkillEffective ?? combat.EnemyCombatSkill, '?')}; enemy END ${text(combat.EnemyEnduranceCurrent, '?')}/${text(combat.EnemyEnduranceMax, '?')}`));
+        details.push(receiptDetail('How', actionName === 'section_combat_start' ? 'Started from this section\'s audited combat preset.' : 'Started from the Combat tab form.'));
+        return { summary: `Combat - Started ${enemy}`, title: 'Combat Started', details: details.filter(Boolean) };
+      }
+      if (actionName === 'combat_auto') {
+        const rounds = arr(combat.Log).length - arr(beforeCombat.Log).length;
+        details.push(receiptDetail('Rounds', rounds > 0 ? `${rounds} round${rounds === 1 ? '' : 's'} resolved` : 'No new round was resolved'));
+        details.push(receiptDetail('Current', `Lone Wolf END ${text(combat.PlayerEnduranceCurrent, '?')}/${text(combat.PlayerEnduranceMax, '?')}; ${enemy} END ${text(combat.EnemyEnduranceCurrent, '?')}/${text(combat.EnemyEnduranceMax, '?')}`));
+        return { summary: `Combat - Auto resolved ${Math.max(0, rounds)} round${rounds === 1 ? '' : 's'}`, title: 'Combat Auto Resolve', details: details.filter(Boolean) };
+      }
+      if (actionName === 'combat_stop') {
+        return { summary: `Combat - Stopped ${enemy}`, title: 'Combat Stopped', details: details.filter(Boolean) };
+      }
+      return null;
+    }
+
+    function buildActionReceipt(payload, beforeSnapshot, afterSnapshot) {
+      const actionName = text(payload?.action);
+      const changes = stateChangeDetails(beforeSnapshot, afterSnapshot);
+      const output = assistantOutputDetail(afterSnapshot);
+      const achievements = achievementDetails(afterSnapshot);
+      const base = [
+        receiptDetail('Where', locationLabel(afterSnapshot)),
+        ...changes.details,
+        output,
+        ...achievements
+      ].filter(Boolean);
+
+      if (actionName === 'apply_automation') {
+        const automation = afterSnapshot?.sectionFlow?.Automation || {};
+        const noAutomation = /No simple automation/i.test(text(afterSnapshot?.message));
+        const summary = noAutomation ? 'No section automation' : (changes.short || 'Applied section effects');
+        return {
+          summary: `Automation - ${summary}`,
+          title: 'Section Automation',
+          details: [
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            receiptDetail('Why', noAutomation ? 'No audited simple automation is recorded for this section.' : text(automation.Summary, 'This section has audited automation.')),
+            ...changes.details,
+            receiptDetail('Audit Result', arr(automation.Messages).join('; ')),
+            receiptDetail('How', noAutomation ? 'You pressed Apply Effects, but there was nothing automated to apply.' : 'You pressed Apply Effects. The assistant used the section audit, updated the sheet, and saved the game.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (['use_item', 'karmo_side_effect', 'karmo_finish', 'meal'].includes(actionName)) {
+        const item = actionName === 'use_item' ? text(payload.item, 'Item') : (actionName === 'meal' ? (payload.missed ? 'Missed Meal' : 'Meal') : 'Karmo Potion');
+        const why = actionName === 'use_item' ? itemUseHelp(item) : (actionName === 'meal' ? 'Meals and missed meals are tracked from the Backpack.' : 'Karmo has special Book 2 timing and side-effect rules.');
+        return {
+          summary: `Item - ${actionName === 'meal' ? text(changes.short || (payload.missed ? 'Missed meal applied' : 'Meal eaten')) : `Used ${item}`}`,
+          title: 'Item Receipt',
+          details: [
+            receiptDetail('Item', item),
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', why),
+            receiptDetail('How', actionName === 'use_item' ? 'You clicked Use beside the item. The assistant applied the configured item effect and saved.' : 'The assistant applied the selected item or meal rule and saved.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'flow_loot') {
+        const label = flowLootLabel(beforeSnapshot, payload.id);
+        return {
+          summary: `Loot - ${changes.itemShort || changes.short || `Applied ${label}`}`,
+          title: 'Loot Receipt',
+          details: [
+            receiptDetail('Loot', label),
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', 'This section offers an audited loot or item choice.'),
+            receiptDetail('How', 'You clicked the loot Apply button. The assistant updated inventory or flags and saved.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (['combat_start', 'section_combat_start', 'combat_round', 'combat_auto', 'combat_evade', 'combat_stop'].includes(actionName)) {
+        const receipt = combatReceipt(payload, beforeSnapshot, afterSnapshot, changes);
+        if (receipt) {
+          receipt.details = [...receipt.details, output, ...achievements].filter(Boolean);
+          return receipt;
+        }
+      }
+
+      if (actionName === 'death_recovery') {
+        const mode = text(payload.mode, 'repeat').toLowerCase();
+        const label = mode === 'rewind' ? 'Rewound' : 'Repeated';
+        return {
+          summary: `Death - ${label} section ${text(stateFrom(afterSnapshot).CurrentSection, '?')}`,
+          title: 'Death Recovery',
+          details: [
+            receiptDetail('Choice', label),
+            receiptDetail('Restored', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', mode === 'rewind' ? 'Rewind restores the previous section checkpoint so you can choose another route.' : 'Repeat restores the current section entry state so you can try the same fight or roll again.'),
+            receiptDetail('How', 'The assistant restored the saved checkpoint, kept achievement history, and saved the game.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (['complete_book', 'continue_book', 'repeat_book'].includes(actionName)) {
+        const completion = afterSnapshot?.bookComplete || {};
+        const summary = completion.Summary || {};
+        const bookTitle = text(summary.BookTitle || bookByNumber(characterFrom(beforeSnapshot).BookNumber)?.title || bookByNumber(characterFrom(afterSnapshot).BookNumber)?.title, 'Book');
+        const verb = actionName === 'complete_book' ? 'Completed' : (actionName === 'repeat_book' ? 'Repeated' : 'Continued');
+        return {
+          summary: `Book - ${verb} ${bookTitle}`,
+          title: 'Book Receipt',
+          details: [
+            receiptDetail('Book', bookTitle),
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            ...changes.details,
+            receiptDetail('Why', actionName === 'complete_book' ? 'The current section is marked as a successful book ending.' : 'You selected a book handoff or replay option from the completion screen.'),
+            receiptDetail('How', 'The assistant updated campaign progress, book state, and saves.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (achievements.length) {
+        const unlocks = arr(afterSnapshot?.achievementUnlocks);
+        const progress = achievements.filter((item) => item?.label === 'Progress');
+        return {
+          summary: unlocks.length === 1 ? `Achievement - ${text(unlocks[0].Name, 'Achievement')} unlocked` : `Achievement - ${unlocks.length} unlocked`,
+          title: 'Achievement Receipt',
+          details: [
+            receiptDetail('Unlocked', unlocks.map((entry) => text(entry.Name, 'Achievement')).join(', ')),
+            receiptDetail('Why', 'The assistant matched an achievement rule after the last action.'),
+            ...progress
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'roll') {
+        return {
+          summary: `Roll - ${text(afterSnapshot?.message, 'Rolled 0-9')}`,
+          title: 'Roll Receipt',
+          details: [
+            receiptDetail('Where', locationLabel(afterSnapshot)),
+            receiptDetail('Result', text(afterSnapshot?.message)),
+            receiptDetail('Why', 'Lone Wolf random checks use digits from 0 to 9. Section-aware roll rules are applied when the audit has one.')
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'shutdown') {
+        return {
+          summary: 'System - Server shutting down',
+          title: 'System Notice',
+          details: [receiptDetail('Status', text(afterSnapshot?.message, 'Lone Wolf assistant server is shutting down.'))].filter(Boolean)
+        };
+      }
+
+      return {
+        summary: text(afterSnapshot?.message, 'Updated.'),
+        title: 'Assistant Notice',
+        details: base
+      };
+    }
+
+    function bookUrl(bookNumber, section) {
+      const book = bookByNumber(bookNumber);
+      if (!hasInstalledBookFiles(book.number)) {
+        return `install-books.html?book=${book.number}`;
+      }
+      if (Number.isInteger(section) && section >= 1 && section <= book.sections) {
+        return `books/lw/${book.folder}/sect${section}.htm`;
+      }
+      return `books/lw/${book.folder}/title.htm`;
+    }
+
+    function hasInstalledBookFiles(bookNumber) {
+      const entry = arr(bookFiles?.Books).find((item) => Number(item.BookNumber) === Number(bookNumber));
+      return entry ? entry.Installed === true : true;
+    }
+
+    function currentBookFilesInstalled() {
+      return hasInstalledBookFiles(currentCharacter().BookNumber);
+    }
+
+    function loadBook(bookNumber, section = null) {
+      const book = bookByNumber(bookNumber);
+      activeBook = book.number;
+      activeSection = Number.isInteger(Number(section)) ? Number(section) : null;
+      if (activeSection && (activeSection < 1 || activeSection > book.sections)) activeSection = null;
+      bookFrame.src = bookUrl(activeBook, activeSection);
+      renderReaderTitle();
+    }
+
+    function renderReaderTitle() {
+      const book = bookByNumber(activeBook);
+      readerTitle.textContent = activeSection ? `${book.number}. ${book.title} - Section ${activeSection}` : `${book.number}. ${book.title}`;
+      document.querySelectorAll('.book-button').forEach((button) => {
+        button.classList.toggle('active', Number(button.dataset.book) === activeBook);
+      });
+    }
+
+    function sectionTargetFromUrl(url) {
+      const match = url.pathname.match(/\/books\/gs\/([^/]+)\/sect(\d+)\.htm$/i);
+      if (!match) return null;
+      const book = books.find((item) => item.folder === match[1]);
+      const section = Number(match[2]);
+      if (!book || !Number.isInteger(section) || section < 1 || section > book.sections) return null;
+      return { book: book.number, section };
+    }
+
+    async function fetchState() {
+      const [response, bookResponse] = await Promise.all([
+        fetch('/api/state', { cache: 'no-store' }),
+        fetch('/api/book-files', { cache: 'no-store' }).catch(() => null)
+      ]);
+      if (!response.ok) throw new Error('Could not load state');
+      app = await response.json();
+      if (bookResponse?.ok) bookFiles = await bookResponse.json();
+      syncUiPreferences(app.uiPreferences);
+      serverStatus.textContent = 'Connected';
+      syncBookToState();
+      render();
+    }
+
+    async function action(payload) {
+      const beforeAction = cloneAppSnapshot(app);
+      const response = await fetch('/api/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      app = await response.json();
+      if (!response.ok) throw new Error(app.error || 'Action failed');
+      syncUiPreferences(app.uiPreferences);
+      setReceipt(buildActionReceipt(payload, beforeAction, app));
+      showAchievementUnlocks(app.achievementUnlocks);
+      syncBookToState();
+      render();
+    }
+
+    function showAchievementUnlocks(unlocks) {
+      const entries = arr(unlocks);
+      if (!toastStack || !entries.length) return;
+      entries.forEach((entry) => {
+        const toast = document.createElement('div');
+        toast.className = 'achievement-toast';
+        toast.innerHTML = `
+          <small>Achievement Unlocked</small>
+          <strong>${escapeHtml(text(entry.Name, 'Achievement'))}</strong>
+        `;
+        toastStack.appendChild(toast);
+        window.setTimeout(() => {
+          toast.remove();
+        }, 6500);
+      });
+    }
+
+    function syncBookToState() {
+      const character = currentCharacter();
+      const section = Number(app.state.CurrentSection);
+      if (activeBook !== Number(character.BookNumber) || activeSection !== section) {
+        loadBook(Number(character.BookNumber), section);
+      }
+    }
+
+    function render() {
+      setModeIndicator();
+      renderStatus();
+      if (isCliMode()) {
+        renderCliPanel();
+        return;
+      }
+      renderQuickPanel();
+      renderTabs();
+      if (currentDeath().Active) {
+        renderDeathScreen();
+        decorateInterfaceCards('death');
+        return;
+      }
+      if (currentBookComplete().Active) {
+        renderBookCompleteScreen();
+        decorateInterfaceCards('complete');
+        return;
+      }
+      const renderers = {
+        sheet: renderSheet,
+        inventory: renderInventory,
+        magicks: renderMagicks,
+        sections: renderSections,
+        combat: renderCombat,
+        achievements: renderAchievements,
+        saves: renderSaves,
+        notes: renderNotes,
+        settings: renderSettings
+      };
+      (renderers[activeView] || renderers.sheet)();
+      decorateInterfaceCards(activeView);
+    }
+
+    function renderStatus() {
+      const c = currentCharacter();
+      const book = bookByNumber(c.BookNumber);
+      statusGrid.innerHTML = [
+        ['Book', `${c.BookNumber}. ${book.title}`, 'status-book'],
+        ['Section', app.state.CurrentSection, 'status-section'],
+        ['END', `${c.EnduranceCurrent}/${c.EnduranceMax}`, 'status-end'],
+        ['WP', c.WillpowerCurrent, 'status-wp'],
+        ['CS', c.CombatSkillCurrent, 'status-cs']
+      ].map(([label, value, className]) => `<div class="stat-card ${className}"><span>${label}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
+    }
+
+    function renderCliPanel() {
+      stopCliTerminal();
+      quickPanel.innerHTML = '';
+      tabs.innerHTML = '';
+      view.classList.remove('view-card-grid');
+      view.innerHTML = `
+        <div class="panel cli-terminal-panel">
+          <div class="cli-terminal-toolbar">
+            <div class="mode-note">CLI mode runs the terminal assistant against the same save data. Switch back to Auto or Manual mode from the menu when you want the web controls again.</div>
+            <span class="cli-terminal-status" id="cliTerminalStatus">Connecting...</span>
+            <button type="button" data-cli-reconnect>Reconnect</button>
+            <button type="button" data-mode-set="auto">Auto Mode</button>
+            <button type="button" data-mode-set="manual">Manual Mode</button>
+          </div>
+          <div id="cliTerminalContainer" aria-label="Lone Wolf terminal"></div>
+        </div>
+      `;
+      window.requestAnimationFrame(startCliTerminal);
+    }
+
+    function cliWsUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const savedPort = localStorage.getItem('lonewolf_redux.wsPort') || localStorage.getItem('lonewolf_redux.wsPort') || '';
+      const port = params.get('wsPort') || savedPort || '8798';
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.hostname || 'localhost';
+      return `${protocol}//${host}:${port}`;
+    }
+
+    function sendCliResize() {
+      if (!cliSocket || cliSocket.readyState !== WebSocket.OPEN || !cliTerminal) return;
+      cliSocket.send(`\x00${JSON.stringify({ type: 'resize', rows: cliTerminal.rows, cols: cliTerminal.cols })}`);
+    }
+
+    function updateCliStatus(textValue) {
+      const status = document.getElementById('cliTerminalStatus');
+      if (status) status.textContent = textValue;
+    }
+
+    function startCliTerminal() {
+      const container = document.getElementById('cliTerminalContainer');
+      if (!container || !isCliMode()) return;
+      if (!window.Terminal) {
+        container.innerHTML = '<div class="mode-note">Terminal assets did not load. Check your internet connection, then use Reconnect or switch back to Auto mode.</div>';
+        updateCliStatus('Terminal unavailable');
+        return;
+      }
+      container.innerHTML = '';
+
+      cliTerminal = new Terminal({
+        cursorBlink: true,
+        convertEol: true,
+        fontFamily: 'Consolas, "Cascadia Mono", "Courier New", monospace',
+        fontSize: 14,
+        theme: {
+          background: '#050704',
+          foreground: '#efe8d0',
+          cursor: '#f2d27a',
+          selectionBackground: '#594a2a',
+          black: '#050704',
+          red: '#ff8f80',
+          green: '#a9d18e',
+          yellow: '#f2d27a',
+          blue: '#93b7ff',
+          magenta: '#d8a8ff',
+          cyan: '#8bd3dd',
+          white: '#efe8d0'
+        }
+      });
+      if (window.FitAddon?.FitAddon) {
+        cliFitAddon = new FitAddon.FitAddon();
+        cliTerminal.loadAddon(cliFitAddon);
+      }
+      cliTerminal.open(container);
+      cliFitAddon?.fit();
+      cliTerminal.writeln('Connecting to Lone Wolf CLI...');
+
+      const wsUrl = cliWsUrl();
+      cliSocket = new WebSocket(wsUrl);
+      cliSocket.addEventListener('open', () => {
+        updateCliStatus('Connected');
+        cliTerminal.focus();
+        cliFitAddon?.fit();
+        sendCliResize();
+      });
+      cliSocket.addEventListener('message', (event) => {
+        cliTerminal.write(typeof event.data === 'string' ? event.data : String(event.data));
+      });
+      cliSocket.addEventListener('close', () => {
+        updateCliStatus('Disconnected');
+        cliTerminal?.writeln('\r\n[CLI disconnected]');
+      });
+      cliSocket.addEventListener('error', () => {
+        updateCliStatus('Connection error');
+        cliTerminal?.writeln('\r\n[Could not connect to the CLI bridge. Make sure the launcher started the WebSocket server.]');
+      });
+      cliTerminal.onData((data) => {
+        if (cliSocket?.readyState === WebSocket.OPEN) cliSocket.send(data);
+      });
+      cliResizeHandler = () => {
+        cliFitAddon?.fit();
+        sendCliResize();
+      };
+      window.addEventListener('resize', cliResizeHandler);
+    }
+
+    function stopCliTerminal(dispose = true) {
+      if (cliResizeHandler) {
+        window.removeEventListener('resize', cliResizeHandler);
+        cliResizeHandler = null;
+      }
+      if (cliSocket) {
+        try { cliSocket.close(); } catch {}
+        cliSocket = null;
+      }
+      if (dispose && cliTerminal) {
+        try { cliTerminal.dispose(); } catch {}
+      }
+      cliTerminal = null;
+      cliFitAddon = null;
+    }
+
+    async function setPlayMode(mode) {
+      const nextMode = normalizePlayMode(mode);
+      const previousMode = playMode;
+      if (nextMode === previousMode) {
+        closeMenus();
+        return;
+      }
+      if (nextMode === 'cli' && app) {
+        await action({ action: 'save', path: '' });
+      }
+      if (previousMode === 'cli' && nextMode !== 'cli') {
+        stopCliTerminal();
+      }
+      playMode = nextMode;
+      localStorage.setItem(playModeKey, playMode);
+      closeMenus();
+      setModeIndicator();
+      if (previousMode === 'cli' && nextMode !== 'cli') {
+        await action({ action: 'reload_last_save' });
+        return;
+      }
+      render();
+    }
+
+    function renderQuickPanel() {
+      const inv = currentInventory();
+      const automation = app.state.Automation || {};
+      const ending = automation.Ending;
+      const flags = automation.Flags || {};
+      const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const staffUnavailable = flags.staffAvailable === false;
+      const flow = currentFlow();
+      const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
+      const successEnding = ending && String(ending.Type || '').toLowerCase() === 'success';
+      const missingBookFiles = !currentBookFilesInstalled();
+      quickPanel.innerHTML = `
+        <div class="quick-column quick-card">
+          <div class="quick-title">Section</div>
+          <button type="button" data-automation-apply ${manualDisabledAttributes('section effects')} title="${isManualMode() ? 'Manual mode: click for section effect advice. No sheet changes will be applied.' : 'Apply the audited effect for the current section, such as stat changes, gear loss, meals, or book-completion flags.'}">Apply Effects</button>
+          <button type="button" data-roll ${manualDisabledAttributes('roll helper')} title="${isManualMode() ? 'Manual mode: click for roll advice. No roll will be recorded.' : 'Roll a random number from 0 to 9. If this section has a special roll rule, the assistant applies it.'}">${rollLabel}</button>
+          ${successEnding ? '<button type="button" data-complete-book>Finalize Book</button>' : ''}
+          ${karmoControls(flags)}
+          <div class="quick-note">${ending ? `Ending marked: ${ending.Type}` : `Book ${currentCharacter().BookNumber}, section ${app.state.CurrentSection}`}</div>
+          ${missingBookFiles ? '<div class="mode-note">Book HTML files are not installed. Open the Install Project Aon Books page from Home.</div>' : ''}
+          ${isManualMode() ? '<div class="mode-note">Manual mode is tracking your sheet only. Click section helpers for advice, then apply the math by hand.</div>' : ''}
+          ${staffUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
+        </div>
+        <div class="quick-column quick-card">
+          <div class="quick-title">Vitals</div>
+          ${statButtons('end', 'END', true)}
+          ${statButtons('wp', 'WP', true)}
+        </div>
+        <div class="quick-column quick-card">
+          <div class="quick-title">Add Item</div>
+          <form id="quickItemForm" class="controls">
+            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+            <input name="item" placeholder="Item name">
+            <button type="submit">Add</button>
+          </form>
+          <div class="controls">
+            <button data-meal="eat">Eat Meal</button>
+            <button data-meal="missed">Missed Meal</button>
+          </div>
+        </div>
+        <div class="quick-column quick-card">
+          <div class="quick-title">Drop Item</div>
+          <div class="quick-drop-list">${quickDropRows(inv)}</div>
+        </div>
+      `;
+    }
+
+    function renderBookCompleteScreen() {
+      const completion = currentBookComplete();
+      const summary = completion.Summary || {};
+      const nextBook = Number(completion.NextBookNumber || 0);
+      const nextTitle = text(completion.NextBookTitle, '');
+      const lesserChoices = arr(completion.LesserMagickChoices);
+      const higherChoices = arr(completion.HigherMagickChoices).length ? arr(completion.HigherMagickChoices) : higherMagicks;
+      const higherChoiceControls = higherChoices.map((name) => `
+        <label class="check-option">
+          <input type="checkbox" name="higherMagicks" value="${escapeHtml(name)}">
+          <span>${escapeHtml(name)}</span>
+        </label>
+      `).join('');
+      const continueControls = completion.CanContinue ? `
+        <form id="continueBookForm" class="grid">
+          ${nextBook === 2 ? `
+            <label class="field">Additional Lesser Magick
+              <select name="lesserMagick">
+                ${lesserChoices.map((power) => `<option value="${escapeHtml(power)}">${escapeHtml(power)}</option>`).join('')}
+              </select>
+            </label>
+          ` : ''}
+          ${nextBook === 3 ? '<label class="field">Willpower Roll<input name="willpowerRoll" type="number" min="0" max="9" placeholder="Blank = random"></label>' : ''}
+          ${nextBook === 4 ? `
+            <div class="check-field">
+              <span>Higher Magicks - choose exactly 5</span>
+              <div class="check-grid">${higherChoiceControls}</div>
+            </div>
+          ` : ''}
+          <button type="submit">Continue to Book ${escapeHtml(nextBook)}</button>
+        </form>
+      ` : '<p class="muted">The supported Lone Wolf campaign is complete.</p>';
+
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Adventure Complete</h2>
+          <div class="grid">
+            ${field('Book', `${escapeHtml(text(summary.BookNumber, currentCharacter().BookNumber))}. ${escapeHtml(text(summary.BookTitle, bookByNumber(currentCharacter().BookNumber).title))}`)}
+            ${field('Character', escapeHtml(text(summary.CharacterName, currentCharacter().Name)))}
+            ${field('Final END', `${escapeHtml(text(summary.EnduranceCurrent, currentCharacter().EnduranceCurrent))}/${escapeHtml(text(summary.EnduranceMax, currentCharacter().EnduranceMax))}`)}
+            ${field('Final WP', escapeHtml(text(summary.WillpowerCurrent, currentCharacter().WillpowerCurrent)))}
+            ${field('Combat Skill', escapeHtml(text(summary.CombatSkill, currentCharacter().CombatSkillCurrent)))}
+            ${field('Nobles', escapeHtml(text(summary.Nobles, currentInventory().Nobles)))}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Book Summary</h2>
+          <div class="grid">
+            ${field('Sections Seen', escapeHtml(text(summary.SectionsVisited, '0')))}
+            ${field('Unique Sections', escapeHtml(text(summary.UniqueSectionsVisited, '0')))}
+            ${field('Combats', escapeHtml(text(summary.CombatCount, '0')))}
+            ${field('Victories', escapeHtml(text(summary.Victories, '0')))}
+            ${field('Defeats', escapeHtml(text(summary.Defeats, '0')))}
+            ${field('Survived Fights', escapeHtml(text(summary.Survived, '0')))}
+            ${field('Rounds Fought', escapeHtml(text(summary.RoundsFought, '0')))}
+            ${field('Deaths', escapeHtml(text(summary.DeathCount, '0')))}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Carry Forward</h2>
+          <div class="grid">
+            ${field('Weapons', escapeHtml(list(summary.Weapons)))}
+            ${field('Backpack', escapeHtml(list(summary.BackpackItems)))}
+            ${field('Special Items', escapeHtml(list(summary.SpecialItems)))}
+            ${field('Herb Pouch', escapeHtml(list(summary.HerbPouchItems)))}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>${completion.CanContinue ? `Continue to Book ${escapeHtml(nextBook)}` : 'Campaign Complete'}</h2>
+          ${nextTitle ? `<p class="muted">${escapeHtml(nextTitle)}</p>` : ''}
+          ${continueControls}
+        </div>
+        <div class="panel">
+          <h2>Repeat This Book</h2>
+          <p class="muted">Start this same book again with this character. END resets to maximum, WP resets to the character's book-start value, and unlocked achievements stay unlocked.</p>
+          <button type="button" data-repeat-book>Repeat Book ${escapeHtml(text(summary.BookNumber, currentCharacter().BookNumber))}</button>
+        </div>
+      `;
+    }
+
+    function renderTabs() {
+      tabs.innerHTML = views.map(([id, label]) => `<button type="button" class="${id === activeView ? 'active' : ''}" data-view="${id}">${label}</button>`).join('');
+    }
+
+    function targetLabel(target) {
+      if (!target) return 'No checkpoint available';
+      const book = text(target.BookNumber, '?');
+      const section = text(target.Section, '?');
+      return `Book ${book}, section ${section}`;
+    }
+
+    function renderDeathScreen() {
+      const death = currentDeath();
+      const outcome = String(death.Type || '').toLowerCase() === 'failure' ? 'Mission Failed' : 'Lone Wolf Has Fallen';
+      const repeatTarget = targetLabel(death.RepeatTarget);
+      const rewindTarget = targetLabel(death.RewindTarget);
+      const repeatCopy = death.CanRepeat
+        ? 'Try this section again. END, WP, combat, and inventory return to the checkpoint from entering this section, so items used during the failed attempt come back.'
+        : 'Repeat is mainly for combat or recoverable attempts inside a section. This death happened too early in the section, so rewind is the useful recovery.';
+      const rewindCopy = death.CanRewind
+        ? 'Step back before this section. Use this when a route choice led to the death and you want to pick a different path.'
+        : 'There is no earlier section checkpoint yet. Load a save or start a new run if repeat is not available.';
+      view.innerHTML = `
+        <div class="panel panel-danger">
+          <h2>${escapeHtml(outcome)}</h2>
+          <p class="muted">${escapeHtml(text(death.Cause, 'This path has ended.'))}</p>
+          <div class="grid">
+            ${field('Section', escapeHtml(text(death.Section, app.state.CurrentSection)))}
+            ${field('Final END', `${escapeHtml(text(death.EnduranceCurrent, '0'))}/${escapeHtml(text(death.EnduranceMax, currentCharacter().EnduranceMax))}`)}
+            ${field('Final WP', escapeHtml(text(death.WillpowerCurrent, currentCharacter().WillpowerCurrent)))}
+            ${field('Recorded', escapeHtml(text(death.RecordedAt, 'Now')))}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Recovery</h2>
+          <div class="death-options">
+            <article class="death-option">
+              <h3>Repeat Section</h3>
+              <p>${escapeHtml(repeatCopy)}</p>
+              <p class="muted">${escapeHtml(repeatTarget)}</p>
+              <button type="button" data-death-recovery="repeat" ${death.CanRepeat ? '' : 'disabled'}>Repeat</button>
+            </article>
+            <article class="death-option">
+              <h3>Rewind Previous Section</h3>
+              <p>${escapeHtml(rewindCopy)}</p>
+              <p class="muted">${escapeHtml(rewindTarget)}</p>
+              <button type="button" data-death-recovery="rewind" ${death.CanRewind ? '' : 'disabled'}>Rewind</button>
+            </article>
+          </div>
+        </div>
+      `;
+    }
+
+    function cardScopeForView(scope) {
+      return `view-${scope || activeView || 'sheet'}`;
+    }
+
+    function cardStorageKey(prefix, scope) {
+      return `${prefix}${scope}`;
+    }
+
+    function isUiPreferenceStorageKey(key) {
+      return uiPreferenceStaticKeys.includes(key) || uiPreferencePrefixes.some((prefix) => key.startsWith(prefix));
+    }
+
+    function uiPreferenceStorageKeys() {
+      const keys = new Set(uiPreferenceStaticKeys);
+      Object.keys(localStorage).forEach((key) => {
+        if (isUiPreferenceStorageKey(key)) keys.add(key);
+      });
+      return Array.from(keys);
+    }
+
+    function collectUiPreferences() {
+      const values = {};
+      uiPreferenceStorageKeys().forEach((key) => {
+        const value = localStorage.getItem(key);
+        if (value !== null) values[key] = value;
+      });
+      return { version: 1, values };
+    }
+
+    function hasUiPreferenceValues(preferences) {
+      return Boolean(preferences?.values && typeof preferences.values === 'object' && Object.keys(preferences.values).length);
+    }
+
+    function hasLocalUiPreferenceValues() {
+      return uiPreferenceStorageKeys().some((key) => localStorage.getItem(key) !== null);
+    }
+
+    function applyUiPreferences(preferences) {
+      const values = preferences?.values && typeof preferences.values === 'object' ? preferences.values : {};
+      uiPreferenceSaveSuspended = true;
+      uiPreferenceStorageKeys().forEach((key) => {
+        if (!(key in values)) localStorage.removeItem(key);
+      });
+      Object.entries(values).forEach(([key, value]) => {
+        if (isUiPreferenceStorageKey(key)) localStorage.setItem(key, String(value));
+      });
+      uiPreferenceSaveSuspended = false;
+      uiPreferencesReady = true;
+    }
+
+    function syncUiPreferences(preferences) {
+      if (uiPreferencesReady) return;
+      if (!hasUiPreferenceValues(preferences) && hasLocalUiPreferenceValues()) {
+        uiPreferencesReady = true;
+        persistUiPreferences(true);
+        return;
+      }
+      applyUiPreferences(preferences || { version: 1, values: {} });
+    }
+
+    function persistUiPreferences(immediate = false) {
+      if (!uiPreferencesReady || uiPreferenceSaveSuspended) return;
+      if (uiPreferenceSaveTimer) window.clearTimeout(uiPreferenceSaveTimer);
+      const payload = collectUiPreferences();
+      const save = async () => {
+        try {
+          await fetch('/api/ui-preferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch {}
+      };
+      if (immediate) {
+        save();
+      } else {
+        uiPreferenceSaveTimer = window.setTimeout(save, 180);
+      }
+    }
+
+    function getJsonStorage(key, fallback) {
+      try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function setJsonStorage(key, value) {
+      const next = JSON.stringify(value);
+      if (localStorage.getItem(key) === next) return;
+      localStorage.setItem(key, next);
+      if (isUiPreferenceStorageKey(key)) persistUiPreferences();
+    }
+
+    function getCardLayout(scope) {
+      const layout = getJsonStorage(cardStorageKey(cardLayoutPrefix, scope), []);
+      return Array.isArray(layout) ? layout.filter(Boolean) : [];
+    }
+
+    function setCardLayout(scope, layout) {
+      setJsonStorage(cardStorageKey(cardLayoutPrefix, scope), arr(layout).map((item) => text(item)).filter(Boolean));
+      persistUiPreferences(true);
+    }
+
+    function getCardSizes(scope) {
+      const sizes = getJsonStorage(cardStorageKey(cardSizePrefix, scope), {});
+      return sizes && typeof sizes === 'object' && !Array.isArray(sizes) ? sizes : {};
+    }
+
+    function getCardSize(scope, id, defaultSize = 'large') {
+      const size = text(getCardSizes(scope)[id], defaultSize);
+      return ['small', 'medium', 'large'].includes(size) ? size : defaultSize;
+    }
+
+    function setCardSize(scope, id, size) {
+      const sizes = getCardSizes(scope);
+      sizes[id] = ['small', 'medium', 'large'].includes(size) ? size : 'large';
+      setJsonStorage(cardStorageKey(cardSizePrefix, scope), sizes);
+      persistUiPreferences(true);
+      render();
+    }
+
+    function getClosedCards(scope) {
+      const closed = getJsonStorage(cardStorageKey(cardClosedPrefix, scope), []);
+      if (!Array.isArray(closed)) return [];
+      return closed.map((id) => normalizeCardId(scope, id)).filter(Boolean);
+    }
+
+    function setClosedCards(scope, closed) {
+      setJsonStorage(
+        cardStorageKey(cardClosedPrefix, scope),
+        Array.from(new Set(arr(closed).map((item) => normalizeCardId(scope, item)).filter(Boolean)))
+      );
+      persistUiPreferences(true);
+    }
+
+    function getCollapsedCards(scope) {
+      const collapsed = getJsonStorage(cardStorageKey(cardCollapsedPrefix, scope), []);
+      if (!Array.isArray(collapsed)) return [];
+      return collapsed.map((id) => normalizeCardId(scope, id)).filter(Boolean);
+    }
+
+    function setCollapsedCards(scope, collapsed) {
+      setJsonStorage(
+        cardStorageKey(cardCollapsedPrefix, scope),
+        Array.from(new Set(arr(collapsed).map((item) => normalizeCardId(scope, item)).filter(Boolean)))
+      );
+      persistUiPreferences(true);
+    }
+
+    function getCardLabels(scope) {
+      const labels = getJsonStorage(cardStorageKey(cardLabelPrefix, scope), {});
+      return labels && typeof labels === 'object' && !Array.isArray(labels) ? labels : {};
+    }
+
+    function rememberCardLabel(scope, id, label) {
+      const labels = getCardLabels(scope);
+      labels[id] = label;
+      setJsonStorage(cardStorageKey(cardLabelPrefix, scope), labels);
+    }
+
+    function slugCardTitle(title, fallback) {
+      const slug = text(title, fallback)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      return slug || fallback;
+    }
+
+    function normalizeCardId(scope, id) {
+      const value = text(id).trim();
+      if (scope === 'tabs' && value === 'section') return 'tabs';
+      return value;
+    }
+
+    function cardTitle(card, fallback = 'Section') {
+      return text(
+        card.dataset.cardTitleOverride ||
+        card.querySelector(':scope > h2')?.textContent ||
+        card.querySelector(':scope > .quick-title')?.textContent ||
+        card.querySelector('.combat-meter-title-row h2')?.textContent,
+        fallback
+      ).trim();
+    }
+
+    function cardHelp(title, scope) {
+      const key = slugCardTitle(title, '');
+      const help = {
+        choices: 'This card shows assistant actions found in the current book section: loot, costs, status flags, combat, route checks, and section-aware rolls.',
+        map: 'Shows the local Project Aon map image for Lone Wolf the Wizard. Open it full-size when you want to inspect the route detail.',
+        'section-assistant': 'Use this when a section has rolls, loot, special costs, or combat presets that are not handled by the book link itself.',
+        'stored-gear': 'This keeps the inventory record for gear the book has taken away and may return later.',
+        'start-tracked-combat': 'Use this for fights that are not started by a section preset. Staff WP controls how much Willpower you spend with the Wizard’s Staff each round.',
+        'combat-controls': 'Resolve rounds here. Pick the active weapon, choose Staff magic when allowed, and enter the section’s roll if the book gives one.',
+        'recent-combat-rounds': 'This is the round-by-round audit trail for the current fight, including END loss, WP spend, and ignored-loss rules.',
+        'section': 'Apply section effects and section-aware rolls from the audit data.',
+        'drop-item': 'Quickly remove carried items without opening the full Inventory tab.'
+      };
+      return help[key] || (scope === 'tabs' ? 'Switch between assistant views. Re-add this from Settings if you close it.' : '');
+    }
+
+    function applyCardOrder(scope, cards) {
+      const parent = cards[0]?.parentElement;
+      if (!parent) return cards;
+      const layout = getCardLayout(scope);
+      if (!layout.length) return cards;
+      const byId = new Map(cards.map((card) => [card.dataset.cardId, card]));
+      const ordered = [];
+      layout.forEach((id) => {
+        const card = byId.get(id);
+        if (card && !ordered.includes(card)) ordered.push(card);
+      });
+      cards.forEach((card) => {
+        if (!ordered.includes(card)) ordered.push(card);
+      });
+      ordered.forEach((card) => parent.appendChild(card));
+      return ordered;
+    }
+
+    function cardMenuHtml(scope, id, title, size, options) {
+      const movementDisabled = options.movable === false ? 'disabled' : '';
+      const closeDisabled = options.closeable === false ? 'disabled' : '';
+      const sizeButton = (value, label) => `<button type="button" class="${size === value ? 'active' : ''}" data-card-size="${scope}:${id}:${value}">${label}</button>`;
+      return `
+        <button class="card-menu-button" type="button" data-card-menu-toggle="${escapeHtml(scope)}:${escapeHtml(id)}" aria-label="${escapeHtml(title)} menu" title="${escapeHtml(title)} menu"></button>
+        <div class="menu-popover card-menu" data-card-menu="${escapeHtml(scope)}:${escapeHtml(id)}" hidden>
+          <div class="menu-heading">${escapeHtml(title)}</div>
+          <div class="menu-row">
+            <button type="button" data-card-move="${escapeHtml(scope)}:${escapeHtml(id)}:up" ${movementDisabled}>Up</button>
+            <button type="button" data-card-move="${escapeHtml(scope)}:${escapeHtml(id)}:down" ${movementDisabled}>Down</button>
+            <button type="button" data-card-move="${escapeHtml(scope)}:${escapeHtml(id)}:left" ${movementDisabled}>Left</button>
+            <button type="button" data-card-move="${escapeHtml(scope)}:${escapeHtml(id)}:right" ${movementDisabled}>Right</button>
+          </div>
+          <div class="menu-heading">Size</div>
+          <div class="menu-row three">
+            ${sizeButton('small', 'Small')}
+            ${sizeButton('medium', 'Medium')}
+            ${sizeButton('large', 'Large')}
+          </div>
+          <button type="button" class="danger" data-card-close="${escapeHtml(scope)}:${escapeHtml(id)}" ${closeDisabled}>Close Card</button>
+        </div>
+      `;
+    }
+
+    function cardCollapseButtonHtml(scope, id, title, collapsed) {
+      const action = collapsed ? 'Expand' : 'Collapse';
+      return `<button class="card-collapse-button" type="button" data-card-collapse="${escapeHtml(scope)}:${escapeHtml(id)}" aria-label="${action} ${escapeHtml(title)} card" aria-expanded="${collapsed ? 'false' : 'true'}" title="${action} card"></button>`;
+    }
+
+    function decorateCards(scope, cards, options = {}) {
+      const actualCards = arr(cards).filter(Boolean);
+      if (!actualCards.length) return;
+      const seen = {};
+      actualCards.forEach((card) => {
+        const title = cardTitle(card);
+        const base = slugCardTitle(title, 'card');
+        seen[base] = (seen[base] || 0) + 1;
+        const id = seen[base] === 1 ? base : `${base}-${seen[base]}`;
+        card.dataset.cardScope = scope;
+        card.dataset.cardId = id;
+        card.dataset.cardTitle = title;
+        rememberCardLabel(scope, id, title);
+      });
+      const ordered = options.movable === false ? actualCards : applyCardOrder(scope, actualCards);
+      const closed = new Set(getClosedCards(scope));
+      const collapsedCards = new Set(getCollapsedCards(scope));
+      ordered.forEach((card) => {
+        const id = card.dataset.cardId;
+        const title = card.dataset.cardTitle || cardTitle(card);
+        const defaultSize = options.defaultSize || 'large';
+        const size = getCardSize(scope, id, defaultSize);
+        const collapsed = collapsedCards.has(id);
+        card.hidden = closed.has(id);
+        card.classList.add('dashboard-card');
+        card.classList.toggle('card-collapsed', collapsed);
+        card.classList.remove('card-size-small', 'card-size-medium', 'card-size-large');
+        card.classList.add(`card-size-${size}`);
+        card.querySelector(':scope > .card-collapse-button')?.remove();
+        card.querySelector(':scope > .card-collapsed-title')?.remove();
+        card.querySelector(':scope > .card-menu-button')?.remove();
+        card.querySelector(':scope > .card-menu')?.remove();
+        card.insertAdjacentHTML('afterbegin', `<div class="card-collapsed-title">${escapeHtml(title)}</div>`);
+        card.insertAdjacentHTML('afterbegin', cardCollapseButtonHtml(scope, id, title, collapsed));
+        card.insertAdjacentHTML('afterbegin', cardMenuHtml(scope, id, title, size, options));
+        const help = cardHelp(title, scope);
+        const helpTarget = card.querySelector(':scope > h2') || card.querySelector(':scope > .quick-title') || card.querySelector('.combat-meter-title-row h2');
+        if (help && helpTarget) {
+          helpTarget.title = help;
+          helpTarget.dataset.cardHelp = 'true';
+        }
+      });
+    }
+
+    function decorateInterfaceCards(scope) {
+      const viewScope = cardScopeForView(scope);
+      view.classList.add('view-card-grid');
+      tabs.dataset.cardTitleOverride = 'Tabs';
+      decorateCards('quick', Array.from(quickPanel.querySelectorAll(':scope > .quick-card')), { defaultSize: 'medium' });
+      decorateCards('tabs', [tabs], { defaultSize: 'large', movable: false });
+      decorateCards(viewScope, Array.from(view.querySelectorAll(':scope > .panel')), { defaultSize: 'large' });
+    }
+
+    function moveCard(scope, id, direction) {
+      const cards = Array.from(document.querySelectorAll('[data-card-scope]')).filter((card) => card.dataset.cardScope === scope);
+      const ids = cards.map((card) => card.dataset.cardId).filter(Boolean);
+      if (!ids.includes(id)) return;
+      const index = ids.indexOf(id);
+      const next = ['up', 'left'].includes(direction) ? index - 1 : index + 1;
+      if (next < 0 || next >= ids.length) return;
+      [ids[index], ids[next]] = [ids[next], ids[index]];
+      setCardLayout(scope, ids);
+      render();
+    }
+
+    function closeCard(scope, id) {
+      const closed = new Set(getClosedCards(scope));
+      const normalizedId = normalizeCardId(scope, id);
+      closed.add(normalizedId);
+      setClosedCards(scope, Array.from(closed));
+      document.querySelectorAll('[data-card-scope][data-card-id]').forEach((card) => {
+        if (card.dataset.cardScope === scope && normalizeCardId(scope, card.dataset.cardId) === normalizedId) {
+          card.hidden = true;
+        }
+      });
+      closeMenus();
+      render();
+    }
+
+    function openCard(scope, id) {
+      const normalizedId = normalizeCardId(scope, id);
+      setClosedCards(scope, getClosedCards(scope).filter((item) => normalizeCardId(scope, item) !== normalizedId));
+      render();
+    }
+
+    function toggleCardCollapsed(scope, id) {
+      const normalizedId = normalizeCardId(scope, id);
+      const collapsed = new Set(getCollapsedCards(scope));
+      if (collapsed.has(normalizedId)) collapsed.delete(normalizedId);
+      else collapsed.add(normalizedId);
+      setCollapsedCards(scope, Array.from(collapsed));
+      closeMenus();
+      render();
+    }
+
+    function resetCardScope(scope) {
+      [cardLayoutPrefix, cardSizePrefix, cardClosedPrefix, cardCollapsedPrefix].forEach((prefix) => localStorage.removeItem(cardStorageKey(prefix, scope)));
+      persistUiPreferences(true);
+      render();
+    }
+
+    function resetAllCardLayouts() {
+      const prefixes = [cardLayoutPrefix, cardSizePrefix, cardClosedPrefix, cardCollapsedPrefix];
+      Object.keys(localStorage)
+        .filter((key) => prefixes.some((prefix) => key.startsWith(prefix)))
+        .forEach((key) => localStorage.removeItem(key));
+      persistUiPreferences(true);
+      render();
+    }
+
+    function closeMenus() {
+      appMenu.hidden = true;
+      activeCardMenu = '';
+      document.querySelectorAll('.card-menu').forEach((menu) => { menu.hidden = true; });
+    }
+
+    function toggleCardMenu(scope, id) {
+      const token = `${scope}:${id}`;
+      const currentMenu = Array.from(document.querySelectorAll('[data-card-menu]')).find((menu) => menu.dataset.cardMenu === token);
+      const wasOpen = activeCardMenu === token && currentMenu && !currentMenu.hidden;
+      closeMenus();
+      if (wasOpen) return;
+      const menu = Array.from(document.querySelectorAll('[data-card-menu]')).find((item) => item.dataset.cardMenu === token);
+      if (menu) {
+        menu.hidden = false;
+        activeCardMenu = token;
+      }
+    }
+
+    function hiddenCardEntries() {
+      const entries = [];
+      hiddenCardScopes().forEach((scope) => {
+        const labels = getCardLabels(scope);
+        getClosedCards(scope).forEach((id) => {
+          entries.push({
+            scope,
+            id,
+            label: labels[id] || fallbackCardLabel(scope, id)
+          });
+        });
+      });
+      return entries.sort((a, b) => `${a.scope}:${a.label}`.localeCompare(`${b.scope}:${b.label}`));
+    }
+
+    function hiddenCardScopes() {
+      const scopes = new Set(['quick', 'tabs']);
+      views.forEach(([id]) => scopes.add(cardScopeForView(id)));
+      scopes.add(cardScopeForView('settings'));
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith(cardClosedPrefix)) scopes.add(key.slice(cardClosedPrefix.length));
+      });
+      return Array.from(scopes).filter(Boolean);
+    }
+
+    function fallbackCardLabel(scope, id) {
+      const key = normalizeCardId(scope, id);
+      const quickLabels = {
+        section: 'Section',
+        vitals: 'Vitals',
+        'add-item': 'Add Item',
+        'drop-item': 'Drop Item'
+      };
+      if (scope === 'quick') return quickLabels[key] || key;
+      if (scope === 'tabs') return 'Tabs';
+      return key
+        .split('-')
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ') || 'Section';
+    }
+
+    function renderAppMenu() {
+      appMenu.innerHTML = `
+        <div class="menu-heading">Assistant</div>
+        <div class="menu-heading">Mode</div>
+        <div class="menu-row three">
+          <button type="button" class="${playMode === 'auto' ? 'active' : ''}" data-mode-set="auto">Auto</button>
+          <button type="button" class="${playMode === 'manual' ? 'active' : ''}" data-mode-set="manual">Manual</button>
+          <button type="button" class="${playMode === 'cli' ? 'active' : ''}" data-mode-set="cli">CLI</button>
+        </div>
+        <button type="button" data-save-current>Save Game</button>
+        <button type="button" data-export-save>Export Current Save</button>
+        <button type="button" data-backup-saves>Backup Saves</button>
+        <button type="button" data-autosave>Autosave: On</button>
+        <button type="button" data-settings-view>Settings</button>
+        <button type="button" class="danger" data-shutdown-app>Shut Down App</button>
+      `;
+    }
+
+    function topWidgetLabel(id) {
+      const widget = topWidgets.find(([key]) => key === id);
+      return widget ? widget[1] : id;
+    }
+
+    function sizeStorageKey(scope) {
+      return scope === 'top' ? topSizeKey : sheetSizeKey;
+    }
+
+    function normalizeWidgetSize(size) {
+      return sizeOrder.includes(size) ? size : 'normal';
+    }
+
+    function getWidgetSizes(scope) {
+      try {
+        const saved = localStorage.getItem(sizeStorageKey(scope));
+        const parsed = saved ? JSON.parse(saved) : {};
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function getWidgetSize(scope, id) {
+      return normalizeWidgetSize(getWidgetSizes(scope)[id]);
+    }
+
+    function setWidgetSize(scope, id, size) {
+      const sizes = getWidgetSizes(scope);
+      const nextSize = normalizeWidgetSize(size);
+      if (nextSize === 'normal') delete sizes[id];
+      else sizes[id] = nextSize;
+      setJsonStorage(sizeStorageKey(scope), sizes);
+      render();
+    }
+
+    function cycleWidgetSize(scope, id) {
+      const current = getWidgetSize(scope, id);
+      const next = sizeOrder[(sizeOrder.indexOf(current) + 1) % sizeOrder.length];
+      setWidgetSize(scope, id, next);
+    }
+
+    function isTopWidgetAvailable(id) {
+      return id !== 'sheet-layout' || activeView === 'sheet';
+    }
+
+    function defaultTopLayout() {
+      return topWidgets.map(([id]) => id);
+    }
+
+    function cleanTopLayout(layout) {
+      const known = new Set(topWidgets.map(([id]) => id));
+      const result = [];
+      arr(layout).forEach((id) => {
+        const key = text(id).trim();
+        if (known.has(key) && !result.includes(key)) result.push(key);
+      });
+      if (!result.includes('page-layout')) result.unshift('page-layout');
+      return result;
+    }
+
+    function getTopLayout() {
+      try {
+        const saved = localStorage.getItem(topLayoutKey);
+        if (saved) return cleanTopLayout(JSON.parse(saved));
+      } catch {}
+      return defaultTopLayout();
+    }
+
+    function setTopLayout(layout) {
+      setJsonStorage(topLayoutKey, cleanTopLayout(layout));
+      render();
+    }
+
+    function resetTopLayout() {
+      localStorage.removeItem(topLayoutKey);
+      localStorage.removeItem(topSizeKey);
+      persistUiPreferences();
+      render();
+    }
+
+    function addTopWidget(id) {
+      const layout = getTopLayout();
+      if (!id || layout.includes(id)) return;
+      setTopLayout([...layout, id]);
+    }
+
+    function removeTopWidget(id) {
+      if (id === 'page-layout') return;
+      setTopLayout(getTopLayout().filter((item) => item !== id));
+    }
+
+    function moveTopWidget(id, direction) {
+      const layout = getTopLayout();
+      const index = layout.indexOf(id);
+      if (index < 0) return;
+      const next = ['up', 'left'].includes(direction) ? index - 1 : index + 1;
+      if (next < 0 || next >= layout.length) return;
+      [layout[index], layout[next]] = [layout[next], layout[index]];
+      setTopLayout(layout);
+    }
+
+    function dropTopWidget(source, target) {
+      if (!source || !target || source === target) return;
+      const layout = getTopLayout().filter((id) => id !== source);
+      const targetIndex = layout.indexOf(target);
+      if (targetIndex < 0) return;
+      layout.splice(targetIndex, 0, source);
+      setTopLayout(layout);
+    }
+
+    function renderTopLayoutControls(layout) {
+      const hidden = topWidgets.filter(([id]) => id !== 'page-layout' && !layout.includes(id) && isTopWidgetAvailable(id));
+      return `
+        <div class="layout-controls">
+          <select id="topWidgetAdd" ${hidden.length ? '' : 'disabled'}>
+            ${hidden.map(([id, label]) => `<option value="${id}">${label}</option>`).join('') || '<option value="">All sections shown</option>'}
+          </select>
+          <button type="button" data-top-widget-add ${hidden.length ? '' : 'disabled'}>Add Section</button>
+          <button type="button" data-top-widget-reset>Reset</button>
+        </div>
+      `;
+    }
+
+    function statusWidgetBody(id) {
+      const c = currentCharacter();
+      const book = bookByNumber(c.BookNumber);
+      const values = {
+        'status-book': [`${c.BookNumber}. ${book.title}`, ''],
+        'status-section': [app.state.CurrentSection, ''],
+        'status-end': [`${c.EnduranceCurrent}/${c.EnduranceMax}`, ''],
+        'status-wp': [c.WillpowerCurrent, ''],
+        'status-cs': [c.CombatSkillCurrent, '']
+      };
+      const [value, subvalue] = values[id] || ['', ''];
+      return `
+        <div class="status-value">${escapeHtml(value)}</div>
+        ${subvalue ? `<div class="status-subvalue">${escapeHtml(subvalue)}</div>` : ''}
+      `;
+    }
+
+    function quickSectionBody() {
+      const automation = app.state.Automation || {};
+      const ending = automation.Ending;
+      const flags = automation.Flags || {};
+      const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const staffUnavailable = flags.staffAvailable === false;
+      const flow = currentFlow();
+      const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
+      const missingBookFiles = !currentBookFilesInstalled();
+      return `
+        <div class="controls">
+          <button type="button" data-automation-apply ${manualDisabledAttributes('section effects')} title="${isManualMode() ? 'Manual mode: click for section effect advice. No sheet changes will be applied.' : 'Apply audited section effects.'}">Apply Effects</button>
+          <button type="button" data-roll ${manualDisabledAttributes('roll helper')} title="${isManualMode() ? 'Manual mode: click for roll advice. No roll will be recorded.' : 'Roll a random number from 0 to 9.'}">${rollLabel}</button>
+        </div>
+        <div class="quick-note">${ending ? `Ending marked: ${escapeHtml(ending.Type)}` : `Book ${escapeHtml(currentCharacter().BookNumber)}, section ${escapeHtml(app.state.CurrentSection)}`}</div>
+        ${missingBookFiles ? '<div class="mode-note">Book HTML files are not installed. Open the Install Project Aon Books page from Home.</div>' : ''}
+        ${isManualMode() ? '<div class="mode-note">Manual mode is tracking your sheet only. Click section helpers for advice, then apply the math by hand.</div>' : ''}
+        ${staffUnavailable || backpackUnavailable ? `<div class="quick-note">Stored gear is being held until the book returns it.</div>` : ''}
+      `;
+    }
+
+    function quickVitalsBody() {
+      return `
+        ${statButtons('end', 'END', true)}
+        ${statButtons('wp', 'WP', true)}
+      `;
+    }
+
+    function quickAddBody() {
+      return `
+        <form id="quickItemForm" class="controls">
+          <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+          <input name="item" placeholder="Item name">
+          <button type="submit">Add</button>
+        </form>
+        <div class="controls" style="margin-top:.35rem">
+          <button data-meal="eat">Eat Meal</button>
+          <button data-meal="missed">Missed Meal</button>
+        </div>
+      `;
+    }
+
+    function quickDropBody() {
+      const inv = currentInventory();
+      return `<div class="quick-drop-list">${quickDropRows(inv)}</div>`;
+    }
+
+    function tabsBody() {
+      return `
+        <div class="controls">
+          ${views.map(([id, label]) => `<button type="button" class="${id === activeView ? 'active' : ''}" data-view="${id}">${label}</button>`).join('')}
+        </div>
+      `;
+    }
+
+    function renderTopWidget(id, layout) {
+      if (!isTopWidgetAvailable(id)) return '';
+      if (id === 'page-layout') {
+        return dashboardPanel('page-layout', 'Page Layout', renderTopLayoutControls(layout), ['extra-wide'], 'top', false);
+      }
+      if (id.startsWith('status-')) {
+        return dashboardPanel(id, topWidgetLabel(id), statusWidgetBody(id), ['top-status'], 'top');
+      }
+      if (id === 'quick-section') return dashboardPanel(id, 'Section Actions', quickSectionBody(), ['wide'], 'top');
+      if (id === 'quick-vitals') return dashboardPanel(id, 'Vitals', quickVitalsBody(), ['wide'], 'top');
+      if (id === 'quick-add') return dashboardPanel(id, 'Add Item', quickAddBody(), ['wide'], 'top');
+      if (id === 'quick-drop') return dashboardPanel(id, 'Drop Item', quickDropBody(), ['wide'], 'top');
+      if (id === 'tabs') return dashboardPanel(id, 'Tabs', tabsBody(), ['extra-wide'], 'top');
+      if (id === 'sheet-layout') return dashboardPanel(id, 'Sheet Layout', renderSheetLayoutControls(getSheetLayout()), ['extra-wide'], 'top');
+      return '';
+    }
+
+    function renderTopDashboard() {
+      const layout = getTopLayout();
+      topDashboard.innerHTML = layout.map((id) => renderTopWidget(id, layout)).join('');
+    }
+
+    function sheetWidgetLabel(id) {
+      const widget = sheetWidgets.find(([key]) => key === id);
+      return widget ? widget[1] : id;
+    }
+
+    function hasSavedCharacter() {
+      return Boolean(text(app?.state?.Settings?.SavePath).trim());
+    }
+
+    function defaultSheetLayout() {
+      return hasSavedCharacter() ? ['action', 'choices'] : ['action', 'new', 'choices'];
+    }
+
+    function cleanSheetLayout(layout) {
+      const known = new Set(sheetWidgets.map(([id]) => id));
+      const result = [];
+      arr(layout).forEach((id) => {
+        const key = text(id).trim();
+        if (known.has(key) && !result.includes(key)) result.push(key);
+      });
+      return result;
+    }
+
+    function getSheetLayout() {
+      try {
+        const saved = localStorage.getItem(sheetLayoutKey);
+        if (saved) return cleanSheetLayout(JSON.parse(saved));
+      } catch {}
+      return defaultSheetLayout();
+    }
+
+    function setSheetLayout(layout) {
+      setJsonStorage(sheetLayoutKey, cleanSheetLayout(layout));
+      render();
+    }
+
+    function resetSheetLayout() {
+      localStorage.removeItem(sheetLayoutKey);
+      localStorage.removeItem(sheetSizeKey);
+      persistUiPreferences();
+      render();
+    }
+
+    function addSheetWidget(id) {
+      const layout = getSheetLayout();
+      if (!id || layout.includes(id)) return;
+      setSheetLayout([...layout, id]);
+    }
+
+    function removeSheetWidget(id) {
+      setSheetLayout(getSheetLayout().filter((item) => item !== id));
+    }
+
+    function moveSheetWidget(id, direction) {
+      const layout = getSheetLayout();
+      const index = layout.indexOf(id);
+      if (index < 0) return;
+      const next = ['up', 'left'].includes(direction) ? index - 1 : index + 1;
+      if (next < 0 || next >= layout.length) return;
+      [layout[index], layout[next]] = [layout[next], layout[index]];
+      setSheetLayout(layout);
+    }
+
+    function dropSheetWidget(source, target) {
+      if (!source || !target || source === target) return;
+      const layout = getSheetLayout().filter((id) => id !== source);
+      const targetIndex = layout.indexOf(target);
+      if (targetIndex < 0) return;
+      layout.splice(targetIndex, 0, source);
+      setSheetLayout(layout);
+    }
+
+    function renderSheetLayoutControls(layout) {
+      const hidden = sheetWidgets.filter(([id]) => !layout.includes(id));
+      return `
+        <div class="layout-controls">
+          <select id="sheetWidgetAdd" ${hidden.length ? '' : 'disabled'}>
+            ${hidden.map(([id, label]) => `<option value="${id}">${label}</option>`).join('') || '<option value="">All sections shown</option>'}
+          </select>
+          <button type="button" data-widget-add ${hidden.length ? '' : 'disabled'}>Add Section</button>
+          <button type="button" data-widget-reset>Reset</button>
+        </div>
+      `;
+    }
+
+    function dashboardPanel(id, title, body, classes = [], scope = 'sheet', removable = true) {
+      const size = getWidgetSize(scope, id);
+      const className = ['panel', 'dashboard-card', `size-${size}`].concat(classes).filter(Boolean).join(' ');
+      const safeScope = escapeHtml(scope);
+      const safeId = escapeHtml(id);
+      return `
+        <section class="${className}" data-widget="${safeId}" data-layout-scope="${safeScope}" draggable="true">
+          <div class="panel-title-row">
+            <h2>${escapeHtml(title)}</h2>
+            <div class="panel-tools">
+              <button type="button" data-widget-move="${safeScope}:${safeId}:left">Left</button>
+              <button type="button" data-widget-move="${safeScope}:${safeId}:right">Right</button>
+              <button type="button" data-widget-size="${safeScope}:${safeId}">${escapeHtml(sizeLabels[size])}</button>
+              ${removable ? `<button type="button" class="danger" data-widget-remove="${safeScope}:${safeId}">Remove</button>` : ''}
+            </div>
+          </div>
+          ${body}
+        </section>
+      `;
+    }
+
+    function choiceGroup(title, rows) {
+      if (!rows) return '';
+      return `
+        <div class="choice-group">
+          <div class="choice-title">${escapeHtml(title)}</div>
+          ${rows}
+        </div>
+      `;
+    }
+
+    function sectionAutomationRows() {
+      const automation = currentFlow().Automation || {};
+      const messages = arr(automation.Messages);
+      if (!automation.Summary) return '';
+      return `
+        <div class="item-row">
+          <small>${automation.Applied ? 'Applied' : 'Ready'}</small>
+          <span class="wrap">${escapeHtml(automation.Summary)}</span>
+          ${automation.Applied ? '' : modeActionButton('data-automation-apply', 'Apply', 'section effects')}
+        </div>
+        ${messages.map((line) => `
+          <div class="item-row">
+            <small>Result</small>
+            <span class="wrap">${escapeHtml(line)}</span>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function sectionLootRows(entry) {
+      return arr(entry.loot).map((loot) => `
+        <div class="item-row">
+          <small>Loot</small>
+          <span class="wrap">${escapeHtml(text(loot.label || loot.id, 'Option'))}</span>
+          ${modeActionButton(`data-flow-loot="${escapeHtml(text(loot.id))}"`, 'Apply', 'section loot')}
+        </div>
+      `).join('');
+    }
+
+    function sectionCombatRows(entry) {
+      return arr(entry.combat).map((combat) => `
+        <div class="item-row">
+          <small>CS ${escapeHtml(text(combat.enemy?.cs || combat.enemies?.[0]?.cs, '?'))}</small>
+          <span class="wrap">${escapeHtml(text(combat.label || combat.enemy?.name || combat.enemies?.[0]?.name, 'Section combat'))}</span>
+          ${modeActionButton(`data-section-combat-start="${escapeHtml(text(combat.id))}"`, 'Start', 'combat presets')}
+        </div>
+      `).join('');
+    }
+
+    function sectionStatusRows(entry) {
+      return arr(entry.status).map((status) => {
+        const current = app.state.Automation?.Flags?.[status.key] === true;
+        return `
+          <div class="item-row">
+            <small>${current ? 'On' : 'Off'}</small>
+            <span class="wrap">${escapeHtml(text(status.label || status.key, 'Status'))}</span>
+            <button type="button" data-status-flag="${escapeHtml(status.key)}:${current ? 'false' : 'true'}">${current ? 'Clear' : 'Set'}</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function sectionWillpowerRows(entry) {
+      const costs = arr(entry.wpCosts);
+      if (entry.wpCost) costs.unshift(entry.wpCost);
+      if (!costs.length) return '';
+      return costs.map((wp) => `
+        <div class="item-row">
+          <small>${escapeHtml(text(wp.cost, '0'))} WP</small>
+          <span class="wrap">${escapeHtml(text(wp.label, 'Section Willpower cost'))}</span>
+          ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:negative"`, 'Spend WP', 'section costs')}
+          ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:endurance_for_missing"`, 'Use END', 'section costs')}
+        </div>
+      `).join('');
+    }
+
+    function sectionRollRows(entry) {
+      const lastRoll = currentFlow().LastRoll;
+      if (!entry.roll && !lastRoll) return '';
+      return `
+        <div class="controls" style="margin-bottom:.35rem">
+          <input id="manualRoll" type="number" min="0" max="9" placeholder="Optional roll">
+          ${modeActionButton('data-roll', 'Roll', 'roll helper')}
+        </div>
+        ${entry.roll ? `<p class="muted">${escapeHtml(text(entry.roll.summary, 'Section-aware roll'))}</p>` : ''}
+        ${lastRoll ? `
+          <div class="item-row">
+            <small>${escapeHtml(lastRoll.Raw)}</small>
+            <span class="wrap">Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
+            ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function routeCheckOutcomeText(outcome) {
+      const label = text(outcome.Label, 'Result');
+      const test = text(outcome.Test);
+      const route = outcome.Route ? ` -> section ${outcome.Route}` : '';
+      return `${test ? `${test}: ` : ''}${label}${route}`;
+    }
+
+    function sectionRouteCheckRows() {
+      return arr(currentFlow().RouteChecks).map((check) => {
+        if (!check.Ready) {
+          return `
+            <div class="item-row">
+              <small>Wait</small>
+              <span class="wrap">${escapeHtml(text(check.Label, 'Route check'))}: ${escapeHtml(text(check.BlockedReason, 'Apply the entry effect first, then recheck the route.'))}</span>
+            </div>
+          `;
+        }
+        const matched = check.MatchedOutcome || {};
+        const formula = text(check.Formula || check.Summary, 'Current sheet check');
+        const value = check.Value ?? '';
+        const currentRoute = matched.Route ? Number(matched.Route) : null;
+        const currentRow = `
+          <div class="item-row">
+            <small>${value !== '' ? `Total ${escapeHtml(value)}` : 'Check'}</small>
+            <span class="wrap">${escapeHtml(text(check.Label, 'Route check'))}: ${escapeHtml(formula)}${matched.Label ? ` | ${escapeHtml(routeCheckOutcomeText(matched))}` : ''}</span>
+            ${currentRoute ? `<button type="button" data-route="${escapeHtml(currentRoute)}">Go ${escapeHtml(currentRoute)}</button>` : ''}
+          </div>
+        `;
+        const otherRows = arr(check.Outcomes)
+          .filter((outcome) => !outcome.Matched)
+          .map((outcome) => `
+            <div class="item-row">
+              <small>Other</small>
+              <span class="wrap">${escapeHtml(routeCheckOutcomeText(outcome))}</span>
+            </div>
+          `)
+          .join('');
+        return currentRow + otherRows;
+      }).join('');
+    }
+
+    function sectionRouteRows() {
+      return arr(currentFlow().SourceRoutes).map((route) => (
+        `<div class="item-row">
+          <small>${escapeHtml(route.Section)}</small>
+          <span class="wrap">${escapeHtml(route.Label || `Go to ${route.Section}`)}</span>
+          <button type="button" data-route="${escapeHtml(route.Section)}">Go</button>
+        </div>`
+      )).join('');
+    }
+
+    function choicesPanelBody() {
+      const entry = currentFlow().Entry || {};
+      const groups = [
+        choiceGroup('Entry Effect', sectionAutomationRows()),
+        choiceGroup('Loot And Section Items', sectionLootRows(entry)),
+        choiceGroup('Willpower Cost', sectionWillpowerRows(entry)),
+        choiceGroup('Section Combat', sectionCombatRows(entry)),
+        choiceGroup('Status Flags', sectionStatusRows(entry)),
+        choiceGroup('Route Check', sectionRouteCheckRows()),
+        choiceGroup('Section Roll', sectionRollRows(entry))
+      ].filter(Boolean);
+      return groups.join('') || '<p class="muted">No section choices recorded for this section.</p>';
+    }
+
+    function renderChoicesPanel() {
+      return `
+        <div class="panel sheet-choices">
+          <h2>Choices</h2>
+          ${choicesPanelBody()}
+        </div>
+      `;
+    }
+
+    function renderMapPanel() {
+      const mapUrl = 'books/lw/01fftd/map.png';
+      if (!hasInstalledBookFiles(1)) {
+        return `
+          <div class="panel sheet-map">
+            <h2>Map</h2>
+            <p class="muted">The Book 1 map is shown from the local Project Aon book files. Install Book 1 files to use this card.</p>
+          </div>
+        `;
+      }
+      return `
+        <div class="panel sheet-map">
+          <h2>Map</h2>
+          <div class="map-card-frame">
+            <img src="${mapUrl}" alt="Flight from the Dark game map" loading="eager" decoding="async">
+          </div>
+          <div class="map-card-actions">
+            <a href="${mapUrl}" target="_blank" rel="noopener">Open Full Map</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function actionChartBody() {
+      const c = currentCharacter();
+      const inv = currentInventory();
+      return `
+        <div class="grid">
+          ${field('Name', c.Name)}
+          ${field('Nobles', inv.Nobles)}
+          ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
+          ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
+          ${field('Willpower', c.WillpowerCurrent)}
+          ${field('Completed Books', list(c.CompletedBooks))}
+        </div>
+      `;
+    }
+
+    function newCharacterBody() {
+      const defaultLesser = new Set(lesserMagicks.slice(0, 5));
+      const lesserChoices = lesserMagicks.map((name) => `
+        <label class="check-option">
+          <input type="checkbox" name="lesserMagicks" value="${escapeHtml(name)}" ${defaultLesser.has(name) ? 'checked' : ''}>
+          <span>${escapeHtml(name)}</span>
+        </label>
+      `).join('');
+      return `
+        <form id="newForm" class="grid">
+          <label class="field">Name<input name="name" value="Lone Wolf"></label>
+          <label class="field">Book<select name="bookNumber" data-new-book>${books.map((b) => `<option value="${b.number}">${b.number}. ${b.title}</option>`).join('')}</select></label>
+          <label class="field">Gift<select name="gift"><option value="">None</option><option value="dagger">Jewelled Dagger</option><option value="talisman">Magic Talisman</option><option value="laumspur">Vial of Laumspur</option></select></label>
+          <div class="check-field">
+            <span data-lesser-help>Lesser Magicks - choose 5 for Book 1</span>
+            <div class="check-grid">${lesserChoices}</div>
+          </div>
+          <button type="submit">Create</button>
+        </form>
+      `;
+    }
+
+    function adjustNewCharacterMagicks(form) {
+      const bookNumber = Number(form?.querySelector('[name="bookNumber"]')?.value || 1);
+      const target = bookNumber > 1 ? 6 : 5;
+      const help = form?.querySelector('[data-lesser-help]');
+      if (help) help.textContent = `Lesser Magicks - choose ${target}`;
+      const boxes = Array.from(form?.querySelectorAll('input[name="lesserMagicks"]') || []);
+      boxes.forEach((box, index) => { box.checked = index < target; });
+    }
+
+    function renderSheetWidget(id, layout) {
+      if (id === 'action') {
+        return dashboardPanel('action', 'Action Chart', actionChartBody(), ['wide']);
+      }
+      if (id === 'choices') {
+        const classes = ['sheet-choices'];
+        if (!layout.includes('new')) classes.push('wide');
+        return dashboardPanel('choices', 'Choices', choicesPanelBody(), classes);
+      }
+      if (id === 'new') {
+        return dashboardPanel('new', 'New Character', newCharacterBody());
+      }
+      if (id === 'stored') {
+        return dashboardPanel('stored', 'Stored Gear', storedGearBody(true));
+      }
+      return '';
+    }
+
+    function renderSheet() {
+      const c = currentCharacter();
+      const inv = currentInventory();
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Action Chart</h2>
+          <div class="grid">
+            ${field('Name', c.Name)}
+            ${field('Nobles', inv.Nobles)}
+            ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
+            ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
+            ${field('Willpower', c.WillpowerCurrent)}
+            ${field('Completed Books', list(c.CompletedBooks))}
+          </div>
+        </div>
+        ${renderChoicesPanel()}
+        ${renderMapPanel()}
+        ${hasSavedCharacter() ? '' : `<div class="panel">
+          <h2>New Character</h2>
+          ${newCharacterBody()}
+        </div>`}
+      `;
+    }
+
+    function renderInventory() {
+      const inv = currentInventory();
+      const flags = app.state.Automation?.Flags || {};
+      const backpackLabel = flags.backpackAvailable === false || flags.backpackItemsAvailable === false ? 'Unavailable' : `${arr(inv.BackpackItems).length}/8`;
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Inventory</h2>
+          <div class="grid">
+            ${field('Weapons', `${arr(inv.Weapons).length}/2`)}
+            ${field('Backpack', backpackLabel)}
+            ${field('Herb Pouch', inv.HasHerbPouch ? `${arr(inv.HerbPouchItems).length}/8` : 'None')}
+            ${field('Special Items', arr(inv.SpecialItems).length)}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Nobles</h2>
+          ${statButtons('nobles', 'Nobles')}
+        </div>
+        ${storedGearPanel()}
+        ${itemList('Weapons', 'weapon', inv.Weapons)}
+        ${itemList('Backpack', 'backpack', inv.BackpackItems)}
+        ${inv.HasHerbPouch ? itemList('Herb Pouch', 'herb', inv.HerbPouchItems) : ''}
+        ${itemList('Special Items', 'special', inv.SpecialItems)}
+        <div class="panel">
+          <h2>Add Item</h2>
+          <form id="itemForm" class="controls">
+            <select name="type"><option value="weapon">Weapon</option><option value="backpack">Backpack</option><option value="special">Special</option><option value="herb">Herb</option></select>
+            <input name="item" placeholder="Item name">
+            <button type="submit">Add</button>
+          </form>
+          <div class="controls" style="margin-top:.55rem">
+            <button data-meal="eat">Eat Meal</button>
+            <button data-meal="missed">Missed Meal</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMagicks() {
+      const c = currentCharacter();
+      view.innerHTML = `
+        <div class="panel"><h2>Willpower</h2>${statButtons('wp', 'Willpower')}</div>
+        ${powerPanel('Lesser Magicks', lesserMagicks, c.LesserMagicks)}
+        ${powerPanel('Higher Magicks', higherMagicks, c.HigherMagicks)}
+      `;
+    }
+
+    function renderSections() {
+      const c = currentCharacter();
+      const history = arr(app.state.SectionHistory).slice(-12).reverse();
+      view.innerHTML = `
+        ${renderSectionAssist()}
+        <div class="panel">
+          <h2>Current Section</h2>
+          <form id="sectionForm" class="controls">
+            <select name="book">${books.map((b) => `<option value="${b.number}" ${Number(c.BookNumber) === b.number ? 'selected' : ''}>${b.number}. ${b.title}</option>`).join('')}</select>
+            <input name="section" type="number" min="1" value="${app.state.CurrentSection}">
+            <button type="submit">Go</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h2>Recent Path</h2>
+          ${history.map((item) => `<div class="item-row"><small>Book ${item.BookNumber}</small><span>${item.BookTitle} - Section ${item.Section}</span><button data-section-jump="${item.BookNumber}:${item.Section}">Open</button></div>`).join('') || '<div class="item-row"><span>No path yet.</span></div>'}
+        </div>
+      `;
+    }
+
+    function renderSectionAssist() {
+      const flow = currentFlow();
+      const entry = flow.Entry || {};
+      const lastRoll = flow.LastRoll;
+      const sourceRoutes = arr(flow.SourceRoutes);
+      const automation = flow.Automation || {};
+      const automationMessages = arr(automation.Messages);
+      const routeRows = sourceRoutes.map((route) => (
+        `<button type="button" data-route="${escapeHtml(route.Section)}">${escapeHtml(route.Label || `Go to ${route.Section}`)}</button>`
+      )).join('');
+      const automationRows = automation.Summary ? `
+        <div class="item-row">
+          <small>${automation.Applied ? 'Applied' : 'Ready'}</small>
+          <span class="wrap">${escapeHtml(automation.Summary)}</span>
+        </div>
+        ${automationMessages.map((line) => `
+          <div class="item-row">
+            <small>Result</small>
+            <span class="wrap">${escapeHtml(line)}</span>
+          </div>
+        `).join('')}
+      ` : '<p class="muted">No automatic entry effect for this section.</p>';
+      const rollRows = lastRoll ? `
+        <div class="item-row">
+          <small>${escapeHtml(lastRoll.Raw)}</small>
+          <span>Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
+          ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
+        </div>
+      ` : '<p class="muted">No roll recorded for this section yet.</p>';
+      const combatRows = arr(entry.combat).map((combat) => `
+        <div class="item-row">
+          <small>CS ${escapeHtml(text(combat.enemy?.cs || combat.enemies?.[0]?.cs, '?'))}</small>
+          <span>${escapeHtml(text(combat.label || combat.enemy?.name || combat.enemies?.[0]?.name, 'Section combat'))}</span>
+          ${modeActionButton(`data-section-combat-start="${escapeHtml(text(combat.id))}"`, 'Start', 'combat presets')}
+        </div>
+      `).join('');
+      const lootRows = arr(entry.loot).map((loot) => `
+        <div class="item-row">
+          <small>Loot</small>
+          <span>${escapeHtml(text(loot.label || loot.id, 'Option'))}</span>
+          ${modeActionButton(`data-flow-loot="${escapeHtml(text(loot.id))}"`, 'Apply', 'section loot')}
+        </div>
+      `).join('');
+      const statusRows = arr(entry.status).map((status) => {
+        const current = app.state.Automation?.Flags?.[status.key] === true;
+        return `
+          <div class="item-row">
+            <small>${current ? 'On' : 'Off'}</small>
+            <span>${escapeHtml(text(status.label || status.key, 'Status'))}</span>
+            <button type="button" data-status-flag="${escapeHtml(status.key)}:${current ? 'false' : 'true'}">${current ? 'Clear' : 'Set'}</button>
+          </div>
+        `;
+      }).join('');
+      const wp = entry.wpCost;
+      const wpPanel = wp ? `
+        <div class="panel">
+          <h2>Willpower Cost</h2>
+          <div class="item-row">
+            <small>${escapeHtml(text(wp.cost, '0'))} WP</small>
+            <span>${escapeHtml(text(wp.label, 'Section Willpower cost'))}</span>
+            ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:negative"`, 'Spend WP', 'section costs')}
+            ${modeActionButton(`data-wp-cost="${escapeHtml(wp.cost)}:endurance_for_missing"`, 'Use END', 'section costs')}
+          </div>
+        </div>
+      ` : '';
+      return `
+        <div class="panel">
+          <h2>Section Assistant</h2>
+          <div class="section-subtitle">Automatic Entry Effect</div>
+          ${automationRows}
+          <div class="controls">
+            <input id="manualRoll" type="number" min="0" max="9" placeholder="Optional roll">
+            ${modeActionButton('data-roll', 'Roll', 'roll helper')}
+          </div>
+          ${entry.roll ? `<p class="muted">${escapeHtml(text(entry.roll.summary, 'Section-aware roll'))}</p>` : '<p class="muted">Generic random digit unless this section has a special random rule.</p>'}
+          ${rollRows}
+          <div class="controls">${routeRows || '<span class="muted">No source routes found.</span>'}</div>
+        </div>
+        ${combatRows ? `<div class="panel"><h2>Section Combat</h2>${combatRows}</div>` : ''}
+        ${lootRows ? `<div class="panel"><h2>Loot And Section Items</h2>${lootRows}</div>` : ''}
+        ${statusRows ? `<div class="panel"><h2>Status Flags</h2>${statusRows}</div>` : ''}
+        ${wpPanel}
+      `;
+    }
+
+    function renderCombat() {
+      const combat = currentCombat();
+      const c = currentCharacter();
+      const active = Boolean(combat.Active);
+      const rounds = arr(combat.Log).slice(-8);
+      const history = arr(app.state.CombatHistory).slice(-5).reverse();
+      const ratio = active && combat.CombatRatio !== null && combat.CombatRatio !== undefined ? formatSigned(combat.CombatRatio) : '(none)';
+      const playerEnd = `${text(combat.PlayerEnduranceCurrent ?? c.EnduranceCurrent, '0')} / ${text(combat.PlayerEnduranceMax ?? c.EnduranceMax, '0')}`;
+      const enemyEnd = `${text(combat.EnemyEnduranceCurrent, '0')} / ${text(combat.EnemyEnduranceMax, '0')}`;
+      const rows = [
+        ['Enemy', text(combat.EnemyName)],
+        ['Lone Wolf CS', text(combat.PlayerCombatSkill ?? c.CombatSkillCurrent, '0')],
+        ['Enemy CS', text(combat.EnemyCombatSkillEffective ?? combat.EnemyCombatSkill, '0')],
+        ['Combat Ratio', ratio],
+        ['Lone Wolf END', playerEnd],
+        ['Enemy END', enemyEnd],
+        ['Weapon', text(combat.ActiveWeapon, 'Unarmed')],
+        ['Staff Magic', combat.UseStaff ? 'On' : 'Off'],
+        ['Staff WP', text(combat.StaffWillpower, '1')],
+        ['Modifier', formatSigned(combat.Modifier || 0)],
+        ['Evade', combat.CanEvade ? 'Available' : 'No'],
+        ['Rounds', String(arr(combat.Log).length)]
+      ];
+      view.innerHTML = `
+        <div class="panel">
+          <h2>${active ? 'Combat Controls' : 'Start Tracked Combat'}</h2>
+          ${active ? `
+            <form id="roundForm" class="controls combat-actions">
+              <select name="activeWeapon" title="Active combat weapon">${combatWeaponOptions(combat)}</select>
+              <select name="useStaff" title="Use Wizard's Staff magic when the Staff is the active weapon"><option value="true" ${combat.UseStaff ? 'selected' : ''}>Staff magic on</option><option value="false" ${combat.UseStaff ? '' : 'selected'}>Staff magic off</option></select>
+              <input name="wp" type="number" min="1" placeholder="WP spend">
+              <input name="roll" type="number" min="0" max="9" placeholder="Roll">
+              <button type="submit">Resolve Round</button>
+              <button type="button" data-combat-auto ${manualDisabledAttributes('combat auto-resolve')} title="${isManualMode() ? 'Manual mode: click for combat round advice. No combat rounds will be resolved.' : 'Resolve the fight automatically using the current combat setup.'}">Auto Resolve</button>
+              <button type="button" data-combat-evade ${combat.CanEvade ? '' : 'disabled'}>Evade</button>
+              <button type="button" class="danger" data-combat-stop>Stop</button>
+            </form>
+          ` : `
+            <form id="combatForm" class="grid">
+              <label class="field">Enemy<input name="name" value="Enemy"></label>
+              <label class="field">CS<input name="cs" type="number" value="10"></label>
+              <label class="field">END<input name="endurance" type="number" value="10"></label>
+              <label class="field" title="Optional temporary Combat Skill modifier for this fight only. Use this when the section gives a combat bonus or penalty.">CS Modifier<input name="modifier" type="number" value="0" title="Temporary CS modifier for this fight."></label>
+              <label class="field">Active Weapon<select name="activeWeapon">${combatWeaponOptions(combat)}</select></label>
+              <label class="field" title="Use Wizard's Staff magic when the Staff is the active weapon. Staff magic spends Willpower during combat.">Staff Magic<select name="useStaff" title="Turn Staff magic on only when the Staff is the active weapon and the fight allows normal Staff use."><option value="true">On</option><option value="false">Off</option></select></label>
+              <label class="field" title="Default Willpower spent with the Wizard's Staff each combat round. The round form can override it.">Default Staff WP Spend<input name="staffWillpower" type="number" min="1" value="1" title="Minimum 1 when using the Wizard's Staff. Enemy END loss is multiplied by this value."></label>
+              <label class="field" title="Optional. If the book says you can evade only after a certain number of rounds, put that number here.">Evade After Rounds<input name="evadeAfterRounds" type="number" min="0" value="0" title="Minimum combat rounds before the Evade button should be used."></label>
+              <label class="field" title="Optional. Use this when the book says where to turn after winning this fight. The assistant can offer that section after victory.">Victory Section<input name="victoryRoute" type="number" min="1" placeholder="Optional" title="Section number to use after winning, if the book gives one."></label>
+              <label class="field" title="Optional. Use this when the book gives a section for evading the fight. The assistant can use this target when you press Evade.">Evade Section<input name="evadeRoute" type="number" min="1" placeholder="Optional" title="Section number to use after evading, if the book gives one."></label>
+              <label class="field" title="Set this to Yes only when the section explicitly allows evasion."><span>Can Evade</span><select name="canEvade" title="Controls whether the Evade button is available for this fight."><option value="">No</option><option value="true">Yes</option></select></label>
+              <button type="submit">Start Combat</button>
+            </form>
+          `}
+        </div>
+        ${active ? renderCombatDuelMeters(combat) : ''}
+        <div class="panel">
+          <h2>Combat</h2>
+          <div class="grid">${rows.map(([label, value]) => field(label, escapeHtml(value))).join('')}</div>
+        </div>
+        <div class="panel">
+          <h2>Recent Combat Rounds</h2>
+          ${rounds.length ? rounds.map((round) => `
+            <div class="item-row">
+              <small>R${escapeHtml(text(round.Round, '?'))}</small>
+              <span>Roll ${escapeHtml(text(round.Roll, '?'))} | Ratio ${escapeHtml(formatSigned(round.Ratio || 0))} | Enemy -${escapeHtml(text(round.EnemyLoss, '0'))} | Lone Wolf -${escapeHtml(text(round.PlayerLoss ?? round.LoneWolfReduxLoss ?? round.GrayStarLoss, '0'))}</span>
+            </div>
+          `).join('') : '<p class="muted">No combat rounds are recorded for the current fight.</p>'}
+        </div>
+        <div class="panel">
+          <h2>Combat Log</h2>
+          ${history.length ? history.map((entry) => `
+            <div class="item-row">
+              <small>${escapeHtml(text(entry.Outcome, '?'))}</small>
+              <span>${escapeHtml(text(entry.EnemyName, 'Enemy'))} | Rounds ${escapeHtml(text(entry.RoundCount, '0'))} | Ratio ${escapeHtml(formatSigned(entry.CombatRatio || 0))}</span>
+            </div>
+          `).join('') : '<p class="muted">No archived combat records yet.</p>'}
+        </div>
+      `;
+    }
+
+    function combatWeaponOptions(combat) {
+      const selected = text(combat.ActiveWeapon, '');
+      const weapons = arr(combat.AvailableWeapons);
+      const options = [{ value: '', label: 'Unarmed' }].concat(weapons.map((weapon) => ({ value: weapon, label: weapon })));
+      return options.map((option) => `
+        <option value="${escapeHtml(option.value)}" ${option.value === selected ? 'selected' : ''}>${escapeHtml(option.label)}</option>
+      `).join('');
+    }
+
+    function achievementRow(definition) {
+      const unlocked = definition.Unlocked === true;
+      const status = unlocked ? 'Unlocked' : 'Locked';
+      return `
+        <div class="item-row achievement-row ${unlocked ? 'unlocked' : 'locked'}">
+          <small class="${unlocked ? 'unlocked' : ''}">${escapeHtml(status)}</small>
+          <span class="wrap">
+            <strong>${escapeHtml(text(definition.Name, 'Achievement'))}</strong>
+            <p>${escapeHtml(text(definition.Description, ''))}</p>
+            ${unlocked && definition.UnlockedAt ? `<p>Unlocked ${escapeHtml(definition.UnlockedAt)}</p>` : ''}
+          </span>
+        </div>
+      `;
+    }
+
+    function renderAchievements() {
+      const achievements = currentAchievements();
+      const definitions = arr(achievements.Definitions);
+      const recent = arr(achievements.Recent);
+      const currentBook = Number(currentCharacter().BookNumber || 1);
+      const currentBookRows = definitions.filter((item) => Number(item.BookNumber || 0) === currentBook);
+      const otherRows = definitions.filter((item) => Number(item.BookNumber || 0) !== currentBook);
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Achievements</h2>
+          <div class="grid">
+            ${field('Unlocked', `${escapeHtml(text(achievements.UnlockedCount, '0'))}/${escapeHtml(text(achievements.TotalCount, '0'))}`)}
+            ${field('Current Book', `${escapeHtml(text(currentBookRows.filter((item) => item.Unlocked).length, '0'))}/${escapeHtml(text(currentBookRows.length, '0'))}`)}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Recent Unlocks</h2>
+          ${recent.length ? recent.map((entry) => `
+            <div class="item-row">
+              <small>Book ${escapeHtml(text(entry.BookNumber, '?'))}</small>
+              <span>${escapeHtml(text(entry.Name, 'Achievement'))}</span>
+            </div>
+          `).join('') : '<p class="muted">No achievements unlocked yet.</p>'}
+        </div>
+        <div class="panel">
+          <h2>Book ${escapeHtml(currentBook)} Achievements</h2>
+          ${currentBookRows.length ? currentBookRows.map(achievementRow).join('') : '<p class="muted">No achievements have been defined for this book yet.</p>'}
+        </div>
+        ${otherRows.length ? `
+          <div class="panel">
+            <h2>Other Achievements</h2>
+            ${otherRows.map(achievementRow).join('')}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderSaves() {
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Save</h2>
+          <form id="saveForm" class="controls"><input name="path" placeholder="Optional save name/path"><button type="submit">Save Now</button><button type="button" data-autosave>Autosave On</button></form>
+        </div>
+        <div class="panel">
+          <h2>Save Tools</h2>
+          <div class="controls">
+            <button type="button" data-export-save title="Download the current character save as a JSON file.">Export Current Save</button>
+            <button type="button" data-backup-saves title="Download a ZIP containing all local save files and UI layout preferences.">Backup All Saves</button>
+          </div>
+          <div class="controls" style="margin-top:.55rem">
+            <input id="importSaveInput" type="file" accept=".json,application/json" title="Choose a Lone Wolf save JSON file to import.">
+            <button type="button" data-import-save title="Load the selected save into this app and create a local copy.">Import Selected Save</button>
+          </div>
+          <p class="muted">Export makes one portable save. Backup creates a ZIP of every local save. Import reads a save JSON and copies it into this installation.</p>
+        </div>
+        <div class="panel">
+          <h2>Load</h2>
+          ${app.saves.map((save, index) => `<div class="item-row"><small>${index + 1}</small><span>${save.Name} - Book ${save.BookNumber}, Sec ${save.Section}</span><button data-load="${index + 1}">Load</button></div>`).join('') || '<div class="item-row"><span>No saves yet.</span></div>'}
+        </div>
+      `;
+    }
+
+    function renderSettings() {
+      const settings = app.state.Settings || {};
+      const paths = app.paths || {};
+      const currentScope = cardScopeForView(activeView === 'settings' ? 'sheet' : activeView);
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Settings</h2>
+          <div class="grid">
+            ${field('Autosave', 'On')}
+            ${field('Save Path', escapeHtml(text(settings.SavePath, 'Not saved yet')))}
+            ${field('Save Folder', escapeHtml(text(paths.SaveDir, 'Unknown')))}
+            ${field('UI Preferences', escapeHtml(text(paths.UiPreferences, 'Unknown')))}
+            ${field('Current View Layout', escapeHtml(currentScope))}
+            ${field('Branding', 'Lone Wolf')}
+          </div>
+          <div class="controls" style="margin-top:.65rem">
+            <button type="button" data-view="sheet">Back to Sheet</button>
+            <button type="button" data-save-current>Save Game</button>
+            <button type="button" data-export-save>Export Current Save</button>
+            <button type="button" data-backup-saves>Backup Saves</button>
+            <button type="button" data-card-reset-scope="${escapeHtml(currentScope)}">Reset Current Layout</button>
+            <button type="button" data-card-reset-all>Reset All Card Layouts</button>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Closed Cards</h2>
+          ${hiddenCardEntries().length ? hiddenCardEntries().map((entry) => `
+            <div class="item-row">
+              <small>${escapeHtml(entry.scope)}</small>
+              <span>${escapeHtml(entry.label)}</span>
+              <button type="button" data-card-open="${escapeHtml(entry.scope)}:${escapeHtml(entry.id)}">Re-add</button>
+            </div>
+          `).join('') : '<p class="muted">No cards are currently closed.</p>'}
+        </div>
+      `;
+    }
+
+    function renderNotes() {
+      const notes = arr(currentCharacter().Notes);
+      view.innerHTML = `
+        <div class="panel">
+          <h2>Notes</h2>
+          ${notes.map((note, index) => `<div class="item-row"><small>${index + 1}</small><span>${note}</span></div>`).join('') || '<div class="item-row"><span>No notes yet.</span></div>'}
+        </div>
+        <div class="panel">
+          <h2>Add Note</h2>
+          <form id="noteForm" class="controls"><input name="text" placeholder="Note text"><button type="submit">Add</button></form>
+        </div>
+      `;
+    }
+
+    function text(value, fallback = '') {
+      if (value === null || value === undefined || value === '') return fallback;
+      return String(value);
+    }
+    function escapeHtml(value) {
+      return text(value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
+    }
+    function numberValue(value, fallback = 0) {
+      const number = Number(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+    function formatSigned(value) {
+      const number = numberValue(value, 0);
+      return number > 0 ? `+${number}` : String(number);
+    }
+    function meterPercent(current, max) {
+      const safeMax = Math.max(0, numberValue(max, 0));
+      if (safeMax <= 0) return 0;
+      const clamped = Math.max(0, Math.min(numberValue(current, 0), safeMax));
+      return Math.max(0, Math.min(100, (clamped / safeMax) * 100));
+    }
+    function meterTone(current, max) {
+      const percent = meterPercent(current, max);
+      if (percent <= 25) return 'meter-danger';
+      if (percent <= 50) return 'meter-warning';
+      return 'meter-good';
+    }
+    function combatMeterCard({ label, current, max, combatSkill, enduranceLabel = 'END', note = '' }) {
+      const currentValue = numberValue(current, 0);
+      const maxValue = numberValue(max, 0);
+      const percent = meterPercent(currentValue, maxValue);
+      const tone = meterTone(currentValue, maxValue);
+      return `
+        <article class="combat-meter-card">
+          <div class="combat-meter-header">
+            <h3>${escapeHtml(label)}</h3>
+            <span class="combat-meter-cs">CS ${escapeHtml(text(combatSkill, '0'))}</span>
+          </div>
+          <div class="combat-meter-meta">
+            <span>${escapeHtml(enduranceLabel)}</span>
+            <strong>${escapeHtml(currentValue)} / ${escapeHtml(maxValue)}</strong>
+          </div>
+          <div class="combat-meter-track" role="meter" aria-label="${escapeHtml(label)} endurance" aria-valuemin="0" aria-valuemax="${escapeHtml(Math.max(1, maxValue))}" aria-valuenow="${escapeHtml(Math.max(0, Math.min(currentValue, maxValue)))}">
+            <div class="combat-meter-fill ${tone}" style="width: ${percent.toFixed(2)}%"></div>
+          </div>
+          ${note ? `<div class="combat-meter-note">${escapeHtml(note)}</div>` : ''}
+        </article>
+      `;
+    }
+    function renderCombatDuelMeters(combat) {
+      const c = currentCharacter();
+      const ratio = combat.CombatRatio === null || combat.CombatRatio === undefined ? '?' : formatSigned(combat.CombatRatio);
+      const notes = arr(combat.CombatNotes).map((note) => text(note).trim()).filter(Boolean);
+      return `
+        <div class="panel combat-meter-panel">
+          <div class="combat-meter-title-row">
+            <h2>Life Meters</h2>
+            <div class="combat-meter-ratio"><span>Combat Ratio</span><strong>${escapeHtml(ratio)}</strong></div>
+          </div>
+          <div class="combat-meter-grid">
+            ${combatMeterCard({
+              label: 'Lone Wolf',
+              current: combat.PlayerEnduranceCurrent ?? c.EnduranceCurrent,
+              max: combat.PlayerEnduranceMax ?? c.EnduranceMax,
+              combatSkill: combat.PlayerCombatSkill ?? c.CombatSkillCurrent,
+              enduranceLabel: combat.PlayerEnduranceLabel || 'END'
+            })}
+            ${combatMeterCard({
+              label: text(combat.EnemyName, 'Enemy'),
+              current: combat.EnemyEnduranceCurrent,
+              max: combat.EnemyEnduranceMax,
+              combatSkill: combat.EnemyCombatSkillEffective ?? combat.EnemyCombatSkill
+            })}
+          </div>
+          ${notes.length ? `<div class="combat-meter-notes">${notes.map((note) => `<span>${escapeHtml(note)}</span>`).join('')}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function field(label, value) {
+      return `<div class="field"><span>${label}</span><div class="value">${value}</div></div>`;
+    }
+    function arr(value) { return Array.isArray(value) ? value : (value ? [value] : []); }
+    function list(value) { const values = arr(value); return values.length ? values.join(', ') : 'None'; }
+    function itemUseHelp(item) {
+      const name = text(item).toLowerCase();
+      if (name.includes('karmo potion')) return 'Drink before combat: doubles current END and WP. Use the Karmo controls to apply the side-effect roll and finish the potion after combat.';
+      if (name.includes('senara potion')) return 'Use: restore 5 Willpower.';
+      if (name.includes('senara bud')) return 'Use: restore 1 Willpower.';
+      if (name.includes('potion of healing') || name.includes('healing potion')) return 'Use: restore 4 Endurance.';
+      if (name.includes('rendalim')) return 'Use: restore 6 Endurance.';
+      if (name.includes('potion of invulnerability')) return 'Use: mark invulnerability protection active and return an Empty Vial.';
+      if (name.includes('potion of alether')) return 'Use: add 2 Combat Skill.';
+      if (name.includes('tarama seed')) return 'Use: mark a Tarama Seed as ready for a no-Willpower spell or Staff use.';
+      if (name.includes('laumspur')) return 'Use: restore the Endurance amount recorded by this Laumspur item.';
+      return '';
+    }
+    function canUseItem(item) {
+      return Boolean(itemUseHelp(item));
+    }
+    function canEatItem(item) {
+      return text(item).trim().toLowerCase() === 'meal';
+    }
+    function itemFlagToggle(item) {
+      const name = text(item).toLowerCase();
+      if (name.includes('yabari') && name.includes('ointment')) {
+        const active = app.state.Automation?.Flags?.yabariOintmentApplied === true;
+        return {
+          key: 'yabariOintmentApplied',
+          value: active ? 'false' : 'true',
+          label: active ? 'Off' : 'Use'
+        };
+      }
+      return null;
+    }
+    function itemActionButtons(type, item) {
+      const encoded = encodeURIComponent(item);
+      const toggle = itemFlagToggle(item);
+      const useHelp = itemUseHelp(item);
+      return [
+        canEatItem(item) ? '<button data-meal="eat">Eat</button>' : '',
+        useHelp ? `<button data-use-item="${type}:${encoded}" title="${escapeHtml(useHelp)}">Use</button>` : '',
+        toggle ? `<button data-status-flag="${toggle.key}:${toggle.value}">${toggle.label}</button>` : ''
+      ].join('');
+    }
+    function statButtons(stat, label, compact = false) {
+      const labelClass = compact ? 'quick-stat-label' : '';
+      const labelStyle = compact ? '' : 'style="min-width:94px"';
+      return `<div class="controls" style="margin-bottom:.45rem"><span class="${labelClass}" ${labelStyle}>${label}</span><button data-adjust="${stat}:-1">-1</button><button data-adjust="${stat}:1">+1</button><input data-set="${stat}" type="number" placeholder="Set"><button data-set-button="${stat}">Set</button></div>`;
+    }
+    function itemList(title, type, items) {
+      const rows = arr(items).map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span>${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`).join('');
+      return `<div class="panel"><h2>${title}</h2>${rows || '<div class="item-row"><span>Empty</span></div>'}</div>`;
+    }
+    function quickDropRows(inv) {
+      const groups = [
+        ['W', 'weapon', inv.Weapons],
+        ['B', 'backpack', inv.BackpackItems],
+        ['H', 'herb', inv.HerbPouchItems],
+        ['S', 'special', inv.SpecialItems]
+      ];
+      const rows = groups.flatMap(([label, type, items]) => arr(items).map((item) => (
+        `<div class="item-row"><small>${label}</small><span>${escapeHtml(item)}</span>${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`
+      )));
+      return rows.join('') || '<div class="item-row"><span>Inventory empty.</span></div>';
+    }
+    function karmoControls(flags) {
+      const active = flags.karmoPotionActive === true;
+      const pending = flags.karmoSideEffectPending === true;
+      if (!active && !pending) return '';
+      const lastRoll = app.state.Automation?.LastRoll || {};
+      const hasKarmoRoll = Number(lastRoll.BookNumber) === 2 && Number(lastRoll.Section) === 45 && Number.isInteger(Number(lastRoll.Raw));
+      const sideLabel = hasKarmoRoll ? `Apply Karmo Side Effect (-${Number(lastRoll.Raw)} END)` : 'Apply Karmo Side Effect';
+      return `
+        <div class="controls" style="margin-top:.35rem">
+          ${pending ? `<button type="button" data-karmo-side-effect title="Apply the section 45 side-effect END loss. You may do this before or after finishing the potion, as the Project Aon footnote leaves that timing to the player.">${escapeHtml(sideLabel)}</button>` : ''}
+          ${active ? '<button type="button" data-karmo-finish title="After the Karmo-assisted combat, halve current END and WP, rounded down.">Finish Karmo</button>' : ''}
+        </div>
+        <div class="quick-note">Karmo Potion: doubled END/WP is ${active ? 'active' : 'finished'}${pending ? '; side-effect still pending' : ''}.</div>
+      `;
+    }
+    function storedEquipment() {
+      const stored = app.state.Automation?.Stored || {};
+      const equipment = stored.confiscatedEquipment && typeof stored.confiscatedEquipment === 'object'
+        ? stored.confiscatedEquipment
+        : {};
+      return {
+        Weapons: arr(equipment.Weapons),
+        BackpackItems: arr(equipment.BackpackItems).length ? arr(equipment.BackpackItems) : arr(stored.confiscatedBackpackItems)
+      };
+    }
+    function storedGearPanel() {
+      const flags = app.state.Automation?.Flags || {};
+      const gearUnavailable = flags.staffAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const stored = storedEquipment();
+      if (!gearUnavailable && !stored.Weapons.length && !stored.BackpackItems.length) return '';
+      return `
+        <div class="panel">
+          <h2>Stored Gear</h2>
+          ${storedGearBody(false)}
+        </div>
+      `;
+    }
+    function storedGearBody(showEmpty = true) {
+      const flags = app.state.Automation?.Flags || {};
+      const gearUnavailable = flags.staffAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const stored = storedEquipment();
+      const weaponRows = stored.Weapons.map((item) => `<div class="item-row"><small>W</small><span>${escapeHtml(item)}</span></div>`);
+      const backpackRows = stored.BackpackItems.map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span></div>`);
+      const rows = weaponRows.concat(backpackRows).join('');
+      return `
+        <p class="muted">${gearUnavailable ? 'Unavailable until the book restores your Staff and Backpack.' : 'Recovered gear record.'}</p>
+        ${rows || (showEmpty ? '<div class="item-row"><span>No stored gear recorded.</span></div>' : '')}
+      `;
+    }
+    function powerPanel(title, all, known) {
+      return `<div class="panel"><h2>${title}</h2>${all.map((name) => {
+        const has = arr(known).includes(name);
+        return `<div class="item-row"><span>${name}</span><small>${has ? 'Known' : 'Available'}</small><button data-power="${has ? 'remove' : 'add'}:${encodeURIComponent(name)}">${has ? 'Remove' : 'Add'}</button></div>`;
+      }).join('')}</div>`;
+    }
+
+    message.addEventListener('click', toggleReceipt);
+    message.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      toggleReceipt();
+    });
+
+    document.addEventListener('pointerdown', (event) => {
+      if (event.target.closest?.('.menu-popover, .app-menu-button, .card-menu-button')) return;
+      closeMenus();
+    });
+
+    document.addEventListener('click', async (event) => {
+      const button = event.target.closest('button');
+      if (!button || !app) return;
+      if (button.dataset.appMenuToggle !== undefined) {
+        const wasHidden = appMenu.hidden;
+        closeMenus();
+        if (wasHidden) {
+          renderAppMenu();
+          appMenu.hidden = false;
+        }
+        return;
+      }
+      if (button.dataset.cardMenuToggle) {
+        const [scope, id] = button.dataset.cardMenuToggle.split(':');
+        toggleCardMenu(scope, id);
+        return;
+      }
+      if (button.dataset.cardCollapse) {
+        const [scope, id] = button.dataset.cardCollapse.split(':');
+        toggleCardCollapsed(scope, id);
+        return;
+      }
+      if (button.dataset.cardMove) {
+        const [scope, id, direction] = button.dataset.cardMove.split(':');
+        moveCard(scope, id, direction);
+        return;
+      }
+      if (button.dataset.cardSize) {
+        const [scope, id, size] = button.dataset.cardSize.split(':');
+        setCardSize(scope, id, size);
+        return;
+      }
+      if (button.dataset.cardClose) {
+        const [scope, id] = button.dataset.cardClose.split(':');
+        closeCard(scope, id);
+        return;
+      }
+      if (button.dataset.cardOpen) {
+        const [scope, id] = button.dataset.cardOpen.split(':');
+        openCard(scope, id);
+        return;
+      }
+      if (button.dataset.cardResetScope) {
+        resetCardScope(button.dataset.cardResetScope);
+        return;
+      }
+      if (button.dataset.cardResetAll !== undefined) {
+        resetAllCardLayouts();
+        return;
+      }
+      if (button.dataset.modeSet) {
+        await setPlayMode(button.dataset.modeSet);
+        return;
+      }
+      if (button.dataset.cliReconnect !== undefined) {
+        stopCliTerminal();
+        startCliTerminal();
+        return;
+      }
+      if (button.dataset.settingsView !== undefined) {
+        activeView = 'settings';
+        closeMenus();
+        render();
+        return;
+      }
+      if (button.dataset.saveCurrent !== undefined) {
+        closeMenus();
+        await action({ action: 'save', path: '' });
+        return;
+      }
+      if (button.dataset.exportSave !== undefined) {
+        closeMenus();
+        window.open('/api/export-save', '_blank');
+        return;
+      }
+      if (button.dataset.backupSaves !== undefined) {
+        closeMenus();
+        window.open('/api/backup-saves', '_blank');
+        return;
+      }
+      if (button.dataset.importSave !== undefined) {
+        const file = document.getElementById('importSaveInput')?.files?.[0];
+        if (!file) {
+          setReceipt({
+            summary: 'Save - Choose a save JSON file first',
+            title: 'Save Import',
+            details: [
+              receiptDetail('Why', 'Import needs a selected Lone Wolf save JSON file.'),
+              receiptDetail('How', 'Choose a file in the import control, then press Import Selected Save again.')
+            ]
+          });
+          return;
+        }
+        const raw = await file.text();
+        await action({ action: 'import_save', raw, save: true });
+        return;
+      }
+      if (button.dataset.shutdownApp !== undefined) {
+        closeMenus();
+        if (window.confirm('Shut down the local Lone Wolf assistant server?')) {
+          await action({ action: 'shutdown' });
+          serverStatus.textContent = 'Shutting down';
+        }
+        return;
+      }
+      if (button.dataset.view) { activeView = button.dataset.view; render(); return; }
+      if (button.dataset.topWidgetAdd !== undefined) {
+        addTopWidget(document.getElementById('topWidgetAdd')?.value || '');
+        return;
+      }
+      if (button.dataset.topWidgetReset !== undefined) {
+        resetTopLayout();
+        return;
+      }
+      if (button.dataset.widgetAdd !== undefined) {
+        addSheetWidget(document.getElementById('sheetWidgetAdd')?.value || '');
+        return;
+      }
+      if (button.dataset.widgetReset !== undefined) {
+        resetSheetLayout();
+        return;
+      }
+      if (button.dataset.widgetRemove) {
+        const [scope, id] = button.dataset.widgetRemove.split(':');
+        if (scope === 'top') removeTopWidget(id);
+        else removeSheetWidget(id);
+        return;
+      }
+      if (button.dataset.widgetMove) {
+        const [scope, id, direction] = button.dataset.widgetMove.split(':');
+        if (scope === 'top') moveTopWidget(id, direction);
+        else moveSheetWidget(id, direction);
+        return;
+      }
+      if (button.dataset.widgetSize) {
+        const [scope, id] = button.dataset.widgetSize.split(':');
+        cycleWidgetSize(scope, id);
+        return;
+      }
+      if (isManualMode() && button.dataset.automationApply !== undefined) {
+        manualSectionAdvice('section effects');
+        return;
+      }
+      if (isManualMode() && button.dataset.roll !== undefined) {
+        manualSectionAdvice('roll helpers');
+        return;
+      }
+      if (isManualMode() && button.dataset.sectionCombatStart !== undefined) {
+        manualSectionAdvice('combat presets', { id: button.dataset.sectionCombatStart });
+        return;
+      }
+      if (isManualMode() && button.dataset.flowLoot) {
+        manualSectionAdvice('section loot', { id: button.dataset.flowLoot });
+        return;
+      }
+      if (isManualMode() && button.dataset.wpCost) {
+        const [cost, mode] = button.dataset.wpCost.split(':');
+        manualSectionAdvice('section costs', { cost: Number(cost), mode });
+        return;
+      }
+      if (isManualMode() && button.dataset.combatAuto !== undefined) {
+        manualSectionAdvice('combat auto-resolve');
+        return;
+      }
+      if (button.dataset.deathRecovery) await action({ action: 'death_recovery', mode: button.dataset.deathRecovery });
+      if (button.dataset.completeBook !== undefined) await action({ action: 'complete_book' });
+      if (button.dataset.repeatBook !== undefined) await action({ action: 'repeat_book' });
+      if (button.dataset.automationApply !== undefined) await action({ action: 'apply_automation' });
+      if (button.dataset.roll !== undefined) {
+        const input = document.getElementById('manualRoll');
+        await action({ action: 'roll', raw: input?.value || '' });
+      }
+      if (button.dataset.route) await action({ action: 'route', section: Number(button.dataset.route) });
+      if (button.dataset.sectionCombatStart !== undefined) await action({ action: 'section_combat_start', id: button.dataset.sectionCombatStart });
+      if (button.dataset.flowLoot) await action({ action: 'flow_loot', id: button.dataset.flowLoot });
+      if (button.dataset.statusFlag) {
+        const [key, value] = button.dataset.statusFlag.split(':');
+        await action({ action: 'status_flag', key, value });
+      }
+      if (button.dataset.wpCost) {
+        const [cost, mode] = button.dataset.wpCost.split(':');
+        await action({ action: 'wp_cost', cost: Number(cost), mode });
+      }
+      if (button.dataset.adjust) {
+        const [stat, delta] = button.dataset.adjust.split(':');
+        await action({ action: 'adjust', stat, value: Number(delta), mode: 'delta' });
+      }
+      if (button.dataset.setButton) {
+        const input = button.closest('.controls')?.querySelector(`[data-set="${button.dataset.setButton}"]`) || document.querySelector(`[data-set="${button.dataset.setButton}"]`);
+        await action({ action: 'adjust', stat: button.dataset.setButton, value: Number(input.value), mode: 'set' });
+      }
+      if (button.dataset.drop) {
+        const [type, item] = button.dataset.drop.split(':');
+        await action({ action: 'drop_item', type, item: decodeURIComponent(item) });
+      }
+      if (button.dataset.useItem) {
+        const [type, item] = button.dataset.useItem.split(':');
+        await action({ action: 'use_item', type, item: decodeURIComponent(item) });
+      }
+      if (button.dataset.karmoSideEffect !== undefined) await action({ action: 'karmo_side_effect' });
+      if (button.dataset.karmoFinish !== undefined) await action({ action: 'karmo_finish' });
+      if (button.dataset.meal) await action({ action: 'meal', missed: button.dataset.meal === 'missed' });
+      if (button.dataset.power) {
+        const [mode, name] = button.dataset.power.split(':');
+        await action({ action: 'power', mode, name: decodeURIComponent(name) });
+      }
+      if (button.dataset.sectionJump) {
+        const [book, section] = button.dataset.sectionJump.split(':');
+        await action({ action: 'set_position', book: Number(book), section: Number(section) });
+      }
+      if (button.dataset.load) await action({ action: 'load', path: button.dataset.load });
+      if (button.dataset.autosave) {
+        closeMenus();
+        await action({ action: 'autosave' });
+      }
+      if (button.dataset.combatStop !== undefined) await action({ action: 'combat_stop' });
+      if (button.dataset.combatAuto !== undefined) await action({ action: 'combat_auto' });
+      if (button.dataset.combatEvade !== undefined) {
+        const form = document.getElementById('roundForm');
+        await action({ action: 'combat_evade', activeWeapon: form?.activeWeapon.value, useStaff: form?.useStaff.value, wp: form?.wp.value, roll: form?.roll.value });
+      }
+    });
+
+    document.addEventListener('dragstart', (event) => {
+      const header = event.target.closest?.('.panel-title-row');
+      const card = header?.closest?.('.dashboard-card');
+      if (!card) return;
+      draggedWidget = `${card.dataset.layoutScope || 'sheet'}:${card.dataset.widget || ''}`;
+      card.classList.add('is-dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', draggedWidget);
+    });
+
+    document.addEventListener('dragover', (event) => {
+      const card = event.target.closest?.('.dashboard-card');
+      if (!card || !draggedWidget) return;
+      const [sourceScope, sourceId] = draggedWidget.split(':');
+      if ((card.dataset.layoutScope || 'sheet') !== sourceScope || card.dataset.widget === sourceId) return;
+      event.preventDefault();
+      document.querySelectorAll('.dashboard-card.drag-over').forEach((item) => item.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+
+    document.addEventListener('drop', (event) => {
+      const card = event.target.closest?.('.dashboard-card');
+      if (!card || !draggedWidget) return;
+      event.preventDefault();
+      const source = event.dataTransfer.getData('text/plain') || draggedWidget;
+      const [sourceScope, sourceId] = source.split(':');
+      const targetScope = card.dataset.layoutScope || 'sheet';
+      const target = card.dataset.widget || '';
+      document.querySelectorAll('.dashboard-card.drag-over, .dashboard-card.is-dragging').forEach((item) => item.classList.remove('drag-over', 'is-dragging'));
+      if (sourceScope === targetScope) {
+        if (sourceScope === 'top') dropTopWidget(sourceId, target);
+        else dropSheetWidget(sourceId, target);
+      }
+      draggedWidget = '';
+    });
+
+    document.addEventListener('dragend', () => {
+      draggedWidget = '';
+      document.querySelectorAll('.dashboard-card.drag-over, .dashboard-card.is-dragging').forEach((item) => item.classList.remove('drag-over', 'is-dragging'));
+    });
+
+    document.addEventListener('change', (event) => {
+      if (event.target.matches?.('[data-new-book]')) {
+        adjustNewCharacterMagicks(event.target.closest('form'));
+      }
+    });
+
+    document.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      if (form.id === 'sectionForm') await action({ action: 'set_position', book: Number(data.book), section: Number(data.section) });
+      if (form.id === 'itemForm' || form.id === 'quickItemForm') await action({ action: 'add_item', type: data.type, item: data.item });
+      if (form.id === 'noteForm') await action({ action: 'note', text: data.text });
+      if (form.id === 'saveForm') await action({ action: 'save', path: data.path });
+      if (form.id === 'continueBookForm') {
+        const higherMagickSelections = formData.getAll('higherMagicks');
+        if (form.querySelectorAll('input[name="higherMagicks"]').length && higherMagickSelections.length !== 5) {
+          setReceipt({
+            summary: 'Book - Choose exactly 5 Higher Magicks.',
+            details: [
+              receiptDetail('Selected', `${higherMagickSelections.length}/5`),
+              receiptDetail('Why', 'Book 4 begins after you choose five Higher Magicks. The assistant needs your picks before it can advance the campaign.'),
+              receiptDetail('How', 'Check exactly five Higher Magick boxes, then press Continue to Book 4.')
+            ]
+          });
+          return;
+        }
+        await action({
+          action: 'continue_book',
+          lesserMagick: data.lesserMagick || '',
+          willpowerRoll: data.willpowerRoll || '',
+          higherMagicks: higherMagickSelections
+        });
+      }
+      if (form.id === 'combatForm') await action({
+        action: 'combat_start',
+        name: data.name,
+        cs: Number(data.cs),
+        endurance: Number(data.endurance),
+        modifier: Number(data.modifier || 0),
+        activeWeapon: data.activeWeapon,
+        useStaff: data.useStaff,
+        staffWillpower: Number(data.staffWillpower || 1),
+        canEvade: data.canEvade === 'true',
+        evadeAfterRounds: Number(data.evadeAfterRounds || 0),
+        victoryRoute: data.victoryRoute,
+        evadeRoute: data.evadeRoute
+      });
+      if (form.id === 'roundForm') await action({ action: 'combat_round', activeWeapon: data.activeWeapon, useStaff: data.useStaff, wp: data.wp, roll: data.roll });
+      if (form.id === 'newForm') await action({
+        action: 'new',
+        name: data.name,
+        bookNumber: Number(data.bookNumber),
+        gift: data.gift,
+        lesserMagicks: formData.getAll('lesserMagicks')
+      });
+      form.reset?.();
+    });
+
+    document.querySelectorAll('.book-button').forEach((button) => {
+      button.addEventListener('click', () => loadBook(Number(button.dataset.book), null));
+    });
+    document.getElementById('currentBtn').addEventListener('click', () => syncBookToState());
+    document.getElementById('titleBtn').addEventListener('click', () => loadBook(activeBook, null));
+
+    bookFrame.addEventListener('load', () => {
+      try {
+        const url = new URL(bookFrame.contentWindow.location.href);
+      const match = url.pathname.match(/\/books\/lw\/([^/]+)\/sect(\d+)\.htm$/i);
+      const titleMatch = url.pathname.match(/\/books\/lw\/([^/]+)\/title\.htm$/i);
+        const folder = match?.[1] || titleMatch?.[1];
+        const book = books.find((item) => item.folder === folder);
+        if (book) {
+          activeBook = book.number;
+          activeSection = match ? Number(match[2]) : null;
+          renderReaderTitle();
+        }
+        const doc = bookFrame.contentDocument;
+        if (!doc) return;
+        doc.addEventListener('click', async (event) => {
+          const link = event.target.closest?.('a[href]');
+          if (!link) return;
+          const target = sectionTargetFromUrl(new URL(link.href, bookFrame.contentWindow.location.href));
+          if (!target) return;
+          event.preventDefault();
+          await action({ action: 'set_position', book: target.book, section: target.section });
+        }, true);
+      } catch {}
+    });
+
+    fetchState().catch((error) => {
+      serverStatus.textContent = 'Disconnected';
+      setReceipt({
+        summary: `Connection - ${error.message}`,
+        title: 'Connection Error',
+        details: [
+          receiptDetail('Status', error.message),
+          receiptDetail('Try', 'Start the local server and open the assistant from localhost.')
+        ]
+      });
+      loadBook(1, null);
+    });
+  </script>
+</body>
+</html>

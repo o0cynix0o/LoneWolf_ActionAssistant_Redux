@@ -1,0 +1,2 @@
+websockets>=12
+pywinpty>=2; platform_system == "Windows"

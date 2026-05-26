@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lone Wolf Books</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #12150f;
+      color: #f0ead8;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    main {
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 42px;
+    }
+    a { color: #f2d27a; }
+    h1 { margin: 0 0 20px; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: 0; }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid #5d5130;
+      padding-bottom: 16px;
+    }
+    .top a {
+      font: 0.88rem Arial, sans-serif;
+      text-decoration: none;
+      border: 1px solid #5d5130;
+      border-radius: 4px;
+      padding: 9px 12px;
+    }
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+    .book {
+      display: block;
+      border: 1px solid #5d5130;
+      border-radius: 6px;
+      padding: 14px;
+      color: inherit;
+      text-decoration: none;
+      background: #1a1d14;
+    }
+    .book:hover { border-color: #d1b865; }
+    .book strong {
+      color: #f2d27a;
+      font-size: 1.1rem;
+    }
+    .book small {
+      display: block;
+      margin-bottom: 6px;
+      color: #a9a088;
+      font: 0.76rem Arial, sans-serif;
+      text-transform: uppercase;
+    }
+    .book span {
+      display: block;
+      margin-top: 6px;
+      color: #c6bea5;
+      font: 0.85rem Arial, sans-serif;
+    }
+    @media (max-width: 620px) {
+      .top { display: block; }
+      .top a { display: inline-block; margin: 4px 8px 0 0; }
+      .book { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="top">
+      <h1>Lone Wolf Books</h1>
+      <div>
+        <a href="index.html">Home</a>
+        <a href="assistant.html">Assistant</a>
+        <a href="install-books.html">Install Books</a>
+      </div>
+    </div>
+    <p>Book files are not included in the release package. Download the standard Lone Wolf HTML ZIPs from Project Aon and extract them into <code>books\lw</code>.</p>
+    <section class="list">
+      <a class="book" href="assistant.html?book=1">
+        <small>Book 1</small>
+        <div><strong>1. Flight from the Dark</strong><span>350 sections</span></div>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

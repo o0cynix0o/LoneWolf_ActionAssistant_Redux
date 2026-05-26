@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Install Lone Wolf Books</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #12150f;
+      color: #f0ead8;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+    }
+    main {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 46px;
+    }
+    h1, h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      color: #f2d27a;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 6vw, 4rem);
+      line-height: 1;
+    }
+    h2 { margin-top: 26px; }
+    a { color: #f2d27a; }
+    .panel {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid #5d5130;
+      border-radius: 6px;
+      background: #171a12;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
+    .book-link {
+      display: block;
+      min-height: 122px;
+      padding: 14px;
+      border: 1px solid #5d5130;
+      border-radius: 6px;
+      background: #1a1d14;
+      color: inherit;
+      text-decoration: none;
+    }
+    .book-link:hover { border-color: #d1b865; }
+    .book-link strong {
+      display: block;
+      color: #f2d27a;
+      margin-bottom: 8px;
+    }
+    code, pre {
+      background: #0d100b;
+      color: #efe8d0;
+      border: 1px solid #4e4528;
+      border-radius: 4px;
+    }
+    code { padding: 0.05rem 0.25rem; }
+    pre {
+      overflow: auto;
+      padding: 12px;
+    }
+    .muted { color: #c6bea5; }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .actions a {
+      padding: 9px 12px;
+      border: 1px solid #5d5130;
+      border-radius: 4px;
+      background: #202417;
+      color: #f0ead8;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Install The Books</h1>
+    <p class="muted">Lone Wolf Action Assistant Redux does not include the Project Aon book files. Download the standard multi-page HTML ZIPs from Project Aon for your own personal use, then extract them into this app.</p>
+
+    <div class="actions">
+      <a href="index.html">Home</a>
+      <a href="assistant.html">Assistant</a>
+      <a href="https://www.projectaon.org/en/Main/License" target="_blank" rel="noopener">Project Aon License</a>
+    </div>
+
+    <section class="panel">
+      <h2>Download Links</h2>
+      <div class="grid">
+        <a class="book-link" href="https://www.projectaon.org/en/Main/FlightFromTheDark" target="_blank" rel="noopener"><strong>1. Flight from the Dark</strong>Open the Project Aon page and choose the standard ZIP.</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Folder Layout</h2>
+      <p>Extract the Book 1 ZIP so this file exists:</p>
+      <pre>books\lw\01fftd\title.htm</pre>
+    </section>
+
+    <section class="panel">
+      <h2>PowerShell Example</h2>
+      <pre>New-Item -ItemType Directory -Force .\books\lw
+
+Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\lw -Force</pre>
+      <p class="muted">See <code>docs\INSTALL_PROJECT_AON_BOOKS.md</code> for the full walkthrough.</p>
+    </section>
+  </main>
+</body>
+</html>

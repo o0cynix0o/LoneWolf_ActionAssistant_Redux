@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+venv/
+
+saves/
+current-position.json
+data/last-save.txt
+data/ui-preferences.json
+*.log
+
+# Project Aon book files are downloaded by each user for personal use.
+# They are intentionally excluded from git and release packages.
+/books/lw/
+
+testing/__pycache__/
+testing/tmp/
+testing/tmp2/
+testing/dry-run-saves/
+
+dist/
+
+# Local checkout used to publish the GitHub wiki.
+/wiki/
