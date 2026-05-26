@@ -2,7 +2,7 @@
 
 Date: 2026-05-26
 
-Scope: issues #1-#7, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, and early branch playtests.
+Scope: issues #1-#8, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, and random/recovery side effects.
 
 ## Checks
 
@@ -13,6 +13,7 @@ Scope: issues #1-#7, covering the Book 1 character/sheet rebuild, section-flow b
 - Simple automation smoke with `testing\lwbook1_simple_automation_smoke.py`.
 - Combat preset smoke with `testing\lwbook1_combat_smoke.py`.
 - Route/random helper smoke with `testing\lwbook1_route_random_smoke.py`.
+- Random/recovery smoke with `testing\lwbook1_random_recovery_smoke.py`.
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
@@ -44,10 +45,12 @@ Scope: issues #1-#7, covering the Book 1 character/sheet rebuild, section-flow b
 - Branch playtest covered early combat through `1 -> 85 -> 229`, verified illegal route blocking from section 85, loaded the section 229 Kraan combat preset, resolved a victory that correctly waits for player choice, and followed the legal victory branch to section 267.
 - Branch playtest covered death/recovery through `1 -> 275 -> 74 -> 281 -> 311 -> 47 -> 322 -> 17 -> 53`, verified the section 17 roll helper with roll 0, triggered terminal death at section 53, and rewound to section 17.
 - Branch playtest covered inventory/stat consequences through legal routes to section 130 Meal consumption without Hunting, section 33 Gold Crowns, and section 274 weapon loss from the section 17 roll helper.
+- Random/recovery smoke covered same-section roll effects for sections 36, 158, and 188, including duplicate-roll protection.
+- Laumspur now restores 3 END and can fulfill a required Meal when no normal Meal is available.
 
 ## Remaining Risk
 
 - The checked routes are playable baselines, not exhaustive route coverage.
-- Multi-roll sections and random outcomes with immediate same-section side effects remain manual.
-- Some player-choice inventory losses, Healing timing, Laumspur special behavior, and remaining combat exceptions still need later audit passes.
+- Section 21 multi-roll handling remains manual.
+- Some player-choice inventory losses, Healing timing, and remaining combat exceptions still need later audit passes.
 - Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.

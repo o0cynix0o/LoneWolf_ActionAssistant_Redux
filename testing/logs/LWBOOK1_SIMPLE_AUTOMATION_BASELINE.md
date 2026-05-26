@@ -30,6 +30,7 @@ Representative smoke coverage:
 - Section 20 loot restores Backpack availability and adds supplies.
 - Section 162 discards Backpack and Weapons.
 - Section 236 applies END loss, permanent CS loss, and removes a Vordak Gem.
+- Laumspur can be used as a Backpack consumable for 3 END and can fulfill a required Meal if no normal Meal is available.
 - Section 350 completes Book 1.
 - Section 53 marks terminal death.
 
@@ -38,4 +39,4 @@ Representative smoke coverage:
 - Combat presets and combat exceptions are still unaudited.
 - Random-number branches and stat-based route checks remain manual unless already represented as source links.
 - Some inventory losses that require player choice remain manual.
-- Laumspur is tracked as a Backpack Item, but its special Meal/healing behavior is not automated yet.
+- Healing timing across ordinary non-combat sections remains manual.

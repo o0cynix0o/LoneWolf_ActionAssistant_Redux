@@ -26,11 +26,12 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Multi-roll sections and route-specific random side effects.
+- Section 21 staged multi-roll handling.
+- Route aftermaths where the book asks the player to choose which item or weapon is lost.
 - Broader route coverage outside the checked successful and early branch paths.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
@@ -81,11 +82,11 @@ Issue #4 changed the combat preset baseline:
 - `testing\lwbook1_combat_smoke.py` verifies representative combat presets and exceptions.
 - `testing\logs\LWBOOK1_COMBAT_AND_RANDOM_AUDIT.md` records coverage and remaining combat/random risk.
 
-Issue #5 changed the route/random baseline:
+Issue #5 changed the initial route/random baseline:
 
-- `data\book1-section-flows.json` includes 17 confirmed roll helpers and 11 confirmed route checks.
+- `data\book1-section-flows.json` initially included 17 confirmed roll helpers and 11 confirmed route checks.
 - The first route checks cover representative Kai Discipline, item, Gold Crown, and END branches.
-- Roll helpers cover straightforward one-roll route outcomes; multi-roll sections and random outcomes with immediate same-section side effects remain manual.
+- Roll helpers covered straightforward one-roll route outcomes; multi-roll sections and random outcomes with immediate same-section side effects were left for later passes.
 - `testing\lwbook1_route_random_smoke.py` verifies representative route and random helpers.
 - `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` records coverage and remaining route/random risk.
 
@@ -104,6 +105,15 @@ Issue #7 changed the branch playtest baseline:
 - The death branch follows `1 -> 275 -> 74 -> 281 -> 311 -> 47 -> 322 -> 17 -> 53`, verifies the section 17 roll helper, triggers terminal death, and rewinds to section 17.
 - Inventory/stat branches cover legal-route Meal consumption without Hunting at section 130, Gold Crown gain at section 33, and weapon loss at section 274.
 - `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` records the branch routes and remaining playtest risk.
+
+Issue #8 changed the random/recovery baseline:
+
+- `data\book1-section-flows.json` now includes 20 confirmed roll helpers.
+- Roll-outcome actions are supported for confirmed same-section random effects, with once-per-visit protection so repeated Roll clicks do not double-apply effects.
+- Sections 36, 158, and 188 apply their confirmed random END or Backpack consequences when the roll outcome is recorded.
+- Plain Book 1 Laumspur restores 3 END, and required Meal automation can consume Laumspur when no normal Meal is available.
+- `testing\lwbook1_random_recovery_smoke.py` verifies those roll side effects and Laumspur behavior.
+- `testing\logs\LWBOOK1_RANDOM_RECOVERY_AUDIT.md` records the issue #8 coverage and remaining risk.
 
 ## GitHub Workflow
 

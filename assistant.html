@@ -3221,6 +3221,12 @@
             <span class="wrap">Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
             ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
           </div>
+          ${arr(lastRoll.ActionMessages).map((line) => `
+            <div class="item-row">
+              <small>Effect</small>
+              <span class="wrap">${escapeHtml(line)}</span>
+            </div>
+          `).join('')}
         ` : ''}
       `;
     }
@@ -3506,6 +3512,12 @@
           <span>Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
           ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
         </div>
+        ${arr(lastRoll.ActionMessages).map((line) => `
+          <div class="item-row">
+            <small>Effect</small>
+            <span class="wrap">${escapeHtml(line)}</span>
+          </div>
+        `).join('')}
       ` : '<p class="muted">No roll recorded for this section yet.</p>';
       const combatRows = arr(entry.combat).map((combat) => `
         <div class="item-row">

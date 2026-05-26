@@ -849,7 +849,33 @@
           "Section": 323
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route on the rotten watchtower ladder.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 140,
+            "label": "Fall from the ladder",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "end",
+                "delta": -2
+              }
+            ]
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 323,
+            "label": "Climb safely"
+          }
+        ]
+      }
     },
     "37": {
       "auditStatus": "source-link-baseline",
@@ -3168,7 +3194,33 @@
           "Section": 106
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random check for the second lightning bolt.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 5,
+            "route": 106,
+            "label": "Second bolt misses"
+          },
+          {
+            "test": "range",
+            "min": 6,
+            "max": 9,
+            "route": 106,
+            "label": "Second bolt hits",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "end",
+                "delta": -4
+              }
+            ]
+          }
+        ]
+      }
     },
     "159": {
       "auditStatus": "source-link-baseline",
@@ -3840,7 +3892,39 @@
           "Section": 303
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random effect after the Kraan attack.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "route": 303,
+            "label": "Backpack ripped away",
+            "actions": [
+              {
+                "type": "backpack",
+                "available": false
+              }
+            ]
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 303,
+            "label": "Arm wounds",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "end",
+                "delta": -3
+              }
+            ]
+          }
+        ]
+      }
     },
     "189": {
       "auditStatus": "source-link-baseline",

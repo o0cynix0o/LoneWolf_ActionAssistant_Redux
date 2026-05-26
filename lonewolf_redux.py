@@ -893,6 +893,7 @@ def default_automation() -> dict[str, Any]:
         },
         "Stored": {},
         "LastRoll": None,
+        "AppliedRollEffects": [],
         "Ending": None,
         "DeathState": {"Active": False},
         "DeathHistory": [],
@@ -1085,6 +1086,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         ("Achievements", "Unlocked"),
         ("Achievements", "Recent"),
         ("Automation", "AppliedVisitEffects"),
+        ("Automation", "AppliedRollEffects"),
         ("Automation", "Journal"),
         ("Automation", "DeathHistory"),
         ("Automation", "SectionCheckpoints"),
@@ -2855,6 +2857,7 @@ class LoneWolfReduxAssistant:
             )
         route = None
         label = ""
+        matched_actions: list[dict[str, Any]] = []
         for outcome in as_list(roll.get("outcomes")):
             if not isinstance(outcome, dict):
                 continue
@@ -2871,6 +2874,9 @@ class LoneWolfReduxAssistant:
             if matched:
                 route = int(outcome.get("route")) if outcome.get("route") is not None else None
                 label = str(outcome.get("label") or "")
+                matched_actions = [
+                    action for action in as_list(outcome.get("actions")) if isinstance(action, dict)
+                ]
                 break
         return {
             "Section": int(self.state["CurrentSection"]),
@@ -2880,7 +2886,50 @@ class LoneWolfReduxAssistant:
             "Route": route,
             "Outcome": label,
             "Summary": roll.get("summary", ""),
+            "Actions": json_clone(matched_actions),
         }
+
+    def apply_roll_outcome_actions(self, result: dict[str, Any]) -> list[str]:
+        actions = [action for action in as_list(result.get("Actions")) if isinstance(action, dict)]
+        if not actions:
+            return []
+        if not bool(self.automation.get("Enabled", True)):
+            return ["Roll outcome effects skipped because automation is disabled."]
+
+        key = f"{self.current_visit_key()}:roll-effects"
+        applied = as_list(self.automation.get("AppliedRollEffects"))
+        if key in applied:
+            return ["Roll outcome effects already applied for this visit."]
+
+        messages: list[str] = []
+        for action in actions:
+            message = self.apply_automation_action(action)
+            if message:
+                messages.append(message)
+
+        if messages:
+            applied.append(key)
+            self.automation["AppliedRollEffects"] = applied[-500:]
+            journal = as_list(self.automation.get("Journal"))
+            journal.append(
+                {
+                    "Kind": "roll",
+                    "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                    "VisitKey": self.current_visit_key(),
+                    "BookNumber": int(self.character["BookNumber"]),
+                    "Section": int(self.state["CurrentSection"]),
+                    "Summary": result.get("Summary", "Roll outcome effects"),
+                    "Messages": messages,
+                    "Roll": {
+                        "Raw": result.get("Raw"),
+                        "Total": result.get("Total"),
+                        "Outcome": result.get("Outcome"),
+                        "Route": result.get("Route"),
+                    },
+                }
+            )
+            self.automation["Journal"] = journal[-100:]
+        return messages
 
     def roll_current_section(self, raw_roll: int | None = None) -> dict[str, Any]:
         flow = self.current_section_flow_entry() or {}
@@ -2894,11 +2943,15 @@ class LoneWolfReduxAssistant:
                 "Route": None,
                 "Outcome": "Generic random digit",
                 "Summary": "Generic roll 0-9",
+                "Actions": [],
             }
         else:
             result = self.evaluate_roll_flow(flow, raw_roll)
         result["BookNumber"] = int(self.character["BookNumber"])
         result["RolledAt"] = datetime.now().isoformat(timespec="seconds")
+        action_messages = self.apply_roll_outcome_actions(result)
+        result["ActionMessages"] = action_messages
+        result["ActionsApplied"] = bool(action_messages and not action_messages[0].startswith("Roll outcome effects"))
         self.automation["LastRoll"] = result
         self.autosave()
         return result
@@ -2914,7 +2967,11 @@ class LoneWolfReduxAssistant:
         applied = visit_key in as_list(self.automation.get("AppliedVisitEffects"))
         journal_entry = None
         for item in reversed(as_list(self.automation.get("Journal"))):
-            if isinstance(item, dict) and item.get("VisitKey") == visit_key:
+            if (
+                isinstance(item, dict)
+                and item.get("VisitKey") == visit_key
+                and str(item.get("Kind") or "section") == "section"
+            ):
                 journal_entry = item
                 break
 
@@ -3278,9 +3335,22 @@ class LoneWolfReduxAssistant:
         available = self.count_items("Meal", ["backpack"])
 
         if mode == "all_or_loss":
-            if available >= count:
-                removed = self.remove_inventory_items("Meal", count, ["backpack"])
-                return f"Meals {available}->{available - removed}"
+            laumspur_available = self.count_items("Laumspur", ["backpack"])
+            if available + laumspur_available >= count:
+                meals_removed = self.remove_inventory_items("Meal", min(count, available), ["backpack"])
+                laumspur_needed = count - meals_removed
+                laumspur_removed = self.remove_inventory_items(
+                    "Laumspur", laumspur_needed, ["backpack"]
+                )
+                parts = []
+                if meals_removed:
+                    parts.append(f"Meals {available}->{available - meals_removed}")
+                if laumspur_removed:
+                    parts.append(
+                        f"Laumspur {laumspur_available}->{laumspur_available - laumspur_removed}"
+                    )
+                    parts.append(self.change_endurance(3 * laumspur_removed))
+                return "; ".join(parts) if parts else f"Meals {available}->{available}"
             loss = int(action.get("enduranceLoss") or 0)
             return f"missing {count} Meals; {self.change_endurance(-loss)}"
 
@@ -3627,7 +3697,7 @@ class LoneWolfReduxAssistant:
                 return {"stat": "end", "delta": 4, "label": "Potion of Laumspur"}
             if "potion" in text:
                 return {"stat": "end", "delta": 3, "label": "Potion of Laumspur"}
-            return {"stat": "end", "delta": 4, "label": "Laumspur"}
+            return {"stat": "end", "delta": 3, "label": "Laumspur"}
         return None
 
     def use_item(self, item_type: str, item: str) -> None:
@@ -3838,6 +3908,7 @@ class LoneWolfReduxAssistant:
         journal = as_list(self.automation.get("Journal"))
         journal.append(
             {
+                "Kind": "section",
                 "AppliedAt": datetime.now().isoformat(timespec="seconds"),
                 "VisitKey": visit_key,
                 "BookNumber": book_number,
@@ -5635,6 +5706,8 @@ class LoneWolfReduxAssistant:
                     print(f"Outcome: {result['Outcome']}")
                 if result.get("Route"):
                     print(f"Route: section {result['Route']}")
+                for message in as_list(result.get("ActionMessages")):
+                    print(message)
             elif command in {"wp", "will", "willpower"}:
                 print("Book 1 does not use Willpower.")
             elif command in {"end", "endurance"}:

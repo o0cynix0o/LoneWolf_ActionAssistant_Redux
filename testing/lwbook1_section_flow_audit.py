@@ -39,8 +39,17 @@ def combat_enemy(name: str, cs: int, endurance: int) -> dict[str, Any]:
     return {"name": name, "cs": cs, "endurance": endurance}
 
 
-def roll_range(minimum: int, maximum: int, route: int, label: str) -> dict[str, Any]:
-    return {"test": "range", "min": minimum, "max": maximum, "route": route, "label": label}
+def roll_range(
+    minimum: int,
+    maximum: int,
+    route: int,
+    label: str,
+    actions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    outcome = {"test": "range", "min": minimum, "max": maximum, "route": route, "label": label}
+    if actions:
+        outcome["actions"] = actions
+    return outcome
 
 
 def section_roll(summary: str, outcomes: list[dict[str, Any]]) -> dict[str, Any]:
@@ -696,6 +705,13 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 145, "Arrow hits"),
         ],
     ),
+    "36": section_roll(
+        "Random route on the rotten watchtower ladder.",
+        [
+            roll_range(0, 4, 140, "Fall from the ladder", [{"type": "stat", "stat": "end", "delta": -2}]),
+            roll_range(5, 9, 323, "Climb safely"),
+        ],
+    ),
     "44": section_roll(
         "Random route after the Kraan attack.",
         [
@@ -729,6 +745,13 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 10, "Not spotted"),
         ],
     ),
+    "158": section_roll(
+        "Random check for the second lightning bolt.",
+        [
+            roll_range(0, 5, 106, "Second bolt misses"),
+            roll_range(6, 9, 106, "Second bolt hits", [{"type": "stat", "stat": "end", "delta": -4}]),
+        ],
+    ),
     "162": power_route_check(
         162,
         "Mind Over Matter",
@@ -746,6 +769,13 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         344,
         label="END after the explosion",
         requires_automation=True,
+    ),
+    "188": section_roll(
+        "Random effect after the Kraan attack.",
+        [
+            roll_range(0, 6, 303, "Backpack ripped away", [{"type": "backpack", "available": False}]),
+            roll_range(7, 9, 303, "Arm wounds", [{"type": "stat", "stat": "end", "delta": -3}]),
+        ],
     ),
     "205": section_roll(
         "Random route while fleeing the disguised Drakkarim.",
@@ -1052,7 +1082,7 @@ def render_report(artifact: dict[str, Any]) -> str:
             "",
             "- Continue route-check audit for optional discipline choices and route-specific side effects.",
             "- Expand simple automations only after each additional section effect is confirmed by the audit.",
-            "- Continue combat/random audit for multi-roll sections and roll outcomes with immediate item/stat effects.",
+            "- Continue combat/random audit for staged multi-roll sections and player-choice aftermath effects.",
         ]
     )
     return "\n".join(lines) + "\n"

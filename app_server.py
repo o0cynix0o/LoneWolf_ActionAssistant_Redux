@@ -272,7 +272,10 @@ def handle_action(payload: dict) -> str:
         result = ASSISTANT.roll_current_section(raw_roll)
         route = result.get("Route")
         route_text = f" -> section {route}" if route else ""
-        return f"Roll {result['Raw']} total {result['Total']}{route_text}"
+        messages = [f"Roll {result['Raw']} total {result['Total']}{route_text}"]
+        for message in result.get("ActionMessages") or []:
+            messages.append(str(message))
+        return "\n".join(messages)
     if action == "route":
         return capture_output(lambda: ASSISTANT.follow_route(int(payload.get("section") or 1)))
     if action == "flow_loot":
