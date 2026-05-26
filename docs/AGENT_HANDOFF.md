@@ -21,17 +21,17 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 - Release packaging script.
 - Combat Results Table and Kai reference data from the old Lone Wolf project.
 - Audit workflow from Grey Star.
-- Empty Book 1 audit data placeholders.
+- Book 1 audit data placeholders, now with the section-flow baseline filled in.
 - Wiki/docs skeleton.
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The following debt remains for later passes:
 
 - Grey Star combat exceptions.
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Book 1 route, section, and combat automation placeholders.
+- Book 1 section-effect and combat automation placeholders.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -54,6 +54,14 @@ Issue #1 changed the default character model to Book 1 Kai rules:
 - Weaponskill rolls against the Book 1 weapon table.
 - Starting gear is Axe, one Meal, Map of Sommerlund, Gold Crowns, plus the monastery-find roll.
 - The web sheet now exposes Gold Crowns, Meals, Kai Disciplines, Weapons, Backpack Items, and Special Items.
+
+Issue #2 changed the route baseline:
+
+- `testing\lwbook1_section_flow_audit.py` crawls `books\lw\01fftd\sect*.htm`.
+- `data\book1-section-flows.json` contains 350 Book 1 section entries and 555 source route links.
+- The graph check found zero missing sections, zero invalid section links, and all 350 sections reachable from section 1.
+- The assistant uses checked-in `sourceRoutes` for legal route buttons and refuses illegal route-button jumps while keeping manual Set Position available for recovery/testing.
+- `testing\logs\LWBOOK1_SECTION_FLOW_BASELINE.md` records the route graph summary and heuristic classification counts.
 
 ## GitHub Workflow
 

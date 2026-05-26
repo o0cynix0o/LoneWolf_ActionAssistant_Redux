@@ -2568,6 +2568,85 @@ class LoneWolfReduxAssistant:
             result.append({"Section": section, "Label": f"Go to {section}"})
         return result
 
+    def flow_source_route_payload(self, entry: dict[str, Any] | None) -> list[dict[str, Any]]:
+        if not isinstance(entry, dict):
+            return []
+        raw_routes = entry.get("sourceRoutes")
+        if raw_routes is None:
+            raw_routes = entry.get("routes")
+
+        result: list[dict[str, Any]] = []
+        seen: set[int] = set()
+        for route in as_list(raw_routes):
+            if isinstance(route, dict):
+                raw_section = route.get("Section", route.get("section"))
+                raw_label = route.get("Label", route.get("label"))
+            else:
+                raw_section = route
+                raw_label = ""
+            try:
+                section = int(raw_section)
+            except (TypeError, ValueError):
+                continue
+            if section in seen:
+                continue
+            seen.add(section)
+            result.append({"Section": section, "Label": str(raw_label or f"Go to {section}")})
+        return result
+
+    def merge_route_labels(
+        self,
+        audited_routes: list[dict[str, Any]],
+        source_routes: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        source_by_section: dict[int, dict[str, Any]] = {}
+        for route in source_routes:
+            if not isinstance(route, dict):
+                continue
+            try:
+                source_by_section[int(route.get("Section"))] = route
+            except (TypeError, ValueError):
+                continue
+
+        merged: list[dict[str, Any]] = []
+        for route in audited_routes:
+            try:
+                section = int(route.get("Section"))
+            except (TypeError, ValueError):
+                continue
+            payload = dict(route)
+            source = source_by_section.get(section, {})
+            if source.get("Label"):
+                payload["Label"] = str(source["Label"])
+            payload["Audited"] = True
+            merged.append(payload)
+        return merged
+
+    def legal_route_targets_for_current_section(self) -> set[int]:
+        book = BOOKS.get(int(self.character["BookNumber"]), BOOKS[1])
+        section = int(self.state["CurrentSection"])
+        entry = self.current_section_flow_entry() or {}
+        routes = {
+            int(route["Section"])
+            for route in self.flow_source_route_payload(entry)
+            if 1 <= int(route["Section"]) <= int(book["MaxSection"])
+        }
+        if not routes:
+            routes.update(self.section_source_routes(int(self.character["BookNumber"]), section))
+        return routes
+
+    def follow_route(self, section: int) -> None:
+        target = int(section)
+        current = int(self.state["CurrentSection"])
+        legal_routes = self.legal_route_targets_for_current_section()
+        if legal_routes and target not in legal_routes:
+            print(
+                f"Section {target} is not a recorded route from section {current}. "
+                "Use Set Position for manual jumps."
+            )
+            return
+        self.set_section(target)
+
     def evaluate_flow_condition(self, condition: dict[str, Any] | None) -> bool:
         if not condition:
             return True
@@ -2835,7 +2914,14 @@ class LoneWolfReduxAssistant:
         book_number = int(self.character["BookNumber"])
         section = int(self.state["CurrentSection"])
         entry = self.current_section_flow_entry() or {}
-        source_routes = self.section_source_routes(book_number, section)
+        audited_routes = self.flow_source_route_payload(entry)
+        source_routes = self.section_source_route_payload(book_number, section)
+        if audited_routes:
+            display_routes = self.merge_route_labels(audited_routes, source_routes)
+        else:
+            display_routes = source_routes or self.route_button_payload(
+                self.section_source_routes(book_number, section)
+            )
         last_roll = self.automation.get("LastRoll")
         if not (
             isinstance(last_roll, dict)
@@ -2848,8 +2934,13 @@ class LoneWolfReduxAssistant:
             "BookNumber": book_number,
             "Section": section,
             "Entry": entry,
-            "SourceRoutes": self.section_source_route_payload(book_number, section)
-            or self.route_button_payload(source_routes),
+            "SourceRoutes": display_routes,
+            "RouteAudit": {
+                "Status": str(entry.get("auditStatus") or ""),
+                "Classification": as_list(entry.get("classification")),
+                "SourceRouteCount": int(entry.get("sourceRouteCount") or len(display_routes)),
+                "IncomingRouteCount": int(entry.get("incomingRouteCount") or 0),
+            },
             "LastRoll": last_roll,
             "RouteChecks": self.evaluate_route_checks(entry, automation),
             "Automation": automation,

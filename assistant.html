@@ -4306,7 +4306,11 @@
           const target = sectionTargetFromUrl(new URL(link.href, bookFrame.contentWindow.location.href));
           if (!target) return;
           event.preventDefault();
-          await action({ action: 'set_position', book: target.book, section: target.section });
+          if (target.book === Number(currentCharacter().BookNumber || 1)) {
+            await action({ action: 'route', section: target.section });
+          } else {
+            await action({ action: 'set_position', book: target.book, section: target.section });
+          }
         }, true);
       } catch {}
     });

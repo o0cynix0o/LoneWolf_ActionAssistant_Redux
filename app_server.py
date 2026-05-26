@@ -274,7 +274,7 @@ def handle_action(payload: dict) -> str:
         route_text = f" -> section {route}" if route else ""
         return f"Roll {result['Raw']} total {result['Total']}{route_text}"
     if action == "route":
-        return capture_output(lambda: ASSISTANT.set_section(int(payload.get("section") or 1)))
+        return capture_output(lambda: ASSISTANT.follow_route(int(payload.get("section") or 1)))
     if action == "flow_loot":
         return capture_output(lambda: ASSISTANT.apply_flow_loot(str(payload.get("id") or "")))
     if action == "status_flag":

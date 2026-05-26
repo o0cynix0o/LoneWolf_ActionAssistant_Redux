@@ -16,9 +16,15 @@ This is the Lone Wolf Action Assistant Redux pre-alpha rebuild.
   - Weaponskill random weapon.
   - Axe, one Meal, Map of Sommerlund, Gold Crowns, and monastery-find starting equipment.
 - Main web sheet rebuilt around Kai Disciplines, Gold Crowns, Meals, Weapons, Backpack Items, and Special Items.
+- Book 1 section-flow baseline generated from local `sect*.htm` files:
+  - 350 sections.
+  - 555 source route links.
+  - zero invalid section links.
+  - all sections reachable from section 1.
+- Route buttons now use the checked-in Book 1 source-link graph and reject illegal route-button jumps.
 
 ## Not A Playable Release
 
-The section audit and automation data are still incomplete. Do not publish this as a playable release until Book 1 movement, combat, and section effects have been audited and playtested.
+The section-effect and combat automation data are still incomplete. Do not publish this as a playable release until Book 1 combat and section effects have been audited and playtested.
 
 Do not package or publish this as a playable app.

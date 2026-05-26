@@ -2,13 +2,14 @@
 
 Date: 2026-05-26
 
-Scope: issue #1 character and sheet rebuild smoke tests.
+Scope: issue #1 character/sheet rebuild and issue #2 section-flow baseline smoke tests.
 
 ## Checks
 
 - Python compile: `app_server.py`, `lonewolf_redux.py`, `launch_lonewolf_redux.py`, and `ws_server.py`.
 - Deterministic character creation through `create_book1_character_state`.
 - Combat smoke for a Book 1 character with Kai Disciplines.
+- Section-flow baseline check with `testing\lwbook1_section_flow_audit.py --check`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
 
 ## Results
@@ -24,8 +25,11 @@ Scope: issue #1 character and sheet rebuild smoke tests.
 - `/api/book-files` reported Book 1 installed from `books\lw\01fftd`.
 - `/books/lw/01fftd/sect1.htm` returned HTTP 200.
 - `/api/state` no longer exposes Magicks, Willpower, Herb Pouch, Nobles, or Staff combat fields to the web dashboard.
+- Section-flow baseline found 350 section files, 555 source route links, zero invalid section links, and 350 sections reachable from section 1.
+- Section 1 route buttons are sourced from the checked-in graph: 141, 85, and 275.
+- Route action smoke accepted legal route 1 -> 141 and refused illegal route 1 -> 2.
 
 ## Remaining Risk
 
-- Section movement is still source-link only; Book 1 automation data remains empty.
+- Section movement now has a checked-in source-link graph, but section effects are still mostly manual.
 - Healing, Hunting meal exceptions, and all section-specific combat exceptions need the next audit pass.
