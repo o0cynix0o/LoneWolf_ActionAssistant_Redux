@@ -64,6 +64,10 @@ def section_staged_roll(
     return {"stagedRoll": {"id": roll_id, "summary": summary, "stages": stages}}
 
 
+def route_action(section: int, actions: list[dict[str, Any]], effect_label: str) -> dict[str, Any]:
+    return {"Section": section, "actions": actions, "effectLabel": effect_label}
+
+
 def loss_choice(
     choice_id: str,
     label: str,
@@ -303,6 +307,7 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ]
     },
+    "193": {"loot": [{"id": "193-scroll", "label": "Take Scroll", "actions": [{"type": "add_item", "container": "backpack", "name": "Scroll"}]}]},
     "197": {
         "loot": [
             {
@@ -317,7 +322,14 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     },
     "199": {"loot": [{"id": "199-meal", "label": "Take 1 Meal", "actions": [{"type": "add_item", "container": "backpack", "name": "Meal"}]}]},
     "243": {"loot": [{"id": "243-mace", "label": "Take Mace", "actions": [{"type": "add_item", "container": "weapon", "name": "Mace"}]}]},
+    "255": {"loot": [{"id": "255-princes-sword", "label": "Take Prince's Sword", "actions": [{"type": "add_item", "container": "weapon", "name": "Prince's Sword"}]}]},
     "263": {"loot": [{"id": "263-gold", "label": "Take 3 Gold Crowns", "actions": [{"type": "stat", "stat": "gold", "delta": 3}]}]},
+    "267": {
+        "loot": [
+            {"id": "267-message", "label": "Take Message", "actions": [{"type": "add_item", "container": "special", "name": "Message"}]},
+            {"id": "267-dagger", "label": "Take Dagger", "actions": [{"type": "add_item", "container": "weapon", "name": "Dagger"}]},
+        ]
+    },
     "277": {
         "lossChoices": [
             loss_choice(
@@ -784,7 +796,13 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         ],
     ),
     "9": item_route_check(9, "Vordak Gem", 236, 292, label="Vordak Gem possession"),
-    "12": stat_route_check(12, "gold", 10, 262, 247, label="Ferryman fare"),
+    "12": {
+        **stat_route_check(12, "gold", 10, 262, 247, label="Caravan fare"),
+        "sourceRoutes": [
+            route_action(262, [{"type": "stat", "stat": "gold", "delta": -10}], "Pay 10 Gold Crowns"),
+            {"Section": 247},
+        ],
+    },
     "17": section_roll(
         "Random route after killing the Kraan.",
         [
@@ -851,7 +869,14 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 338, "Weapon survives"),
         ],
     ),
-    "46": power_route_option(46, "Sixth Sense", 296, label="Sixth Sense ferryman warning"),
+    "46": {
+        **power_route_option(46, "Sixth Sense", 296, label="Sixth Sense ferryman warning"),
+        "sourceRoutes": [
+            {"Section": 296},
+            route_action(246, [{"type": "stat", "stat": "gold", "delta": -2}], "Pay 2 Gold Crowns"),
+            {"Section": 90},
+        ],
+    },
     "49": section_roll(
         "Random route in the shop.",
         [

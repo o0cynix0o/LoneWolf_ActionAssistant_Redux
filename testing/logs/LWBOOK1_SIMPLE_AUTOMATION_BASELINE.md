@@ -11,8 +11,8 @@ Scope: issue #3 conservative section-effect pass for *Flight from the Dark*.
 - Section 350 marks Book 1 success/completion.
 - 7 required Meal sections are automated with a Hunting exemption.
 - Confirmed direct END changes, Gold Crown gains, Vordak Gem effects, permanent CS loss from the Vordak Gem backlash, and deterministic gear loss are automated.
-- `data/book1-section-flows.json` now includes optional loot buttons for 21 sections:
-  15, 20, 62, 113, 124, 148, 164, 184, 197, 199, 243, 263, 290, 291, 305, 307, 315, 319, 346, 347, and 349.
+- `data/book1-section-flows.json` now includes optional loot buttons for 24 sections:
+  15, 20, 62, 113, 124, 148, 164, 184, 193, 197, 199, 243, 255, 263, 267, 290, 291, 305, 307, 315, 319, 346, 347, and 349.
 
 ## Verification
 

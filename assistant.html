@@ -1769,6 +1769,11 @@
       return text(option?.label || id, 'Loot');
     }
 
+    function routeLabel(route) {
+      const label = text(route?.Label, `Go to ${text(route?.Section, '?')}`);
+      return route?.EffectLabel ? `${label} (${route.EffectLabel})` : label;
+    }
+
     function lastNewCombatRound(beforeSnapshot, afterSnapshot) {
       const beforeLog = arr(combatFrom(beforeSnapshot).Log);
       const afterLog = arr(combatFrom(afterSnapshot).Log);
@@ -3347,7 +3352,7 @@
       return arr(currentFlow().SourceRoutes).map((route) => (
         `<div class="item-row">
           <small>${escapeHtml(route.Section)}</small>
-          <span class="wrap">${escapeHtml(route.Label || `Go to ${route.Section}`)}</span>
+          <span class="wrap">${escapeHtml(routeLabel(route))}</span>
           <button type="button" data-route="${escapeHtml(route.Section)}">Go</button>
         </div>`
       )).join('');
@@ -3566,7 +3571,7 @@
       const healing = flow.Healing || {};
       const automationMessages = arr(automation.Messages);
       const routeRows = sourceRoutes.map((route) => (
-        `<button type="button" data-route="${escapeHtml(route.Section)}">${escapeHtml(route.Label || `Go to ${route.Section}`)}</button>`
+        `<button type="button" data-route="${escapeHtml(route.Section)}">${escapeHtml(routeLabel(route))}</button>`
       )).join('');
       const automationRows = automation.Summary ? `
         <div class="item-row">

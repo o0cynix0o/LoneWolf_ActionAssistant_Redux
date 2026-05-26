@@ -69,7 +69,7 @@ Issue #3 changed the simple automation baseline:
 - `data\book1-simple-automations.json` has 48 confirmed Book 1 section-effect entries.
 - Required Meal sections use the Book 1 Hunting exemption.
 - Direct END loss/gain, Gold Crowns, Vordak Gem effects, permanent CS loss from section 236, deterministic gear loss, terminal death/failure, and section 350 completion are represented.
-- `data\book1-section-flows.json` includes optional loot buttons for 21 confirmed sections.
+- `data\book1-section-flows.json` includes optional loot buttons for 24 confirmed sections.
 - `testing\lwbook1_simple_automation_smoke.py` verifies representative effects.
 - `testing\logs\LWBOOK1_SIMPLE_AUTOMATION_BASELINE.md` records coverage and remaining risk.
 
@@ -147,10 +147,13 @@ Issue #12 started the automation-language audit:
 
 - `testing\lwbook1_automation_language_audit.py` scans all 350 local Book 1 section files for automation-likely language and writes section-number/category findings without copying book prose.
 - The first clear slice added optional loot helpers for section 15 Sword, section 346 Spear, and section 349 Crystal Star Pendant.
+- User rulings added section 193 Scroll as a Backpack Item, section 267 Message as a Special Item, section 267 Dagger as a Weapon, and section 255 Prince's Sword as a Weapon.
 - Section 258 now applies the repeated Backpack/Weapons loss when reached directly.
 - Section 46 now exposes a Sixth Sense route warning without forcing either non-Sixth-Sense route choice.
+- Route-cost actions now deduct 10 Gold Crowns for section 12 -> 262 and 2 Gold Crowns for section 46 -> 246.
+- Sections 115, 132, and 150 are recorded as no sheet change for Meal language.
 - `testing\lwbook1_automation_language_smoke.py` verifies those clear helpers.
-- Issue #12 remains open for ambiguous rulings around item categories, gold payment timing, and temporary combat weapon handling.
+- Issue #12 remains open for route-check and combat-outcome candidates from the scanner.
 
 ## GitHub Workflow
 

@@ -92,7 +92,7 @@ DIRECT_COVERAGE = {
     "endurance_gain": {"simple", "loot"},
     "combat_skill_modifier": {"simple", "combat"},
     "meal": {"simple", "loot"},
-    "gold": {"simple", "loot", "routeCheck"},
+    "gold": {"simple", "loot", "routeCheck", "routeAction"},
     "gold_cost": set(),
     "inventory_gain": {"simple", "loot", "lossChoice"},
     "inventory_loss": {"simple", "lossChoice", "roll"},
@@ -100,6 +100,17 @@ DIRECT_COVERAGE = {
     "route_check": {"routeCheck"},
     "terminal": {"simple", "stagedRoll"},
 }
+
+
+REVIEWED_NO_AUTOMATION: dict[str, set[str]] = {
+    "78": {"gold", "gold_cost"},
+    "115": {"meal"},
+    "132": {"meal"},
+    "150": {"meal"},
+    "255": {"meal"},
+}
+
+DIRECT_COVERAGE["gold_cost"] = {"routeAction"}
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -137,6 +148,9 @@ def flow_coverage(entry: dict[str, Any], simple_entry: dict[str, Any] | None) ->
         coverage.add("stagedRoll")
     if entry.get("routeChecks"):
         coverage.add("routeCheck")
+    for route in entry.get("sourceRoutes", []):
+        if isinstance(route, dict) and route.get("actions"):
+            coverage.add("routeAction")
     if entry.get("combat"):
         coverage.add("combat")
     return coverage
@@ -161,7 +175,9 @@ def build_audit() -> dict[str, Any]:
         coverage = flow_coverage(entry, simple_entry)
         category_status: dict[str, str] = {}
         for category in signals:
-            if category_covered(category, coverage):
+            if category in REVIEWED_NO_AUTOMATION.get(str(section), set()):
+                category_status[category] = "reviewed-no-automation"
+            elif category_covered(category, coverage):
                 category_status[category] = "covered"
                 covered[category].append(section)
             else:
@@ -209,6 +225,10 @@ def render_report(audit: dict[str, Any]) -> str:
     ]
     for category in sorted(SIGNALS):
         lines.append(f"- {category}: {list_line(gaps.get(category, []))}")
+    lines.extend(["", "## Reviewed No Automation", ""])
+    for section in sorted(REVIEWED_NO_AUTOMATION, key=lambda value: int(value)):
+        categories = ", ".join(sorted(REVIEWED_NO_AUTOMATION[section]))
+        lines.append(f"- Section {section}: {categories}")
     lines.extend(["", "## Next Review Slice", ""])
     priority_categories = [
         "endurance_loss",

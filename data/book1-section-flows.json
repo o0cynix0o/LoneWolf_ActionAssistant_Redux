@@ -279,7 +279,15 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 262
+          "Section": 262,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -10
+            }
+          ],
+          "effectLabel": "Pay 10 Gold Crowns"
         },
         {
           "Section": 247
@@ -289,7 +297,7 @@
       "routeChecks": [
         {
           "id": "12-gold-gte-10",
-          "label": "Ferryman fare",
+          "label": "Caravan fare",
           "summary": "Checks current Gold Crowns.",
           "requiresAutomationApplied": false,
           "formula": {
@@ -1151,7 +1159,15 @@
           "Section": 296
         },
         {
-          "Section": 246
+          "Section": 246,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            }
+          ],
+          "effectLabel": "Pay 2 Gold Crowns"
         },
         {
           "Section": 90
@@ -4131,7 +4147,20 @@
           "Section": 126
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "193-scroll",
+          "label": "Take Scroll",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Scroll"
+            }
+          ]
+        }
+      ]
     },
     "194": {
       "auditStatus": "source-link-baseline",
@@ -5370,6 +5399,19 @@
         }
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "255-princes-sword",
+          "label": "Take Prince's Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Prince's Sword"
+            }
+          ]
+        }
+      ],
       "combat": [
         {
           "id": "255-gourgaz",
@@ -5588,7 +5630,31 @@
           "Section": 125
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "267-message",
+          "label": "Take Message",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Message"
+            }
+          ]
+        },
+        {
+          "id": "267-dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "268": {
       "auditStatus": "source-link-baseline",

@@ -11,6 +11,7 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 - Confirmed roll helpers added for 20 Book 1 sections.
 - Confirmed staged roll helper added for section 21.
 - Confirmed route checks added for 12 Book 1 sections.
+- Confirmed route-cost actions added for 2 Book 1 sections.
 - The pass uses existing assistant cards: Section Roll for random digits and Route Check for sheet-dependent branches.
 - Roll helpers resolve the route/result label.
 - Confirmed same-section roll effects are applied for sections 36, 158, and 188 with once-per-visit protection.
@@ -42,6 +43,11 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 - Item checks: 9, 173.
 - Stat checks: 12, 203.
 - Section 162 and section 203 checks are tied to sections with automatic entry effects; the smoke test verifies those entry effects are applied before checking the route.
+
+## Route Costs
+
+- Section 12 removes 10 Gold Crowns when the paid route to section 262 is chosen.
+- Section 46 removes 2 Gold Crowns when the ferryman route to section 246 is chosen.
 
 ## Data Artifacts
 

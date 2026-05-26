@@ -75,6 +75,23 @@ def smoke_clear_loot_helpers() -> None:
     quiet(assistant.apply_flow_loot, "349-crystal-star-pendant")
     assert_true("Crystal Star Pendant" in assistant.inventory["SpecialItems"], "section 349 Pendant loot")
 
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 193)
+    quiet(assistant.apply_flow_loot, "193-scroll")
+    assert_true("Scroll" in assistant.inventory["BackpackItems"], "section 193 Scroll Backpack Item")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 255)
+    quiet(assistant.apply_flow_loot, "255-princes-sword")
+    assert_equal(assistant.inventory["Weapons"], ["Axe", "Prince's Sword"], "section 255 Prince's Sword loot")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 267)
+    quiet(assistant.apply_flow_loot, "267-message")
+    quiet(assistant.apply_flow_loot, "267-dagger")
+    assert_true("Message" in assistant.inventory["SpecialItems"], "section 267 Message Special Item")
+    assert_equal(assistant.inventory["Weapons"], ["Axe", "Dagger"], "section 267 Dagger loot")
+
 
 def smoke_section_258_gear_loss() -> None:
     assistant = fresh_assistant()
@@ -99,10 +116,45 @@ def smoke_section_46_sixth_sense_check() -> None:
     assert_equal(check["MatchedOutcome"], None, "section 46 no Sixth Sense has no matched optional route")
 
 
+def smoke_route_gold_costs() -> None:
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 15
+    quiet(assistant.set_section, 12)
+    quiet(assistant.follow_route, 262)
+    assert_equal(assistant.inventory["GoldCrowns"], 5, "section 12 paid route removes 10 Gold Crowns")
+    assert_equal(assistant.state["CurrentSection"], 262, "section 12 paid route target")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 15
+    quiet(assistant.set_section, 12)
+    quiet(assistant.follow_route, 247)
+    assert_equal(assistant.inventory["GoldCrowns"], 15, "section 12 unpaid route preserves Gold Crowns")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 5
+    quiet(assistant.set_section, 46)
+    route = next(route for route in assistant.current_section_flow_payload()["SourceRoutes"] if route["Section"] == 246)
+    assert_equal(route["EffectLabel"], "Pay 2 Gold Crowns", "section 46 paid route label")
+    quiet(assistant.follow_route, 246)
+    assert_equal(assistant.inventory["GoldCrowns"], 3, "section 46 accepted offer removes 2 Gold Crowns")
+    assert_equal(assistant.state["CurrentSection"], 246, "section 46 accepted offer target")
+
+
+def smoke_meal_rulings() -> None:
+    assistant = fresh_assistant()
+    start_meals = assistant.inventory["BackpackItems"].count("Meal")
+    quiet(assistant.set_section, 115)
+    quiet(assistant.follow_route, 150)
+    assert_equal(assistant.inventory["BackpackItems"].count("Meal"), start_meals, "section 115 table Meal does not consume carried Meal")
+    assert_equal(assistant.state["CurrentSection"], 150, "section 115 Meal route target")
+
+
 def main() -> int:
     smoke_clear_loot_helpers()
     smoke_section_258_gear_loss()
     smoke_section_46_sixth_sense_check()
+    smoke_route_gold_costs()
+    smoke_meal_rulings()
     print("Book 1 automation-language smoke passed.")
     return 0
 

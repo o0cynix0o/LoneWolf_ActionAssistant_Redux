@@ -896,6 +896,7 @@ def default_automation() -> dict[str, Any]:
         "AppliedRollEffects": [],
         "AppliedHealing": [],
         "AppliedLossChoices": [],
+        "AppliedRouteActions": [],
         "StagedRolls": {},
         "Ending": None,
         "DeathState": {"Active": False},
@@ -1094,6 +1095,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         ("Automation", "AppliedRollEffects"),
         ("Automation", "AppliedHealing"),
         ("Automation", "AppliedLossChoices"),
+        ("Automation", "AppliedRouteActions"),
         ("Automation", "Journal"),
         ("Automation", "DeathHistory"),
         ("Automation", "SectionCheckpoints"),
@@ -2610,7 +2612,15 @@ class LoneWolfReduxAssistant:
             if section in seen:
                 continue
             seen.add(section)
-            result.append({"Section": section, "Label": str(raw_label or f"Go to {section}")})
+            payload = {"Section": section, "Label": str(raw_label or f"Go to {section}")}
+            if isinstance(route, dict):
+                actions = route.get("Actions", route.get("actions"))
+                if actions is not None:
+                    payload["Actions"] = as_list(actions)
+                effect_label = route.get("EffectLabel", route.get("effectLabel"))
+                if effect_label:
+                    payload["EffectLabel"] = str(effect_label)
+            result.append(payload)
         return result
 
     def merge_route_labels(
@@ -2641,6 +2651,53 @@ class LoneWolfReduxAssistant:
             merged.append(payload)
         return merged
 
+    def route_payload_for_target(self, target: int) -> dict[str, Any] | None:
+        entry = self.current_section_flow_entry() or {}
+        for route in self.flow_source_route_payload(entry):
+            if int(route.get("Section") or 0) == int(target):
+                return route
+        return None
+
+    def apply_route_actions(self, target: int) -> list[str]:
+        route = self.route_payload_for_target(target)
+        if not isinstance(route, dict):
+            return []
+        actions = [action for action in as_list(route.get("Actions")) if isinstance(action, dict)]
+        if not actions:
+            return []
+        if not bool(self.automation.get("Enabled", True)):
+            return ["Route effects skipped because automation is disabled."]
+
+        key = f"{self.current_visit_key()}:route:{int(target)}"
+        applied = as_list(self.automation.get("AppliedRouteActions"))
+        if key in applied:
+            return ["Route effects already applied for this section visit."]
+
+        messages: list[str] = []
+        for action in actions:
+            message = self.apply_automation_action(action)
+            if message:
+                messages.append(message)
+
+        if messages:
+            applied.append(key)
+            self.automation["AppliedRouteActions"] = applied[-500:]
+            journal = as_list(self.automation.get("Journal"))
+            journal.append(
+                {
+                    "Kind": "route",
+                    "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                    "VisitKey": self.current_visit_key(),
+                    "BookNumber": int(self.character["BookNumber"]),
+                    "Section": int(self.state["CurrentSection"]),
+                    "Summary": f"Route to section {int(target)}",
+                    "Messages": messages,
+                    "TargetSection": int(target),
+                }
+            )
+            self.automation["Journal"] = journal[-100:]
+        return messages
+
     def legal_route_targets_for_current_section(self) -> set[int]:
         book = BOOKS.get(int(self.character["BookNumber"]), BOOKS[1])
         section = int(self.state["CurrentSection"])
@@ -2664,6 +2721,8 @@ class LoneWolfReduxAssistant:
                 "Use Set Position for manual jumps."
             )
             return
+        for message in self.apply_route_actions(target):
+            print(f"Route effect: {message}")
         self.set_section(target)
 
     def evaluate_flow_condition(self, condition: dict[str, Any] | None) -> bool:
