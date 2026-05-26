@@ -953,6 +953,8 @@ def default_state() -> dict[str, Any]:
             "DefeatRoute": None,
             "DefeatEnduranceMinimum": None,
             "EvadeRoute": None,
+            "FlawlessVictoryRoute": None,
+            "WoundedVictoryRoute": None,
             "RoundLimit": 0,
             "SurvivalRoute": None,
             "RoundExceededRoute": None,
@@ -962,6 +964,7 @@ def default_state() -> dict[str, Any]:
             "PostRoundWpThreshold": None,
             "PerRoundActions": [],
             "TimedModifiers": [],
+            "AppliedConditionalModifierLabels": [],
             "IgnorePlayerLossRounds": 0,
             "FixedPlayerCombatSkill": None,
             "EnemyQueue": [],
@@ -1074,6 +1077,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         ("Combat", "Log"),
         ("Combat", "PerRoundActions"),
         ("Combat", "TimedModifiers"),
+        ("Combat", "AppliedConditionalModifierLabels"),
         ("Combat", "EnemyQueue"),
         ("Combat", "VictoryChoices"),
         ("Combat", "AfterVictoryActions"),
@@ -2663,6 +2667,12 @@ class LoneWolfReduxAssistant:
             return not self.has_power(str(condition.get("name") or ""))
         if kind == "item":
             return self.has_item(
+                str(condition.get("name") or ""),
+                condition.get("containers"),
+                str(condition.get("match") or "exact"),
+            )
+        if kind == "no_item":
+            return not self.has_item(
                 str(condition.get("name") or ""),
                 condition.get("containers"),
                 str(condition.get("match") or "exact"),
@@ -4745,12 +4755,22 @@ class LoneWolfReduxAssistant:
             timed = self.combat_timed_modifier_for_round()
             if timed:
                 notes.append(f"Timed modifier this round {timed:+d}")
+            if bool(self.combat.get("EnemyImmune")):
+                notes.append("Enemy immune to Mindblast")
             if self.combat.get("FixedPlayerCombatSkill") is not None:
                 notes.append(f"Fixed combat skill {int(self.combat['FixedPlayerCombatSkill'])}")
             if int(self.combat.get("RoundLimit") or 0):
                 notes.append(f"Round limit {int(self.combat['RoundLimit'])}")
             if bool(self.combat.get("IgnorePlayerLossIfEnemyLossGreater")):
                 notes.append("Ignore Lone Wolf END loss when enemy loss is higher.")
+            notes.extend(
+                str(label)
+                for label in as_list(self.combat.get("AppliedConditionalModifierLabels"))
+                if str(label)
+            )
+            victory_choices = as_list(self.combat.get("VictoryChoices"))
+            if victory_choices:
+                notes.append(f"Victory choices: sections {', '.join(str(route) for route in victory_choices)}")
             _, weapon_notes = self.combat_weapon_modifier_and_notes()
             notes.extend(weapon_notes)
             if bool(self.combat.get("CanEvade")):
@@ -4802,11 +4822,31 @@ class LoneWolfReduxAssistant:
         for modifier in as_list(self.combat.get("TimedModifiers")):
             if not isinstance(modifier, dict):
                 continue
+            if isinstance(modifier.get("condition"), dict) and not self.evaluate_flow_condition(
+                modifier.get("condition")
+            ):
+                continue
             start = int(modifier.get("startRound") or 1)
             end = int(modifier.get("endRound") or start)
             if start <= round_number <= end:
                 total += int(modifier.get("modifier") or 0)
         return total
+
+    def evaluated_combat_preset_modifier(self, preset: dict[str, Any]) -> tuple[int, list[str]]:
+        total = int(preset.get("modifier") or 0)
+        labels: list[str] = []
+        for modifier in as_list(preset.get("conditionalModifiers")):
+            if not isinstance(modifier, dict):
+                continue
+            if isinstance(modifier.get("condition"), dict) and not self.evaluate_flow_condition(
+                modifier.get("condition")
+            ):
+                continue
+            value = int(modifier.get("modifier") or 0)
+            total += value
+            label = str(modifier.get("label") or "Conditional modifier")
+            labels.append(f"{label}: {value:+d} CS")
+        return total, labels
 
     def combat_skill_for_round(self, round_number: int | None = None) -> int:
         fixed = self.combat.get("FixedPlayerCombatSkill")
@@ -4881,9 +4921,10 @@ class LoneWolfReduxAssistant:
         elif fixed_cs is not None:
             fixed_cs = int(fixed_cs)
 
+        modifier, modifier_labels = self.evaluated_combat_preset_modifier(preset)
         self.combat.update(
             {
-                "Modifier": int(preset.get("modifier") or 0),
+                "Modifier": modifier,
                 "UseStaff": False,
                 "ForceUnarmed": bool(preset.get("forceUnarmed", False)),
                 "EnemyImmune": bool(preset.get("enemyImmune", False)),
@@ -4896,6 +4937,8 @@ class LoneWolfReduxAssistant:
                 "DefeatRoute": preset.get("defeatRoute"),
                 "DefeatEnduranceMinimum": preset.get("defeatEnduranceMinimum"),
                 "EvadeRoute": preset.get("evadeRoute"),
+                "FlawlessVictoryRoute": preset.get("flawlessVictoryRoute"),
+                "WoundedVictoryRoute": preset.get("woundedVictoryRoute"),
                 "RoundLimit": max(0, int(preset.get("roundLimit") or 0)),
                 "SurvivalRoute": preset.get("survivalRoute"),
                 "RoundExceededRoute": preset.get("roundExceededRoute"),
@@ -4905,6 +4948,7 @@ class LoneWolfReduxAssistant:
                 "PostRoundWpThreshold": None,
                 "PerRoundActions": as_list(preset.get("perRoundActions")),
                 "TimedModifiers": as_list(preset.get("timedModifiers")),
+                "AppliedConditionalModifierLabels": modifier_labels,
                 "IgnorePlayerLossRounds": max(0, int(preset.get("ignorePlayerLossRounds") or 0)),
                 "FixedPlayerCombatSkill": fixed_cs,
                 "EnemyQueue": enemies,
@@ -4950,6 +4994,13 @@ class LoneWolfReduxAssistant:
                 if message:
                     messages.append(message)
         return messages
+
+    def combat_player_loss_total(self) -> int:
+        total = 0
+        for round_entry in as_list(self.combat.get("Log")):
+            if isinstance(round_entry, dict):
+                total += int(round_entry.get("PlayerLoss") or round_entry.get("LoneWolfReduxLoss") or 0)
+        return total
 
     def route_after_combat_round(self) -> bool:
         round_count = self.combat_round_count()
@@ -5005,6 +5056,11 @@ class LoneWolfReduxAssistant:
             self.archive_current_combat("Victory")
             self.combat["Active"] = False
             route = self.combat.get("VictoryRoute")
+            player_loss_total = self.combat_player_loss_total()
+            if player_loss_total > 0 and self.combat.get("WoundedVictoryRoute"):
+                route = self.combat.get("WoundedVictoryRoute")
+            elif player_loss_total <= 0 and self.combat.get("FlawlessVictoryRoute"):
+                route = self.combat.get("FlawlessVictoryRoute")
             win_within = int(self.combat.get("WinWithinRounds") or 0)
             if win_within:
                 route = self.combat.get("WinWithinRoute") if round_count <= win_within else self.combat.get("TooLateRoute")
@@ -5066,6 +5122,8 @@ class LoneWolfReduxAssistant:
                 "DefeatRoute": None,
                 "DefeatEnduranceMinimum": None,
                 "EvadeRoute": None,
+                "FlawlessVictoryRoute": None,
+                "WoundedVictoryRoute": None,
                 "RoundLimit": 0,
                 "SurvivalRoute": None,
                 "RoundExceededRoute": None,
@@ -5075,6 +5133,7 @@ class LoneWolfReduxAssistant:
                 "PostRoundWpThreshold": None,
                 "PerRoundActions": [],
                 "TimedModifiers": [],
+                "AppliedConditionalModifierLabels": [],
                 "IgnorePlayerLossRounds": 0,
                 "FixedPlayerCombatSkill": None,
                 "EnemyQueue": [],

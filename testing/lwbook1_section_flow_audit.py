@@ -34,6 +34,11 @@ DISCIPLINES = [
     "Mind Over Matter",
 ]
 
+
+def combat_enemy(name: str, cs: int, endurance: int) -> dict[str, Any]:
+    return {"name": name, "cs": cs, "endurance": endurance}
+
+
 MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "20": {
         "loot": [
@@ -164,6 +169,385 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
 }
 
 
+MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
+    "17": {
+        "combat": [
+            {
+                "id": "17-kraan",
+                "label": "Fight the Kraan",
+                "enemy": combat_enemy("Kraan", 16, 24),
+                "modifier": -1,
+                "victoryChoices": [53, 274, 316],
+            }
+        ]
+    },
+    "29": {
+        "combat": [
+            {
+                "id": "29-vordak",
+                "label": "Fight the Vordak",
+                "enemy": combat_enemy("Vordak", 17, 25),
+                "conditionalModifiers": [
+                    {
+                        "label": "No Mindshield against Mindforce",
+                        "modifier": -2,
+                        "condition": {"type": "no_power", "name": "Mindshield"},
+                    }
+                ],
+                "victoryRoute": 270,
+            }
+        ]
+    },
+    "34": {
+        "combat": [
+            {
+                "id": "34-vordak",
+                "label": "Fight the Vordak",
+                "enemy": combat_enemy("Vordak", 17, 25),
+                "conditionalModifiers": [
+                    {
+                        "label": "No Mindshield against Mindforce",
+                        "modifier": -2,
+                        "condition": {"type": "no_power", "name": "Mindshield"},
+                    }
+                ],
+                "victoryRoute": 328,
+            }
+        ]
+    },
+    "43": {
+        "combat": [
+            {
+                "id": "43-black-bear",
+                "label": "Fight the Black Bear",
+                "enemy": combat_enemy("Black Bear", 16, 10),
+                "canEvade": True,
+                "evadeAfterRounds": 3,
+                "evadeRoute": 106,
+                "victoryRoute": 195,
+            }
+        ]
+    },
+    "55": {
+        "combat": [
+            {
+                "id": "55-giak",
+                "label": "Fight the surprised Giak",
+                "enemy": combat_enemy("Giak", 9, 9),
+                "modifier": 4,
+                "victoryRoute": 325,
+            }
+        ]
+    },
+    "63": {
+        "combat": [
+            {
+                "id": "63-madman",
+                "label": "Fight the Madman",
+                "enemy": combat_enemy("Madman", 11, 10),
+                "victoryRoute": 269,
+            }
+        ]
+    },
+    "72": {
+        "combat": [
+            {
+                "id": "72-giak-doomwolf",
+                "label": "Fight the Giak and Doomwolf",
+                "enemy": combat_enemy("Giak and Doomwolf", 15, 24),
+                "victoryRoute": 265,
+            }
+        ]
+    },
+    "112": {
+        "combat": [
+            {
+                "id": "112-giaks",
+                "label": "Fight the two Giaks",
+                "enemies": [combat_enemy("Giak 1", 13, 10), combat_enemy("Giak 2", 12, 10)],
+                "victoryChoices": [33, 248],
+            }
+        ]
+    },
+    "133": {
+        "combat": [
+            {
+                "id": "133-winged-serpent",
+                "label": "Fight the Winged Serpent",
+                "enemy": combat_enemy("Winged Serpent", 16, 18),
+                "enemyImmune": True,
+                "victoryRoute": 266,
+            }
+        ]
+    },
+    "136": {
+        "combat": [
+            {
+                "id": "136-giaks",
+                "label": "Fight the two Giaks from higher ground",
+                "enemies": [combat_enemy("Giak 1", 13, 10), combat_enemy("Giak 2", 12, 10)],
+                "modifier": 1,
+                "victoryRoute": 313,
+            }
+        ]
+    },
+    "138": {
+        "combat": [
+            {
+                "id": "138-giaks",
+                "label": "Fight the two Mountain Giaks",
+                "enemies": [combat_enemy("Giak 1", 13, 10), combat_enemy("Giak 2", 12, 10)],
+                "victoryRoute": 291,
+            }
+        ]
+    },
+    "169": {
+        "combat": [
+            {
+                "id": "169-crypt-spawn",
+                "label": "Fight the Crypt Spawn",
+                "enemy": combat_enemy("Crypt Spawn", 16, 16),
+                "canEvade": True,
+                "evadeAfterRounds": 1,
+                "evadeRoute": 23,
+                "victoryRoute": 137,
+            }
+        ]
+    },
+    "170": {
+        "combat": [
+            {
+                "id": "170-burrowcrawler",
+                "label": "Fight the Burrowcrawler",
+                "enemy": combat_enemy("Burrowcrawler", 17, 7),
+                "enemyImmune": True,
+                "conditionalModifiers": [
+                    {
+                        "label": "No Torch in Backpack",
+                        "modifier": -3,
+                        "condition": {
+                            "type": "no_item",
+                            "name": "Torch",
+                            "containers": ["backpack"],
+                            "match": "exact",
+                        },
+                    }
+                ],
+                "victoryRoute": 319,
+            }
+        ]
+    },
+    "180": {
+        "combat": [
+            {
+                "id": "180-bandits",
+                "label": "Fight the leader and soldiers",
+                "enemies": [
+                    combat_enemy("Leader", 15, 22),
+                    combat_enemy("Soldier 1", 13, 20),
+                    combat_enemy("Soldier 2", 12, 20),
+                ],
+                "victoryRoute": 62,
+            }
+        ]
+    },
+    "191": {
+        "combat": [
+            {
+                "id": "191-bodyguard",
+                "label": "Fight the Bodyguard",
+                "enemy": combat_enemy("Bodyguard", 11, 21),
+                "canEvade": True,
+                "evadeRoute": 234,
+                "victoryRoute": 24,
+            }
+        ]
+    },
+    "208": {
+        "combat": [
+            {
+                "id": "208-giaks",
+                "label": "Fight the Giaks",
+                "enemy": combat_enemy("Giaks", 15, 13),
+                "victoryChoices": [148, 320],
+            }
+        ]
+    },
+    "220": {
+        "combat": [
+            {
+                "id": "220-bodyguard",
+                "label": "Fight the Bodyguard",
+                "enemy": combat_enemy("Bodyguard", 11, 20),
+                "canEvade": True,
+                "evadeRoute": 234,
+                "victoryRoute": 24,
+            }
+        ]
+    },
+    "227": {
+        "combat": [
+            {
+                "id": "227-marshviper",
+                "label": "Fight the Marshviper",
+                "enemy": combat_enemy("Marshviper", 16, 6),
+                "woundedVictoryRoute": 271,
+                "flawlessVictoryRoute": 348,
+            }
+        ]
+    },
+    "229": {
+        "combat": [
+            {
+                "id": "229-kraan",
+                "label": "Fight the Kraan in the dust",
+                "enemy": combat_enemy("Kraan", 16, 25),
+                "modifier": -1,
+                "victoryChoices": [267, 125],
+            }
+        ]
+    },
+    "231": {
+        "combat": [
+            {
+                "id": "231-robber",
+                "label": "Fight the Robber",
+                "enemy": combat_enemy("Robber", 13, 20),
+                "canEvade": True,
+                "evadeAfterRounds": 2,
+                "evadeRoute": 7,
+                "roundLimit": 4,
+                "roundExceededRoute": 203,
+                "winWithinRounds": 4,
+                "winWithinRoute": 94,
+                "tooLateRoute": 203,
+            }
+        ]
+    },
+    "246": {
+        "combat": [
+            {
+                "id": "246-drakkar",
+                "label": "Fight the Drakkar",
+                "enemy": combat_enemy("Drakkar", 15, 23),
+                "victoryRoute": 197,
+            }
+        ]
+    },
+    "253": {
+        "combat": [
+            {
+                "id": "253-doomwolves",
+                "label": "Fight the four Doomwolves",
+                "enemies": [
+                    combat_enemy("Doomwolf 1", 13, 24),
+                    combat_enemy("Doomwolf 2", 14, 23),
+                    combat_enemy("Doomwolf 3", 14, 22),
+                    combat_enemy("Doomwolf 4", 15, 21),
+                ],
+                "victoryRoute": 278,
+            }
+        ]
+    },
+    "255": {
+        "combat": [
+            {
+                "id": "255-gourgaz",
+                "label": "Fight the Gourgaz",
+                "enemy": combat_enemy("Gourgaz", 20, 30),
+                "enemyImmune": True,
+                "victoryRoute": 82,
+            }
+        ]
+    },
+    "260": {
+        "combat": [
+            {
+                "id": "260-unarmed-giaks",
+                "label": "Fight the Giaks unarmed",
+                "enemies": [combat_enemy("Giak 1", 11, 18), combat_enemy("Giak 2", 12, 17)],
+                "forceUnarmed": True,
+                "victoryRoute": 156,
+            }
+        ]
+    },
+    "283": {
+        "combat": [
+            {
+                "id": "283-vordak",
+                "label": "Fight the Vordak",
+                "enemy": combat_enemy("Vordak", 17, 25),
+                "timedModifiers": [
+                    {"label": "Surprise attack", "modifier": 2, "startRound": 1, "endRound": 1},
+                    {
+                        "label": "No Mindshield against Mindforce",
+                        "modifier": -2,
+                        "startRound": 2,
+                        "endRound": 999,
+                        "condition": {"type": "no_power", "name": "Mindshield"},
+                    },
+                ],
+                "victoryRoute": 123,
+            }
+        ]
+    },
+    "336": {
+        "combat": [
+            {
+                "id": "336-giaks",
+                "label": "Fight the two Giaks",
+                "enemies": [combat_enemy("Giak 1", 14, 11), combat_enemy("Giak 2", 13, 11)],
+                "victoryRoute": 117,
+            }
+        ]
+    },
+    "339": {
+        "combat": [
+            {
+                "id": "339-robber",
+                "label": "Fight the Robber",
+                "enemy": combat_enemy("Robber", 13, 20),
+                "canEvade": True,
+                "evadeRoute": 7,
+                "roundLimit": 4,
+                "roundExceededRoute": 203,
+                "winWithinRounds": 4,
+                "winWithinRoute": 94,
+                "tooLateRoute": 203,
+            }
+        ]
+    },
+    "340": {
+        "combat": [
+            {
+                "id": "340-giak-doomwolf",
+                "label": "Fight the Giak and Doomwolf",
+                "enemy": combat_enemy("Giak and Doomwolf", 14, 24),
+                "victoryRoute": 193,
+            }
+        ]
+    },
+    "342": {
+        "combat": [
+            {
+                "id": "342-vordak",
+                "label": "Fight the Vordak",
+                "enemy": combat_enemy("Vordak", 18, 26),
+                "enemyImmune": True,
+                "conditionalModifiers": [
+                    {
+                        "label": "No Mindshield against Mindforce",
+                        "modifier": -2,
+                        "condition": {"type": "no_power", "name": "Mindshield"},
+                    }
+                ],
+                "victoryRoute": 123,
+            }
+        ]
+    },
+}
+
+
 def clean_text(source: str) -> str:
     text = re.sub(r"<[^>]+>", " ", source)
     text = html.unescape(text)
@@ -272,9 +656,10 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         sources = incoming.get(section, [])
         entry["incomingRouteCount"] = len(sources)
 
-    for section, override in MANUAL_FLOW_AUDIT.items():
-        if int(section) in sections:
-            sections[int(section)].update(override)
+    for manual_audit in (MANUAL_FLOW_AUDIT, MANUAL_COMBAT_AUDIT):
+        for section, override in manual_audit.items():
+            if int(section) in sections:
+                sections[int(section)].update(override)
 
     reachable: set[int] = set()
     queue: deque[int] = deque([1])
@@ -335,6 +720,7 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "branchSections": branch_sections,
         "classificationCounts": dict(sorted(classified_counts.items())),
         "manualFlowAuditCount": len(MANUAL_FLOW_AUDIT),
+        "manualCombatAuditCount": len(MANUAL_COMBAT_AUDIT),
         "section1Routes": [route["Section"] for route in sections.get(1, {}).get("sourceRoutes", [])],
         "section350Classes": sections.get(350, {}).get("classification", []),
     }
@@ -387,12 +773,13 @@ def render_report(artifact: dict[str, Any]) -> str:
             "- `sourceRoutes` is the compact legal-link baseline used by the assistant.",
             "- `classification` is heuristic and marks candidates for the later human section automation audit.",
             f"- {artifact['manualFlowAuditCount']} sections include confirmed optional loot buttons.",
+            f"- {artifact['manualCombatAuditCount']} sections include confirmed combat presets.",
             "",
             "## Remaining Work",
             "",
             "- Confirm route checks that depend on Kai Disciplines, items, END, Gold Crowns, or random digits.",
             "- Expand simple automations only after each additional section effect is confirmed by the audit.",
-            "- Audit combat sections for enemy stats, evasion rules, Mindblast immunity, and victory routes.",
+            "- Continue combat/random audit for route checks and non-combat random outcomes.",
         ]
     )
     return "\n".join(lines) + "\n"

@@ -299,7 +299,24 @@
           "Section": 316
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "17-kraan",
+          "label": "Fight the Kraan",
+          "enemy": {
+            "name": "Kraan",
+            "cs": 16,
+            "endurance": 24
+          },
+          "modifier": -1,
+          "victoryChoices": [
+            53,
+            274,
+            316
+          ]
+        }
+      ]
     },
     "18": {
       "auditStatus": "source-link-baseline",
@@ -529,7 +546,29 @@
           "Section": 270
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "29-vordak",
+          "label": "Fight the Vordak",
+          "enemy": {
+            "name": "Vordak",
+            "cs": 17,
+            "endurance": 25
+          },
+          "conditionalModifiers": [
+            {
+              "label": "No Mindshield against Mindforce",
+              "modifier": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 270
+        }
+      ]
     },
     "30": {
       "auditStatus": "source-link-baseline",
@@ -605,7 +644,29 @@
           "Section": 328
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "34-vordak",
+          "label": "Fight the Vordak",
+          "enemy": {
+            "name": "Vordak",
+            "cs": 17,
+            "endurance": 25
+          },
+          "conditionalModifiers": [
+            {
+              "label": "No Mindshield against Mindforce",
+              "modifier": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 328
+        }
+      ]
     },
     "35": {
       "auditStatus": "source-link-baseline",
@@ -751,7 +812,22 @@
           "Section": 106
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "43-black-bear",
+          "label": "Fight the Black Bear",
+          "enemy": {
+            "name": "Black Bear",
+            "cs": 16,
+            "endurance": 10
+          },
+          "canEvade": true,
+          "evadeAfterRounds": 3,
+          "evadeRoute": 106,
+          "victoryRoute": 195
+        }
+      ]
     },
     "44": {
       "auditStatus": "source-link-baseline",
@@ -935,7 +1011,20 @@
           "Section": 325
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "55-giak",
+          "label": "Fight the surprised Giak",
+          "enemy": {
+            "name": "Giak",
+            "cs": 9,
+            "endurance": 9
+          },
+          "modifier": 4,
+          "victoryRoute": 325
+        }
+      ]
     },
     "56": {
       "auditStatus": "source-link-baseline",
@@ -1094,7 +1183,19 @@
           "Section": 269
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "63-madman",
+          "label": "Fight the Madman",
+          "enemy": {
+            "name": "Madman",
+            "cs": 11,
+            "endurance": 10
+          },
+          "victoryRoute": 269
+        }
+      ]
     },
     "64": {
       "auditStatus": "source-link-baseline",
@@ -1234,7 +1335,19 @@
           "Section": 265
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "72-giak-doomwolf",
+          "label": "Fight the Giak and Doomwolf",
+          "enemy": {
+            "name": "Giak and Doomwolf",
+            "cs": 15,
+            "endurance": 24
+          },
+          "victoryRoute": 265
+        }
+      ]
     },
     "73": {
       "auditStatus": "source-link-baseline",
@@ -1852,7 +1965,29 @@
           "Section": 248
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "112-giaks",
+          "label": "Fight the two Giaks",
+          "enemies": [
+            {
+              "name": "Giak 1",
+              "cs": 13,
+              "endurance": 10
+            },
+            {
+              "name": "Giak 2",
+              "cs": 12,
+              "endurance": 10
+            }
+          ],
+          "victoryChoices": [
+            33,
+            248
+          ]
+        }
+      ]
     },
     "113": {
       "auditStatus": "source-link-baseline",
@@ -2231,7 +2366,20 @@
           "Section": 266
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "133-winged-serpent",
+          "label": "Fight the Winged Serpent",
+          "enemy": {
+            "name": "Winged Serpent",
+            "cs": 16,
+            "endurance": 18
+          },
+          "enemyImmune": true,
+          "victoryRoute": 266
+        }
+      ]
     },
     "134": {
       "auditStatus": "source-link-baseline",
@@ -2278,7 +2426,27 @@
           "Section": 313
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "136-giaks",
+          "label": "Fight the two Giaks from higher ground",
+          "enemies": [
+            {
+              "name": "Giak 1",
+              "cs": 13,
+              "endurance": 10
+            },
+            {
+              "name": "Giak 2",
+              "cs": 12,
+              "endurance": 10
+            }
+          ],
+          "modifier": 1,
+          "victoryRoute": 313
+        }
+      ]
     },
     "137": {
       "auditStatus": "source-link-baseline",
@@ -2307,7 +2475,26 @@
           "Section": 291
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "138-giaks",
+          "label": "Fight the two Mountain Giaks",
+          "enemies": [
+            {
+              "name": "Giak 1",
+              "cs": 13,
+              "endurance": 10
+            },
+            {
+              "name": "Giak 2",
+              "cs": 12,
+              "endurance": 10
+            }
+          ],
+          "victoryRoute": 291
+        }
+      ]
     },
     "139": {
       "auditStatus": "source-link-baseline",
@@ -2822,7 +3009,22 @@
           "Section": 137
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "169-crypt-spawn",
+          "label": "Fight the Crypt Spawn",
+          "enemy": {
+            "name": "Crypt Spawn",
+            "cs": 16,
+            "endurance": 16
+          },
+          "canEvade": true,
+          "evadeAfterRounds": 1,
+          "evadeRoute": 23,
+          "victoryRoute": 137
+        }
+      ]
     },
     "170": {
       "auditStatus": "source-link-baseline",
@@ -2839,7 +3041,34 @@
           "Section": 319
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "170-burrowcrawler",
+          "label": "Fight the Burrowcrawler",
+          "enemy": {
+            "name": "Burrowcrawler",
+            "cs": 17,
+            "endurance": 7
+          },
+          "enemyImmune": true,
+          "conditionalModifiers": [
+            {
+              "label": "No Torch in Backpack",
+              "modifier": -3,
+              "condition": {
+                "type": "no_item",
+                "name": "Torch",
+                "containers": [
+                  "backpack"
+                ],
+                "match": "exact"
+              }
+            }
+          ],
+          "victoryRoute": 319
+        }
+      ]
     },
     "171": {
       "auditStatus": "source-link-baseline",
@@ -3001,7 +3230,31 @@
           "Section": 22
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "combat": [
+        {
+          "id": "180-bandits",
+          "label": "Fight the leader and soldiers",
+          "enemies": [
+            {
+              "name": "Leader",
+              "cs": 15,
+              "endurance": 22
+            },
+            {
+              "name": "Soldier 1",
+              "cs": 13,
+              "endurance": 20
+            },
+            {
+              "name": "Soldier 2",
+              "cs": 12,
+              "endurance": 20
+            }
+          ],
+          "victoryRoute": 62
+        }
+      ]
     },
     "181": {
       "auditStatus": "source-link-baseline",
@@ -3199,7 +3452,21 @@
           "Section": 234
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "191-bodyguard",
+          "label": "Fight the Bodyguard",
+          "enemy": {
+            "name": "Bodyguard",
+            "cs": 11,
+            "endurance": 21
+          },
+          "canEvade": true,
+          "evadeRoute": 234,
+          "victoryRoute": 24
+        }
+      ]
     },
     "192": {
       "auditStatus": "source-link-baseline",
@@ -3497,7 +3764,22 @@
           "Section": 320
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "208-giaks",
+          "label": "Fight the Giaks",
+          "enemy": {
+            "name": "Giaks",
+            "cs": 15,
+            "endurance": 13
+          },
+          "victoryChoices": [
+            148,
+            320
+          ]
+        }
+      ]
     },
     "209": {
       "auditStatus": "source-link-baseline",
@@ -3672,7 +3954,21 @@
           "Section": 234
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "220-bodyguard",
+          "label": "Fight the Bodyguard",
+          "enemy": {
+            "name": "Bodyguard",
+            "cs": 11,
+            "endurance": 20
+          },
+          "canEvade": true,
+          "evadeRoute": 234,
+          "victoryRoute": 24
+        }
+      ]
     },
     "221": {
       "auditStatus": "source-link-baseline",
@@ -3786,7 +4082,20 @@
           "Section": 348
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "227-marshviper",
+          "label": "Fight the Marshviper",
+          "enemy": {
+            "name": "Marshviper",
+            "cs": 16,
+            "endurance": 6
+          },
+          "woundedVictoryRoute": 271,
+          "flawlessVictoryRoute": 348
+        }
+      ]
     },
     "228": {
       "auditStatus": "source-link-baseline",
@@ -3822,7 +4131,23 @@
           "Section": 125
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "229-kraan",
+          "label": "Fight the Kraan in the dust",
+          "enemy": {
+            "name": "Kraan",
+            "cs": 16,
+            "endurance": 25
+          },
+          "modifier": -1,
+          "victoryChoices": [
+            267,
+            125
+          ]
+        }
+      ]
     },
     "230": {
       "auditStatus": "source-link-baseline",
@@ -3855,7 +4180,26 @@
           "Section": 7
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "231-robber",
+          "label": "Fight the Robber",
+          "enemy": {
+            "name": "Robber",
+            "cs": 13,
+            "endurance": 20
+          },
+          "canEvade": true,
+          "evadeAfterRounds": 2,
+          "evadeRoute": 7,
+          "roundLimit": 4,
+          "roundExceededRoute": 203,
+          "winWithinRounds": 4,
+          "winWithinRoute": 94,
+          "tooLateRoute": 203
+        }
+      ]
     },
     "232": {
       "auditStatus": "source-link-baseline",
@@ -4091,7 +4435,19 @@
           "Section": 197
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "246-drakkar",
+          "label": "Fight the Drakkar",
+          "enemy": {
+            "name": "Drakkar",
+            "cs": 15,
+            "endurance": 23
+          },
+          "victoryRoute": 197
+        }
+      ]
     },
     "247": {
       "auditStatus": "source-link-baseline",
@@ -4199,7 +4555,36 @@
           "Section": 278
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "253-doomwolves",
+          "label": "Fight the four Doomwolves",
+          "enemies": [
+            {
+              "name": "Doomwolf 1",
+              "cs": 13,
+              "endurance": 24
+            },
+            {
+              "name": "Doomwolf 2",
+              "cs": 14,
+              "endurance": 23
+            },
+            {
+              "name": "Doomwolf 3",
+              "cs": 14,
+              "endurance": 22
+            },
+            {
+              "name": "Doomwolf 4",
+              "cs": 15,
+              "endurance": 21
+            }
+          ],
+          "victoryRoute": 278
+        }
+      ]
     },
     "254": {
       "auditStatus": "source-link-baseline",
@@ -4233,7 +4618,20 @@
           "Section": 82
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "255-gourgaz",
+          "label": "Fight the Gourgaz",
+          "enemy": {
+            "name": "Gourgaz",
+            "cs": 20,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "victoryRoute": 82
+        }
+      ]
     },
     "256": {
       "auditStatus": "source-link-baseline",
@@ -4302,7 +4700,27 @@
           "Section": 156
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "260-unarmed-giaks",
+          "label": "Fight the Giaks unarmed",
+          "enemies": [
+            {
+              "name": "Giak 1",
+              "cs": 11,
+              "endurance": 18
+            },
+            {
+              "name": "Giak 2",
+              "cs": 12,
+              "endurance": 17
+            }
+          ],
+          "forceUnarmed": true,
+          "victoryRoute": 156
+        }
+      ]
     },
     "261": {
       "auditStatus": "source-link-baseline",
@@ -4659,7 +5077,37 @@
           "Section": 123
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "283-vordak",
+          "label": "Fight the Vordak",
+          "enemy": {
+            "name": "Vordak",
+            "cs": 17,
+            "endurance": 25
+          },
+          "timedModifiers": [
+            {
+              "label": "Surprise attack",
+              "modifier": 2,
+              "startRound": 1,
+              "endRound": 1
+            },
+            {
+              "label": "No Mindshield against Mindforce",
+              "modifier": -2,
+              "startRound": 2,
+              "endRound": 999,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 123
+        }
+      ]
     },
     "284": {
       "auditStatus": "source-link-baseline",
@@ -5540,7 +5988,26 @@
           "Section": 117
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "336-giaks",
+          "label": "Fight the two Giaks",
+          "enemies": [
+            {
+              "name": "Giak 1",
+              "cs": 14,
+              "endurance": 11
+            },
+            {
+              "name": "Giak 2",
+              "cs": 13,
+              "endurance": 11
+            }
+          ],
+          "victoryRoute": 117
+        }
+      ]
     },
     "337": {
       "auditStatus": "source-link-baseline",
@@ -5591,7 +6058,25 @@
           "Section": 7
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "339-robber",
+          "label": "Fight the Robber",
+          "enemy": {
+            "name": "Robber",
+            "cs": 13,
+            "endurance": 20
+          },
+          "canEvade": true,
+          "evadeRoute": 7,
+          "roundLimit": 4,
+          "roundExceededRoute": 203,
+          "winWithinRounds": 4,
+          "winWithinRoute": 94,
+          "tooLateRoute": 203
+        }
+      ]
     },
     "340": {
       "auditStatus": "source-link-baseline",
@@ -5606,7 +6091,19 @@
           "Section": 193
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "340-giak-doomwolf",
+          "label": "Fight the Giak and Doomwolf",
+          "enemy": {
+            "name": "Giak and Doomwolf",
+            "cs": 14,
+            "endurance": 24
+          },
+          "victoryRoute": 193
+        }
+      ]
     },
     "341": {
       "auditStatus": "source-link-baseline",
@@ -5643,7 +6140,30 @@
           "Section": 123
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "342-vordak",
+          "label": "Fight the Vordak",
+          "enemy": {
+            "name": "Vordak",
+            "cs": 18,
+            "endurance": 26
+          },
+          "enemyImmune": true,
+          "conditionalModifiers": [
+            {
+              "label": "No Mindshield against Mindforce",
+              "modifier": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 123
+        }
+      ]
     },
     "343": {
       "auditStatus": "source-link-baseline",

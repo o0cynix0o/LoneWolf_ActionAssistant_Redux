@@ -26,12 +26,11 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The following debt remains for later passes:
 
-- Grey Star combat exceptions.
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Book 1 combat automation placeholders and unaudited route-check math.
+- Unaudited route-check math for random/stat/item/Kai Discipline branches.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -71,6 +70,15 @@ Issue #3 changed the simple automation baseline:
 - `data\book1-section-flows.json` includes optional loot buttons for 18 confirmed sections.
 - `testing\lwbook1_simple_automation_smoke.py` verifies representative effects.
 - `testing\logs\LWBOOK1_SIMPLE_AUTOMATION_BASELINE.md` records coverage and remaining risk.
+
+Issue #4 changed the combat preset baseline:
+
+- `data\book1-section-flows.json` includes 29 confirmed Book 1 combat presets.
+- The combat engine supports conditional preset modifiers, including no Mindshield and no Torch checks.
+- Timed combat modifiers now honor conditions, used by the section 283 Vordak fight.
+- Mindblast immunity, forced unarmed combat, multi-enemy queues, evasion routes, round-limit outcomes, and section 227 flawless/wounded victory routes are represented where confirmed.
+- `testing\lwbook1_combat_smoke.py` verifies representative combat presets and exceptions.
+- `testing\logs\LWBOOK1_COMBAT_AND_RANDOM_AUDIT.md` records coverage and remaining combat/random risk.
 
 ## GitHub Workflow
 
