@@ -44,9 +44,10 @@ This report records section numbers, graph counts, and audit classifications onl
 - `data/book1-section-flows.json` now contains one entry for every discovered section.
 - `sourceRoutes` is the compact legal-link baseline used by the assistant.
 - `classification` is heuristic and marks candidates for the later human section automation audit.
+- 18 sections include confirmed optional loot buttons.
 
 ## Remaining Work
 
 - Confirm route checks that depend on Kai Disciplines, items, END, Gold Crowns, or random digits.
-- Add simple automations only after each section effect is confirmed by the audit.
+- Expand simple automations only after each additional section effect is confirmed by the audit.
 - Audit combat sections for enemy stats, evasion rules, Mindblast immunity, and victory routes.

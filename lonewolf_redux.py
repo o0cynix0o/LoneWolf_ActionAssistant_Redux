@@ -2485,6 +2485,12 @@ class LoneWolfReduxAssistant:
             return True
 
         self.inventory[key] = as_list(self.inventory[key]) + [item]
+        if key == "Weapons":
+            self.automation_flags["weaponsAvailable"] = True
+        if key == "BackpackItems":
+            self.inventory["HasBackpack"] = True
+            self.automation_flags["backpackAvailable"] = True
+            self.automation_flags["backpackItemsAvailable"] = True
         return True
 
     def add_flexible_storage_item(self, item: str) -> bool:
@@ -3065,14 +3071,38 @@ class LoneWolfReduxAssistant:
     def discard_backpack(self) -> str:
         discarded = as_list(self.inventory.get("BackpackItems"))
         self.inventory["BackpackItems"] = []
+        self.inventory["HasBackpack"] = False
         self.automation_flags["backpackAvailable"] = False
         self.automation_flags["backpackItemsAvailable"] = False
         return f"backpack discarded: {len(discarded)} Backpack Item(s) removed"
 
     def set_backpack_available(self, available: bool) -> str:
+        self.inventory["HasBackpack"] = bool(available)
         self.automation_flags["backpackAvailable"] = bool(available)
         self.automation_flags["backpackItemsAvailable"] = bool(available)
         return f"backpackAvailable={bool(available)}"
+
+    def discard_weapons(self) -> str:
+        count = len(as_list(self.inventory.get("Weapons")))
+        self.inventory["Weapons"] = []
+        self.automation_flags["weaponsAvailable"] = False
+        return f"weapons discarded: {count}"
+
+    def clear_backpack_items(self) -> str:
+        count = len(as_list(self.inventory.get("BackpackItems")))
+        self.inventory["BackpackItems"] = []
+        return f"Backpack Items discarded: {count}"
+
+    def discard_gear(self) -> str:
+        weapon_count = len(as_list(self.inventory.get("Weapons")))
+        backpack_count = len(as_list(self.inventory.get("BackpackItems")))
+        self.inventory["Weapons"] = []
+        self.inventory["BackpackItems"] = []
+        self.inventory["HasBackpack"] = False
+        self.automation_flags["weaponsAvailable"] = False
+        self.automation_flags["backpackAvailable"] = False
+        self.automation_flags["backpackItemsAvailable"] = False
+        return f"gear discarded: {weapon_count} Weapon(s); {backpack_count} Backpack Item(s)"
 
     def has_available_staff(self) -> bool:
         return False
@@ -3192,6 +3222,15 @@ class LoneWolfReduxAssistant:
                 int(action.get("delta") or 0), bool(action.get("allowNegative"))
             )
         if stat in {"end", "endurance"}:
+            if mode == "set":
+                before = int(self.character["EnduranceCurrent"])
+                value = max(0, min(int(action.get("value") or 0), int(self.character["EnduranceMax"])))
+                self.character["EnduranceCurrent"] = value
+                return f"END {before}->{value}"
+            if mode in {"restore_max", "restoremax", "full_recover"}:
+                before = int(self.character["EnduranceCurrent"])
+                self.character["EnduranceCurrent"] = int(self.character["EnduranceMax"])
+                return f"END {before}->{self.character['EnduranceCurrent']}"
             if mode == "half_recover_floor":
                 gain = int(self.character["EnduranceCurrent"]) // 2
                 return self.change_endurance(gain)
@@ -3222,6 +3261,8 @@ class LoneWolfReduxAssistant:
         return "unknown stat action"
 
     def apply_automation_meal(self, action: dict[str, Any]) -> str:
+        if bool(action.get("huntingExempt")) and self.has_power("Hunting"):
+            return "Hunting: no Meal needed"
         count = max(0, int(action.get("count") or 1))
         mode = str(action.get("mode") or "per_missing")
         available = self.count_items("Meal", ["backpack"])
@@ -3297,6 +3338,12 @@ class LoneWolfReduxAssistant:
             if bool(action.get("available", True)):
                 return self.set_backpack_available(True)
             return self.discard_backpack()
+        if action_type == "discard_weapons":
+            return self.discard_weapons()
+        if action_type == "discard_backpack_items":
+            return self.clear_backpack_items()
+        if action_type == "discard_gear":
+            return self.discard_gear()
         if action_type == "ending":
             ending = str(action.get("ending") or "death")
             book_number = int(self.character["BookNumber"])

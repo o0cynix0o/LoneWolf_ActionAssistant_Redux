@@ -34,6 +34,135 @@ DISCIPLINES = [
     "Mind Over Matter",
 ]
 
+MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
+    "20": {
+        "loot": [
+            {
+                "id": "20-supplies",
+                "label": "Take Backpack, 2 Meals, and Dagger",
+                "actions": [
+                    {"type": "backpack", "available": True},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "weapon", "name": "Dagger"},
+                ],
+            }
+        ]
+    },
+    "62": {
+        "loot": [
+            {
+                "id": "62-gold-meals",
+                "label": "Take 28 Gold Crowns and 3 Meals",
+                "actions": [
+                    {"type": "stat", "stat": "gold", "delta": 28},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                ],
+            },
+            {"id": "62-sword", "label": "Take Sword", "actions": [{"type": "add_item", "container": "weapon", "name": "Sword"}]},
+        ]
+    },
+    "113": {
+        "loot": [
+            {
+                "id": "113-laumspur",
+                "label": "Take 2 Laumspur Meals",
+                "actions": [
+                    {"type": "add_item", "container": "backpack", "name": "Laumspur"},
+                    {"type": "add_item", "container": "backpack", "name": "Laumspur"},
+                ],
+            }
+        ]
+    },
+    "124": {
+        "loot": [
+            {
+                "id": "124-box",
+                "label": "Take 15 Gold Crowns and Silver Key",
+                "actions": [
+                    {"type": "stat", "stat": "gold", "delta": 15},
+                    {"type": "add_item", "container": "special", "name": "Silver Key"},
+                ],
+            }
+        ]
+    },
+    "148": {"loot": [{"id": "148-warhammer", "label": "Take Warhammer", "actions": [{"type": "add_item", "container": "weapon", "name": "Warhammer"}]}]},
+    "164": {"loot": [{"id": "164-alether", "label": "Take Potion of Alether", "actions": [{"type": "add_item", "container": "backpack", "name": "Potion of Alether"}]}]},
+    "184": {
+        "loot": [
+            {
+                "id": "184-supplies",
+                "label": "Take 40 Gold Crowns, Sword, and 4 Meals",
+                "actions": [
+                    {"type": "stat", "stat": "gold", "delta": 40},
+                    {"type": "add_item", "container": "weapon", "name": "Sword"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                    {"type": "add_item", "container": "backpack", "name": "Meal"},
+                ],
+            }
+        ]
+    },
+    "197": {
+        "loot": [
+            {
+                "id": "197-drakkar",
+                "label": "Take Short Sword and 6 Gold Crowns",
+                "actions": [
+                    {"type": "add_item", "container": "weapon", "name": "Short Sword"},
+                    {"type": "stat", "stat": "gold", "delta": 6},
+                ],
+            }
+        ]
+    },
+    "199": {"loot": [{"id": "199-meal", "label": "Take 1 Meal", "actions": [{"type": "add_item", "container": "backpack", "name": "Meal"}]}]},
+    "243": {"loot": [{"id": "243-mace", "label": "Take Mace", "actions": [{"type": "add_item", "container": "weapon", "name": "Mace"}]}]},
+    "263": {"loot": [{"id": "263-gold", "label": "Take 3 Gold Crowns", "actions": [{"type": "stat", "stat": "gold", "delta": 3}]}]},
+    "290": {"loot": [{"id": "290-quarterstaff", "label": "Take Quarterstaff", "actions": [{"type": "add_item", "container": "weapon", "name": "Quarterstaff"}]}]},
+    "291": {
+        "loot": [
+            {"id": "291-gold", "label": "Take 6 Gold Crowns", "actions": [{"type": "stat", "stat": "gold", "delta": 6}]},
+            {"id": "291-spear", "label": "Take Spear", "actions": [{"type": "add_item", "container": "weapon", "name": "Spear"}]},
+            {"id": "291-dagger", "label": "Take Dagger", "actions": [{"type": "add_item", "container": "weapon", "name": "Dagger"}]},
+        ]
+    },
+    "305": {"loot": [{"id": "305-spear", "label": "Take Giak Spear", "actions": [{"type": "add_item", "container": "weapon", "name": "Spear"}]}]},
+    "307": {
+        "loot": [
+            {"id": "307-meal", "label": "Take 1 Meal", "actions": [{"type": "add_item", "container": "backpack", "name": "Meal"}]},
+            {"id": "307-warhammer", "label": "Take Warhammer", "actions": [{"type": "add_item", "container": "weapon", "name": "Warhammer"}]},
+        ]
+    },
+    "315": {
+        "loot": [
+            {
+                "id": "315-purse",
+                "label": "Take 6 Gold Crowns and Perfumed Soap",
+                "actions": [
+                    {"type": "stat", "stat": "gold", "delta": 6},
+                    {"type": "add_item", "container": "backpack", "name": "Tablet of Perfumed Soap"},
+                ],
+            }
+        ]
+    },
+    "319": {
+        "loot": [
+            {
+                "id": "319-pouch",
+                "label": "Take Dagger and 20 Gold Crowns",
+                "actions": [
+                    {"type": "add_item", "container": "weapon", "name": "Dagger"},
+                    {"type": "stat", "stat": "gold", "delta": 20},
+                ],
+            }
+        ]
+    },
+    "347": {"loot": [{"id": "347-torch", "label": "Take 1 Torch", "actions": [{"type": "add_item", "container": "backpack", "name": "Torch"}]}]},
+}
+
 
 def clean_text(source: str) -> str:
     text = re.sub(r"<[^>]+>", " ", source)
@@ -143,6 +272,10 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         sources = incoming.get(section, [])
         entry["incomingRouteCount"] = len(sources)
 
+    for section, override in MANUAL_FLOW_AUDIT.items():
+        if int(section) in sections:
+            sections[int(section)].update(override)
+
     reachable: set[int] = set()
     queue: deque[int] = deque([1])
     while queue:
@@ -201,6 +334,7 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "terminalSections": terminal_sections,
         "branchSections": branch_sections,
         "classificationCounts": dict(sorted(classified_counts.items())),
+        "manualFlowAuditCount": len(MANUAL_FLOW_AUDIT),
         "section1Routes": [route["Section"] for route in sections.get(1, {}).get("sourceRoutes", [])],
         "section350Classes": sections.get(350, {}).get("classification", []),
     }
@@ -252,11 +386,12 @@ def render_report(artifact: dict[str, Any]) -> str:
             "- `data/book1-section-flows.json` now contains one entry for every discovered section.",
             "- `sourceRoutes` is the compact legal-link baseline used by the assistant.",
             "- `classification` is heuristic and marks candidates for the later human section automation audit.",
+            f"- {artifact['manualFlowAuditCount']} sections include confirmed optional loot buttons.",
             "",
             "## Remaining Work",
             "",
             "- Confirm route checks that depend on Kai Disciplines, items, END, Gold Crowns, or random digits.",
-            "- Add simple automations only after each section effect is confirmed by the audit.",
+            "- Expand simple automations only after each additional section effect is confirmed by the audit.",
             "- Audit combat sections for enemy stats, evasion rules, Mindblast immunity, and victory routes.",
         ]
     )

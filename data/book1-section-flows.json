@@ -354,7 +354,34 @@
           "Section": 273
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "20-supplies",
+          "label": "Take Backpack, 2 Meals, and Dagger",
+          "actions": [
+            {
+              "type": "backpack",
+              "available": true
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "21": {
       "auditStatus": "source-link-baseline",
@@ -1014,7 +1041,46 @@
           "Section": 288
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "62-gold-meals",
+          "label": "Take 28 Gold Crowns and 3 Meals",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 28
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "62-sword",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        }
+      ]
     },
     "63": {
       "auditStatus": "source-link-baseline",
@@ -1806,7 +1872,25 @@
           "Section": 295
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "113-laumspur",
+          "label": "Take 2 Laumspur Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Laumspur"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Laumspur"
+            }
+          ]
+        }
+      ]
     },
     "114": {
       "auditStatus": "source-link-baseline",
@@ -1982,7 +2066,25 @@
           "Section": 106
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "124-box",
+          "label": "Take 15 Gold Crowns and Silver Key",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 15
+            },
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Silver Key"
+            }
+          ]
+        }
+      ]
     },
     "125": {
       "auditStatus": "source-link-baseline",
@@ -2372,7 +2474,20 @@
           "Section": 199
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "148-warhammer",
+          "label": "Take Warhammer",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Warhammer"
+            }
+          ]
+        }
+      ]
     },
     "149": {
       "auditStatus": "source-link-baseline",
@@ -2616,7 +2731,20 @@
           "Section": 308
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "164-alether",
+          "label": "Take Potion of Alether",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Alether"
+            }
+          ]
+        }
+      ]
     },
     "165": {
       "auditStatus": "source-link-baseline",
@@ -2932,7 +3060,45 @@
           "Section": 64
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "184-supplies",
+          "label": "Take 40 Gold Crowns, Sword, and 4 Meals",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 40
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        }
+      ]
     },
     "185": {
       "auditStatus": "source-link-baseline",
@@ -3129,7 +3295,25 @@
           "Section": 172
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "197-drakkar",
+          "label": "Take Short Sword and 6 Gold Crowns",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            },
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            }
+          ]
+        }
+      ]
     },
     "198": {
       "auditStatus": "source-link-baseline",
@@ -3160,7 +3344,20 @@
           "Section": 81
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "199-meal",
+          "label": "Take 1 Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        }
+      ]
     },
     "200": {
       "auditStatus": "source-link-baseline",
@@ -3841,7 +4038,20 @@
           "Section": 97
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "243-mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        }
+      ]
     },
     "244": {
       "auditStatus": "source-link-baseline",
@@ -4141,7 +4351,20 @@
           "Section": 157
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "263-gold",
+          "label": "Take 3 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 3
+            }
+          ]
+        }
+      ]
     },
     "264": {
       "auditStatus": "source-link-baseline",
@@ -4528,7 +4751,20 @@
           "Section": 140
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "290-quarterstaff",
+          "label": "Take Quarterstaff",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        }
+      ]
     },
     "291": {
       "auditStatus": "source-link-baseline",
@@ -4543,7 +4779,42 @@
           "Section": 272
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "291-gold",
+          "label": "Take 6 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            }
+          ]
+        },
+        {
+          "id": "291-spear",
+          "label": "Take Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "291-dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "292": {
       "auditStatus": "source-link-baseline",
@@ -4754,7 +5025,20 @@
           "Section": 105
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "305-spear",
+          "label": "Take Giak Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        }
+      ]
     },
     "306": {
       "auditStatus": "source-link-baseline",
@@ -4778,7 +5062,31 @@
           "Section": 213
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "307-meal",
+          "label": "Take 1 Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "307-warhammer",
+          "label": "Take Warhammer",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Warhammer"
+            }
+          ]
+        }
+      ]
     },
     "308": {
       "auditStatus": "source-link-baseline",
@@ -4897,7 +5205,25 @@
           "Section": 213
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "315-purse",
+          "label": "Take 6 Gold Crowns and Perfumed Soap",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Tablet of Perfumed Soap"
+            }
+          ]
+        }
+      ]
     },
     "316": {
       "auditStatus": "source-link-baseline",
@@ -4951,7 +5277,25 @@
           "Section": 157
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "319-pouch",
+          "label": "Take Dagger and 20 Gold Crowns",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            },
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 20
+            }
+          ]
+        }
+      ]
     },
     "320": {
       "auditStatus": "source-link-baseline",
@@ -5370,7 +5714,20 @@
           "Section": 103
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "347-torch",
+          "label": "Take 1 Torch",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Torch"
+            }
+          ]
+        }
+      ]
     },
     "348": {
       "auditStatus": "source-link-baseline",

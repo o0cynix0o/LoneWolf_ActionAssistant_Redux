@@ -22,9 +22,14 @@ This is the Lone Wolf Action Assistant Redux pre-alpha rebuild.
   - zero invalid section links.
   - all sections reachable from section 1.
 - Route buttons now use the checked-in Book 1 source-link graph and reject illegal route-button jumps.
+- Book 1 simple automation baseline:
+  - 47 confirmed section-effect entries.
+  - required Meal handling with Hunting exemption.
+  - direct END/Gold/gear/death/completion effects.
+  - optional loot buttons for 18 sections.
 
 ## Not A Playable Release
 
-The section-effect and combat automation data are still incomplete. Do not publish this as a playable release until Book 1 combat and section effects have been audited and playtested.
+Combat automation, route math, and some special item/Kai Discipline behavior are still incomplete. Do not publish this as a playable release until Book 1 combat, route checks, and section effects have been audited and playtested.
 
 Do not package or publish this as a playable app.

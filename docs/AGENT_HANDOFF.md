@@ -21,17 +21,17 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 - Release packaging script.
 - Combat Results Table and Kai reference data from the old Lone Wolf project.
 - Audit workflow from Grey Star.
-- Book 1 audit data placeholders, now with the section-flow baseline filled in.
+- Book 1 audit data placeholders, now with the section-flow and simple automation baselines filled in.
 - Wiki/docs skeleton.
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The following debt remains for later passes:
 
 - Grey Star combat exceptions.
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Book 1 section-effect and combat automation placeholders.
+- Book 1 combat automation placeholders and unaudited route-check math.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -62,6 +62,15 @@ Issue #2 changed the route baseline:
 - The graph check found zero missing sections, zero invalid section links, and all 350 sections reachable from section 1.
 - The assistant uses checked-in `sourceRoutes` for legal route buttons and refuses illegal route-button jumps while keeping manual Set Position available for recovery/testing.
 - `testing\logs\LWBOOK1_SECTION_FLOW_BASELINE.md` records the route graph summary and heuristic classification counts.
+
+Issue #3 changed the simple automation baseline:
+
+- `data\book1-simple-automations.json` has 47 confirmed Book 1 section-effect entries.
+- Required Meal sections use the Book 1 Hunting exemption.
+- Direct END loss/gain, Gold Crowns, Vordak Gem effects, permanent CS loss from section 236, deterministic gear loss, terminal death/failure, and section 350 completion are represented.
+- `data\book1-section-flows.json` includes optional loot buttons for 18 confirmed sections.
+- `testing\lwbook1_simple_automation_smoke.py` verifies representative effects.
+- `testing\logs\LWBOOK1_SIMPLE_AUTOMATION_BASELINE.md` records coverage and remaining risk.
 
 ## GitHub Workflow
 
