@@ -24,6 +24,6 @@ Scope: issue #8 random side-effect and recovery item behavior pass.
 
 ## Remaining Risk
 
-- Section 21 remains manual because it is a staged multi-roll section with possible death and recovery branches.
-- Player-choice losses, such as choosing which weapon breaks after section 277, remain manual.
-- Broad Kai Healing timing still needs a dedicated pass; this issue only corrected item-based recovery behavior.
+- Section 21 staged random handling is now covered by the dedicated section 21 smoke test.
+- Additional player-choice aftermaths may surface during broader route playtesting.
+- Broad Kai Healing timing remains intentionally explicit rather than automatic.

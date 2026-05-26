@@ -896,6 +896,7 @@ def default_automation() -> dict[str, Any]:
         "AppliedRollEffects": [],
         "AppliedHealing": [],
         "AppliedLossChoices": [],
+        "StagedRolls": {},
         "Ending": None,
         "DeathState": {"Active": False},
         "DeathHistory": [],
@@ -1059,6 +1060,8 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         state["Automation"]["Flags"] = dict(base["Automation"]["Flags"])
     if not isinstance(state["Automation"].get("Stored"), dict):
         state["Automation"]["Stored"] = {}
+    if not isinstance(state["Automation"].get("StagedRolls"), dict):
+        state["Automation"]["StagedRolls"] = {}
     if state["Automation"].get("LastRoll") is not None and not isinstance(state["Automation"].get("LastRoll"), dict):
         state["Automation"]["LastRoll"] = None
     if not isinstance(state["Automation"].get("DeathState"), dict):
@@ -2893,6 +2896,171 @@ class LoneWolfReduxAssistant:
             "Actions": json_clone(matched_actions),
         }
 
+    def staged_roll_entry(self, flow: dict[str, Any] | None = None) -> dict[str, Any] | None:
+        entry = flow if isinstance(flow, dict) else (self.current_section_flow_entry() or {})
+        staged = entry.get("stagedRoll") if isinstance(entry, dict) else None
+        return staged if isinstance(staged, dict) else None
+
+    def staged_roll_store(self) -> dict[str, Any]:
+        store = self.automation.get("StagedRolls")
+        if not isinstance(store, dict):
+            store = {}
+            self.automation["StagedRolls"] = store
+        return store
+
+    def staged_roll_key(self, staged: dict[str, Any]) -> str:
+        roll_id = str(staged.get("id") or "staged-roll")
+        return f"{self.current_visit_key()}:{roll_id}"
+
+    def staged_roll_stages(self, staged: dict[str, Any]) -> list[dict[str, Any]]:
+        return [stage for stage in as_list(staged.get("stages")) if isinstance(stage, dict)]
+
+    def staged_roll_stage(self, staged: dict[str, Any], stage_id: str) -> dict[str, Any] | None:
+        for stage in self.staged_roll_stages(staged):
+            if str(stage.get("id") or "") == str(stage_id):
+                return stage
+        stages = self.staged_roll_stages(staged)
+        return stages[0] if stages else None
+
+    def default_staged_roll_state(self, staged: dict[str, Any]) -> dict[str, Any]:
+        first = self.staged_roll_stage(staged, "")
+        return {
+            "Id": str(staged.get("id") or "staged-roll"),
+            "Stage": str(first.get("id") or "stage-1") if first else "",
+            "Complete": False,
+            "History": [],
+            "LastResult": None,
+        }
+
+    def staged_roll_state(self, staged: dict[str, Any]) -> dict[str, Any]:
+        store = self.staged_roll_store()
+        key = self.staged_roll_key(staged)
+        state = store.get(key)
+        if not isinstance(state, dict):
+            state = self.default_staged_roll_state(staged)
+            store[key] = state
+        state.setdefault("History", [])
+        state.setdefault("Complete", False)
+        return state
+
+    def evaluate_staged_roll_outcome(
+        self, stage: dict[str, Any], raw: int
+    ) -> dict[str, Any]:
+        for outcome in as_list(stage.get("outcomes")):
+            if not isinstance(outcome, dict):
+                continue
+            test = str(outcome.get("test") or "range").lower()
+            matched = False
+            if test == "range":
+                matched = int(outcome.get("min", -999)) <= raw <= int(outcome.get("max", 999))
+            elif test == "values":
+                matched = raw in [int(value) for value in as_list(outcome.get("values"))]
+            elif test == "even":
+                matched = raw % 2 == 0
+            elif test == "odd":
+                matched = raw % 2 == 1
+            if matched:
+                return outcome
+        return {}
+
+    def roll_staged_current_section(
+        self, flow: dict[str, Any], raw_roll: int | None = None
+    ) -> dict[str, Any]:
+        staged = self.staged_roll_entry(flow)
+        if not staged:
+            return {}
+        state = self.staged_roll_state(staged)
+        if bool(state.get("Complete")) and isinstance(state.get("LastResult"), dict):
+            result = json_clone(state["LastResult"])
+            result["Actions"] = []
+            result["AlreadyComplete"] = True
+            return result
+
+        raw = random_digit() if raw_roll is None else max(0, min(9, int(raw_roll)))
+        stage = self.staged_roll_stage(staged, str(state.get("Stage") or ""))
+        if not stage:
+            return {
+                "Section": int(self.state["CurrentSection"]),
+                "Raw": raw,
+                "Total": raw,
+                "Modifiers": [],
+                "Route": None,
+                "Outcome": "No staged roll stage configured",
+                "Summary": str(staged.get("summary") or "Staged roll"),
+                "Actions": [],
+                "Staged": True,
+                "Complete": True,
+            }
+
+        outcome = self.evaluate_staged_roll_outcome(stage, raw)
+        route = int(outcome.get("route")) if outcome.get("route") is not None else None
+        next_stage = str(outcome.get("nextStage") or "")
+        ending = str(outcome.get("ending") or "")
+        actions = [action for action in as_list(outcome.get("actions")) if isinstance(action, dict)]
+        if ending:
+            actions.append(
+                {
+                    "type": "ending",
+                    "ending": ending,
+                    "cause": str(outcome.get("cause") or f"Section {self.state['CurrentSection']} ended the run."),
+                }
+            )
+
+        result = {
+            "Section": int(self.state["CurrentSection"]),
+            "Raw": raw,
+            "Total": raw,
+            "Modifiers": [],
+            "Route": route,
+            "Outcome": str(outcome.get("label") or ""),
+            "Summary": str(staged.get("summary") or "Staged roll"),
+            "Actions": json_clone(actions),
+            "Staged": True,
+            "Stage": str(stage.get("id") or ""),
+            "StageLabel": str(stage.get("label") or stage.get("id") or "Stage"),
+            "NextStage": next_stage,
+            "Complete": bool(route or ending or not next_stage),
+            "Ending": ending,
+        }
+
+        history = as_list(state.get("History"))
+        history.append(
+            {
+                "Stage": result["Stage"],
+                "StageLabel": result["StageLabel"],
+                "Raw": raw,
+                "Outcome": result["Outcome"],
+                "Route": route,
+                "NextStage": next_stage,
+                "Ending": ending,
+            }
+        )
+        state["History"] = history[-10:]
+        if next_stage and not route and not ending:
+            state["Stage"] = next_stage
+            state["Complete"] = False
+        else:
+            state["Complete"] = True
+        state["LastResult"] = json_clone(result)
+        self.staged_roll_store()[self.staged_roll_key(staged)] = state
+        return result
+
+    def current_staged_roll_payload(self, entry: dict[str, Any] | None = None) -> dict[str, Any]:
+        staged = self.staged_roll_entry(entry)
+        if not staged:
+            return {}
+        state = self.staged_roll_state(staged)
+        stage = self.staged_roll_stage(staged, str(state.get("Stage") or ""))
+        return {
+            "Id": str(staged.get("id") or ""),
+            "Summary": str(staged.get("summary") or ""),
+            "Stage": str(stage.get("id") or "") if stage else "",
+            "StageLabel": str(stage.get("label") or stage.get("id") or "") if stage else "",
+            "Complete": bool(state.get("Complete")),
+            "History": as_list(state.get("History")),
+            "LastResult": json_clone(state.get("LastResult")) if isinstance(state.get("LastResult"), dict) else None,
+        }
+
     def apply_roll_outcome_actions(self, result: dict[str, Any]) -> list[str]:
         actions = [action for action in as_list(result.get("Actions")) if isinstance(action, dict)]
         if not actions:
@@ -2937,7 +3105,9 @@ class LoneWolfReduxAssistant:
 
     def roll_current_section(self, raw_roll: int | None = None) -> dict[str, Any]:
         flow = self.current_section_flow_entry() or {}
-        if not isinstance(flow.get("roll"), dict):
+        if isinstance(flow.get("stagedRoll"), dict):
+            result = self.roll_staged_current_section(flow, raw_roll)
+        elif not isinstance(flow.get("roll"), dict):
             raw = random_digit() if raw_roll is None else max(0, min(9, int(raw_roll)))
             result = {
                 "Section": int(self.state["CurrentSection"]),
@@ -2954,8 +3124,15 @@ class LoneWolfReduxAssistant:
         result["BookNumber"] = int(self.character["BookNumber"])
         result["RolledAt"] = datetime.now().isoformat(timespec="seconds")
         action_messages = self.apply_roll_outcome_actions(result)
+        if result.get("AlreadyComplete"):
+            action_messages = ["Staged roll already complete for this section visit."] + action_messages
         result["ActionMessages"] = action_messages
-        result["ActionsApplied"] = bool(action_messages and not action_messages[0].startswith("Roll outcome effects"))
+        result["ActionsApplied"] = bool(
+            action_messages
+            and not action_messages[0].startswith(
+                ("Roll outcome effects", "Staged roll already complete")
+            )
+        )
         self.automation["LastRoll"] = result
         self.autosave()
         return result
@@ -3200,6 +3377,7 @@ class LoneWolfReduxAssistant:
             },
             "LastRoll": last_roll,
             "RouteChecks": self.evaluate_route_checks(entry, automation),
+            "StagedRoll": self.current_staged_roll_payload(entry),
             "Healing": self.current_healing_payload(),
             "LossChoices": self.current_loss_choices_payload(entry),
             "Automation": automation,

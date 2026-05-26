@@ -56,6 +56,14 @@ def section_roll(summary: str, outcomes: list[dict[str, Any]]) -> dict[str, Any]
     return {"roll": {"summary": summary, "outcomes": outcomes}}
 
 
+def section_staged_roll(
+    roll_id: str,
+    summary: str,
+    stages: list[dict[str, Any]],
+) -> dict[str, Any]:
+    return {"stagedRoll": {"id": roll_id, "summary": summary, "stages": stages}}
+
+
 def loss_choice(
     choice_id: str,
     label: str,
@@ -737,6 +745,43 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(3, 9, 316, "Clean escape"),
         ],
     ),
+    "21": section_staged_roll(
+        "21-marsh",
+        "Staged random check in the marsh.",
+        [
+            {
+                "id": "first",
+                "label": "First marsh roll",
+                "outcomes": [
+                    {"test": "range", "min": 0, "max": 4, "label": "Horse stuck in the mud", "nextStage": "second"},
+                    {"test": "range", "min": 5, "max": 9, "label": "Steer clear of the morass", "route": 189},
+                ],
+            },
+            {
+                "id": "second",
+                "label": "Second marsh roll",
+                "outcomes": [
+                    {"test": "range", "min": 0, "max": 7, "label": "Mud rises to your armpits", "nextStage": "final"},
+                    {"test": "range", "min": 8, "max": 9, "label": "Drag yourself onto firm ground", "route": 189},
+                ],
+            },
+            {
+                "id": "final",
+                "label": "Last chance marsh roll",
+                "outcomes": [
+                    {"test": "values", "values": [9], "label": "Last-chance escape", "route": 312},
+                    {
+                        "test": "range",
+                        "min": 0,
+                        "max": 8,
+                        "label": "Bog claims Lone Wolf",
+                        "ending": "death",
+                        "cause": "Section 21 bog death.",
+                    },
+                ],
+            },
+        ],
+    ),
     "22": section_roll(
         "Random route after evading the bandits.",
         [
@@ -1062,6 +1107,7 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "manualCombatAuditCount": len(MANUAL_COMBAT_AUDIT),
         "manualRouteAuditCount": len(MANUAL_ROUTE_AUDIT),
         "manualRollAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "roll" in entry),
+        "manualStagedRollAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "stagedRoll" in entry),
         "manualRouteCheckAuditCount": sum(1 for entry in MANUAL_ROUTE_AUDIT.values() if "routeChecks" in entry),
         "section1Routes": [route["Section"] for route in sections.get(1, {}).get("sourceRoutes", [])],
         "section350Classes": sections.get(350, {}).get("classification", []),
@@ -1118,13 +1164,14 @@ def render_report(artifact: dict[str, Any]) -> str:
             f"- {artifact['manualLossChoiceAuditCount']} sections include confirmed explicit loss-choice helpers.",
             f"- {artifact['manualCombatAuditCount']} sections include confirmed combat presets.",
             f"- {artifact['manualRollAuditCount']} sections include confirmed roll helpers.",
+            f"- {artifact['manualStagedRollAuditCount']} sections include confirmed staged roll helpers.",
             f"- {artifact['manualRouteCheckAuditCount']} sections include confirmed route checks.",
             "",
             "## Remaining Work",
             "",
             "- Continue route-check audit for optional discipline choices and route-specific side effects.",
             "- Expand simple automations only after each additional section effect is confirmed by the audit.",
-            "- Continue combat/random audit for staged multi-roll sections and remaining player-choice aftermath effects.",
+            "- Continue combat/random audit for remaining staged random and player-choice aftermath effects.",
         ]
     )
     return "\n".join(lines) + "\n"

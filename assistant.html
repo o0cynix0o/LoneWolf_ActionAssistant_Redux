@@ -1391,12 +1391,33 @@
 
     function rollOutcomeText(outcome) {
       const route = outcome.route !== undefined ? ` -> section ${outcome.route}` : '';
+      const nextStage = outcome.nextStage !== undefined ? ` -> next stage ${outcome.nextStage}` : '';
+      const ending = outcome.ending !== undefined ? ` -> ${outcome.ending}` : '';
+      const suffix = route || nextStage || ending;
       const label = text(outcome.label || outcome.outcome, 'outcome');
       const test = text(outcome.test).toLowerCase();
-      if (test === 'range') return `${text(outcome.min, '?')}-${text(outcome.max, '?')}: ${label}${route}`;
-      if (test === 'values') return `${arr(outcome.values).join(', ')}: ${label}${route}`;
-      if (test === 'even' || test === 'odd') return `${test}: ${label}${route}`;
-      return `${label}${route}`;
+      if (test === 'range') return `${text(outcome.min, '?')}-${text(outcome.max, '?')}: ${label}${suffix}`;
+      if (test === 'values') return `${arr(outcome.values).join(', ')}: ${label}${suffix}`;
+      if (test === 'even' || test === 'odd') return `${test}: ${label}${suffix}`;
+      return `${label}${suffix}`;
+    }
+
+    function stagedRollSummary(entry, stagedState) {
+      const staged = entry?.stagedRoll || null;
+      if (!staged) return '';
+      const state = stagedState || {};
+      const stageLabel = text(state.StageLabel, '');
+      const stagePrefix = state.Complete ? 'Complete' : 'Next';
+      return [text(staged.summary, 'Staged section roll'), stageLabel ? `${stagePrefix}: ${stageLabel}` : '']
+        .filter(Boolean)
+        .join(' - ');
+    }
+
+    function stagedRollAdviceText(staged) {
+      return arr(staged.stages).map((stage) => {
+        const outcomes = arr(stage.outcomes).map(rollOutcomeText).join('; ');
+        return `${text(stage.label || stage.id, 'Stage')}: ${outcomes}`;
+      }).join(' | ');
     }
 
     function combatPresetAdvice(preset) {
@@ -1441,7 +1462,8 @@
           details.push(receiptDetail('How to do it', 'No control change is needed for this section effect.'));
         }
       } else if (kind === 'roll helpers') {
-        const roll = entry.roll || {};
+        const roll = entry.roll || entry.stagedRoll || {};
+        const staged = entry.stagedRoll || null;
         const rollLabel = text(roll.summary, 'Roll 0-9');
         summary = `Manual Advice - ${rollLabel}`;
         title = 'Manual Section Roll';
@@ -1451,6 +1473,9 @@
         }
         if (arr(roll.outcomes).length) {
           details.push(receiptDetail('Outcomes', arr(roll.outcomes).map(rollOutcomeText).join('; ')));
+        }
+        if (staged && arr(staged.stages).length) {
+          details.push(receiptDetail('Stages', stagedRollAdviceText(staged)));
         }
         details.push(receiptDetail('How to do it', 'Use a 0-9 random digit. Add listed modifiers. Follow the matching book link or enter the resulting section in the Section card.'));
       } else if (kind === 'combat presets') {
@@ -2273,7 +2298,7 @@
       const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
       const weaponsUnavailable = flags.weaponsAvailable === false;
       const flow = currentFlow();
-      const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
+      const rollLabel = flow.Entry?.roll || flow.Entry?.stagedRoll ? 'Section Roll' : 'Roll 0-9';
       const successEnding = ending && String(ending.Type || '').toLowerCase() === 'success';
       const missingBookFiles = !currentBookFilesInstalled();
       quickPanel.innerHTML = `
@@ -3006,7 +3031,7 @@
       const backpackUnavailable = flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
       const weaponsUnavailable = flags.weaponsAvailable === false;
       const flow = currentFlow();
-      const rollLabel = flow.Entry?.roll ? 'Section Roll' : 'Roll 0-9';
+      const rollLabel = flow.Entry?.roll || flow.Entry?.stagedRoll ? 'Section Roll' : 'Roll 0-9';
       const missingBookFiles = !currentBookFilesInstalled();
       return `
         <div class="controls">
@@ -3249,18 +3274,21 @@
     }
 
     function sectionRollRows(entry) {
-      const lastRoll = currentFlow().LastRoll;
-      if (!entry.roll && !lastRoll) return '';
+      const flow = currentFlow();
+      const lastRoll = flow.LastRoll;
+      const roll = entry.roll || entry.stagedRoll;
+      const stagedSummary = stagedRollSummary(entry, flow.StagedRoll);
+      if (!roll && !lastRoll) return '';
       return `
         <div class="controls" style="margin-bottom:.35rem">
           <input id="manualRoll" type="number" min="0" max="9" placeholder="Optional roll">
           ${modeActionButton('data-roll', 'Roll', 'roll helper')}
         </div>
-        ${entry.roll ? `<p class="muted">${escapeHtml(text(entry.roll.summary, 'Section-aware roll'))}</p>` : ''}
+        ${roll ? `<p class="muted">${escapeHtml(stagedSummary || text(roll.summary, 'Section-aware roll'))}</p>` : ''}
         ${lastRoll ? `
           <div class="item-row">
             <small>${escapeHtml(lastRoll.Raw)}</small>
-            <span class="wrap">Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
+            <span class="wrap">Total ${escapeHtml(lastRoll.Total)}${lastRoll.StageLabel ? ` | ${escapeHtml(lastRoll.StageLabel)}` : ''}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
             ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
           </div>
           ${arr(lastRoll.ActionMessages).map((line) => `
@@ -3530,6 +3558,8 @@
       const flow = currentFlow();
       const entry = flow.Entry || {};
       const lastRoll = flow.LastRoll;
+      const sectionRoll = entry.roll || entry.stagedRoll;
+      const stagedSummary = stagedRollSummary(entry, flow.StagedRoll);
       const sourceRoutes = arr(flow.SourceRoutes);
       const automation = flow.Automation || {};
       const healing = flow.Healing || {};
@@ -3552,7 +3582,7 @@
       const rollRows = lastRoll ? `
         <div class="item-row">
           <small>${escapeHtml(lastRoll.Raw)}</small>
-          <span>Total ${escapeHtml(lastRoll.Total)}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
+          <span>Total ${escapeHtml(lastRoll.Total)}${lastRoll.StageLabel ? ` | ${escapeHtml(lastRoll.StageLabel)}` : ''}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
           ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
         </div>
         ${arr(lastRoll.ActionMessages).map((line) => `
@@ -3619,7 +3649,7 @@
             <input id="manualRoll" type="number" min="0" max="9" placeholder="Optional roll">
             ${modeActionButton('data-roll', 'Roll', 'roll helper')}
           </div>
-          ${entry.roll ? `<p class="muted">${escapeHtml(text(entry.roll.summary, 'Section-aware roll'))}</p>` : '<p class="muted">Generic random digit unless this section has a special random rule.</p>'}
+          ${sectionRoll ? `<p class="muted">${escapeHtml(stagedSummary || text(sectionRoll.summary, 'Section-aware roll'))}</p>` : '<p class="muted">Generic random digit unless this section has a special random rule.</p>'}
           ${rollRows}
           <div class="controls">${routeRows || '<span class="muted">No source routes found.</span>'}</div>
         </div>

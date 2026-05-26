@@ -26,6 +26,6 @@ Scope: issue #9 Kai Healing and explicit player-choice loss helper pass.
 
 ## Remaining Risk
 
-- Section 21 remains manual because it is a staged multi-roll section.
+- Section 21 staged random handling is now covered by the dedicated section 21 smoke test.
 - Additional player-choice aftermaths may surface during broader route playtesting.
 - The Healing helper is explicit rather than automatic; fully automatic timing remains intentionally avoided.

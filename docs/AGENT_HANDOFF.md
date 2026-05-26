@@ -26,12 +26,12 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
-- Section 21 staged multi-roll handling.
 - Remaining route aftermaths where the book asks the player to choose which item or weapon is lost.
+- Any remaining staged random edge cases found during broader route playtesting.
 - Broader route coverage outside the checked successful and early branch paths.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
@@ -86,7 +86,7 @@ Issue #5 changed the initial route/random baseline:
 
 - `data\book1-section-flows.json` initially included 17 confirmed roll helpers and 11 confirmed route checks.
 - The first route checks cover representative Kai Discipline, item, Gold Crown, and END branches.
-- Roll helpers covered straightforward one-roll route outcomes; multi-roll sections and random outcomes with immediate same-section side effects were left for later passes.
+- Roll helpers initially covered straightforward one-roll route outcomes; later passes added same-section side effects and the section 21 staged roll helper.
 - `testing\lwbook1_route_random_smoke.py` verifies representative route and random helpers.
 - `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` records coverage and remaining route/random risk.
 
@@ -124,6 +124,15 @@ Issue #9 changed the Healing/loss-choice baseline:
 - Section 277 lets the player choose the broken Weapon.
 - `testing\lwbook1_healing_loss_smoke.py` verifies Healing readiness, duplicate protection, combat/no-discipline blocks, and both loss-choice helpers.
 - `testing\logs\LWBOOK1_HEALING_LOSS_AUDIT.md` records the issue #9 coverage and remaining risk.
+
+Issue #10 changed the staged roll baseline:
+
+- `data\book1-section-flows.json` includes 1 confirmed staged roll helper, currently section 21.
+- Section 21 tracks the marsh check across first, second, and final rolls for the current section visit.
+- Section 21 routes first-roll success and second-roll recovery to 189, final-roll success to 312, and final-roll failure to terminal death.
+- Repeated Roll clicks after the staged helper completes return the stored result instead of changing the stage or reapplying death effects.
+- `testing\lwbook1_section21_staged_smoke.py` verifies first-roll success, second-roll recovery, final-roll success, and final-roll death.
+- `testing\logs\LWBOOK1_ROUTE_RANDOM_AUDIT.md` and `testing\logs\LWBOOK1_PLAYTEST_REPORT.md` record the issue #10 coverage.
 
 ## GitHub Workflow
 

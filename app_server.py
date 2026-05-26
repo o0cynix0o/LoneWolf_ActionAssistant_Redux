@@ -272,7 +272,9 @@ def handle_action(payload: dict) -> str:
         result = ASSISTANT.roll_current_section(raw_roll)
         route = result.get("Route")
         route_text = f" -> section {route}" if route else ""
-        messages = [f"Roll {result['Raw']} total {result['Total']}{route_text}"]
+        stage_text = f" | {result['StageLabel']}" if result.get("StageLabel") else ""
+        outcome_text = f" | {result['Outcome']}" if result.get("Outcome") else ""
+        messages = [f"Roll {result['Raw']} total {result['Total']}{stage_text}{outcome_text}{route_text}"]
         for message in result.get("ActionMessages") or []:
             messages.append(str(message))
         return "\n".join(messages)

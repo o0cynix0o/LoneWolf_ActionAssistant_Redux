@@ -2,7 +2,7 @@
 
 Date: 2026-05-26
 
-Scope: issues #1-#9, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, and explicit loss-choice helpers.
+Scope: issues #1-#10, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, and the section 21 staged roll helper.
 
 ## Checks
 
@@ -15,6 +15,7 @@ Scope: issues #1-#9, covering the Book 1 character/sheet rebuild, section-flow b
 - Route/random helper smoke with `testing\lwbook1_route_random_smoke.py`.
 - Random/recovery smoke with `testing\lwbook1_random_recovery_smoke.py`.
 - Healing/loss smoke with `testing\lwbook1_healing_loss_smoke.py`.
+- Section 21 staged roll smoke with `testing\lwbook1_section21_staged_smoke.py`.
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
@@ -49,11 +50,11 @@ Scope: issues #1-#9, covering the Book 1 character/sheet rebuild, section-flow b
 - Random/recovery smoke covered same-section roll effects for sections 36, 158, and 188, including duplicate-roll protection.
 - Laumspur now restores 3 END and can fulfill a required Meal when no normal Meal is available.
 - Healing/loss smoke covered Kai Healing readiness, duplicate protection, no-Healing/combat blocks, section 144 selected loss, section 144 fallback loss, and section 277 selected Weapon loss.
-- Section-flow data now includes 18 optional loot helpers and 2 explicit loss-choice helpers.
+- Section 21 staged roll smoke covered first-roll success, second-roll recovery, final-roll success, and final-roll death with rewind.
+- Section-flow data now includes 18 optional loot helpers, 2 explicit loss-choice helpers, and 1 staged roll helper.
 
 ## Remaining Risk
 
 - The checked routes are playable baselines, not exhaustive route coverage.
-- Section 21 multi-roll handling remains manual.
 - Additional player-choice aftermaths and remaining combat exceptions still need later audit passes.
 - Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.

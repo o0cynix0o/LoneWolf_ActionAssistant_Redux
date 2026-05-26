@@ -548,7 +548,75 @@
           "Section": 312
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "stagedRoll": {
+        "id": "21-marsh",
+        "summary": "Staged random check in the marsh.",
+        "stages": [
+          {
+            "id": "first",
+            "label": "First marsh roll",
+            "outcomes": [
+              {
+                "test": "range",
+                "min": 0,
+                "max": 4,
+                "label": "Horse stuck in the mud",
+                "nextStage": "second"
+              },
+              {
+                "test": "range",
+                "min": 5,
+                "max": 9,
+                "label": "Steer clear of the morass",
+                "route": 189
+              }
+            ]
+          },
+          {
+            "id": "second",
+            "label": "Second marsh roll",
+            "outcomes": [
+              {
+                "test": "range",
+                "min": 0,
+                "max": 7,
+                "label": "Mud rises to your armpits",
+                "nextStage": "final"
+              },
+              {
+                "test": "range",
+                "min": 8,
+                "max": 9,
+                "label": "Drag yourself onto firm ground",
+                "route": 189
+              }
+            ]
+          },
+          {
+            "id": "final",
+            "label": "Last chance marsh roll",
+            "outcomes": [
+              {
+                "test": "values",
+                "values": [
+                  9
+                ],
+                "label": "Last-chance escape",
+                "route": 312
+              },
+              {
+                "test": "range",
+                "min": 0,
+                "max": 8,
+                "label": "Bog claims Lone Wolf",
+                "ending": "death",
+                "cause": "Section 21 bog death."
+              }
+            ]
+          }
+        ]
+      }
     },
     "22": {
       "auditStatus": "source-link-baseline",
