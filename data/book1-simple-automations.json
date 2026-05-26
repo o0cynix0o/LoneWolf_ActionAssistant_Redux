@@ -103,6 +103,10 @@
         {"type": "remove_item", "containers": ["backpack"], "name": "Vordak Gem", "count": 1}
       ]
     },
+    "258": {
+      "summary": "Lose Backpack and Weapons during the escape.",
+      "actions": [{"type": "discard_gear"}]
+    },
     "259": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 259 ends the mission."}]},
     "269": {
       "summary": "Receive 10 Gold Crowns reward.",

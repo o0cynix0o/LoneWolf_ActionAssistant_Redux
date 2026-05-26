@@ -26,7 +26,7 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass started the section-by-section automation-language scan. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
@@ -66,10 +66,10 @@ Issue #2 changed the route baseline:
 
 Issue #3 changed the simple automation baseline:
 
-- `data\book1-simple-automations.json` has 47 confirmed Book 1 section-effect entries.
+- `data\book1-simple-automations.json` has 48 confirmed Book 1 section-effect entries.
 - Required Meal sections use the Book 1 Hunting exemption.
 - Direct END loss/gain, Gold Crowns, Vordak Gem effects, permanent CS loss from section 236, deterministic gear loss, terminal death/failure, and section 350 completion are represented.
-- `data\book1-section-flows.json` includes optional loot buttons for 18 confirmed sections.
+- `data\book1-section-flows.json` includes optional loot buttons for 21 confirmed sections.
 - `testing\lwbook1_simple_automation_smoke.py` verifies representative effects.
 - `testing\logs\LWBOOK1_SIMPLE_AUTOMATION_BASELINE.md` records coverage and remaining risk.
 
@@ -142,6 +142,15 @@ Issue #11 changed the player-choice aftermath baseline:
 - The section 307 Meal remains a separate ordinary loot button.
 - `testing\lwbook1_player_choice_aftermath_smoke.py` verifies the section 307 weapon exchange, duplicate protection, and no-Weapon block.
 - `testing\logs\LWBOOK1_PLAYER_CHOICE_AUDIT.md` records the issue #11 coverage.
+
+Issue #12 started the automation-language audit:
+
+- `testing\lwbook1_automation_language_audit.py` scans all 350 local Book 1 section files for automation-likely language and writes section-number/category findings without copying book prose.
+- The first clear slice added optional loot helpers for section 15 Sword, section 346 Spear, and section 349 Crystal Star Pendant.
+- Section 258 now applies the repeated Backpack/Weapons loss when reached directly.
+- Section 46 now exposes a Sixth Sense route warning without forcing either non-Sixth-Sense route choice.
+- `testing\lwbook1_automation_language_smoke.py` verifies those clear helpers.
+- Issue #12 remains open for ambiguous rulings around item categories, gold payment timing, and temporary combat weapon handling.
 
 ## GitHub Workflow
 

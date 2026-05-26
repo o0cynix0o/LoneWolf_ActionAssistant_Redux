@@ -368,7 +368,20 @@
           "Section": 35
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "15-sword",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        }
+      ]
     },
     "16": {
       "auditStatus": "source-link-baseline",
@@ -1144,7 +1157,27 @@
           "Section": 90
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "46-sixth-sense",
+          "label": "Sixth Sense ferryman warning",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 296,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "47": {
       "auditStatus": "source-link-baseline",
@@ -7104,7 +7137,20 @@
           "Section": 14
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "346-spear",
+          "label": "Take Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        }
+      ]
     },
     "347": {
       "auditStatus": "source-link-baseline",
@@ -7158,7 +7204,20 @@
           "Section": 293
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "349-crystal-star-pendant",
+          "label": "Keep Crystal Star Pendant",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Crystal Star Pendant"
+            }
+          ]
+        }
+      ]
     },
     "350": {
       "auditStatus": "source-link-baseline",

@@ -2,7 +2,7 @@
 
 Date: 2026-05-26
 
-Scope: issues #1-#11, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, and the section 307 weapon exchange helper.
+Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, and the first section-by-section automation-language slice.
 
 ## Checks
 
@@ -17,6 +17,7 @@ Scope: issues #1-#11, covering the Book 1 character/sheet rebuild, section-flow 
 - Healing/loss smoke with `testing\lwbook1_healing_loss_smoke.py`.
 - Section 21 staged roll smoke with `testing\lwbook1_section21_staged_smoke.py`.
 - Player-choice aftermath smoke with `testing\lwbook1_player_choice_aftermath_smoke.py`.
+- Automation-language smoke with `testing\lwbook1_automation_language_smoke.py`.
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
@@ -38,7 +39,7 @@ Scope: issues #1-#11, covering the Book 1 character/sheet rebuild, section-flow 
 - Section 1 route buttons are sourced from the checked-in graph: 141, 85, and 275.
 - Route action smoke accepted legal route 1 -> 141 and refused illegal route 1 -> 2.
 - Simple automation smoke covered END loss, required Meals, Hunting meal exemption, END restoration, Gold Crowns, Vordak Gem handling, gear loss, optional section 20 supplies, Book 1 completion, and terminal death.
-- Simple automation data now covers 47 confirmed section-effect entries and optional loot buttons for 18 sections.
+- Simple automation data now covers 48 confirmed section-effect entries and optional loot buttons for 21 sections.
 - Combat smoke covered representative Book 1 enemies, Mindblast immunity, conditional CS modifiers, timed modifiers, forced unarmed combat, evasion, round limits, and section 227 victory routing.
 - Route/random smoke covered representative Kai Discipline, item, Gold Crown, END, and one-roll random route helpers.
 - End-to-end playtest reached section 350 through this legal route:
@@ -53,11 +54,13 @@ Scope: issues #1-#11, covering the Book 1 character/sheet rebuild, section-flow 
 - Healing/loss smoke covered Kai Healing readiness, duplicate protection, no-Healing/combat blocks, section 144 selected loss, section 144 fallback loss, and section 277 selected Weapon loss.
 - Section 21 staged roll smoke covered first-roll success, second-roll recovery, final-roll success, and final-roll death with rewind.
 - Player-choice aftermath smoke covered section 307's explicit Weapon-for-Warhammer exchange and duplicate protection.
-- Section-flow data now includes 18 optional loot helpers, 3 explicit loss/exchange-choice helpers, and 1 staged roll helper.
+- Automation-language smoke covered the clear issue #12 slice: section 15 Sword, section 346 Spear, section 349 Crystal Star Pendant, section 258 gear loss, and section 46 Sixth Sense warning.
+- Section-flow data now includes 21 optional loot helpers, 3 explicit loss/exchange-choice helpers, and 1 staged roll helper.
 
 ## Remaining Risk
 
 - The checked routes are playable baselines, not exhaustive route coverage.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
+- Issue #12 still has ambiguous automation-language candidates awaiting ruling before implementation.
 - Remaining combat exceptions still need later audit passes.
 - Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.

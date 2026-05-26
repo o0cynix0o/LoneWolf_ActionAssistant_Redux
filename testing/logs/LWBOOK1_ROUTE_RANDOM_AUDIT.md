@@ -10,7 +10,7 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 - Confirmed roll helpers added for 20 Book 1 sections.
 - Confirmed staged roll helper added for section 21.
-- Confirmed route checks added for 11 Book 1 sections.
+- Confirmed route checks added for 12 Book 1 sections.
 - The pass uses existing assistant cards: Section Roll for random digits and Route Check for sheet-dependent branches.
 - Roll helpers resolve the route/result label.
 - Confirmed same-section roll effects are applied for sections 36, 158, and 188 with once-per-visit protection.
@@ -38,7 +38,7 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 ## Route Checks
 
-- Kai Discipline checks: 52, 88, 105, 128, 162, 242, 303.
+- Kai Discipline checks: 46, 52, 88, 105, 128, 162, 242, 303.
 - Item checks: 9, 173.
 - Stat checks: 12, 203.
 - Section 162 and section 203 checks are tied to sections with automatic entry effects; the smoke test verifies those entry effects are applied before checking the route.

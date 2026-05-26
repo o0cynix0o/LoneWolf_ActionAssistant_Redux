@@ -131,6 +131,32 @@ def power_route_check(
     }
 
 
+def power_route_option(
+    section: int,
+    power: str,
+    power_route: int,
+    *,
+    label: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "routeChecks": [
+            {
+                "id": f"{section}-{power.lower().replace(' ', '-')}",
+                "label": label or f"{power} route",
+                "summary": f"Checks whether Lone Wolf has {power}.",
+                "outcomes": [
+                    condition_outcome(
+                        f"{power} available",
+                        power_route,
+                        {"type": "power", "name": power},
+                        f"Has {power}",
+                    ),
+                ],
+            }
+        ]
+    }
+
+
 def item_route_check(
     section: int,
     item: str,
@@ -194,6 +220,7 @@ def stat_route_check(
 
 
 MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
+    "15": {"loot": [{"id": "15-sword", "label": "Take Sword", "actions": [{"type": "add_item", "container": "weapon", "name": "Sword"}]}]},
     "20": {
         "loot": [
             {
@@ -348,7 +375,17 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ]
     },
+    "346": {"loot": [{"id": "346-spear", "label": "Take Spear", "actions": [{"type": "add_item", "container": "weapon", "name": "Spear"}]}]},
     "347": {"loot": [{"id": "347-torch", "label": "Take 1 Torch", "actions": [{"type": "add_item", "container": "backpack", "name": "Torch"}]}]},
+    "349": {
+        "loot": [
+            {
+                "id": "349-crystal-star-pendant",
+                "label": "Keep Crystal Star Pendant",
+                "actions": [{"type": "add_item", "container": "special", "name": "Crystal Star Pendant"}],
+            }
+        ]
+    },
 }
 
 
@@ -814,6 +851,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 338, "Weapon survives"),
         ],
     ),
+    "46": power_route_option(46, "Sixth Sense", 296, label="Sixth Sense ferryman warning"),
     "49": section_roll(
         "Random route in the shop.",
         [
