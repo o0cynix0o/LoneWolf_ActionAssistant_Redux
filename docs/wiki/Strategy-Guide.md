@@ -1,13 +1,20 @@
 # Strategy Guide
 
-The public strategy guide has not been written yet.
+Spoiler warning: these pages talk openly about routes, items, danger spots, and replay targets.
 
-When Book 1 is audited and playtested, write this in the friendly player-guide style established during the Grey Star project:
+The strategy guides are the player-facing version of the audit work: warm, practical, and written for someone who is actually playing the book. Technical route labels and implementation notes belong in `testing/logs`; these pages focus on what kind of run to make, what to respect, and what to leave for replay.
 
-- clear route advice
-- useful item notes
-- combat warnings
-- achievement/replay hints
-- conversational tone
+## Available Guides
 
-Keep clinical audit details in `testing\logs`, not in the player-facing guide.
+- [Book 1 Strategy Guide](Book-1-Strategy-Guide)
+
+## What To Expect
+
+Each guide should give you:
+
+- a quick first-clear recommendation
+- a plain-English read on what the book is testing
+- the big paths worth replaying
+- items and discoveries that actually matter
+- combat and inventory tips
+- future achievement and replay advice

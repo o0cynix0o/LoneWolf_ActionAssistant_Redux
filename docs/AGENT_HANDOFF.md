@@ -26,13 +26,13 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
 - Any remaining route aftermaths where the book asks the player to choose which item or weapon is lost or exchanged.
 - Any remaining staged random edge cases found during broader route playtesting.
-- Broader route coverage outside the checked successful and early branch paths.
+- Manual browser ergonomics and release-readiness review.
 
 Do not paper over this by renaming labels only. Replace the underlying state and rules.
 
@@ -170,6 +170,14 @@ Issue #14 changed the route playtesting baseline:
 - The gauntlet covers section 255 through section 46/246/197, section 12 through section 191/234, section 242/9 Vordak Gem outcomes, section 162 capture outcomes, section 203 END routing, section 174 gear loss, and section 349 loot.
 - `testing\logs\LWBOOK1_ROUTE_GAUNTLET_PLAYTEST.md` records the pass.
 - Packaging/release is still blocked until a manual browser ergonomics pass confirms ordinary play feels good.
+
+Issue #15 changed the workflow and guide baseline:
+
+- `docs\LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` records the reusable per-book onboarding pipeline.
+- `testing\logs\LWBOOK1_PIPELINE_BACKFILL.md` maps Book 1's completed work to that pipeline.
+- `testing\logs\LWBOOK1_AUTOMATION_LEDGER.md` backfills the Book 1 automation ledger from the checked-in data.
+- `testing\logs\LWBOOK1_ACHIEVEMENT_CANDIDATES.md` records candidate Book 1 achievements for later approval.
+- `docs\wiki\Book-1-Strategy-Guide.md` adds the player-facing guide in the Grey Star guide tone: practical, warm, route-aware, and not written like an audit log.
 
 ## GitHub Workflow
 
