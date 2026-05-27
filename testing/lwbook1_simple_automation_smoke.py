@@ -76,6 +76,19 @@ def smoke_endurance_and_meal() -> None:
     quiet(assistant.set_section, 130)
     assert_equal(assistant.character["EnduranceCurrent"], start_end, "Hunting skips required Meal loss")
 
+    assistant = fresh_assistant(disciplines=["Hunting", "Camouflage", "Sixth Sense", "Tracking", "Healing"])
+    assistant.inventory["BackpackItems"] = ["Meal"]
+    start_end = int(assistant.character["EnduranceCurrent"])
+    quiet(assistant.set_section, 235)
+    messages = assistant.automation["Journal"][-1]["Messages"]
+    assert_equal(assistant.inventory["BackpackItems"], ["Meal"], "Hunting preserves carried Meal")
+    assert_equal(assistant.character["EnduranceCurrent"], start_end, "Hunting prevents required Meal END loss")
+    assert_in(
+        "Hunting: no Meal needed; Meals unchanged at 1",
+        messages,
+        "Hunting exemption receipt includes unchanged Meal count",
+    )
+
     assistant = fresh_assistant()
     assistant.character["EnduranceCurrent"] -= 8
     quiet(assistant.set_section, 212)

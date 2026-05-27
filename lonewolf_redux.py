@@ -3059,7 +3059,8 @@ class LoneWolfReduxAssistant:
 
     def apply_automation_meal(self, action: dict[str, Any]) -> str:
         if bool(action.get("huntingExempt")) and self.has_power("Hunting"):
-            return "Hunting: no Meal needed"
+            available = self.count_items("Meal", ["backpack"])
+            return f"Hunting: no Meal needed; Meals unchanged at {available}"
         count = max(0, int(action.get("count") or 1))
         mode = str(action.get("mode") or "per_missing")
         available = self.count_items("Meal", ["backpack"])
