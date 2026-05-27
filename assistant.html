@@ -2720,7 +2720,7 @@
     function cardHelp(title, scope) {
       const key = slugCardTitle(title, '');
       const help = {
-        choices: 'This card shows actual section choices and optional actions. Automation receipts and route-check calculations live in the bottom status receipt.',
+        choices: 'This card shows assistant-added choices and optional actions. Ordinary book links stay in the reader text.',
         map: 'Shows the local Project Aon map image for Flight from the Dark. Open it full-size when you want to inspect the route detail.',
         'section-assistant': 'Use this when a section has rolls, loot, special costs, or combat presets that are not handled by the book link itself.',
         'stored-gear': 'This keeps the inventory record for gear the book has taken away and may return later.',
@@ -3373,8 +3373,12 @@
       }).join('');
     }
 
-    function sectionRouteRows() {
-      return arr(currentFlow().SourceRoutes).map((route) => (
+    function routeHasAssistantEffect(route) {
+      return Boolean(route?.EffectLabel || arr(route?.Actions).length);
+    }
+
+    function sectionRouteEffectRows() {
+      return arr(currentFlow().SourceRoutes).filter(routeHasAssistantEffect).map((route) => (
         `<div class="item-row">
           <small>${escapeHtml(route.Section)}</small>
           <span class="wrap">${escapeHtml(routeLabel(route))}</span>
@@ -3386,7 +3390,7 @@
     function choicesPanelBody() {
       const entry = currentFlow().Entry || {};
       const groups = [
-        choiceGroup('Routes', sectionRouteRows()),
+        choiceGroup('Route Effects', sectionRouteEffectRows()),
         choiceGroup('Available Checked Routes', sectionRouteCheckChoiceRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),
