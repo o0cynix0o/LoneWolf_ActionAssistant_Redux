@@ -65,7 +65,7 @@ Current implemented/audited folder:
 - `01fftd`
   `Flight from the Dark`
 
-Known future pipeline targets:
+Installed local corpus:
 
 - `02fotw`
   `Fire on the Water`
@@ -75,8 +75,62 @@ Known future pipeline targets:
   `The Chasm of Doom`
 - `05sots`
   `Shadow on the Sand`
+- `06tkot`
+  `The Kingdoms of Terror`
+- `07cd`
+  `Castle Death`
+- `08tjoh`
+  `The Jungle of Horrors`
+- `09tcof`
+  `The Cauldron of Fear`
+- `10tdot`
+  `The Dungeons of Torgar`
+- `11tpot`
+  `The Prisoners of Time`
+- `12tmod`
+  `The Masters of Darkness`
+- `13tplor`
+  `The Plague Lords of Ruel`
+- `14tcok`
+  `The Captives of Kaag`
+- `15tdc`
+  `The Darke Crusade`
+- `16tlov`
+  `The Legacy of Vashna`
+- `17tdoi`
+  `The Deathlord of Ixia`
+- `18dotd`
+  `Dawn of the Dragons`
+- `19wb`
+  `Wolf's Bane`
+- `20tcon`
+  `The Curse of Naar`
+- `21votm`
+  `Voyage of the Moonstone`
+- `22tbos`
+  `The Buccaneers of Shadaki`
+- `23mh`
+  `Mydnight's Hero`
+- `24rw`
+  `Rune War`
+- `25totw`
+  `Trail of the Wolf`
+- `26tfobm`
+  `The Fall of Blood Mountain`
+- `27v`
+  `Vampirium`
+- `28thos`
+  `The Hunger of Sejanoz`
+- `29tsoc`
+  `The Storms of Chai`
+- `dotd`
+  `Dawn of the Darklords`
 
 Do not treat a future folder as supported just because it exists locally. Each book must pass the full workflow in `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
+
+Current pipeline target:
+
+- Book 2, `02fotw`, has source verification and rules/handoff logs under `testing/logs/LWBOOK2_*`.
 
 ## Recommended Audit Start Pattern
 

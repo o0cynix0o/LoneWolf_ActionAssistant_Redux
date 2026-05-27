@@ -75,4 +75,4 @@ Scope: issues #1-#26, covering the Book 1 character/sheet rebuild, section-flow 
 - The first achievement batch is conservative; `lw1_route_gauntlet` remains deferred as internal playtest proof.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
 - Later route playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
-- Packaging/release still requires the final automated validation ladder and fresh ZIP smoke test for issue #26.
+- Book 1 was packaged and smoke-tested as prerelease `v0.1.0-rc1`; remaining risk now lives in broader user playtesting and later-book transition work.

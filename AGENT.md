@@ -6,8 +6,8 @@ This repo is the clean rebuild target for **Lone Wolf Action Assistant Redux**.
 
 - Root: `C:\Scripts\LoneWolf_ActionAssistant_Redux`
 - GitHub: `https://github.com/o0cynix0o/LoneWolf_ActionAssistant_Redux`
-- First book source: `books\lw\01fftd`
-- Status: Book 1 playable release candidate; final package validation in progress under GitHub issue #26
+- Installed local book sources: `books\lw\01fftd` through `books\lw\29tsoc`, plus `books\lw\dotd`
+- Status: Book 1 playable release candidate published as `v0.1.0-rc1`; Book 2 rules/handoff scan is complete and rulings are pending under GitHub issue #27
 
 The folder was bootstrapped from the Grey Star Action Assistant workflow so the next agent can reuse the modern web GUI cards, receipt drawer, launcher shape, docs structure, packaging workflow, and audit/test conventions.
 
@@ -26,9 +26,9 @@ Book 1 rules, character creation, route helpers, automation, combat support, ach
 
 ## Current Priorities
 
-1. Finish issue #26: validate, package, smoke-test, and publish the first Book 1 release candidate if the package stays clean.
-2. Keep public docs in a friendly team voice; keep technical audit logs direct and factual.
-3. Start Book 2 only through `docs\LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`: rules scan, book handoff scan, new gear/power setup, section-flow audit, automation, combat, achievements, docs, and tests.
+1. Resolve the Book 2 rulings in `testing\logs\LWBOOK2_RULINGS_QUEUE.md`.
+2. Start Book 2 implementation only after those rulings are clear: setup/start-state first, then section-flow, automation, combat, achievements, docs, and tests.
+3. Keep public docs in a friendly team voice; keep technical audit logs direct and factual.
 
 ## Useful Source Projects
 
