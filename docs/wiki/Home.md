@@ -13,7 +13,7 @@ Lone Wolf Action Assistant Redux is a local Python web app that acts like a digi
 It helps with:
 
 - Book 1 character creation
-- Book 2 setup from either a completed Book 1 run or a fresh Book 2 start
+- Book 2 setup and source-link routing from either a completed Book 1 run or a fresh Book 2 start
 - Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns
 - random number rolls from 0 to 9
 - route checks for Kai Disciplines, items, Gold Crowns, and Endurance
@@ -44,11 +44,11 @@ It is designed to support the books, not replace them.
 Current assistant support is strongest for:
 
 - **Book 1: Flight from the Dark**
-- **Book 2: Fire on the Water** setup and start-state handling
+- **Book 2: Fire on the Water** setup, start-state handling, and source-link routes
 
 Book 1 is the current playable release candidate. Character creation, sheet fields, section routes, core automation, combat presets, random helpers, death recovery, achievements, and Book 1 guide pages are in place.
 
-Book 2 can now prepare the campaign handoff or a fresh start, including the new Kai Discipline, starting Gold, carry-over inventory, mandatory items, and Royal Armoury choices. Book 2 section automation, combat presets, achievements, and guide pages are still in the next pipeline passes.
+Book 2 can now prepare the campaign handoff or a fresh start, including the new Kai Discipline, starting Gold, carry-over inventory, mandatory items, and Royal Armoury choices. Its checked source-link route graph is also in place. Book 2 section automation, combat presets, achievements, and guide pages are still in the next pipeline passes.
 
 Book 3 and later will be added one at a time through the book pipeline so new rules, carry-over choices, powers, gear, and section logic get proper attention.
 

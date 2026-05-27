@@ -1,6 +1,6 @@
 # Getting Started
 
-This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 setup now underway. We are keeping the app local, practical, and faithful to the book text.
+This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 setup and source routes now underway. We are keeping the app local, practical, and faithful to the book text.
 
 ## Requirements
 
@@ -80,9 +80,9 @@ For practical route advice, see [Book 1 Strategy Guide](Book-1-Strategy-Guide).
 
 ## Starting Book 2
 
-Book 2 is not a playable adventure yet, but its starting setup is available. You can continue from a completed Book 1 save or create a clearly labeled fresh Book 2 character.
+Book 2 is not a playable adventure yet, but its starting setup and source-link route graph are available. You can continue from a completed Book 1 save or create a clearly labeled fresh Book 2 character.
 
-The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices.
+The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices. Section effects, combat presets, achievements, and route advice still come later.
 
 ## Choose A Play Mode
 

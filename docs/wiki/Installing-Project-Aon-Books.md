@@ -38,13 +38,13 @@ Do not commit it. Do not package it. Do not upload it to a release.
 
 ## Book 2
 
-Book 2 setup uses:
+Book 2 setup and source-route support use:
 
 ```text
 books\lw\02fotw
 ```
 
-The setup flow is available now, but the Book 2 adventure sections still need the rest of the pipeline before we call the book playable.
+The setup flow and checked source-route graph are available now, but the Book 2 adventure sections still need the rest of the automation pipeline before we call the book playable.
 
 ## Future Books
 

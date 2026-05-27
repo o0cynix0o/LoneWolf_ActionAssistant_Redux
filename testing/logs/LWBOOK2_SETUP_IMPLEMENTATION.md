@@ -70,8 +70,6 @@ Covered:
 
 ## Remaining Work
 
-- Generate Book 2 checked-in section-flow data.
-- Write `LWBOOK2_SECTION_FLOW_BASELINE.md`.
 - Run the full automation-language scan across all Book 2 sections.
 - Implement Book 2 section effects, route checks, random helpers, combat presets, loss/exchange helpers, death/failure/completion, achievements, and strategy docs.
 - Handle later watch-items for Sommerswerd, Magic Spear, Crystal Star Pendant durable history, and Wildlands Hunting suppression.

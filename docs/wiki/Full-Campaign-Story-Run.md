@@ -30,7 +30,7 @@ For advice on why this is a comfortable first-clear route, see the [Book 1 Strat
 
 ## Book 2: Fire on the Water
 
-Book 2 setup is underway. The app can prepare the Book 2 starting state after a completed Book 1 run, but we have not added a recommended story route yet.
+Book 2 setup and source-link routing are underway. The app can prepare the Book 2 starting state after a completed Book 1 run, but we have not added a recommended story route yet.
 
 ## Later Books
 

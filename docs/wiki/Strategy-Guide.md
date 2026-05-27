@@ -22,4 +22,4 @@ Each guide should give you:
 - achievement and replay advice
 
 Book 2 and later guides should be added only after those books have gone through the book pipeline.
-Book 2 setup is already in progress, so its guide should wait for the section-flow, automation, combat, and achievement passes before we give route advice.
+Book 2 setup and source-link routing are already in progress, so its guide should wait for the automation, combat, and achievement passes before we give route advice.

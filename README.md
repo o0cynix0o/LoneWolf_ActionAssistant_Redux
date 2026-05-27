@@ -34,7 +34,7 @@ Project Aon links:
 ## What It Includes
 
 - Book 1 support for *Flight from the Dark*.
-- Book 2 setup/start-state support for *Fire on the Water*; section automation is still in the pipeline.
+- Book 2 setup/start-state and source-link route support for *Fire on the Water*; section automation is still in the pipeline.
 - Split view with the book reader on the left and the assistant on the right, once the Project Aon book files are installed locally.
 - Book 1 character creation from the rules:
   - Combat Skill = random digit + 10
@@ -55,7 +55,7 @@ Project Aon links:
 ## Current Limitations
 
 - Book 1 is the first supported book and is being prepared as the first public prerelease package.
-- Book 2 can be set up from Book 1 completion or as a fresh Book 2 start, but Book 2 section automation, combat presets, achievements, and guide material are not playable yet.
+- Book 2 can be set up from Book 1 completion or as a fresh Book 2 start, and its source-link section routes are available. Book 2 section automation, combat presets, achievements, and guide material are not playable yet.
 - Book 3 and later are not supported yet.
 - Later books must be onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` before they are treated as playable.
 
@@ -185,10 +185,11 @@ Before publishing a package, run the public release checklist and smoke-test the
 - `Launch-LoneWolfRedux.ps1`: Windows convenience launcher.
 - `books/`: local book install folder. Project Aon book files go under `books/lw/` but are ignored by git and not included in release ZIPs.
 - `data/book1-section-flows.json`: Book 1 route, helper, combat, and roll data.
+- `data/book2-section-flows.json`: Book 2 source-link route baseline.
 - `data/book1-simple-automations.json`: Book 1 simple section automation data.
 - `data/book-route-checks.json`: route-check helper data.
 - `data/crt.json`: Combat Results Table.
-- `testing/`: route, automation, combat, achievement, and Book 1 playtest checks.
+- `testing/`: route, automation, combat, achievement, and book playtest checks.
 - `testing/logs/`: technical audit reports and playtest reports.
 - `tools/Make-Release.ps1`: release ZIP builder.
 

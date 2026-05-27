@@ -130,7 +130,7 @@ Do not treat a future folder as supported just because it exists locally. Each b
 
 Current pipeline target:
 
-- Book 2, `02fotw`, has source verification, rules/handoff logs, setup implementation notes, and a setup smoke test under `testing/logs/LWBOOK2_*` and `testing/lwbook2_setup_smoke.py`.
+- Book 2, `02fotw`, has source verification, rules/handoff logs, setup implementation notes, a setup smoke test, and a checked-in section-flow baseline under `testing/logs/LWBOOK2_*`, `testing/lwbook2_setup_smoke.py`, and `testing/lwbook2_section_flow_audit.py`.
 
 ## Recommended Audit Start Pattern
 
@@ -170,6 +170,26 @@ Primary technical audit logs:
 - `testing/logs/LWBOOK1_COMBAT_AND_RANDOM_AUDIT.md`
 - `testing/logs/LWBOOK1_PLAYTEST_REPORT.md`
 - `testing/logs/LWBOOK1_AUDIT_INDEX.md`
+
+## Current Book 2 Baseline
+
+Book 2 folder:
+
+- `books/lw/02fotw`
+
+Expected section range:
+
+- `sect1.htm` through `sect350.htm`
+
+Checked-in data artifacts:
+
+- `data/book2-section-flows.json`
+
+Primary technical audit logs:
+
+- `testing/logs/LWBOOK2_PASS1_RULES_BASELINE.md`
+- `testing/logs/LWBOOK2_SETUP_IMPLEMENTATION.md`
+- `testing/logs/LWBOOK2_SECTION_FLOW_BASELINE.md`
 
 ## Repo Hygiene
 
