@@ -6,7 +6,17 @@ GitHub issue: #27
 
 Scope: rulings needed before Book 2 start-state and section automation implementation.
 
-## Required Before Book 2 Setup Implementation
+## Applied Setup Rulings
+
+| ID | Topic | User ruling | Implementation direction |
+| --- | --- | --- | --- |
+| B2-R1 | Book 1 Backpack Items | Backpack Items should carry over from Book 1 because some Book 1 items matter later in the series. | Carry Backpack availability and Backpack Items into Book 2 when transitioning from a completed Book 1 save, still enforcing the eight-item Backpack limit. |
+| B2-R2 | Standalone Book 2 start | Standalone Book 2 is allowed only when Book 2 is the first book the player has read; if coming from Book 1, no new character is needed. | Support two setup paths: campaign transition from Book 1 and clearly labeled fresh standalone Book 2 creation. |
+| B2-R3 | Gold cap during transition | Gold caps hard at 50; if the cap is reached, no additional Gold is picked up. | Clamp Gold Crowns to 50 whenever Book 2 starting/carry-over Gold is applied and show a receipt when Gold is lost to the cap. |
+| B2-R4 | Collector's Edition Special Item loss option | Follow Project Aon main text only for now, until section 194 is reached in play and reviewed. | Implement main-text behavior only; keep the CE note documented as a future/manual consideration. |
+| B2-R5 | Access papers | Track as a story flag and an inventory item that can be removed, until the section is play-reviewed. | Add an item/flag pattern when section automation reaches access papers: inventory can show/remove the papers, while story flag can support route logic. |
+
+## Original Setup Questions
 
 | ID | Topic | Source | Question | Default Recommendation |
 | --- | --- | --- | --- | --- |
@@ -27,4 +37,4 @@ Scope: rulings needed before Book 2 start-state and section automation implement
 
 ## Status
 
-No rulings have been applied yet. These questions should be answered before Book 2 setup or automation code is changed.
+Setup rulings B2-R1 through B2-R5 are answered and ready for implementation. Later section-audit rulings B2-R6 through B2-R9 remain watch-items for the combat, item, and Meal automation passes.

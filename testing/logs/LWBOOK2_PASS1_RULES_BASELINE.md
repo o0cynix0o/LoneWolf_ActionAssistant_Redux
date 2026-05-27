@@ -102,8 +102,8 @@ Book 2 needs these app changes before it is playable:
 - Book 2 starting Gold roll and Gold carry-over addition.
 - Book 2 Special Item auto-adds for Seal of Hammerdal and Map of Sommerlund.
 - Support for standalone Book 2 creation, if approved.
-- Book-aware handling for carried Backpack Items from Book 1, pending ruling.
-- Gold cap behavior at 50 Crowns, pending ruling.
+- Carry-over handling for Backpack availability and Backpack Items from Book 1, per ruling B2-R1.
+- Hard Gold cap behavior at 50 Crowns, per ruling B2-R3.
 - Special Item duplicate handling for items such as Chainmail Waistcoat and Map, pending implementation detail.
 
 ## Annotation And Errata Findings
@@ -164,8 +164,16 @@ Recommended next issue after rulings:
 4. Write `LWBOOK2_SECTION_FLOW_BASELINE.md`.
 5. Begin the Book 2 automation-language scan from the signal categories above.
 
+## Applied Rulings
+
+- Book 1 Backpack Items carry over into Book 2.
+- Standalone Book 2 creation is allowed only as a clearly labeled fresh start, not when continuing from Book 1.
+- Gold Crowns cap hard at 50; excess Gold is not picked up.
+- Section 194 follows Project Aon main text only for now.
+- Access papers should become both an inventory item that can be removed and a story flag that can support route logic.
+
 ## Remaining Risk
 
 - This pass did not implement Book 2 behavior.
 - Section automations, combat presets, route checks, random helpers, achievements, and strategy docs remain future work.
-- Several campaign handoff choices need user rulings before implementation.
+- Later section-audit watch-items remain for Sommerswerd, Magic Spear, Crystal Star Pendant history, and Wildlands Hunting suppression.
