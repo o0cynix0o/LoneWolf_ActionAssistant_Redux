@@ -562,6 +562,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      height: min(58vh, 640px);
+      min-height: 220px;
       overflow: hidden;
       border: 1px solid #4e4528;
       border-radius: 5px;
@@ -569,9 +571,10 @@
     }
     .map-card-frame img {
       display: block;
-      width: 100%;
-      max-height: min(62vh, 680px);
+      width: auto;
       height: auto;
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
     }
     .map-card-actions {
