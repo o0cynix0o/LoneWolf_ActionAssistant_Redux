@@ -54,4 +54,6 @@ For cleanup advice, see the [100 Percent Achievement Guide](Achievement-100-Perc
 
 ## Repeat Book
 
-Future campaign support will keep unlocked achievements while letting completed books be replayed. For now, Book 1 achievement history is preserved in the save.
+Use **Repeat Book 1** when you want another run at routes or achievements. The app returns you to section 1, restores full Endurance and base Combat Skill, rebuilds your original Book 1 starting gear, and keeps your Kai Disciplines and Weaponskill.
+
+Achievement history and combat history stay in the save, so a replay feels like a fresh run without erasing what you already proved.

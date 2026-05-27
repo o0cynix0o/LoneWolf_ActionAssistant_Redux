@@ -1,14 +1,14 @@
 # Lone Wolf Action Assistant Redux
 
-Lone Wolf Action Assistant Redux is a local browser-based play aid for the *Lone Wolf* gamebooks. It pairs locally installed Project Aon book files with a companion assistant that handles character bookkeeping, section support, combat tracking, saves, achievements, and strategy-guide material.
+Lone Wolf Action Assistant Redux is a local browser-based play aid for the *Lone Wolf* gamebooks. We built it to sit beside your own Project Aon book files and take care of the fiddly Action Chart work: character bookkeeping, section support, combat tracking, saves, achievements, and strategy-guide material.
 
 This repository is the clean AA2 rebuild of the earlier Lone Wolf assistant. It uses the proven Grey Star Action Assistant workflow as a project template, but the rules, book data, automation, tests, and player docs are rebuilt around Lone Wolf.
 
-Current status: **Book 1 playable local pre-alpha**
+Current status: **Book 1 playable release candidate**
 
 ## Book Files Are Not Included
 
-This project does **not** redistribute Project Aon book HTML files. Users must download the standard Project Aon HTML editions for personal use and place them under:
+This project does **not** redistribute Project Aon book HTML files. Bring your own standard Project Aon HTML editions for personal use and place them under:
 
 ```text
 books\lw
@@ -53,8 +53,7 @@ Project Aon links:
 
 ## Current Limitations
 
-- This is not yet a public packaged release.
-- The manual browser ergonomics and release-readiness pass is still pending.
+- Book 1 is the first supported book and is being prepared as the first public prerelease package.
 - Book 2 and later are not supported yet.
 - Later books must be onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` before they are treated as playable.
 
@@ -144,6 +143,7 @@ Useful starting points:
 - `docs/BOOK_SOURCE_MAP.md`
 - `docs/INSTALL_PROJECT_AON_BOOKS.md`
 - `docs/PUBLIC_RELEASE_CHECKLIST.md`
+- `docs/RELEASE_NOTES_V0.1.0-rc1.md`
 - `docs/RELEASE_NOTES_PREALPHA.md`
 
 Wiki source pages live in `docs/wiki/` and are mirrored to the GitHub wiki when publishing player-facing docs.
@@ -169,7 +169,7 @@ Create a release ZIP from the current git commit:
 
 The ZIP is written to `dist/`. Runtime saves, UI preferences, the local wiki checkout, and local Project Aon book files are not included.
 
-Do not package or publish a release until the browser ergonomics and release-readiness pass is complete.
+Before publishing a package, run the public release checklist and smoke-test the ZIP from a fresh extracted folder.
 
 ## Project Layout
 

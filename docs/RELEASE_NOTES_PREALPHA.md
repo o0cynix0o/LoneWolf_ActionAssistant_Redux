@@ -1,6 +1,6 @@
-# Pre-Alpha Notes
+# Historical Pre-Alpha Notes
 
-This is the Lone Wolf Action Assistant Redux pre-alpha rebuild.
+These notes record the early Lone Wolf Action Assistant Redux pre-alpha rebuild. They are kept for project history; current player-facing releases start with `docs/RELEASE_NOTES_V0.1.0-rc1.md`.
 
 ## Included
 
@@ -28,8 +28,6 @@ This is the Lone Wolf Action Assistant Redux pre-alpha rebuild.
   - direct END/Gold/gear/death/completion effects.
   - optional loot buttons for 18 sections.
 
-## Not A Playable Release
+## Historical Release Warning
 
-Combat automation, route math, and some special item/Kai Discipline behavior are still incomplete. Do not publish this as a playable release until Book 1 combat, route checks, and section effects have been audited and playtested.
-
-Do not package or publish this as a playable app.
+At this stage, combat automation, route math, and some special item/Kai Discipline behavior were still incomplete. The project was not ready to package or publish as a playable app yet.

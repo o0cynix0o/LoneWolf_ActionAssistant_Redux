@@ -1,8 +1,8 @@
 # Public Release Checklist
 
-Use this before tagging or uploading a public build.
+Use this before tagging or uploading a public build. It is the team's last calm look around before we hand the app to players.
 
-Current release state: **Book 1 playable local pre-alpha**. Do not package or publish a public release until the manual browser ergonomics pass has been completed and release approval is explicit.
+Current release state: **Book 1 playable release candidate**. Book 1 has automated coverage and multiple browser playthroughs behind it; package only from a clean commit after the final ZIP smoke test passes.
 
 ## Clean Start
 
@@ -64,7 +64,7 @@ Before public release, verify:
 - Book 1 completion screen
 - app restart recovery from an existing save
 
-Record the result in `testing/logs/LWBOOK1_PLAYTEST_REPORT.md` or a newer release-readiness log before packaging.
+Record the result in `testing/logs/LWBOOK1_PLAYTEST_REPORT.md` or a newer release-readiness log before packaging. If something feels awkward during real play, fix it before cutting the ZIP.
 
 ## Package
 

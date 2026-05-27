@@ -2,7 +2,7 @@
 
 Lone Wolf Action Assistant Redux does not include the Project Aon book files.
 
-Download the books from Project Aon for personal use, then extract the standard HTML files into the local `books\lw` folder.
+Download the books from Project Aon for personal use, then extract the standard HTML files into the local `books\lw` folder. The app will read them from your machine; we do not bundle or upload them.
 
 ## Book 1
 

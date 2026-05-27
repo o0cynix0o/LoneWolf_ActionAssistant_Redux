@@ -2,11 +2,11 @@
 
 ## Is This Playable Yet?
 
-Book 1 is playable locally in pre-alpha form.
+Yes. Book 1 is playable locally as the first release candidate.
 
 You can create a Book 1 character, use the Book 1 Action Chart, follow section routes, apply audited section effects, resolve supported combats and rolls, recover from death, save/load, and unlock achievements.
 
-It is not a packaged public release yet. The next big non-book step is a manual browser ergonomics and release-readiness pass.
+The next books are not supported yet; we will onboard them one at a time so rule changes, new powers, and new gear choices are not rushed.
 
 ## Which Book Is Supported First?
 

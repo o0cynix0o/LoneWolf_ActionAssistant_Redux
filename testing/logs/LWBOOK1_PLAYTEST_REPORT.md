@@ -2,7 +2,7 @@
 
 Date: 2026-05-27
 
-Scope: issues #1-#16, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, the combat edge playtest, the broader route gauntlet, the reusable book pipeline backfill, and the approved Book 1 achievement batch.
+Scope: issues #1-#26, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, the combat edge playtest, the broader route gauntlet, the reusable book pipeline backfill, the approved Book 1 achievement batch, browser ergonomics polish, and the release-readiness pass.
 
 ## Checks
 
@@ -25,6 +25,7 @@ Scope: issues #1-#16, covering the Book 1 character/sheet rebuild, section-flow 
 - Route gauntlet playtest with `testing\lwbook1_route_gauntlet_playtest.py`.
 - Achievement smoke with `testing\lwbook1_achievement_smoke.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
+- Manual browser playtesting reported by the user on 2026-05-27, covering at least two Book 1 runs after the browser polish fixes.
 
 ## Results
 
@@ -65,6 +66,8 @@ Scope: issues #1-#16, covering the Book 1 character/sheet rebuild, section-flow 
 - Automation-language audit now reports zero uncovered signal categories.
 - Section-flow data now includes 24 optional loot helpers, 3 explicit loss/exchange-choice helpers, 36 route-check sections, and 1 staged roll helper.
 - Achievement smoke covered Book 1 definitions, story-route completion, first blood, Gourgaz victory, durable item history for Prince's Sword and Crystal Star Pendant, paid route achievements, Vordak Gem outcomes, capture outcomes, gear loss, marsh escape, 75-section exploration, and completed-book summary backfill.
+- Browser polish after the main automation pass moved automation receipts out of Choices, hid ordinary text routes from the Choices card, scaled the Book 1 map to fit the screen, added themed death-screen summaries, fixed Repeat Book 1, and clarified Hunting Meal exemption receipts.
+- User browser playtesting reached at least two Book 1 playthroughs with no remaining pain points reported before the release-readiness package pass.
 
 ## Remaining Risk
 
@@ -72,4 +75,4 @@ Scope: issues #1-#16, covering the Book 1 character/sheet rebuild, section-flow 
 - The first achievement batch is conservative; `lw1_route_gauntlet` remains deferred as internal playtest proof.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
 - Later route playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
-- Packaging/release is still blocked until a manual browser ergonomics pass confirms the app feels playable through ordinary use.
+- Packaging/release still requires the final automated validation ladder and fresh ZIP smoke test for issue #26.

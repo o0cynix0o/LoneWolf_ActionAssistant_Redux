@@ -118,4 +118,4 @@ then every wiki edit must keep both folders in sync.
 
 ## Release Honesty
 
-Do not call the app release-ready until the browser ergonomics pass and packaging checks are complete. Book 1 is playable in local pre-alpha form, but the release ZIP should not be advertised until that pass is done.
+Do not call a package release-ready until the packaging checks are complete. Book 1 is now the playable release candidate; later books remain future pipeline work.

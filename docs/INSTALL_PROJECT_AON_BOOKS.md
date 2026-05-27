@@ -2,7 +2,7 @@
 
 Lone Wolf Action Assistant Redux does not include Project Aon book HTML files in the repository or release ZIP.
 
-Project Aon provides the Internet Editions for personal use from its own distribution point. Their license allows you to receive/download the books for personal use, but it does not allow this project to redistribute the book files. Download the books directly from Project Aon, then place them in the local folder layout below.
+Project Aon provides the Internet Editions from its own site. Their license lets you download the books for personal use, but it does not let this project redistribute the book files. Download the books directly from Project Aon, then place them in the local folder layout below.
 
 Read the license here:
 
@@ -16,7 +16,7 @@ Current supported book:
 
 | Book | Status | Project Aon page | Standard ZIP |
 | --- | --- | --- | --- |
-| 1. Flight from the Dark | Playable pre-alpha | https://www.projectaon.org/en/Main/FlightFromTheDark | https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip |
+| 1. Flight from the Dark | Playable release candidate | https://www.projectaon.org/en/Main/FlightFromTheDark | https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip |
 
 Future books must be installed locally before they can be audited through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
 

@@ -2,7 +2,7 @@
 
 Welcome to the project wiki for **Lone Wolf Action Assistant Redux**.
 
-This wiki is the player-facing companion to the local web assistant. It explains how to use the app while playing the **Lone Wolf** gamebooks from your own Project Aon book files.
+This wiki is the player-facing companion to the local web assistant. We use it to explain how the app works, what Book 1 can do today, and how to keep your own Project Aon book files local and private.
 
 The app does not include Project Aon book files. Download the books directly from Project Aon for personal use, then follow [Installing Project Aon Books](Installing-Project-Aon-Books).
 
@@ -44,9 +44,9 @@ Current assistant support is strongest for:
 
 - **Book 1: Flight from the Dark**
 
-Book 1 has a playable local pre-alpha baseline: character creation, sheet fields, section routes, core automation, combat presets, random helpers, death recovery, achievements, and Book 1 guide pages are in place.
+Book 1 is the current playable release candidate. Character creation, sheet fields, section routes, core automation, combat presets, random helpers, death recovery, achievements, and Book 1 guide pages are in place.
 
-The app still needs a manual browser ergonomics and release-readiness pass before packaging.
+Book 2 and later will be added one at a time through the book pipeline so new rules, carry-over choices, powers, gear, and section logic get proper attention.
 
 ## Project Rule
 

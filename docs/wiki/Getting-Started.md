@@ -1,6 +1,6 @@
 # Getting Started
 
-This project is a pre-alpha Lone Wolf Action Assistant Redux rebuild. Book 1 is playable enough for local use, but it is not a packaged public release yet.
+This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux. We are starting with *Flight from the Dark* and keeping the app local, practical, and faithful to the book text.
 
 ## Requirements
 
@@ -59,7 +59,7 @@ docs\INSTALL_PROJECT_AON_BOOKS.md
 
 ## Playing Book 1
 
-Start a new Book 1 character from the assistant. The current Book 1 sheet supports Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns.
+Start a new Book 1 character from the assistant. The Book 1 sheet supports Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns.
 
 Use the assistant buttons when the current section offers them:
 

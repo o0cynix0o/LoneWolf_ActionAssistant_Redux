@@ -1,8 +1,8 @@
 # Public Release Guide
 
-This page is the release-readiness checklist for a fresh install.
+This page is the release-readiness checklist for a fresh install. It is the friendly version of our maintainer checklist: make sure the app starts cleanly, make sure the books are still user-installed, and make sure nothing personal sneaks into the package.
 
-Lone Wolf Action Assistant Redux is not release-ready yet. Book 1 is playable locally, but the app still needs the manual browser ergonomics pass before packaging.
+Book 1 is the current release candidate. Keep packaging honest: run the checks, smoke-test a fresh ZIP, and only publish a build that feels good to actually play.
 
 ## Start
 
@@ -56,7 +56,7 @@ If the layout gets strange, open **Settings** and use **Reset All Card Layouts**
 
 Before packaging a release:
 
-- finish the manual browser ergonomics pass
+- record the manual browser playtest result
 - confirm new character flow, saves, imports, route buttons, loot, combat, death recovery, and achievements in the browser
 - confirm Book 1 files are not packaged
 - confirm personal saves are not packaged
