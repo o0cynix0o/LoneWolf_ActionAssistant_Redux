@@ -715,6 +715,16 @@
       color: #aeb091;
       font-size: 0.82rem;
     }
+    .death-copy {
+      max-width: 820px;
+      margin: 0.15rem 0 0.75rem;
+      color: #efe8d0;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+    .death-summary {
+      margin-top: 0.65rem;
+    }
     .death-options {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2492,9 +2502,144 @@
       return `Book ${book}, section ${section}`;
     }
 
+    const deathScenesBySection = {
+      21: {
+        title: 'The Ground Declines Your Request',
+        body: 'The marsh looks at your travel plans and quietly files a correction. You and your horse make a serious attempt at forward progress; the ground has other priorities.',
+        status: 'Swallowed by the bog.',
+        advice: 'When the terrain starts behaving like soup, believe it.'
+      },
+      53: {
+        title: 'Gravity Makes A Strong Argument',
+        body: 'You make a brief but memorable attempt at downhill travel. Sadly, uncontrolled tumbling has not yet been recognized as a Kai Discipline.',
+        status: 'Terminal impact, followed by enemy cleanup.',
+        advice: 'Next time, consider the route with fewer hills, ditches, and witnesses.'
+      },
+      54: {
+        title: 'Roadside Assistance Is Not Coming',
+        body: 'The road gets busy, the spear gets accurate, and your travel plan becomes a pile of terrible decisions. The enemy handles the follow-up with upsetting confidence.',
+        status: 'Stopped on the highway.',
+        advice: 'A fast escape is useful. A safe escape is better.'
+      },
+      60: {
+        title: 'The Guest Policy Was Terrible',
+        body: 'You accepted shelter from exactly the wrong people. Their hospitality is short, sharp, and very final.',
+        status: 'Betrayed at close range.',
+        advice: 'Maybe give future rustic accommodations a second inspection.'
+      },
+      108: {
+        title: 'Gravity Makes A Strong Argument',
+        body: 'You make a bold attempt at rooftop aviation. Sadly, Sommerlund has not recognized "falling very fast" as a Kai Discipline.',
+        status: 'Terminal impact.',
+        advice: 'Next time, consider the route with fewer rooftops.'
+      },
+      127: {
+        title: 'This Is Why We Avoid Capture',
+        body: 'Capture goes from bad to worse with impressive speed. The enemy processing system is unpleasant, efficient, and light on paperwork.',
+        status: 'Claimed while prisoner.',
+        advice: 'If capture is optional, treat that option with deep suspicion.'
+      },
+      154: {
+        title: 'The Trap Was, In Fact, A Trap',
+        body: 'In fairness, the pit was doing its job. In further fairness, you discovered this from the least useful angle.',
+        status: 'Caught by a prepared hazard.',
+        advice: 'Suspicious ground is often suspicious for a reason.'
+      },
+      185: {
+        title: 'The Hidden Archer Files A Complaint',
+        body: 'You wait for the hidden archer to show themselves. The hidden archer declines and sends several extremely persuasive counterarguments instead.',
+        status: 'Ambushed by arrows.',
+        advice: 'If the shooter is hidden, standing still is a bold research method.'
+      },
+      219: {
+        title: 'Architectural Feedback Arrives Quickly',
+        body: 'A large block of stone handles the negotiation. It does not seem interested in your side of the story.',
+        status: 'Flattened by masonry.',
+        advice: 'Ancient structures are rarely improved by standing underneath the moving parts.'
+      },
+      234: {
+        title: 'Gravity Makes A Strong Argument',
+        body: 'You leave the caravan in a hurry and meet the road in a way roads generally do not appreciate. The enemy then adds a decorative conclusion.',
+        status: 'Bad landing, worse aftermath.',
+        advice: 'Emergency exits are better when they include the word "controlled".'
+      },
+      259: {
+        title: 'Staff Meeting Adjourned',
+        body: 'A mysterious staff appears, the air gets dramatic, and then your future is cancelled by lightning.',
+        status: 'Struck by sorcery.',
+        advice: 'When the room gets colder and chanting starts, leaving is not cowardice. It is scheduling.'
+      },
+      271: {
+        title: 'The Marsh Has Notes',
+        body: 'Poison and marsh water team up, which is exactly the kind of collaboration nobody asked for.',
+        status: 'Poisoned and drowned.',
+        advice: 'Marshes rarely improve a medical emergency.'
+      },
+      286: {
+        title: 'That Was Not A Negotiation',
+        body: 'The enemy does not pause for a dramatic speech, which feels rude, but efficient. There are simply too many of them.',
+        status: 'Overwhelmed in combat.',
+        advice: 'Courage is good. Counting is also good.'
+      },
+      292: {
+        title: 'The Darkness Accepts Your Application',
+        body: 'You are pulled beyond the world into a timeless dark realm, which is exactly as bad as it sounds. The ancient evil wins this round, and its employee retention policy appears to be "forever."',
+        status: 'Claimed by ancient darkness.',
+        advice: 'Maybe do not pick that option again.'
+      },
+      306: {
+        title: 'Outnumbered Is A Number',
+        body: 'The ambush arrives from above, and the math becomes ugly fast. You are brave; unfortunately, there are a lot of them.',
+        status: 'Overwhelmed by enemy forces.',
+        advice: 'Brave is good. Surrounded is bad.'
+      },
+      309: {
+        title: 'That Was Not A Social Call',
+        body: 'You identify the threat. The threat immediately identifies you back, and its customer service is catastrophic.',
+        status: 'Destroyed by dark sorcery.',
+        advice: 'If the robed figure screams and the air changes, the conversation is over.'
+      },
+      327: {
+        title: 'The Sky Has Become A Problem',
+        body: 'The sky fills with enemies, which is a strong sign that the day has left the planning phase.',
+        status: 'Caught by overwhelming pursuit.',
+        advice: 'A retreat is only a retreat if the exit is still open.'
+      }
+    };
+
+    const genericDeathScenes = {
+      combat: {
+        title: 'That Was Not A Negotiation',
+        body: 'The enemy does not pause for a dramatic speech, which feels rude, but efficient. Your mission ends in the sort of close-range disagreement that armor was invented to prevent.',
+        status: 'Defeated in combat.',
+        advice: 'Maybe heal, flee, or reconsider that "I can take them" energy.'
+      },
+      failure: {
+        title: 'A Bold Tactical Miscalculation',
+        body: 'You press on despite every sign that this was a bad idea. The universe, always happy to provide feedback, responds with finality.',
+        status: 'Mission failed.',
+        advice: 'Courage is good. Evidence is also good.'
+      },
+      default: {
+        title: 'Well. That Went Poorly.',
+        body: 'The plan had promise right up until the part where it stopped having promise. Lone Wolf has fallen, and the road to Holmgard remains inconveniently unfinished.',
+        status: 'Your adventure ends here.',
+        advice: 'Rewind, retry, and pretend this was a valuable training exercise.'
+      }
+    };
+
+    function deathSceneFor(death) {
+      const section = Number(death?.Section || app?.state?.CurrentSection || 0);
+      if (deathScenesBySection[section]) return deathScenesBySection[section];
+      const type = String(death?.Type || '').toLowerCase();
+      if (type === 'combat') return genericDeathScenes.combat;
+      if (type === 'failure') return genericDeathScenes.failure;
+      return genericDeathScenes.default;
+    }
+
     function renderDeathScreen() {
       const death = currentDeath();
-      const outcome = String(death.Type || '').toLowerCase() === 'failure' ? 'Mission Failed' : 'Lone Wolf Has Fallen';
+      const scene = deathSceneFor(death);
       const repeatTarget = targetLabel(death.RepeatTarget);
       const rewindTarget = targetLabel(death.RewindTarget);
       const repeatCopy = death.CanRepeat
@@ -2505,8 +2650,16 @@
         : 'There is no earlier section checkpoint yet. Load a save or start a new run if repeat is not available.';
       view.innerHTML = `
         <div class="panel panel-danger">
-          <h2>${escapeHtml(outcome)}</h2>
-          <p class="muted">${escapeHtml(text(death.Cause, 'This path has ended.'))}</p>
+          <h2>${escapeHtml(scene.title)}</h2>
+          <p class="death-copy">${escapeHtml(scene.body)}</p>
+          <div class="grid death-summary">
+            ${field('Result', escapeHtml(text(scene.result, 'Your adventure ends here.')))}
+            ${field('Status', escapeHtml(scene.status))}
+            ${field('Advice', escapeHtml(scene.advice))}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Final Record</h2>
           <div class="grid">
             ${field('Section', escapeHtml(text(death.Section, app.state.CurrentSection)))}
             ${field('Final END', `${escapeHtml(text(death.EnduranceCurrent, '0'))}/${escapeHtml(text(death.EnduranceMax, currentCharacter().EnduranceMax))}`)}
