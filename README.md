@@ -1,26 +1,29 @@
 # Lone Wolf Action Assistant Redux
 
-Lone Wolf Action Assistant Redux is the clean AA2 rebuild of the Lone Wolf play assistant. This repository starts from the proven Grey Star Action Assistant workflow and rebuilds the rules, audit data, testing, docs, packaging, issues, and release process around *Flight from the Dark*.
+Lone Wolf Action Assistant Redux is a local browser-based play aid for the *Lone Wolf* gamebooks. It pairs locally installed Project Aon book files with a companion assistant that handles character bookkeeping, section support, combat tracking, saves, achievements, and strategy-guide material.
+
+This repository is the clean AA2 rebuild of the earlier Lone Wolf assistant. It uses the proven Grey Star Action Assistant workflow as a project template, but the rules, book data, automation, tests, and player docs are rebuilt around Lone Wolf.
 
 Current status: **Book 1 playable local pre-alpha**
 
-The modern web dashboard, card layout, receipt drawer, launcher, release tooling, and workflow docs are in place. Book 1 now supports valid *Flight from the Dark* character creation, Lone Wolf Action Chart fields, source-link routes, section automation, route checks, random helpers, combat presets, loot/loss helpers, death recovery, achievements, playtest coverage, and wiki pages.
-
-This is still not a public packaged release. The next non-book milestone is the manual browser ergonomics and release-readiness pass.
-
 ## Book Files Are Not Included
 
-This project does **not** redistribute Project Aon book HTML files. Users must download the books from Project Aon for personal use and place them locally under:
+This project does **not** redistribute Project Aon book HTML files. Users must download the standard Project Aon HTML editions for personal use and place them under:
 
 ```text
 books\lw
 ```
 
-The first audit target is already expected at:
+The current supported local book folder is:
 
 ```text
 books\lw\01fftd
 ```
+
+Full walkthrough:
+
+- `docs/INSTALL_PROJECT_AON_BOOKS.md`
+- local app page: `http://127.0.0.1:8797/install-books.html`
 
 Project Aon links:
 
@@ -28,54 +31,165 @@ Project Aon links:
 - Flight from the Dark: https://www.projectaon.org/en/Main/FlightFromTheDark
 - Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip
 
-## What This Rebuild Contains
+## What It Includes
 
-- Card-dashboard web shell adapted for Lone Wolf Redux.
-- Local Python web server and launcher skeleton.
-- CLI bridge skeleton.
-- Old Lone Wolf data references copied into `data/`:
-  - combat results table
-  - Kai Disciplines
-  - Magnakai references
-  - Weaponskill map
-- Book 1 character creation from *Flight from the Dark* rules:
+- Book 1 support for *Flight from the Dark*.
+- Split view with the book reader on the left and the assistant on the right, once the Project Aon book files are installed locally.
+- Book 1 character creation from the rules:
   - Combat Skill = random digit + 10
   - Endurance = random digit + 20
   - exactly five Kai Disciplines
   - Weaponskill random weapon mapping
   - Axe, Backpack with one Meal, Map of Sommerlund, Gold Crown roll, and monastery-find roll
-- Book 1 section-flow baseline generated from the local `sect*.htm` files:
-  - 350 sections found
-  - 555 source route links
-  - zero invalid section links
-  - section 1 legal routes exposed from checked-in data
-- Book 1 automation baseline:
-  - checked section-effect entries
-  - required Meal handling with Hunting exemption
-  - direct END/Gold/gear/completion/death effects
-  - optional loot buttons and loss-choice helpers
-- Book 1 combat presets, random helpers, route checks, death recovery, and achievements.
-- Local docs mirror and GitHub wiki scaffold for player-facing pages.
+- Lone Wolf Action Chart fields for Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns.
+- Book 1 source-link route data from the local `sect*.htm` files.
+- Audited section helpers for Meals, Endurance changes, Gold changes, item gain/loss, route checks, random helpers, combat presets, death recovery, book completion, and achievements.
+- Expandable notification receipts that explain recent automation, item use, combat, recovery, and achievement changes.
+- Save export, save import, and full save backup.
+- Persistent card layout and size preferences.
+- Three play modes: Auto, Manual, and CLI.
+- Player-facing wiki scaffold and Book 1 strategy material.
 - Agent handoff docs for continuing the rebuild in a fresh chat.
-- Grey Star-style audit, playtest, docs, release, wiki, issue, and packaging workflow.
 
-## What Still Needs Rebuilt
+## Current Limitations
 
-- Manual browser ergonomics and release-readiness review.
-- Any Book 1 polish found during ordinary play.
-- Public release package after the release-readiness pass.
-- Book 2 and later support through the Lone Wolf book pipeline.
+- This is not yet a public packaged release.
+- The manual browser ergonomics and release-readiness pass is still pending.
+- Book 2 and later are not supported yet.
+- Later books must be onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` before they are treated as playable.
 
-## Start Locally
+## Quick Start
+
+Install dependencies from the project folder:
+
+```powershell
+python -m pip install -r .\requirements.txt
+```
+
+Start the app:
 
 ```powershell
 .\Launch-LoneWolfRedux.ps1
 ```
 
+Or:
+
+```powershell
+python .\launch_lonewolf_redux.py
+```
+
 Then open:
 
 ```text
-http://localhost:8797/assistant.html
+http://127.0.0.1:8797/assistant.html
 ```
 
-The next work should begin with [AGENT.md](AGENT.md) and the Book 1 audit logs under `testing\logs`.
+Use the local server address. Opening `assistant.html` directly from the file system can break local book paths.
+
+If this is a fresh checkout, open the book install guide first:
+
+```text
+http://127.0.0.1:8797/install-books.html
+```
+
+## Play Modes
+
+Use the small white dot in the upper-right of the assistant panel to switch modes.
+
+- **Auto Mode** is the normal helper mode. Section effects, section-aware rolls, loot helpers, combat presets, saves, death recovery, and achievements are available.
+- **Manual Mode** keeps the sheet, saves, inventory, notes, and achievements, but disables audited section automation. Use it when you want to do the book math yourself.
+- **CLI Mode** replaces the normal assistant body with the terminal assistant inside the web page. It uses the same save data as the web GUI.
+
+Default ports:
+
+- Library and web app: `http://127.0.0.1:8797`
+- Embedded CLI bridge: `ws://127.0.0.1:8798`
+
+## Basic Play Flow
+
+1. Start the app from PowerShell.
+2. Open the assistant page from the local server address.
+3. Create or load a Lone Wolf character.
+4. Read the book in the left pane.
+5. Click book section links normally; the assistant follows your current section.
+6. Use the assistant panels for inventory, stats, combat, rolls, notes, saves, and achievements.
+7. When Book 1 ends, use the completion screen to review the result. Later-book transitions are future pipeline work.
+
+## Saves And Backups
+
+Use the **Saves** tab for:
+
+- **Export Current Save**: download the current character as JSON.
+- **Import Selected Save**: load an exported save into this install.
+- **Backup All Saves**: download every local save in one ZIP.
+
+Runtime save data is intentionally local and ignored by git:
+
+- `saves/`
+- `current-position.json`
+- `data/last-save.txt`
+- `data/ui-preferences.json`
+
+## Documentation
+
+Project docs live in `docs/`.
+
+Useful starting points:
+
+- `AGENT.md`
+- `docs/AGENT_HANDOFF.md`
+- `docs/LONE_WOLF_AA2_WORKFLOW.md`
+- `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`
+- `docs/BOOK_AUDIT_WORKFLOW.md`
+- `docs/BOOK_SOURCE_MAP.md`
+- `docs/INSTALL_PROJECT_AON_BOOKS.md`
+- `docs/PUBLIC_RELEASE_CHECKLIST.md`
+- `docs/RELEASE_NOTES_PREALPHA.md`
+
+Wiki source pages live in `docs/wiki/` and are mirrored to the GitHub wiki when publishing player-facing docs.
+
+## Testing
+
+Run the Book 1 release checks from the project folder:
+
+```powershell
+python -m py_compile app_server.py lonewolf_redux.py launch_lonewolf_redux.py ws_server.py
+python .\testing\playtest_book1.py
+```
+
+The granular Book 1 scripts live under `testing/`, and supporting audit reports live under `testing/logs/`.
+
+## Release Package
+
+Create a release ZIP from the current git commit:
+
+```powershell
+.\tools\Make-Release.ps1
+```
+
+The ZIP is written to `dist/`. Runtime saves, UI preferences, the local wiki checkout, and local Project Aon book files are not included.
+
+Do not package or publish a release until the browser ergonomics and release-readiness pass is complete.
+
+## Project Layout
+
+- `assistant.html`: web assistant UI.
+- `index.html`: local book library entry page.
+- `install-books.html`: local book install guide page.
+- `app_server.py`: HTTP server and JSON API for the web assistant.
+- `lonewolf_redux.py`: terminal assistant and shared Lone Wolf rules logic.
+- `ws_server.py`: WebSocket bridge for embedded CLI mode.
+- `launch_lonewolf_redux.py`: Python launcher for the web app and CLI bridge.
+- `Launch-LoneWolfRedux.ps1`: Windows convenience launcher.
+- `books/`: local book install folder. Project Aon book files go under `books/lw/` but are ignored by git and not included in release ZIPs.
+- `data/book1-section-flows.json`: Book 1 route, helper, combat, and roll data.
+- `data/book1-simple-automations.json`: Book 1 simple section automation data.
+- `data/book-route-checks.json`: route-check helper data.
+- `data/crt.json`: Combat Results Table.
+- `testing/`: route, automation, combat, achievement, and Book 1 playtest checks.
+- `testing/logs/`: technical audit reports and playtest reports.
+- `tools/Make-Release.ps1`: release ZIP builder.
+
+## Notice
+
+This is an unofficial local play aid. It does not redistribute the Lone Wolf books. Users download the Project Aon Internet Editions directly from Project Aon for personal use. See `NOTICE.md`.
