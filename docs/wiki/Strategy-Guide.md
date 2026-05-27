@@ -1,12 +1,14 @@
 # Strategy Guide
 
-Spoiler warning: these pages talk openly about routes, items, danger spots, and replay targets.
+A heads-up before we begin: these pages talk openly about routes, items, danger spots, and replay targets for supported books.
 
-The strategy guides are the player-facing version of the audit work: warm, practical, and written for someone who is actually playing the book. Technical route labels and implementation notes belong in `testing/logs`; these pages focus on what kind of run to make, what to respect, and what to leave for replay.
+The strategy guides are written for someone who is actually playing the book. They focus on what kind of run to make, what to respect, and what to leave for replay.
 
 ## Available Guides
 
 - [Book 1 Strategy Guide](Book-1-Strategy-Guide)
+- [Full Campaign Story Run](Full-Campaign-Story-Run)
+- [100 Percent Achievement Guide](Achievement-100-Percent-Guide)
 
 ## What To Expect
 
@@ -17,4 +19,6 @@ Each guide should give you:
 - the big paths worth replaying
 - items and discoveries that actually matter
 - combat and inventory tips
-- future achievement and replay advice
+- achievement and replay advice
+
+Book 2 and later guides should be added only after those books have gone through the book pipeline.

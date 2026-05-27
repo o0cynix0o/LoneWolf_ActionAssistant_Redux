@@ -1,26 +1,61 @@
 # Getting Started
 
-This project is a pre-alpha Lone Wolf Action Assistant Redux rebuild. Book 1 is playable enough for local testing, but it is not a packaged public release yet.
+This project is a pre-alpha Lone Wolf Action Assistant Redux rebuild. Book 1 is playable enough for local use, but it is not a packaged public release yet.
 
-To run the local shell:
+## Requirements
+
+- Python 3
+- A modern browser
+- The project files from the repository
+- Your own Project Aon Book 1 HTML files
+
+Install Python dependencies from the project folder if needed:
+
+```powershell
+python -m pip install -r .\requirements.txt
+```
+
+## Start The App
+
+From PowerShell:
 
 ```powershell
 .\Launch-LoneWolfRedux.ps1
 ```
 
-Then open:
+Or:
 
-```text
-http://localhost:8797/assistant.html
+```powershell
+python .\launch_lonewolf_redux.py
 ```
 
-For the first build pass, use the local Book 1 files:
+Then open the local server page:
+
+```text
+http://127.0.0.1:8797/assistant.html
+```
+
+## Install The Books
+
+The release ZIP does not include Project Aon book files.
+
+For Book 1, extract the Project Aon standard HTML files here:
 
 ```text
 books\lw\01fftd
 ```
 
-Do not commit the book files.
+The local guide page is:
+
+```text
+http://127.0.0.1:8797/install-books.html
+```
+
+The repo guide is:
+
+```text
+docs\INSTALL_PROJECT_AON_BOOKS.md
+```
 
 ## Playing Book 1
 
@@ -35,3 +70,39 @@ Use the assistant buttons when the current section offers them:
 - death recovery controls when a run ends badly
 
 For practical route advice, see [Book 1 Strategy Guide](Book-1-Strategy-Guide).
+
+## Choose A Play Mode
+
+Use the small menu in the upper-right of the assistant panel to switch modes.
+
+- **Auto** is the normal helper mode with section effects, roll helpers, loot helpers, combat presets, and achievements.
+- **Manual** keeps the sheet and saves, but turns audited helpers into advice-only buttons so you can handle the book math yourself.
+- **CLI** opens the terminal assistant inside the web page and uses the same save data.
+
+## Important Browser Note
+
+Use the local server URL. Opening `assistant.html` directly as a file can make the book open but leave the assistant disconnected.
+
+Correct:
+
+```text
+http://127.0.0.1:8797/assistant.html
+```
+
+Risky:
+
+```text
+opening assistant.html directly from the file system
+```
+
+## Autosave
+
+The app autosaves state during normal play. That is intentional. It protects the sheet, inventory, route history, combat history, achievements, and notes as you move through the book.
+
+## Moving Saves
+
+Use the **Saves** tab when you need to move or protect your run:
+
+- **Export Current Save** downloads the current character.
+- **Backup All Saves** downloads every local save in one ZIP.
+- **Import Selected Save** loads an exported save JSON into this installation.

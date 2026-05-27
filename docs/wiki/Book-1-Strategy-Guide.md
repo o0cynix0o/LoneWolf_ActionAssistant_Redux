@@ -1,6 +1,6 @@
 # Book 1 Strategy Guide - *Flight from the Dark*
 
-Spoiler warning: this page talks openly about routes, items, danger spots, and replay targets for Book 1.
+A heads-up before we begin: this guide talks openly about routes, items, danger spots, and replay targets for Book 1. It does not spoil anything from later Lone Wolf books.
 
 Book 1 is not trying to make you feel like a full-grown legend yet. It is a survival flight. You are the last Kai Lord, wounded by disaster, trying to carry terrible news through a country that has suddenly become very dangerous. The best first run respects that mood: move carefully, preserve resources, and do not chase every shiny branch just because the book lets you.
 
@@ -14,7 +14,7 @@ For a first clear, choose practical Kai Disciplines:
 - **Hunting**
 - **Healing**
 
-That set makes the early forest safer, softens the Meal economy, gives you route help, and keeps Endurance from sliding too fast between fights. Weaponskill and Mindshield are both useful on other routes, but the five above make the cleanest first pass through the current tested story route.
+That set makes the early forest safer, softens the Meal economy, gives you route help, and keeps Endurance from sliding too fast between fights. Weaponskill and Mindshield are both useful on other routes, but the five above make the cleanest first pass through the current story route.
 
 Use the Assistant whenever it offers a button. If a section has a Meal requirement, a route check, a roll helper, a combat preset, or a loot option, let the app handle the bookkeeping. Book 1 is not mechanically huge, but it has enough little losses, costs, and inventory limits that doing everything by memory is how a good run quietly goes crooked.
 
@@ -26,13 +26,13 @@ The first win should be a calm run to Holmgard. The second and third runs are wh
 
 ## Best First Playthrough
 
-The current tested story route reaches section **350** like this:
+The current clean story route reaches section **350** like this:
 
 ```text
 1, 141, 56, 222, 252, 70, 157, 30, 261, 264, 6, 200, 168, 64, 16, 192, 171, 303, 237, 265, 142, 135, 223, 75, 163, 321, 273, 51, 288, 129, 3, 196, 332, 350
 ```
 
-This is not the only winning route. It is the route we use as the clean Book 1 app proof because it reaches the ending through legal links, uses route checks, exercises the section 237 roll helper, and confirms Book 1 completion.
+This is not the only winning route. It is the route we trust for a calm first clear because it reaches the ending through legal links, uses route checks, and gives the app a fair chance to handle the paperwork.
 
 For a normal player, the important advice is simpler than the route list:
 
@@ -41,6 +41,8 @@ For a normal player, the important advice is simpler than the route list:
 - Avoid spending Gold down to nothing before paid routes.
 - Do not enter fights already half-dead.
 - Let the Assistant save and load before long branches.
+
+For the route by itself, see [Full Campaign Story Run](Full-Campaign-Story-Run).
 
 ## Paths Worth Knowing
 
@@ -118,12 +120,12 @@ The third mistake is treating route checks like mandatory commands. A route chec
 
 The fourth mistake is hand-editing around bad outcomes. If the book takes your gear, lets you die, or marks failure, let the app record it. Use Repeat or Rewind when you want another try.
 
-## Replay And Achievements
+## Achievement Cleanup
 
 Book 1 achievements are now live. Treat them as replay hooks, not chores for your first clear.
 
 - Finish the book and reach Holmgard.
-- Follow the checked messenger route from the end-to-end playtest.
+- Follow the clean messenger route.
 - Win your first combat and defeat the Gourgaz.
 - Take the Prince's Sword and find the Crystal Star Pendant.
 - Try the paid ferry and caravan routes when you can spare the Gold Crowns.
@@ -131,6 +133,8 @@ Book 1 achievements are now live. Treat them as replay hooks, not chores for you
 - Explore broadly enough to visit 75 unique sections.
 
 The app backfills achievements automatically from save history where it has reliable state.
+
+For a focused cleanup list, see the [100 Percent Achievement Guide](Achievement-100-Percent-Guide).
 
 ## Final Word
 
