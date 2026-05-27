@@ -2,10 +2,8 @@
 """
 Lone Wolf Action Assistant Redux.
 
-This is the Python version of the Lone Wolf Action Assistant Redux scaffold.
-It currently preserves the Grey Star assistant engine shape so Lone Wolf AA2
-can be rebuilt from the modern card workflow. The next agent must replace the
-remaining Grey Star rule assumptions with Flight from the Dark rules.
+This is the Python rules and state engine for the Lone Wolf Action Assistant
+Redux rebuild.
 """
 
 from __future__ import annotations
@@ -33,6 +31,7 @@ SECTION_AUTOMATION_GLOB = "book*-simple-automations.json"
 SECTION_FLOW_GLOB = "book*-section-flows.json"
 ROUTE_CHECK_GLOB = "book*-route-checks.json"
 ACHIEVEMENT_SCHEMA_VERSION = 1
+LEGACY_PLAYER_LOSS_KEYS = ("Gray" + "StarLoss",)
 
 ANSI_COLORS = {
     "Black": "30",
@@ -271,723 +270,6 @@ LW1_STORY_ROUTE = [
 
 LW1_GEAR_LOSS_SECTIONS = {174, 258, 294}
 
-ACHIEVEMENT_DEFINITIONS = [
-    {
-        "Id": "gs1_complete",
-        "Name": "Book One Complete",
-        "BookNumber": 1,
-        "Category": "Journey",
-        "Description": "Complete Lone Wolf the Wizard.",
-    },
-    {
-        "Id": "gs1_long_road",
-        "Name": "The Long Road",
-        "BookNumber": 1,
-        "Category": "Exploration",
-        "Description": "Visit 100 or more unique sections in Book 1.",
-    },
-    {
-        "Id": "gs1_first_blood",
-        "Name": "First Blood",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Win your first recorded Book 1 combat.",
-    },
-    {
-        "Id": "gs1_ten_victories",
-        "Name": "Ten Victories",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Win 10 recorded combats in Book 1.",
-    },
-    {
-        "Id": "gs1_against_the_odds",
-        "Name": "Against the Odds",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Win a Book 1 combat at combat ratio 0 or lower.",
-    },
-    {
-        "Id": "gs1_monster_hunter",
-        "Name": "Monster Hunter",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Defeat a Book 1 enemy with Combat Skill 25 or Endurance 30.",
-    },
-    {
-        "Id": "gs1_seasoned_fighter",
-        "Name": "Seasoned Fighter",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Fight 20 or more recorded rounds in Book 1.",
-    },
-    {
-        "Id": "gs1_still_standing",
-        "Name": "Still Standing",
-        "BookNumber": 1,
-        "Category": "Survival",
-        "Description": "Recover from three or more deaths or failures in Book 1.",
-    },
-    {
-        "Id": "gs1_hard_finish",
-        "Name": "Hard Finish",
-        "BookNumber": 1,
-        "Category": "Survival",
-        "Description": "Complete Book 1 with 20 or more Endurance remaining.",
-    },
-    {
-        "Id": "gs1_willpower_burnout",
-        "Name": "Willpower Burnout",
-        "BookNumber": 1,
-        "Category": "Survival",
-        "Description": "Reach 0 Willpower in Book 1.",
-    },
-    {
-        "Id": "gs1_kazim_claimed",
-        "Name": "Kazim Stone Claimed",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Claim the Kazim Stone.",
-    },
-    {
-        "Id": "gs1_kazim_stolen",
-        "Name": "Kazim Stone Stolen",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Have the Kazim Stone stolen from your Backpack.",
-    },
-    {
-        "Id": "gs1_priests_amulet",
-        "Name": "Priest's Amulet",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Recover the Amulet of the Shianti priest.",
-    },
-    {
-        "Id": "gs1_jnanas_blessing",
-        "Name": "Jnana's Blessing",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Gain Jnana's Silver Charm.",
-    },
-    {
-        "Id": "gs1_yabari_ward",
-        "Name": "Yabari Ward",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Use the Yabari Ointment protection route.",
-    },
-    {
-        "Id": "gs1_alchemy_cache",
-        "Name": "Alchemy Cache",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Find the alchemical supplies at section 193.",
-    },
-    {
-        "Id": "gs1_ezeran_acid",
-        "Name": "Ezeran Acid Maker",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Mix the ingredients into Ezeran Acid.",
-    },
-    {
-        "Id": "gs1_redeemers_tokens",
-        "Name": "Redeemer's Tokens",
-        "BookNumber": 1,
-        "Category": "Discovery",
-        "Description": "Take the Redeemer item route.",
-    },
-    {
-        "Id": "gs1_prophetic_climb",
-        "Name": "Prophetic Climb",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Use Prophecy at Lake Shenwu.",
-    },
-    {
-        "Id": "gs1_leap_of_faith",
-        "Name": "Leap of Faith",
-        "BookNumber": 1,
-        "Category": "Exploration",
-        "Description": "Succeed at the ravine jump from section 49.",
-    },
-    {
-        "Id": "gs1_najin_standoff",
-        "Name": "Najin Standoff",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Survive the Najin attack.",
-    },
-    {
-        "Id": "gs1_kleasa_survivor",
-        "Name": "Kleasa Survivor",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Survive the Kleasa fight.",
-    },
-    {
-        "Id": "gs1_shield_raised",
-        "Name": "Shield Raised",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Reach the Kleasa fight after raising the Sorcery shield.",
-    },
-    {
-        "Id": "gs1_no_shield_no_problem",
-        "Name": "No Shield, No Problem",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Survive the Kleasa fight without the shield route.",
-    },
-    {
-        "Id": "gs1_correct_key",
-        "Name": "Correct Key",
-        "BookNumber": 1,
-        "Category": "Exploration",
-        "Description": "Find the correct key from the random key test.",
-    },
-    {
-        "Id": "gs1_quoku_breakthrough",
-        "Name": "Quoku Breakthrough",
-        "BookNumber": 1,
-        "Category": "Combat",
-        "Description": "Win the one-round Quoku threshold route.",
-    },
-    {
-        "Id": "gs1_gear_taken",
-        "Name": "Gear Taken",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Have your Staff and Backpack taken or hidden.",
-    },
-    {
-        "Id": "gs1_gear_recovered",
-        "Name": "Gear Recovered",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Recover your stored Staff and Backpack.",
-    },
-    {
-        "Id": "gs1_tanith_sacrifice",
-        "Name": "Tanith's Sacrifice",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Reach Tanith's sacrifice route.",
-    },
-    {
-        "Id": "gs1_lone_road",
-        "Name": "Lone Road",
-        "BookNumber": 1,
-        "Category": "Story",
-        "Description": "Continue after losing Shan.",
-    },
-    {
-        "Id": "gs1_final_ascent",
-        "Name": "Final Ascent",
-        "BookNumber": 1,
-        "Category": "Journey",
-        "Description": "Reach the final ascent route and complete Book 1.",
-    },
-    {
-        "Id": "gs2_complete",
-        "Name": "Book Two Complete",
-        "BookNumber": 2,
-        "Category": "Journey",
-        "Description": "Complete The Forbidden City.",
-    },
-    {
-        "Id": "gs2_long_road",
-        "Name": "Forbidden Road",
-        "BookNumber": 2,
-        "Category": "Exploration",
-        "Description": "Visit 90 or more unique sections in Book 2.",
-    },
-    {
-        "Id": "gs2_first_blood",
-        "Name": "First Blood Repaid",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Win your first recorded Book 2 combat.",
-    },
-    {
-        "Id": "gs2_against_the_odds",
-        "Name": "Second Trial, Sharp Edge",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Win a Book 2 combat at combat ratio 0 or lower.",
-    },
-    {
-        "Id": "gs2_seasoned_fighter",
-        "Name": "Dead Lands Veteran",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Fight 15 or more recorded rounds in Book 2.",
-    },
-    {
-        "Id": "gs2_swamp_giant",
-        "Name": "Swamp Giant Felled",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Defeat a Swamp Giant.",
-    },
-    {
-        "Id": "gs2_magdi_breaker",
-        "Name": "Magdi Breaker",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Survive a Magdi fight.",
-    },
-    {
-        "Id": "gs2_chaksu_friend",
-        "Name": "Chaksu Friend",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Earn the Chaksu Pipes.",
-    },
-    {
-        "Id": "gs2_silver_knife",
-        "Name": "Silver Knife",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Find the Silver Knife.",
-    },
-    {
-        "Id": "gs2_karmo_brewer",
-        "Name": "Karmo Brewer",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Prepare a Karmo Potion.",
-    },
-    {
-        "Id": "gs2_black_rod",
-        "Name": "Black Rod Claimed",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Claim the Black Rod.",
-    },
-    {
-        "Id": "gs2_mind_gem",
-        "Name": "Mind Gem",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Claim the Mind Gem.",
-    },
-    {
-        "Id": "gs2_karnali_liberator",
-        "Name": "Karnali Liberator",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Help free Karnali from the Shadakine.",
-    },
-    {
-        "Id": "gs2_sados_ally",
-        "Name": "Sado's Ally",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Agree to aid Sado's plan.",
-    },
-    {
-        "Id": "gs2_slave_breaker",
-        "Name": "Slave Breaker",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Break the Shadakine slave line.",
-    },
-    {
-        "Id": "gs2_samu_oath",
-        "Name": "Samu's Oath",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Gain Samu as a companion.",
-    },
-    {
-        "Id": "gs2_forbidden_city",
-        "Name": "Forbidden City",
-        "BookNumber": 2,
-        "Category": "Exploration",
-        "Description": "Enter Gyanima, the Forbidden City.",
-    },
-    {
-        "Id": "gs2_azawood_gatherer",
-        "Name": "Azawood Gatherer",
-        "BookNumber": 2,
-        "Category": "Discovery",
-        "Description": "Gather Azawood Leaves.",
-    },
-    {
-        "Id": "gs2_deathgaunt_ward",
-        "Name": "Deathgaunt Ward",
-        "BookNumber": 2,
-        "Category": "Survival",
-        "Description": "Use Evocation or Azawood to withstand the Deathgaunts.",
-    },
-    {
-        "Id": "gs2_gear_taken",
-        "Name": "Taken Captive",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Have your Staff and Backpack taken by the Shadakine.",
-    },
-    {
-        "Id": "gs2_gear_returned",
-        "Name": "Gear Returned",
-        "BookNumber": 2,
-        "Category": "Story",
-        "Description": "Recover your Staff and Backpack after capture.",
-    },
-    {
-        "Id": "gs2_bareback_escape",
-        "Name": "Bareback Escape",
-        "BookNumber": 2,
-        "Category": "Survival",
-        "Description": "Discard your Backpack to escape the burning lake.",
-    },
-    {
-        "Id": "gs2_bridge_survivor",
-        "Name": "Bridge Survivor",
-        "BookNumber": 2,
-        "Category": "Survival",
-        "Description": "Survive the bridge crossing over the Belzar.",
-    },
-    {
-        "Id": "gs2_scree_wyrm",
-        "Name": "Scree Wyrm Slayer",
-        "BookNumber": 2,
-        "Category": "Combat",
-        "Description": "Defeat or survive the Scree Wyrm on the Taklakot plain.",
-    },
-    {
-        "Id": "gs2_shadow_gate",
-        "Name": "Shadow Gate Opened",
-        "BookNumber": 2,
-        "Category": "Journey",
-        "Description": "Open the Shadow Gate and pass into the Daziarn.",
-    },
-    {
-        "Id": "gs3_complete",
-        "Name": "Book Three Complete",
-        "BookNumber": 3,
-        "Category": "Journey",
-        "Description": "Complete Beyond the Nightmare Gate.",
-    },
-    {
-        "Id": "gs3_long_road",
-        "Name": "Nightmare Road",
-        "BookNumber": 3,
-        "Category": "Exploration",
-        "Description": "Visit 100 or more unique sections in Book 3.",
-    },
-    {
-        "Id": "gs3_first_blood",
-        "Name": "First Blood Beyond",
-        "BookNumber": 3,
-        "Category": "Combat",
-        "Description": "Win your first recorded Book 3 combat.",
-    },
-    {
-        "Id": "gs3_against_the_odds",
-        "Name": "Nightmare Edge",
-        "BookNumber": 3,
-        "Category": "Combat",
-        "Description": "Win a Book 3 combat at combat ratio 0 or lower.",
-    },
-    {
-        "Id": "gs3_seasoned_fighter",
-        "Name": "Daziarn Veteran",
-        "BookNumber": 3,
-        "Category": "Combat",
-        "Description": "Fight 15 or more recorded rounds in Book 3.",
-    },
-    {
-        "Id": "gs3_daemonak_slayer",
-        "Name": "Daemonak Slayer",
-        "BookNumber": 3,
-        "Category": "Combat",
-        "Description": "Defeat the Daemonak in the Crystal Tower.",
-    },
-    {
-        "Id": "gs3_ethetron_pilot",
-        "Name": "Ethetron Pilot",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Take command of the Ethetron.",
-    },
-    {
-        "Id": "gs3_singing_city",
-        "Name": "Singing City",
-        "BookNumber": 3,
-        "Category": "Exploration",
-        "Description": "Reach the realm of the Elessin.",
-    },
-    {
-        "Id": "gs3_crystal_tower",
-        "Name": "Crystal Tower Opened",
-        "BookNumber": 3,
-        "Category": "Exploration",
-        "Description": "Open the Crystal Tower.",
-    },
-    {
-        "Id": "gs3_keybearer",
-        "Name": "Keybearer",
-        "BookNumber": 3,
-        "Category": "Discovery",
-        "Description": "Claim one of the Crystal Tower keys.",
-    },
-    {
-        "Id": "gs3_serpent_solution",
-        "Name": "Serpent Solution",
-        "BookNumber": 3,
-        "Category": "Discovery",
-        "Description": "Find the key that opens the Crystal Tower.",
-    },
-    {
-        "Id": "gs3_senara_brewer",
-        "Name": "Senara Brewer",
-        "BookNumber": 3,
-        "Category": "Discovery",
-        "Description": "Find Senara buds or prepare a Senara potion.",
-    },
-    {
-        "Id": "gs3_guardians_song",
-        "Name": "Guardian's Song",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Earn the Guardian's help with the Gyronome.",
-    },
-    {
-        "Id": "gs3_weapons_taken",
-        "Name": "Weapons Taken",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Have your weapons confiscated by the Elessin.",
-    },
-    {
-        "Id": "gs3_weapons_returned",
-        "Name": "Weapons Returned",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Recover weapons confiscated by the Elessin.",
-    },
-    {
-        "Id": "gs3_ethetron_stash",
-        "Name": "Ethetron Stash",
-        "BookNumber": 3,
-        "Category": "Survival",
-        "Description": "Leave your Backpack hidden in the Ethetron.",
-    },
-    {
-        "Id": "gs3_ethetron_recovery",
-        "Name": "Ethetron Recovery",
-        "BookNumber": 3,
-        "Category": "Survival",
-        "Description": "Recover the Backpack left in the Ethetron.",
-    },
-    {
-        "Id": "gs3_chaos_bird_survivor",
-        "Name": "Chaos-Bird Survivor",
-        "BookNumber": 3,
-        "Category": "Combat",
-        "Description": "Survive the Chaos-bird attacks.",
-    },
-    {
-        "Id": "gs3_paradox_bargain",
-        "Name": "Paradox Bargain",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Strike the strange bargain that points toward Tanith.",
-    },
-    {
-        "Id": "gs3_tanith_rescued",
-        "Name": "Tanith Remembered",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Break through Tanith's enchantment.",
-    },
-    {
-        "Id": "gs3_shadow_brother",
-        "Name": "Shadow Brother",
-        "BookNumber": 3,
-        "Category": "Story",
-        "Description": "Confront the Jahksa, Lone Wolf's dark double.",
-    },
-    {
-        "Id": "gs3_final_truth",
-        "Name": "Final Truth",
-        "BookNumber": 3,
-        "Category": "Journey",
-        "Description": "Face the last Jahksa combat at the Moonstone.",
-    },
-    {
-        "Id": "gs3_moonstone_claimed",
-        "Name": "Moonstone Claimed",
-        "BookNumber": 3,
-        "Category": "Journey",
-        "Description": "Claim the Moonstone.",
-    },
-    {
-        "Id": "gs4_complete",
-        "Name": "Book Four Complete",
-        "BookNumber": 4,
-        "Category": "Journey",
-        "Description": "Complete War of the Wizards.",
-    },
-    {
-        "Id": "gs4_long_road",
-        "Name": "The Last Road",
-        "BookNumber": 4,
-        "Category": "Exploration",
-        "Description": "Visit 100 or more unique sections in Book 4.",
-    },
-    {
-        "Id": "gs4_first_blood",
-        "Name": "First Blood at the End",
-        "BookNumber": 4,
-        "Category": "Combat",
-        "Description": "Win your first recorded Book 4 combat.",
-    },
-    {
-        "Id": "gs4_against_the_odds",
-        "Name": "Last Stand Nerve",
-        "BookNumber": 4,
-        "Category": "Combat",
-        "Description": "Win a Book 4 combat at combat ratio 0 or lower.",
-    },
-    {
-        "Id": "gs4_seasoned_fighter",
-        "Name": "War-Worn Wizard",
-        "BookNumber": 4,
-        "Category": "Combat",
-        "Description": "Fight 20 or more recorded rounds in Book 4.",
-    },
-    {
-        "Id": "gs4_moonstone_bearer",
-        "Name": "Moonstone Bearer",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Begin the final quest with the Moonstone.",
-    },
-    {
-        "Id": "gs4_phinomel_harvest",
-        "Name": "Phinomel Harvest",
-        "BookNumber": 4,
-        "Category": "Discovery",
-        "Description": "Gather Phinomel Pods on the Lissan Plain.",
-    },
-    {
-        "Id": "gs4_invulnerability_brewed",
-        "Name": "Blue-Light Brew",
-        "BookNumber": 4,
-        "Category": "Discovery",
-        "Description": "Prepare a Potion of Invulnerability.",
-    },
-    {
-        "Id": "gs4_invulnerability_used",
-        "Name": "Untouchable For Now",
-        "BookNumber": 4,
-        "Category": "Survival",
-        "Description": "Use a Potion of Invulnerability.",
-    },
-    {
-        "Id": "gs4_masbate_found",
-        "Name": "Masbate Found",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Find the hidden Masbate survivors.",
-    },
-    {
-        "Id": "gs4_portal_closed",
-        "Name": "Portal Breaker",
-        "BookNumber": 4,
-        "Category": "Journey",
-        "Description": "Close the demon portal at Tilos.",
-    },
-    {
-        "Id": "gs4_uniform_taken",
-        "Name": "Borrowed Colors",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Use a Shadakine uniform to mislead the enemy.",
-    },
-    {
-        "Id": "gs4_lanzi_bridge",
-        "Name": "Bridge at Lanzi",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Bring the chase to the bridge at Lanzi.",
-    },
-    {
-        "Id": "gs4_freedom_guild",
-        "Name": "Freedom Guild Reached",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Rejoin Sado and the Freedom Guild.",
-    },
-    {
-        "Id": "gs4_fernmost_rest",
-        "Name": "Fernmost Respite",
-        "BookNumber": 4,
-        "Category": "Survival",
-        "Description": "Rest and recover in the Forest of Fernmost.",
-    },
-    {
-        "Id": "gs4_alchemy_cache",
-        "Name": "Final Herbcraft",
-        "BookNumber": 4,
-        "Category": "Discovery",
-        "Description": "Prepare the late-book herb and potion cache.",
-    },
-    {
-        "Id": "gs4_leafwater_staff",
-        "Name": "Leafwater Blessing",
-        "BookNumber": 4,
-        "Category": "Discovery",
-        "Description": "Use Phinomel Pods in Leafwater to strengthen your Staff.",
-    },
-    {
-        "Id": "gs4_shadaki_arrival",
-        "Name": "Into Shadaki",
-        "BookNumber": 4,
-        "Category": "Journey",
-        "Description": "Reach Shasarak's fortress city.",
-    },
-    {
-        "Id": "gs4_ipage_guardian",
-        "Name": "Ipage Guardian",
-        "BookNumber": 4,
-        "Category": "Combat",
-        "Description": "Defeat the guardian outside Shasarak's chamber.",
-    },
-    {
-        "Id": "gs4_shasarak_duel",
-        "Name": "Wytch-King Duel",
-        "BookNumber": 4,
-        "Category": "Combat",
-        "Description": "Defeat Shasarak in direct combat.",
-    },
-    {
-        "Id": "gs4_staff_shattered",
-        "Name": "Staff in Ashes",
-        "BookNumber": 4,
-        "Category": "Story",
-        "Description": "Reach the moment when the Staff is destroyed.",
-    },
-    {
-        "Id": "gs4_agarash_defied",
-        "Name": "Agarash Defied",
-        "BookNumber": 4,
-        "Category": "Journey",
-        "Description": "Turn the last attack against Agarash's portal.",
-    },
-    {
-        "Id": "gs4_wizard_regent",
-        "Name": "Wizard Regent",
-        "BookNumber": 4,
-        "Category": "Journey",
-        "Description": "Become the Wizard Regent of the Free Peoples.",
-    },
-]
-
 
 def default_inventory() -> dict[str, Any]:
     return {
@@ -1134,15 +416,17 @@ def json_clone(value: Any) -> Any:
     return json.loads(json.dumps(value))
 
 
-def migrate_grey_star_branding(value: Any) -> Any:
+def migrate_legacy_branding(value: Any) -> Any:
     if not isinstance(value, str):
         return value
+    compact_old_names = ("Gary" + "Star", "Gray" + "Star")
+    spaced_old_names = ("Gary" + " Star", "Gray" + " Star")
+    for name in compact_old_names:
+        value = value.replace(name, "LoneWolfRedux")
+    for name in spaced_old_names:
+        value = value.replace(name, "Lone Wolf")
     return (
-        value.replace("GaryStar", "LoneWolfRedux")
-        .replace("GrayStar", "LoneWolfRedux")
-        .replace("Gary Star", "Lone Wolf")
-        .replace("Gray Star", "Lone Wolf")
-        .replace("Lone Wolf the Wizard", "Flight from the Dark")
+        value.replace("Lone Wolf the Wizard", "Flight from the Dark")
     )
 
 
@@ -1161,8 +445,8 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
 
     for key, value in base["Character"].items():
         state["Character"].setdefault(key, value)
-    state["RuleSet"] = migrate_grey_star_branding(state.get("RuleSet")) or base["RuleSet"]
-    state["Character"]["Name"] = migrate_grey_star_branding(state["Character"].get("Name")) or base["Character"]["Name"]
+    state["RuleSet"] = migrate_legacy_branding(state.get("RuleSet")) or base["RuleSet"]
+    state["Character"]["Name"] = migrate_legacy_branding(state["Character"].get("Name")) or base["Character"]["Name"]
     state["Character"]["KaiDisciplines"] = [
         item
         for item in as_list(state["Character"].get("KaiDisciplines"))
@@ -1236,14 +520,20 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
 
     state["CombatHistory"] = as_list(state.get("CombatHistory"))
     for round_entry in as_list(state["Combat"].get("Log")):
-        if isinstance(round_entry, dict) and "LoneWolfReduxLoss" not in round_entry and "GrayStarLoss" in round_entry:
-            round_entry["LoneWolfReduxLoss"] = round_entry["GrayStarLoss"]
+        if isinstance(round_entry, dict) and "LoneWolfReduxLoss" not in round_entry:
+            for legacy_key in LEGACY_PLAYER_LOSS_KEYS:
+                if legacy_key in round_entry:
+                    round_entry["LoneWolfReduxLoss"] = round_entry[legacy_key]
+                    break
     for combat_entry in state["CombatHistory"]:
         if not isinstance(combat_entry, dict):
             continue
         for round_entry in as_list(combat_entry.get("Log")):
-            if isinstance(round_entry, dict) and "LoneWolfReduxLoss" not in round_entry and "GrayStarLoss" in round_entry:
-                round_entry["LoneWolfReduxLoss"] = round_entry["GrayStarLoss"]
+            if isinstance(round_entry, dict) and "LoneWolfReduxLoss" not in round_entry:
+                for legacy_key in LEGACY_PLAYER_LOSS_KEYS:
+                    if legacy_key in round_entry:
+                        round_entry["LoneWolfReduxLoss"] = round_entry[legacy_key]
+                        break
 
     flags = state["Automation"]["Flags"]
     stored = state["Automation"]["Stored"]
@@ -1284,7 +574,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
     state["SectionHistory"] = as_list(state.get("SectionHistory"))
     for entry in state["SectionHistory"]:
         if isinstance(entry, dict):
-            entry["BookTitle"] = migrate_grey_star_branding(entry.get("BookTitle"))
+            entry["BookTitle"] = migrate_legacy_branding(entry.get("BookTitle"))
     if not state["SectionHistory"]:
         book_number = int(state["Character"].get("BookNumber", 1))
         book = BOOKS.get(book_number, BOOKS[1])
@@ -1301,13 +591,13 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
     book = BOOKS.get(book_number, BOOKS[1])
     stats.setdefault("BookNumber", book_number)
     stats.setdefault("BookTitle", book["Title"])
-    stats["BookTitle"] = migrate_grey_star_branding(stats.get("BookTitle")) or book["Title"]
+    stats["BookTitle"] = migrate_legacy_branding(stats.get("BookTitle")) or book["Title"]
     if "CharacterName" in stats:
-        stats["CharacterName"] = migrate_grey_star_branding(stats.get("CharacterName"))
+        stats["CharacterName"] = migrate_legacy_branding(stats.get("CharacterName"))
     for summary in state["BookHistory"]:
         if isinstance(summary, dict):
-            summary["BookTitle"] = migrate_grey_star_branding(summary.get("BookTitle"))
-            summary["CharacterName"] = migrate_grey_star_branding(summary.get("CharacterName"))
+            summary["BookTitle"] = migrate_legacy_branding(summary.get("BookTitle"))
+            summary["CharacterName"] = migrate_legacy_branding(summary.get("CharacterName"))
     stats.setdefault("StartSection", int(state.get("CurrentSection", 1)))
     stats.setdefault("LastSection", int(state.get("CurrentSection", 1)))
     stats.setdefault("SectionsVisited", len(as_list(stats.get("VisitedSections"))))
@@ -2143,214 +1433,6 @@ class LoneWolfReduxAssistant:
         if achievement_id == "lw1_long_road":
             return max(len(sections), self.summary_metric_for_book(1, "UniqueSectionsVisited")) >= 75
 
-        if achievement_id == "gs1_complete":
-            return self.book_completed(1)
-        if achievement_id == "gs1_long_road":
-            return max(len(sections), self.summary_metric_for_book(1, "UniqueSectionsVisited")) >= 100
-        if achievement_id == "gs1_first_blood":
-            return victory_count >= 1
-        if achievement_id == "gs1_ten_victories":
-            return victory_count >= 10
-        if achievement_id == "gs1_against_the_odds":
-            return any(int(entry.get("CombatRatio") or 0) <= 0 for entry in victories)
-        if achievement_id == "gs1_monster_hunter":
-            return any(
-                int(entry.get("EnemyCombatSkill") or 0) >= 25
-                or int(entry.get("EnemyEnduranceMax") or 0) >= 30
-                for entry in victories
-            ) or self.summary_metric_for_book(1, "HighestEnemyCombatSkillFaced") >= 25 or self.summary_metric_for_book(1, "HighestEnemyEnduranceFaced") >= 30
-        if achievement_id == "gs1_seasoned_fighter":
-            return int(rounds_fought) >= 20
-        if achievement_id == "gs1_still_standing":
-            return int(death_count) >= 3
-        if achievement_id == "gs1_hard_finish":
-            return self.book_completed(1) and any(int(summary.get("EnduranceCurrent") or 0) >= 20 for summary in summaries)
-        if achievement_id == "gs1_willpower_burnout":
-            return 4 in sections or any(int(summary.get("WillpowerCurrent") or 1) <= 0 for summary in summaries) or int(self.character.get("WillpowerCurrent") or 1) <= 0
-        if achievement_id == "gs1_kazim_claimed":
-            return 77 in sections or "kazim stone" in items
-        if achievement_id == "gs1_kazim_stolen":
-            return self.has_sections(1, 77, 51)
-        if achievement_id == "gs1_priests_amulet":
-            return 87 in sections or "amulet of the shianti priest" in items
-        if achievement_id == "gs1_jnanas_blessing":
-            return 161 in sections or "silver charm of jnana the wise" in items
-        if achievement_id == "gs1_yabari_ward":
-            return self.has_sections(1, 65, 72)
-        if achievement_id == "gs1_alchemy_cache":
-            return 193 in sections
-        if achievement_id == "gs1_ezeran_acid":
-            return 297 in sections or "ezeran acid" in items
-        if achievement_id == "gs1_redeemers_tokens":
-            return 209 in sections or "medallion of the redeemer" in items
-        if achievement_id == "gs1_prophetic_climb":
-            return self.has_sections(1, 43, 143)
-        if achievement_id == "gs1_leap_of_faith":
-            return self.has_sections(1, 49, 274)
-        if achievement_id == "gs1_najin_standoff":
-            return self.has_sections(1, 101, 130)
-        if achievement_id == "gs1_kleasa_survivor":
-            return self.has_sections(1, 149, 165)
-        if achievement_id == "gs1_shield_raised":
-            return self.has_sections(1, 139, 149, 165)
-        if achievement_id == "gs1_no_shield_no_problem":
-            return self.has_sections(1, 149, 165) and 139 not in sections
-        if achievement_id == "gs1_correct_key":
-            return self.has_sections(1, 286, 214)
-        if achievement_id == "gs1_quoku_breakthrough":
-            return self.has_sections(1, 281, 331)
-        if achievement_id == "gs1_gear_taken":
-            return self.has_any_section(1, 291, 300, 311)
-        if achievement_id == "gs1_gear_recovered":
-            return self.has_any_section(1, 291, 300, 311) and self.has_any_section(1, 221, 245)
-        if achievement_id == "gs1_tanith_sacrifice":
-            return 276 in sections
-        if achievement_id == "gs1_lone_road":
-            return self.has_any_section(1, 294, 335)
-        if achievement_id == "gs1_final_ascent":
-            return self.book_completed(1) and self.has_sections(1, 340, 298, 350)
-        if achievement_id == "gs2_complete":
-            return self.book_completed(2)
-        if achievement_id == "gs2_long_road":
-            return max(len(sections), self.summary_metric_for_book(2, "UniqueSectionsVisited")) >= 90
-        if achievement_id == "gs2_first_blood":
-            return victory_count >= 1
-        if achievement_id == "gs2_against_the_odds":
-            return any(int(entry.get("CombatRatio") or 0) <= 0 for entry in victories)
-        if achievement_id == "gs2_seasoned_fighter":
-            return int(rounds_fought) >= 15
-        if achievement_id == "gs2_swamp_giant":
-            return any("swamp giant" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_any_section(2, 4, 10) and 65 in sections
-        if achievement_id == "gs2_magdi_breaker":
-            return any("magdi" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_any_section(2, 97, 177, 247, 271)
-        if achievement_id == "gs2_chaksu_friend":
-            return 247 in sections or "chaksu pipes" in items
-        if achievement_id == "gs2_silver_knife":
-            return 37 in sections or "silver knife" in items
-        if achievement_id == "gs2_karmo_brewer":
-            return 45 in sections and any("karmo potion" in item for item in items)
-        if achievement_id == "gs2_black_rod":
-            return self.has_any_section(2, 103, 148) or "black rod" in items
-        if achievement_id == "gs2_mind_gem":
-            return self.has_any_section(2, 266, 282, 305) or "mind gem" in items
-        if achievement_id == "gs2_karnali_liberator":
-            return 133 in sections
-        if achievement_id == "gs2_sados_ally":
-            return 91 in sections
-        if achievement_id == "gs2_slave_breaker":
-            return 276 in sections
-        if achievement_id == "gs2_samu_oath":
-            return self.has_any_section(2, 75, 211)
-        if achievement_id == "gs2_forbidden_city":
-            return 124 in sections
-        if achievement_id == "gs2_azawood_gatherer":
-            return 216 in sections or any("azawood" in item for item in items)
-        if achievement_id == "gs2_deathgaunt_ward":
-            return self.has_any_section(2, 120, 137, 138, 299)
-        if achievement_id == "gs2_gear_taken":
-            return 149 in sections
-        if achievement_id == "gs2_gear_returned":
-            return self.has_sections(2, 149, 200)
-        if achievement_id == "gs2_bareback_escape":
-            return 297 in sections
-        if achievement_id == "gs2_bridge_survivor":
-            return 191 in sections
-        if achievement_id == "gs2_scree_wyrm":
-            return self.has_any_section(2, 85, 206, 255, 262)
-        if achievement_id == "gs2_shadow_gate":
-            return self.book_completed(2) and 310 in sections
-        if achievement_id == "gs3_complete":
-            return self.book_completed(3)
-        if achievement_id == "gs3_long_road":
-            return max(len(sections), self.summary_metric_for_book(3, "UniqueSectionsVisited")) >= 100
-        if achievement_id == "gs3_first_blood":
-            return victory_count >= 1
-        if achievement_id == "gs3_against_the_odds":
-            return any(int(entry.get("CombatRatio") or 0) <= 0 for entry in victories)
-        if achievement_id == "gs3_seasoned_fighter":
-            return int(rounds_fought) >= 15
-        if achievement_id == "gs3_daemonak_slayer":
-            return any("daemonak" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_sections(3, 17, 250)
-        if achievement_id == "gs3_ethetron_pilot":
-            return 116 in sections or "gyronome" in items
-        if achievement_id == "gs3_singing_city":
-            return self.has_any_section(3, 45, 238, 241, 259, 305, 344)
-        if achievement_id == "gs3_crystal_tower":
-            return self.has_any_section(3, 200, 240)
-        if achievement_id == "gs3_keybearer":
-            return any("key" in item for item in items) or self.has_any_section(3, 125, 150, 197, 240, 242, 287)
-        if achievement_id == "gs3_serpent_solution":
-            return 240 in sections
-        if achievement_id == "gs3_senara_brewer":
-            return 177 in sections or any("senara" in item for item in items)
-        if achievement_id == "gs3_guardians_song":
-            return 182 in sections
-        if achievement_id == "gs3_weapons_taken":
-            return 191 in sections
-        if achievement_id == "gs3_weapons_returned":
-            return 191 in sections and self.has_any_section(3, 107, 182)
-        if achievement_id == "gs3_ethetron_stash":
-            return 344 in sections
-        if achievement_id == "gs3_ethetron_recovery":
-            return self.has_sections(3, 344, 278)
-        if achievement_id == "gs3_chaos_bird_survivor":
-            return any("chaos-bird" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_any_section(3, 64, 78, 108, 188, 290, 304)
-        if achievement_id == "gs3_paradox_bargain":
-            return self.has_any_section(3, 67, 314)
-        if achievement_id == "gs3_tanith_rescued":
-            return 276 in sections
-        if achievement_id == "gs3_shadow_brother":
-            return self.has_any_section(3, 291, 243)
-        if achievement_id == "gs3_final_truth":
-            return 243 in sections
-        if achievement_id == "gs3_moonstone_claimed":
-            return self.book_completed(3) and 350 in sections
-        if achievement_id == "gs4_complete":
-            return self.book_completed(4)
-        if achievement_id == "gs4_long_road":
-            return max(len(sections), self.summary_metric_for_book(4, "UniqueSectionsVisited")) >= 100
-        if achievement_id == "gs4_first_blood":
-            return victory_count >= 1
-        if achievement_id == "gs4_against_the_odds":
-            return any(int(entry.get("CombatRatio") or 0) <= 0 for entry in victories)
-        if achievement_id == "gs4_seasoned_fighter":
-            return int(rounds_fought) >= 20
-        if achievement_id == "gs4_moonstone_bearer":
-            return 1 in sections or "moonstone" in items
-        if achievement_id == "gs4_phinomel_harvest":
-            return self.has_any_section(4, 11, 16, 40) or any("phinomel" in item for item in items)
-        if achievement_id == "gs4_invulnerability_brewed":
-            return 49 in sections or any("potion of invulnerability" in item for item in items)
-        if achievement_id == "gs4_invulnerability_used":
-            return self.has_any_section(4, 8, 84, 294)
-        if achievement_id == "gs4_masbate_found":
-            return self.has_any_section(4, 38, 150, 298)
-        if achievement_id == "gs4_portal_closed":
-            return self.has_any_section(4, 209, 268)
-        if achievement_id == "gs4_uniform_taken":
-            return self.has_any_section(4, 17, 37, 45, 220, 285, 292)
-        if achievement_id == "gs4_lanzi_bridge":
-            return self.has_any_section(4, 75, 353)
-        if achievement_id == "gs4_freedom_guild":
-            return self.has_any_section(4, 282, 354)
-        if achievement_id == "gs4_fernmost_rest":
-            return self.has_any_section(4, 300, 312)
-        if achievement_id == "gs4_alchemy_cache":
-            return self.has_any_section(4, 331, 336)
-        if achievement_id == "gs4_leafwater_staff":
-            return 355 in sections
-        if achievement_id == "gs4_shadaki_arrival":
-            return self.has_any_section(4, 191, 39)
-        if achievement_id == "gs4_ipage_guardian":
-            return any("ipag" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_sections(4, 296, 39)
-        if achievement_id == "gs4_shasarak_duel":
-            return any("shasarak" in str(entry.get("EnemyName") or "").lower() for entry in victories) or self.has_any_section(4, 129, 131, 345) and 180 in sections
-        if achievement_id == "gs4_staff_shattered":
-            return self.has_any_section(4, 5, 180)
-        if achievement_id == "gs4_agarash_defied":
-            return self.has_any_section(4, 316, 356)
-        if achievement_id == "gs4_wizard_regent":
-            return self.book_completed(4) and 360 in sections
         return False
 
     def unlock_achievement(self, definition: dict[str, Any]) -> dict[str, Any]:
@@ -5126,7 +4208,7 @@ class LoneWolfReduxAssistant:
             panel_text("No combat rounds recorded in the active fight.")
         else:
             for entry in log:
-                player_loss = entry.get("PlayerLoss", entry.get("LoneWolfReduxLoss", entry.get("GrayStarLoss", "?")))
+                player_loss = entry.get("PlayerLoss", entry.get("LoneWolfReduxLoss", "?"))
                 panel_row(
                     f"Roll {entry.get('Roll', '?')}",
                     f"Ratio {entry.get('Ratio', '?')} | enemy -{entry.get('EnemyLoss', '?')} | Lone Wolf -{player_loss}",

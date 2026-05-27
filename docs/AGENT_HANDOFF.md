@@ -26,10 +26,10 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The sixteenth issue pass implemented the approved Book 1 achievement batch with automatic sync/backfill. The seventeenth issue pass scaffolded the Lone Wolf GitHub wiki and docs mirror using the Grey Star wiki structure. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The sixteenth issue pass implemented the approved Book 1 achievement batch with automatic sync/backfill. The seventeenth issue pass scaffolded the Lone Wolf GitHub wiki and docs mirror using the Grey Star wiki structure. The eighteenth issue pass removed safe leftover scaffold references from runtime code and recorded the reference audit. The following debt remains for later passes:
 
-- Book 2-4 Grey Star completion assumptions.
-- Legacy compatibility code for older Grey Star-derived save fields.
+- Book 2 and later transition rules.
+- Legacy compatibility code for older scaffold-derived save fields.
 - Any remaining route aftermaths where the book asks the player to choose which item or weapon is lost or exchanged.
 - Any remaining staged random edge cases found during broader route playtesting.
 - Manual browser ergonomics and release-readiness review.
@@ -193,6 +193,13 @@ Issue #17 changed the wiki baseline:
 - `docs\wiki\_Sidebar.md` and the player-facing page set now mirror the Grey Star wiki shape: getting started, install guide, commands, modes, combat, inventory, stats/achievements, saves, release guide, support matrix, strategy index, story route, achievement guide, FAQ, and Book 1 guide.
 - The live GitHub wiki checkout exists at ignored path `wiki\`; keep it mirrored with `docs\wiki\` before pushing wiki changes.
 - The current wiki is honest about release state: Book 1 is playable local pre-alpha, and packaging waits for the browser ergonomics pass.
+
+Issue #18 changed the scaffold-reference baseline:
+
+- Removed the unused legacy achievement catalogue and trigger block from `lonewolf_redux.py`.
+- Removed direct legacy combat-loss field references from the browser UI and normalized them inside save migration instead.
+- Replaced the leftover Moonstone landing-page subtitle with Book 1 Lone Wolf wording.
+- `testing\logs\LW_SCAFFOLD_REFERENCE_AUDIT.md` records intentional references, cleaned leftovers, and later-book rule debt.
 
 ## GitHub Workflow
 

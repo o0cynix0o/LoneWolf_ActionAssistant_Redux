@@ -3728,7 +3728,7 @@
           ${rounds.length ? rounds.map((round) => `
             <div class="item-row">
               <small>R${escapeHtml(text(round.Round, '?'))}</small>
-              <span>Roll ${escapeHtml(text(round.Roll, '?'))} | Ratio ${escapeHtml(formatSigned(round.Ratio || 0))} | Enemy -${escapeHtml(text(round.EnemyLoss, '0'))} | Lone Wolf -${escapeHtml(text(round.PlayerLoss ?? round.LoneWolfReduxLoss ?? round.GrayStarLoss, '0'))}</span>
+              <span>Roll ${escapeHtml(text(round.Roll, '?'))} | Ratio ${escapeHtml(formatSigned(round.Ratio || 0))} | Enemy -${escapeHtml(text(round.EnemyLoss, '0'))} | Lone Wolf -${escapeHtml(text(round.PlayerLoss ?? round.LoneWolfReduxLoss, '0'))}</span>
             </div>
           `).join('') : '<p class="muted">No combat rounds are recorded for the current fight.</p>'}
         </div>

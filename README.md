@@ -2,9 +2,11 @@
 
 Lone Wolf Action Assistant Redux is the clean AA2 rebuild of the Lone Wolf play assistant. This repository starts from the proven Grey Star Action Assistant workflow and rebuilds the rules, audit data, testing, docs, packaging, issues, and release process around *Flight from the Dark*.
 
-Current status: **pre-alpha Book 1 simple automation baseline**
+Current status: **Book 1 playable local pre-alpha**
 
-The modern web dashboard, card layout, receipt drawer, launcher shape, release tooling, and workflow docs are in place. The first Book 1 pass creates a legal *Flight from the Dark* character and shows the Lone Wolf action-chart fields for Kai Disciplines, Weapons, Backpack, Special Items, Meals, and Gold Crowns. Later passes add a generated Book 1 source-link graph and the first conservative section-effect automations. Combat exceptions and route math are still incomplete, so this is not a public playable release yet.
+The modern web dashboard, card layout, receipt drawer, launcher, release tooling, and workflow docs are in place. Book 1 now supports valid *Flight from the Dark* character creation, Lone Wolf Action Chart fields, source-link routes, section automation, route checks, random helpers, combat presets, loot/loss helpers, death recovery, achievements, playtest coverage, and wiki pages.
+
+This is still not a public packaged release. The next non-book milestone is the manual browser ergonomics and release-readiness pass.
 
 ## Book Files Are Not Included
 
@@ -28,7 +30,7 @@ Project Aon links:
 
 ## What This Rebuild Contains
 
-- Grey Star AA card-dashboard web shell adapted for Lone Wolf Redux.
+- Card-dashboard web shell adapted for Lone Wolf Redux.
 - Local Python web server and launcher skeleton.
 - CLI bridge skeleton.
 - Old Lone Wolf data references copied into `data/`:
@@ -47,21 +49,22 @@ Project Aon links:
   - 555 source route links
   - zero invalid section links
   - section 1 legal routes exposed from checked-in data
-- Book 1 simple automation baseline:
-  - 47 confirmed section-effect entries
+- Book 1 automation baseline:
+  - checked section-effect entries
   - required Meal handling with Hunting exemption
   - direct END/Gold/gear/completion/death effects
-  - optional loot buttons for 18 sections
+  - optional loot buttons and loss-choice helpers
+- Book 1 combat presets, random helpers, route checks, death recovery, and achievements.
+- Local docs mirror and GitHub wiki scaffold for player-facing pages.
 - Agent handoff docs for continuing the rebuild in a fresh chat.
 - Grey Star-style audit, playtest, docs, release, wiki, issue, and packaging workflow.
 
 ## What Still Needs Rebuilt
 
-- Healing and Kai Discipline effects.
-- Full Lone Wolf combat audit for all Book 1 special cases.
-- Deeper Book 1 route checks and random/stat branch automation.
-- Achievements, combat playtests, and strategy guide.
-- Public release notes and package once Book 1 support is real.
+- Manual browser ergonomics and release-readiness review.
+- Any Book 1 polish found during ordinary play.
+- Public release package after the release-readiness pass.
+- Book 2 and later support through the Lone Wolf book pipeline.
 
 ## Start Locally
 
