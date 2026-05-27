@@ -179,9 +179,69 @@ def smoke_death_recovery_checkpoint() -> None:
     assert_equal(assistant.state["CurrentSection"], 141, "rewound section")
 
 
+def smoke_repeat_book1_reset() -> None:
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 350)
+    assert_true(assistant.book_completion_payload().get("Active"), "Book 1 completion screen active")
+
+    assistant.character["EnduranceCurrent"] = 2
+    assistant.character["CombatSkillCurrent"] = 9
+    assistant.inventory["Weapons"] = ["Sword", "Dagger"]
+    assistant.inventory["BackpackItems"] = ["Potion of Healing"]
+    assistant.inventory["SpecialItems"] = ["Map of Sommerlund", "Silver Key"]
+    assistant.inventory["GoldCrowns"] = 40
+    assistant.inventory["Nobles"] = 40
+    assistant.automation["Ending"] = {"BookNumber": 1, "Section": 350, "Type": "success"}
+    assistant.automation["LastRoll"] = {"Raw": 9}
+    assistant.automation["AppliedVisitEffects"] = ["old"]
+    assistant.automation["AppliedRouteActions"] = ["old"]
+    assistant.automation["Stored"] = {"confiscatedEquipment": {"Weapons": ["Axe"]}}
+    assistant.state["Combat"]["Active"] = True
+    assistant.state["CombatHistory"] = [{"BookNumber": 1, "Outcome": "victory"}]
+    assistant.achievement_state()["Unlocked"] = [{"Id": "kept", "Name": "Kept Achievement"}]
+
+    quiet(assistant.repeat_completed_book)
+
+    assert_equal(assistant.state["CurrentSection"], 1, "repeat starts at section 1")
+    assert_equal(assistant.book_completion_payload().get("Active"), False, "repeat clears completion screen")
+    assert_equal(assistant.character["BookNumber"], 1, "repeat stays in Book 1")
+    assert_equal(assistant.character["CombatSkillCurrent"], assistant.character["CombatSkillBase"], "repeat restores base CS")
+    assert_equal(assistant.character["CombatSkillCurrent"], 14, "repeat keeps original CS roll")
+    assert_equal(assistant.character["EnduranceCurrent"], assistant.character["EnduranceMax"], "repeat restores full END")
+    assert_equal(assistant.character["EnduranceMax"], 30, "repeat keeps original starting END bonus")
+    assert_equal(
+        assistant.character["KaiDisciplines"],
+        ["Camouflage", "Sixth Sense", "Tracking", "Hunting", "Healing"],
+        "repeat keeps Kai Disciplines",
+    )
+    assert_equal(assistant.inventory["Weapons"], ["Axe"], "repeat resets starting Weapon")
+    assert_equal(assistant.inventory["BackpackItems"], ["Meal"], "repeat resets Backpack Items")
+    assert_equal(
+        assistant.inventory["SpecialItems"],
+        ["Map of Sommerlund", "Chainmail Waistcoat"],
+        "repeat resets Special Items",
+    )
+    assert_equal(assistant.inventory["GoldCrowns"], 3, "repeat resets Gold Crowns from creation roll")
+    assert_equal(assistant.inventory["HasBackpack"], True, "repeat restores Backpack")
+    assert_true(1 in assistant.character["CompletedBooks"], "repeat preserves completed Book 1 history")
+    assert_equal(assistant.achievement_state()["Unlocked"][0]["Id"], "kept", "repeat preserves achievements")
+    assert_equal(assistant.automation.get("Ending"), None, "repeat clears ending")
+    assert_equal(assistant.automation.get("AppliedVisitEffects"), [], "repeat clears applied entry effects")
+    assert_equal(assistant.automation.get("AppliedRouteActions"), [], "repeat clears route effects")
+    assert_equal(assistant.automation.get("Stored"), {}, "repeat clears stored gear")
+    assert_equal(assistant.state["Combat"]["Active"], False, "repeat clears combat")
+    assert_equal(
+        assistant.state["CombatHistory"],
+        [{"BookNumber": 1, "Outcome": "victory"}],
+        "repeat preserves combat history",
+    )
+    assert_equal([entry["Section"] for entry in assistant.state["SectionHistory"]], [1], "repeat resets route history")
+
+
 def main() -> int:
     play_success_route()
     smoke_death_recovery_checkpoint()
+    smoke_repeat_book1_reset()
     print("Book 1 end-to-end playtest passed.")
     return 0
 

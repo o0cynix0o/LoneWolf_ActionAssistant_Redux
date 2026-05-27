@@ -5371,32 +5371,87 @@ class LoneWolfReduxAssistant:
         book_number = int(summary.get("BookNumber") or self.character["BookNumber"])
         self.ensure_book_completed(book_number)
 
-        self.character["BookNumber"] = book_number
-        self.character["CombatSkillCurrent"] = int(self.character.get("CombatSkillBase") or self.character.get("CombatSkillCurrent") or 0)
-        self.character["EnduranceCurrent"] = int(self.character["EnduranceMax"])
-        self.character["WillpowerCurrent"] = int(self.character.get("WillpowerBase") or self.character["WillpowerCurrent"])
+        if book_number != 1:
+            print("Only Book 1 repeat is enabled in this rebuild.")
+            return
+
+        def saved_digit(key: str, fallback: int) -> int:
+            rolls = self.character.get("CreationRolls")
+            raw = rolls.get(key) if isinstance(rolls, dict) else None
+            try:
+                value = int(raw)
+            except (TypeError, ValueError):
+                value = int(fallback)
+            return max(0, min(9, value))
+
+        def current_weaponskill_roll() -> int | None:
+            rolls = self.character.get("CreationRolls")
+            if isinstance(rolls, dict):
+                raw = rolls.get("Weaponskill")
+                if raw is not None:
+                    try:
+                        return max(0, min(9, int(raw)))
+                    except (TypeError, ValueError):
+                        pass
+            current_weapon = str(self.character.get("WeaponskillWeapon") or "")
+            for digit, weapon in WEAPONSKILL_MAP.items():
+                if str(weapon).lower() == current_weapon.lower():
+                    return int(digit)
+            return None
+
+        name = str(self.character.get("Name") or "Lone Wolf")
+        kai_disciplines = as_list(self.character.get("KaiDisciplines"))
+        completed_books = sorted({int(item) for item in as_list(self.character.get("CompletedBooks")) if str(item).strip()} | {1})
+        notes = as_list(self.character.get("Notes"))
+        achievements = json_clone(self.state.get("Achievements"))
+        book_history = json_clone(as_list(self.state.get("BookHistory")))
+        settings = json_clone(self.state.get("Settings"))
+        automation_enabled = bool(self.automation.get("Enabled", True))
+
+        combat_roll = saved_digit(
+            "CombatSkill",
+            int(self.character.get("CombatSkillBase") or self.character.get("CombatSkillCurrent") or 10) - 10,
+        )
+        endurance_roll = saved_digit(
+            "Endurance",
+            int(self.character.get("EnduranceBase") or self.character.get("EnduranceMax") or 20) - 20,
+        )
+        gold_roll = saved_digit("GoldCrowns", 0)
+        starting_find_roll = saved_digit("StartingFind", 0)
+        weaponskill_roll = current_weaponskill_roll()
+
+        fresh = create_book1_character_state(
+            name=name,
+            kai_disciplines=kai_disciplines,
+            combat_skill_roll=combat_roll,
+            endurance_roll=endurance_roll,
+            gold_roll=gold_roll,
+            starting_find_roll=starting_find_roll,
+            weaponskill_roll=weaponskill_roll,
+        )
 
         self.state["CurrentSection"] = 1
+        self.state["Character"] = fresh["Character"]
+        self.state["Character"]["CompletedBooks"] = completed_books
+        self.state["Character"]["Notes"] = notes
+        self.state["Inventory"] = fresh["Inventory"]
         self.state["Combat"] = json_clone(default_state()["Combat"])
-        self.state["Combat"]["StartedSection"] = 1
+        self.state["SectionHistory"] = []
+        self.state["BookHistory"] = book_history
+        self.state["Achievements"] = achievements if isinstance(achievements, dict) else default_achievements()
+        self.state["Settings"] = settings if isinstance(settings, dict) else default_state()["Settings"]
+        self.state["Automation"] = default_automation()
+        self.state["Automation"]["Enabled"] = automation_enabled
         self.state["CurrentBookStats"] = {
             "BookNumber": book_number,
             "BookTitle": BOOKS[book_number]["Title"],
             "StartSection": 1,
             "LastSection": 1,
-            "SectionsVisited": 1,
-            "VisitedSections": [1],
+            "SectionsVisited": 0,
+            "VisitedSections": [],
             "StartingEnduranceMax": int(self.character["EnduranceMax"]),
-            "StartingWillpower": int(self.character["WillpowerCurrent"]),
+            "StartingGoldCrowns": int(self.inventory.get("GoldCrowns") or 0),
         }
-        self.clear_death_state()
-        self.automation["Ending"] = None
-        self.automation["LastRoll"] = None
-        self.automation["SectionCheckpoints"] = []
-        self.automation["Flags"] = dict(default_automation()["Flags"])
-        self.automation["Stored"] = {}
-
-        self.ensure_herb_pouch()
         self.record_section_visit()
         self.save_section_checkpoint("ready")
         self.write_current_position()
@@ -5404,7 +5459,7 @@ class LoneWolfReduxAssistant:
         print(
             f"Restarted Book {book_number}: {BOOKS[book_number]['Title']} "
             f"with END {self.character['EnduranceCurrent']}/{self.character['EnduranceMax']} "
-            f"and WP {self.character['WillpowerCurrent']}."
+            f"and CS {self.character['CombatSkillCurrent']}."
         )
 
     def note_command(self, tokens: list[str]) -> None:
