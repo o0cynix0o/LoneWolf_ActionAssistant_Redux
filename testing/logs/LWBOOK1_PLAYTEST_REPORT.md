@@ -2,7 +2,7 @@
 
 Date: 2026-05-27
 
-Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, and the completed section-by-section automation-language pass.
+Scope: issues #1-#13, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, and the combat edge playtest.
 
 ## Checks
 
@@ -12,6 +12,7 @@ Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow 
 - Section-flow baseline check with `testing\lwbook1_section_flow_audit.py --check`.
 - Simple automation smoke with `testing\lwbook1_simple_automation_smoke.py`.
 - Combat preset smoke with `testing\lwbook1_combat_smoke.py`.
+- Combat edge playtest with `testing\lwbook1_combat_edge_playtest.py`.
 - Route/random helper smoke with `testing\lwbook1_route_random_smoke.py`.
 - Random/recovery smoke with `testing\lwbook1_random_recovery_smoke.py`.
 - Healing/loss smoke with `testing\lwbook1_healing_loss_smoke.py`.
@@ -42,6 +43,7 @@ Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow 
 - Simple automation smoke covered END loss, required Meals, Hunting meal exemption, END restoration, Gold Crowns, Vordak Gem handling, gear loss, optional section 20 supplies, Book 1 completion, and terminal death.
 - Simple automation data now covers 48 confirmed section-effect entries and optional loot buttons for 24 sections.
 - Combat smoke covered representative Book 1 enemies, Mindblast immunity, conditional CS modifiers, timed modifiers, forced unarmed combat, evasion, round limits, and section 227 victory routing.
+- Combat edge playtest loaded and resolved all 29 checked-in combat presets, confirmed section 236 remains the only combat-class section without a preset, checked route linkage, exercised evasion gates, and verified round-limit timeout routing.
 - Route/random smoke covered representative Kai Discipline, item, Gold Crown, END, and one-roll random route helpers.
 - End-to-end playtest reached section 350 through this legal route:
   `1 -> 141 -> 56 -> 222 -> 252 -> 70 -> 157 -> 30 -> 261 -> 264 -> 6 -> 200 -> 168 -> 64 -> 16 -> 192 -> 171 -> 303 -> 237 -> 265 -> 142 -> 135 -> 223 -> 75 -> 163 -> 321 -> 273 -> 51 -> 288 -> 129 -> 3 -> 196 -> 332 -> 350`.
@@ -63,5 +65,5 @@ Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow 
 
 - The checked routes are playable baselines, not exhaustive route coverage.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
-- Remaining combat exceptions still need later audit passes.
+- Later route playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
 - Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.

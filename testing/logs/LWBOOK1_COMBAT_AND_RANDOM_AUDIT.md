@@ -1,6 +1,6 @@
 # LW Book 1 Combat And Random Audit
 
-Date: 2026-05-26
+Date: 2026-05-27
 
 Scope: first combat preset baseline for local Project Aon Book 1 section files.
 
@@ -10,6 +10,7 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 - Confirmed combat presets added for 29 Book 1 combat sections.
 - Section 236 remains a simple automation entry, not a combat preset.
+- The issue #13 edge playtest loads and resolves all 29 checked-in combat presets.
 - Multi-enemy queues are used where the section fights enemies one at a time.
 - Single combined enemies are used where the section says to fight a group or rider/mount pair as one enemy.
 - Victory routes, evasion routes, and victory choices are included only where the section gives them directly.
@@ -32,9 +33,10 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 - `data/book1-section-flows.json` now carries the combat presets.
 - `testing/lwbook1_section_flow_audit.py` regenerates the checked-in flow data from local book files plus the manual combat audit.
 - `testing/lwbook1_combat_smoke.py` verifies representative presets and exception handling.
+- `testing/lwbook1_combat_edge_playtest.py` verifies every checked-in preset loads, routes, archives, and handles evasion/timeout edges.
+- `testing/logs/LWBOOK1_COMBAT_EDGE_PLAYTEST.md` records the issue #13 combat edge pass.
 
 ## Remaining Work
 
-- Route-check and single-roll helper baseline started in `LWBOOK1_ROUTE_RANDOM_AUDIT.md`.
-- Multi-roll sections and same-section random side effects still need later work.
-- More end-to-end playtesting is needed before packaging or release.
+- More end-to-end route playtesting is needed before packaging or release.
+- Later playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
