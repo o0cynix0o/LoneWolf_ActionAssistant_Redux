@@ -26,7 +26,7 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
@@ -163,6 +163,13 @@ Issue #13 changed the combat hardening baseline:
 - The playtest confirms section 236 remains the only combat-class section without a combat preset, because it is handled as simple automation.
 - The playtest verifies preset route linkage, multi-enemy queues, victory-choice combats, evasion gates, round-limit timeout routes, and combat archive creation.
 - `testing\logs\LWBOOK1_COMBAT_EDGE_PLAYTEST.md` records the pass.
+
+Issue #14 changed the route playtesting baseline:
+
+- `testing\lwbook1_route_gauntlet_playtest.py` follows risky legal routes covering paid routes, combat-adjacent choices, item-gated outcomes, death/failure states, END-threshold routing, gear loss, and side-route loot.
+- The gauntlet covers section 255 through section 46/246/197, section 12 through section 191/234, section 242/9 Vordak Gem outcomes, section 162 capture outcomes, section 203 END routing, section 174 gear loss, and section 349 loot.
+- `testing\logs\LWBOOK1_ROUTE_GAUNTLET_PLAYTEST.md` records the pass.
+- Packaging/release is still blocked until a manual browser ergonomics pass confirms ordinary play feels good.
 
 ## GitHub Workflow
 

@@ -2,7 +2,7 @@
 
 Date: 2026-05-27
 
-Scope: issues #1-#13, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, and the combat edge playtest.
+Scope: issues #1-#14, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, the combat edge playtest, and the broader route gauntlet.
 
 ## Checks
 
@@ -22,6 +22,7 @@ Scope: issues #1-#13, covering the Book 1 character/sheet rebuild, section-flow 
 - Automation-language report regeneration with `testing\lwbook1_automation_language_audit.py --write`.
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
+- Route gauntlet playtest with `testing\lwbook1_route_gauntlet_playtest.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
 
 ## Results
@@ -52,6 +53,8 @@ Scope: issues #1-#13, covering the Book 1 character/sheet rebuild, section-flow 
 - Branch playtest covered early combat through `1 -> 85 -> 229`, verified illegal route blocking from section 85, loaded the section 229 Kraan combat preset, resolved a victory that correctly waits for player choice, and followed the legal victory branch to section 267.
 - Branch playtest covered death/recovery through `1 -> 275 -> 74 -> 281 -> 311 -> 47 -> 322 -> 17 -> 53`, verified the section 17 roll helper with roll 0, triggered terminal death at section 53, and rewound to section 17.
 - Branch playtest covered inventory/stat consequences through legal routes to section 130 Meal consumption without Hunting, section 33 Gold Crowns, and section 274 weapon loss from the section 17 roll helper.
+- Route gauntlet covered paid routes, Gourgaz and Drakkar combat-adjacent routing, Bodyguard evasion into death recovery state, Vordak Gem failure/backlash, capture escape with and without Mind Over Matter, section 203 END threshold routing, section 174 gear loss, and section 349 side-route loot.
+- Route gauntlet confirmed section 197's Gold Crown gain still applies when a full Weapon list blocks taking the Short Sword.
 - Random/recovery smoke covered same-section roll effects for sections 36, 158, and 188, including duplicate-roll protection.
 - Laumspur now restores 3 END and can fulfill a required Meal when no normal Meal is available.
 - Healing/loss smoke covered Kai Healing readiness, duplicate protection, no-Healing/combat blocks, section 144 selected loss, section 144 fallback loss, and section 277 selected Weapon loss.
@@ -63,7 +66,7 @@ Scope: issues #1-#13, covering the Book 1 character/sheet rebuild, section-flow 
 
 ## Remaining Risk
 
-- The checked routes are playable baselines, not exhaustive route coverage.
+- The checked routes are broader playable baselines, not exhaustive route coverage.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
 - Later route playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
-- Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.
+- Packaging/release is still blocked until a manual browser ergonomics pass confirms the app feels playable through ordinary use.
