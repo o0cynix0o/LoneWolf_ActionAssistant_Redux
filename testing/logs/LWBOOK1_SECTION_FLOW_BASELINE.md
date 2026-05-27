@@ -49,10 +49,10 @@ This report records section numbers, graph counts, and audit classifications onl
 - 29 sections include confirmed combat presets.
 - 20 sections include confirmed roll helpers.
 - 1 sections include confirmed staged roll helpers.
-- 12 sections include confirmed route checks.
+- 36 sections include confirmed route checks.
 
 ## Remaining Work
 
-- Continue route-check audit for optional discipline choices and route-specific side effects.
+- Expand route checks only when later playtests find new context-specific helper opportunities.
 - Expand simple automations only after each additional section effect is confirmed by the audit.
 - Continue combat/random audit for remaining staged random and player-choice aftermath effects.

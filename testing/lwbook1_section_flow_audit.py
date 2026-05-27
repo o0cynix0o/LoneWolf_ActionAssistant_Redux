@@ -161,6 +161,42 @@ def power_route_option(
     }
 
 
+def combined_route_checks(*entries: dict[str, Any]) -> dict[str, Any]:
+    checks: list[dict[str, Any]] = []
+    for entry in entries:
+        route_checks = entry.get("routeChecks")
+        if isinstance(route_checks, list):
+            checks.extend([check for check in route_checks if isinstance(check, dict)])
+    return {"routeChecks": checks}
+
+
+def item_route_option(
+    section: int,
+    item: str,
+    item_route: int,
+    *,
+    label: str | None = None,
+    container: str = "backpack",
+) -> dict[str, Any]:
+    return {
+        "routeChecks": [
+            {
+                "id": f"{section}-{item.lower().replace(' ', '-')}",
+                "label": label or f"{item} route",
+                "summary": f"Checks whether Lone Wolf has {item}.",
+                "outcomes": [
+                    condition_outcome(
+                        f"{item} available",
+                        item_route,
+                        {"type": "item", "name": item, "containers": [container], "match": "exact"},
+                        f"Has {item}",
+                    ),
+                ],
+            }
+        ]
+    }
+
+
 def item_route_check(
     section: int,
     item: str,
@@ -781,6 +817,7 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
 
 
 MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
+    "1": power_route_option(1, "Sixth Sense", 141, label="Sixth Sense opening route"),
     "2": section_roll(
         "Random route from the falling branch.",
         [
@@ -788,6 +825,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 276, "Less severe fall"),
         ],
     ),
+    "4": power_route_option(4, "Sixth Sense", 218, label="Sixth Sense canoe route"),
     "7": section_roll(
         "Random route while escaping the shop.",
         [
@@ -803,6 +841,8 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             {"Section": 247},
         ],
     },
+    "18": power_route_option(18, "Camouflage", 114, label="Camouflage Kraan route"),
+    "19": power_route_option(19, "Tracking", 69, label="Tracking Sleeptooth route"),
     "17": section_roll(
         "Random route after killing the Kraan.",
         [
@@ -855,6 +895,10 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 145, "Arrow hits"),
         ],
     ),
+    "23": combined_route_checks(
+        item_route_option(23, "Golden Key", 326, label="Golden Key pin route", container="special"),
+        power_route_option(23, "Mind Over Matter", 151, label="Mind Over Matter pin route"),
+    ),
     "36": section_roll(
         "Random route on the rotten watchtower ladder.",
         [
@@ -862,6 +906,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 323, "Climb safely"),
         ],
     ),
+    "37": power_route_option(37, "Camouflage", 282, label="Camouflage refugee route"),
     "44": section_roll(
         "Random route after the Kraan attack.",
         [
@@ -885,6 +930,9 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         ],
     ),
     "52": power_route_check(52, "Animal Kinship", 225, 250, label="Animal Kinship tree route"),
+    "70": power_route_option(70, "Sixth Sense", 8, label="Sixth Sense forest route"),
+    "71": power_route_option(71, "Sixth Sense", 65, label="Sixth Sense sarcophagus route"),
+    "83": power_route_option(83, "Sixth Sense", 45, label="Sixth Sense soldiers route"),
     "88": power_route_check(88, "Healing", 216, 31, label="Healing route", optional=True),
     "89": section_roll(
         "Random route while fleeing the Kraan.",
@@ -894,8 +942,11 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 316, "Clean escape"),
         ],
     ),
+    "91": power_route_option(91, "Sixth Sense", 198, label="Sixth Sense shopkeeper route"),
     "105": power_route_check(105, "Animal Kinship", 298, 335, label="Animal Kinship bird route", optional=True),
+    "125": power_route_option(125, "Tracking", 301, label="Tracking path route"),
     "128": power_route_check(128, "Hunting", 297, 336, label="Hunting ambush route"),
+    "151": power_route_option(151, "Mind Over Matter", 87, label="Mind Over Matter lock route"),
     "160": section_roll(
         "Random route while hiding from Giaks.",
         [
@@ -918,7 +969,10 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         label="Mind Over Matter escape route",
         requires_automation=True,
     ),
+    "167": power_route_option(167, "Sixth Sense", 178, label="Sixth Sense horse route"),
+    "172": power_route_option(172, "Camouflage", 114, label="Camouflage Kraan route"),
     "173": item_route_check(173, "Silver Key", 158, 259, label="Silver Key door route", container="special"),
+    "175": power_route_option(175, "Camouflage", 182, label="Camouflage river route"),
     "203": stat_route_check(
         203,
         "end",
@@ -935,6 +989,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(7, 9, 303, "Arm wounds", [{"type": "stat", "stat": "end", "delta": -3}]),
         ],
     ),
+    "200": power_route_option(200, "Camouflage", 168, label="Camouflage caravan route"),
     "205": section_roll(
         "Random route while fleeing the disguised Drakkarim.",
         [
@@ -942,6 +997,8 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 145, "Arrow hits"),
         ],
     ),
+    "211": power_route_option(211, "Sixth Sense", 244, label="Sixth Sense chamber route"),
+    "222": power_route_option(222, "Tracking", 67, label="Tracking fork route"),
     "226": section_roll(
         "Random route after the Kraan attack.",
         [
@@ -956,7 +1013,9 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 72, "Detected"),
         ],
     ),
+    "235": power_route_option(235, "Tracking", 254, label="Tracking road route"),
     "242": power_route_check(242, "Mindshield", 166, 9, label="Mindshield psychic route"),
+    "272": power_route_check(272, "Tracking", 134, 305, label="Tracking hut route"),
     "275": section_roll(
         "Random route on the left-hand track.",
         [
@@ -987,12 +1046,18 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         ],
     ),
     "303": power_route_check(303, "Camouflage", 237, 72, label="Camouflage patrol route"),
+    "308": power_route_option(308, "Animal Kinship", 122, label="Animal Kinship horse route"),
+    "311": power_route_option(311, "Camouflage", 324, label="Camouflage cave route"),
     "314": section_roll(
         "Random route into Holmgard.",
         [
             roll_range(0, 6, 341, "Reach the guildhall area"),
             roll_range(7, 9, 98, "Alternative city route"),
         ],
+    ),
+    "334": combined_route_checks(
+        power_route_option(334, "Sixth Sense", 48, label="Sixth Sense Drakkarim route"),
+        power_route_option(334, "Camouflage", 73, label="Camouflage Drakkarim route"),
     ),
     "337": section_roll(
         "Random route after opening the gate.",
@@ -1001,6 +1066,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 317, "Slip through"),
         ],
     ),
+    "341": power_route_option(341, "Tracking", 310, label="Tracking city route"),
 }
 
 

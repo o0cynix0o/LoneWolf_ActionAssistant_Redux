@@ -26,7 +26,7 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass started the section-by-section automation-language scan. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
@@ -143,7 +143,7 @@ Issue #11 changed the player-choice aftermath baseline:
 - `testing\lwbook1_player_choice_aftermath_smoke.py` verifies the section 307 weapon exchange, duplicate protection, and no-Weapon block.
 - `testing\logs\LWBOOK1_PLAYER_CHOICE_AUDIT.md` records the issue #11 coverage.
 
-Issue #12 started the automation-language audit:
+Issue #12 completed the automation-language audit:
 
 - `testing\lwbook1_automation_language_audit.py` scans all 350 local Book 1 section files for automation-likely language and writes section-number/category findings without copying book prose.
 - The first clear slice added optional loot helpers for section 15 Sword, section 346 Spear, and section 349 Crystal Star Pendant.
@@ -152,8 +152,10 @@ Issue #12 started the automation-language audit:
 - Section 46 now exposes a Sixth Sense route warning without forcing either non-Sixth-Sense route choice.
 - Route-cost actions now deduct 10 Gold Crowns for section 12 -> 262 and 2 Gold Crowns for section 46 -> 246.
 - Sections 115, 132, and 150 are recorded as no sheet change for Meal language.
-- `testing\lwbook1_automation_language_smoke.py` verifies those clear helpers.
-- Issue #12 remains open for route-check and combat-outcome candidates from the scanner.
+- The final route-check pass added the clear remaining optional Kai Discipline and item route displays from the scanner.
+- Reviewed false positives and already-covered combat-condition branches are recorded in `testing\logs\LWBOOK1_AUTOMATION_LANGUAGE_AUDIT.md`.
+- The automation-language report now shows zero uncovered signal categories.
+- `testing\lwbook1_automation_language_smoke.py` verifies the clear helpers and representative reviewed route checks.
 
 ## GitHub Workflow
 

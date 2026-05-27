@@ -59,6 +59,25 @@ def assert_true(value, label: str) -> None:
         raise AssertionError(f"{label}: expected truthy value, got {value!r}")
 
 
+def route_check_by_id(assistant: lonewolf_redux.LoneWolfReduxAssistant, check_id: str) -> dict:
+    checks = assistant.current_section_flow_payload()["RouteChecks"]
+    for check in checks:
+        if check["Id"] == check_id:
+            return check
+    raise AssertionError(f"route check {check_id!r} not found; saw {[check['Id'] for check in checks]!r}")
+
+
+def assert_matched_route(
+    assistant: lonewolf_redux.LoneWolfReduxAssistant,
+    check_id: str,
+    expected: int | None,
+    label: str,
+) -> None:
+    matched = route_check_by_id(assistant, check_id)["MatchedOutcome"]
+    actual = matched["Route"] if matched else None
+    assert_equal(actual, expected, label)
+
+
 def smoke_clear_loot_helpers() -> None:
     assistant = fresh_assistant()
     quiet(assistant.set_section, 15)
@@ -149,12 +168,46 @@ def smoke_meal_rulings() -> None:
     assert_equal(assistant.state["CurrentSection"], 150, "section 115 Meal route target")
 
 
+def smoke_reviewed_route_checks() -> None:
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 1)
+    assert_matched_route(assistant, "1-sixth-sense", 141, "section 1 Sixth Sense route")
+
+    assistant = fresh_assistant(["Healing", "Camouflage", "Hunting", "Tracking", "Weaponskill"])
+    quiet(assistant.set_section, 1)
+    assert_matched_route(assistant, "1-sixth-sense", None, "section 1 no Sixth Sense optional route")
+
+    assistant = fresh_assistant(["Healing", "Camouflage", "Sixth Sense", "Tracking", "Mind Over Matter"])
+    assistant.inventory["SpecialItems"].append("Golden Key")
+    quiet(assistant.set_section, 23)
+    assert_matched_route(assistant, "23-golden-key", 326, "section 23 Golden Key route")
+    assert_matched_route(assistant, "23-mind-over-matter", 151, "section 23 Mind Over Matter route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 272)
+    assert_matched_route(assistant, "272-tracking", 134, "section 272 Tracking route")
+
+    assistant = fresh_assistant(["Healing", "Camouflage", "Sixth Sense", "Hunting", "Weaponskill"])
+    quiet(assistant.set_section, 272)
+    assert_matched_route(assistant, "272-tracking", 305, "section 272 no Tracking route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 334)
+    assert_matched_route(assistant, "334-sixth-sense", 48, "section 334 Sixth Sense route")
+    assert_matched_route(assistant, "334-camouflage", 73, "section 334 Camouflage route")
+
+    assistant = fresh_assistant(["Healing", "Camouflage", "Animal Kinship", "Tracking", "Weaponskill"])
+    quiet(assistant.set_section, 308)
+    assert_matched_route(assistant, "308-animal-kinship", 122, "section 308 Animal Kinship route")
+
+
 def main() -> int:
     smoke_clear_loot_helpers()
     smoke_section_258_gear_loss()
     smoke_section_46_sixth_sense_check()
     smoke_route_gold_costs()
     smoke_meal_rulings()
+    smoke_reviewed_route_checks()
     print("Book 1 automation-language smoke passed.")
     return 0
 

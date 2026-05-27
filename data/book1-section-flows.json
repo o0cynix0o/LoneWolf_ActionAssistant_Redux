@@ -33,7 +33,27 @@
           "Section": 275
         }
       ],
-      "incomingRouteCount": 0
+      "incomingRouteCount": 0,
+      "routeChecks": [
+        {
+          "id": "1-sixth-sense",
+          "label": "Sixth Sense opening route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 141,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "2": {
       "auditStatus": "source-link-baseline",
@@ -105,7 +125,27 @@
           "Section": 175
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "4-sixth-sense",
+          "label": "Sixth Sense canoe route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 218,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "5": {
       "auditStatus": "source-link-baseline",
@@ -490,7 +530,27 @@
           "Section": 29
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "18-camouflage",
+          "label": "Camouflage Kraan route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 114,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "19": {
       "auditStatus": "source-link-baseline",
@@ -510,7 +570,27 @@
           "Section": 119
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "19-tracking",
+          "label": "Tracking Sleeptooth route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 69,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            }
+          ]
+        }
+      ]
     },
     "20": {
       "auditStatus": "source-link-baseline",
@@ -693,7 +773,49 @@
           "Section": 337
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "23-golden-key",
+          "label": "Golden Key pin route",
+          "summary": "Checks whether Lone Wolf has Golden Key.",
+          "outcomes": [
+            {
+              "label": "Golden Key available",
+              "route": 326,
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Golden Key",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ],
+              "testLabel": "Has Golden Key"
+            }
+          ]
+        },
+        {
+          "id": "23-mind-over-matter",
+          "label": "Mind Over Matter pin route",
+          "summary": "Checks whether Lone Wolf has Mind Over Matter.",
+          "outcomes": [
+            {
+              "label": "Mind Over Matter available",
+              "route": 151,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ],
+              "testLabel": "Has Mind Over Matter"
+            }
+          ]
+        }
+      ]
     },
     "24": {
       "auditStatus": "source-link-baseline",
@@ -982,7 +1104,27 @@
           "Section": 289
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "routeChecks": [
+        {
+          "id": "37-camouflage",
+          "label": "Camouflage refugee route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 282,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "38": {
       "auditStatus": "source-link-baseline",
@@ -1666,7 +1808,27 @@
           "Section": 157
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "70-sixth-sense",
+          "label": "Sixth Sense forest route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 8,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "71": {
       "auditStatus": "source-link-baseline",
@@ -1686,7 +1848,27 @@
           "Section": 104
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "71-sixth-sense",
+          "label": "Sixth Sense sarcophagus route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 65,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "72": {
       "auditStatus": "source-link-baseline",
@@ -1885,7 +2067,27 @@
           "Section": 232
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "83-sixth-sense",
+          "label": "Sixth Sense soldiers route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 45,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "84": {
       "auditStatus": "source-link-baseline",
@@ -2078,7 +2280,27 @@
           "Section": 7
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "91-sixth-sense",
+          "label": "Sixth Sense shopkeeper route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 198,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "92": {
       "auditStatus": "source-link-baseline",
@@ -2694,7 +2916,27 @@
           "Section": 214
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "routeChecks": [
+        {
+          "id": "125-tracking",
+          "label": "Tracking path route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 301,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            }
+          ]
+        }
+      ]
     },
     "126": {
       "auditStatus": "source-link-baseline",
@@ -3218,7 +3460,27 @@
           "Section": 337
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "151-mind-over-matter",
+          "label": "Mind Over Matter lock route",
+          "summary": "Checks whether Lone Wolf has Mind Over Matter.",
+          "outcomes": [
+            {
+              "label": "Mind Over Matter available",
+              "route": 87,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ],
+              "testLabel": "Has Mind Over Matter"
+            }
+          ]
+        }
+      ]
     },
     "152": {
       "auditStatus": "source-link-baseline",
@@ -3555,7 +3817,27 @@
           "Section": 264
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "167-sixth-sense",
+          "label": "Sixth Sense horse route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 178,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "168": {
       "auditStatus": "source-link-baseline",
@@ -3678,7 +3960,27 @@
           "Section": 29
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "172-camouflage",
+          "label": "Camouflage Kraan route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 114,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "173": {
       "auditStatus": "source-link-baseline",
@@ -3767,7 +4069,27 @@
           "Section": 116
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "175-camouflage",
+          "label": "Camouflage river route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 182,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "176": {
       "auditStatus": "source-link-baseline",
@@ -4302,7 +4624,27 @@
           "Section": 78
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "routeChecks": [
+        {
+          "id": "200-camouflage",
+          "label": "Camouflage caravan route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 168,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "201": {
       "auditStatus": "source-link-baseline",
@@ -4538,7 +4880,27 @@
           "Section": 106
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "211-sixth-sense",
+          "label": "Sixth Sense chamber route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 244,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        }
+      ]
     },
     "212": {
       "auditStatus": "source-link-baseline",
@@ -4711,7 +5073,27 @@
           "Section": 252
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "222-tracking",
+          "label": "Tracking fork route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 67,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            }
+          ]
+        }
+      ]
     },
     "223": {
       "auditStatus": "source-link-baseline",
@@ -4987,7 +5369,27 @@
           "Section": 146
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "235-tracking",
+          "label": "Tracking road route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 254,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            }
+          ]
+        }
+      ]
     },
     "236": {
       "auditStatus": "source-link-baseline",
@@ -5725,7 +6127,39 @@
           "Section": 305
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "272-tracking",
+          "label": "Tracking hut route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "requiresAutomationApplied": false,
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 134,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            },
+            {
+              "label": "No Tracking",
+              "route": 305,
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "No Tracking"
+            }
+          ]
+        }
+      ]
     },
     "273": {
       "auditStatus": "source-link-baseline",
@@ -6497,7 +6931,27 @@
           "Section": 233
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "308-animal-kinship",
+          "label": "Animal Kinship horse route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 122,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ],
+              "testLabel": "Has Animal Kinship"
+            }
+          ]
+        }
+      ]
     },
     "309": {
       "auditStatus": "source-link-baseline",
@@ -6539,7 +6993,27 @@
           "Section": 47
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "311-camouflage",
+          "label": "Camouflage cave route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 324,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "312": {
       "auditStatus": "source-link-baseline",
@@ -6925,7 +7399,45 @@
           "Section": 162
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "334-sixth-sense",
+          "label": "Sixth Sense Drakkarim route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 48,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ],
+              "testLabel": "Has Sixth Sense"
+            }
+          ]
+        },
+        {
+          "id": "334-camouflage",
+          "label": "Camouflage Drakkarim route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 73,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ],
+              "testLabel": "Has Camouflage"
+            }
+          ]
+        }
+      ]
     },
     "335": {
       "auditStatus": "source-link-baseline",
@@ -7106,7 +7618,27 @@
           "Section": 37
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "341-tracking",
+          "label": "Tracking city route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 310,
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ],
+              "testLabel": "Has Tracking"
+            }
+          ]
+        }
+      ]
     },
     "342": {
       "auditStatus": "source-link-baseline",

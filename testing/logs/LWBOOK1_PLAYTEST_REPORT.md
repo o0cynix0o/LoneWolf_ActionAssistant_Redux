@@ -1,8 +1,8 @@
 # Book 1 Playtest Report
 
-Date: 2026-05-26
+Date: 2026-05-27
 
-Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, and the first section-by-section automation-language slice.
+Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, and the completed section-by-section automation-language pass.
 
 ## Checks
 
@@ -18,6 +18,7 @@ Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow 
 - Section 21 staged roll smoke with `testing\lwbook1_section21_staged_smoke.py`.
 - Player-choice aftermath smoke with `testing\lwbook1_player_choice_aftermath_smoke.py`.
 - Automation-language smoke with `testing\lwbook1_automation_language_smoke.py`.
+- Automation-language report regeneration with `testing\lwbook1_automation_language_audit.py --write`.
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
@@ -54,13 +55,13 @@ Scope: issues #1-#12, covering the Book 1 character/sheet rebuild, section-flow 
 - Healing/loss smoke covered Kai Healing readiness, duplicate protection, no-Healing/combat blocks, section 144 selected loss, section 144 fallback loss, and section 277 selected Weapon loss.
 - Section 21 staged roll smoke covered first-roll success, second-roll recovery, final-roll success, and final-roll death with rewind.
 - Player-choice aftermath smoke covered section 307's explicit Weapon-for-Warhammer exchange and duplicate protection.
-- Automation-language smoke covered the issue #12 rulings: section 15 Sword, section 193 Scroll, section 255 Prince's Sword, section 267 Message and Dagger, section 346 Spear, section 349 Crystal Star Pendant, section 258 gear loss, section 46 Sixth Sense warning, section 12/46 Gold Crown route costs, and the section 115/150 no-sheet-change Meal ruling.
-- Section-flow data now includes 24 optional loot helpers, 3 explicit loss/exchange-choice helpers, and 1 staged roll helper.
+- Automation-language smoke covered the issue #12 rulings: section 15 Sword, section 193 Scroll, section 255 Prince's Sword, section 267 Message and Dagger, section 346 Spear, section 349 Crystal Star Pendant, section 258 gear loss, section 46 Sixth Sense warning, section 12/46 Gold Crown route costs, the section 115/150 no-sheet-change Meal ruling, and representative reviewed route checks.
+- Automation-language audit now reports zero uncovered signal categories.
+- Section-flow data now includes 24 optional loot helpers, 3 explicit loss/exchange-choice helpers, 36 route-check sections, and 1 staged roll helper.
 
 ## Remaining Risk
 
 - The checked routes are playable baselines, not exhaustive route coverage.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
-- Issue #12 still has route-check and combat-outcome candidates for continued section-by-section review.
 - Remaining combat exceptions still need later audit passes.
 - Packaging/release is still blocked until broader manual playtesting confirms the app feels playable outside the checked baseline path.

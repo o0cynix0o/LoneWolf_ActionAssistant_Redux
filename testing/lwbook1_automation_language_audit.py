@@ -30,8 +30,8 @@ from lwbook1_section_flow_audit import clean_text, maintext_block  # noqa: E402
 
 SIGNALS: dict[str, list[tuple[str, str]]] = {
     "endurance_loss": [
-        ("deduct_endurance", r"\bdeduct\b[^.]*\bendurance\b|\bendurance\b[^.]*\bdeduct\b"),
-        ("lose_endurance", r"\blose\b[^.]*\bendurance\b|\bendurance\b[^.]*\blose\b"),
+        ("deduct_endurance", r"\bdeduct\b[^.]*\bendurance points?\b|\bendurance points?\b[^.]*\bdeduct\b"),
+        ("lose_endurance", r"\blose\b[^.]*\bendurance points?\b|\bendurance points?\b[^.]*\blose\b"),
     ],
     "endurance_gain": [
         ("restore_endurance", r"\brestore\b[^.]*\bendurance\b|\bendurance\b[^.]*\brestore\b"),
@@ -75,7 +75,7 @@ SIGNALS: dict[str, list[tuple[str, str]]] = {
         ("pick_a_number", r"\bpick a number\b"),
     ],
     "route_check": [
-        ("if_possess", r"\bif you (possess|have|carry)\b"),
+        ("if_possess", r"\bif you (possess|carry)\b|\bif you have (?!picked|chosen|a number|more than|no |no longer)\b"),
         ("if_not_possess", r"\bif you do not (possess|have|carry)\b"),
         ("kai_discipline", r"\bkai discipline\b"),
     ],
@@ -103,11 +103,27 @@ DIRECT_COVERAGE = {
 
 
 REVIEWED_NO_AUTOMATION: dict[str, set[str]] = {
+    "67": {"route_check"},
     "78": {"gold", "gold_cost"},
     "115": {"meal"},
+    "117": {"route_check"},
     "132": {"meal"},
+    "145": {"route_check"},
     "150": {"meal"},
+    "237": {"route_check"},
     "255": {"meal"},
+    "258": {"route_check"},
+    "301": {"route_check"},
+    "324": {"route_check"},
+}
+
+REVIEWED_COVERED: dict[str, set[str]] = {
+    "29": {"route_check"},
+    "34": {"route_check"},
+    "170": {"route_check"},
+    "227": {"endurance_loss"},
+    "283": {"route_check"},
+    "342": {"route_check"},
 }
 
 DIRECT_COVERAGE["gold_cost"] = {"routeAction"}
@@ -177,6 +193,9 @@ def build_audit() -> dict[str, Any]:
         for category in signals:
             if category in REVIEWED_NO_AUTOMATION.get(str(section), set()):
                 category_status[category] = "reviewed-no-automation"
+            elif category in REVIEWED_COVERED.get(str(section), set()):
+                category_status[category] = "reviewed-covered"
+                covered[category].append(section)
             elif category_covered(category, coverage):
                 category_status[category] = "covered"
                 covered[category].append(section)
@@ -208,7 +227,7 @@ def render_report(audit: dict[str, Any]) -> str:
     lines = [
         "# LW Book 1 Automation Language Audit",
         "",
-        "Date: 2026-05-26",
+        "Date: 2026-05-27",
         "",
         "Scope: issue #12 section-by-section scan for automation-likely language.",
         "",
@@ -229,6 +248,10 @@ def render_report(audit: dict[str, Any]) -> str:
     for section in sorted(REVIEWED_NO_AUTOMATION, key=lambda value: int(value)):
         categories = ", ".join(sorted(REVIEWED_NO_AUTOMATION[section]))
         lines.append(f"- Section {section}: {categories}")
+    lines.extend(["", "## Reviewed Covered", ""])
+    for section in sorted(REVIEWED_COVERED, key=lambda value: int(value)):
+        categories = ", ".join(sorted(REVIEWED_COVERED[section]))
+        lines.append(f"- Section {section}: {categories}")
     lines.extend(["", "## Next Review Slice", ""])
     priority_categories = [
         "endurance_loss",
@@ -247,6 +270,8 @@ def render_report(audit: dict[str, Any]) -> str:
         candidates = gaps.get(category, [])
         if candidates:
             lines.append(f"- {category}: review sections {list_line(candidates[:20])}")
+    if not any(gaps.get(category, []) for category in priority_categories):
+        lines.append("- none")
     return "\n".join(lines) + "\n"
 
 

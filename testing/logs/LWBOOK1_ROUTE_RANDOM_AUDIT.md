@@ -1,6 +1,6 @@
 # LW Book 1 Route And Random Audit
 
-Date: 2026-05-26
+Date: 2026-05-27
 
 Scope: first route-check and random outcome baseline for local Project Aon Book 1 section files.
 
@@ -10,7 +10,7 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 - Confirmed roll helpers added for 20 Book 1 sections.
 - Confirmed staged roll helper added for section 21.
-- Confirmed route checks added for 12 Book 1 sections.
+- Confirmed route checks added for 36 Book 1 sections, with 38 individual checks.
 - Confirmed route-cost actions added for 2 Book 1 sections.
 - The pass uses existing assistant cards: Section Roll for random digits and Route Check for sheet-dependent branches.
 - Roll helpers resolve the route/result label.
@@ -39,10 +39,11 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 
 ## Route Checks
 
-- Kai Discipline checks: 46, 52, 88, 105, 128, 162, 242, 303.
-- Item checks: 9, 173.
+- Kai Discipline checks: 1, 4, 18, 19, 23, 37, 46, 52, 70, 71, 83, 88, 91, 105, 125, 128, 151, 162, 167, 172, 175, 200, 211, 222, 235, 242, 272, 303, 308, 311, 334, 341.
+- Item checks: 9, 23, 173.
 - Stat checks: 12, 203.
 - Section 162 and section 203 checks are tied to sections with automatic entry effects; the smoke test verifies those entry effects are applied before checking the route.
+- The issue #12 pass added the remaining clear optional discipline/item route displays surfaced by the automation-language scanner.
 
 ## Route Costs
 
@@ -63,4 +64,4 @@ This log records confirmed mechanics by section number only. Do not copy Book 1 
 ## Remaining Work
 
 - Additional player-choice random aftermaths may surface during broader route playtesting.
-- Optional Kai choices with several non-Kai alternatives need more nuanced availability display before broad automation.
+- Broader route playtesting may still find context-specific helper opportunities outside the automation-language signal scan.
