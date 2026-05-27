@@ -1562,6 +1562,86 @@
       renderReceipt();
     }
 
+    function sectionStatusReceiptDetails() {
+      if (!app) return [];
+      const flow = currentFlow();
+      const entry = flow.Entry || {};
+      const automation = flow.Automation || {};
+      const details = [];
+
+      if (automation.Summary) {
+        details.push(receiptDetail('Entry Effect', `${automation.Applied ? 'Applied' : 'Ready'}: ${automation.Summary}`));
+        arr(automation.Messages).forEach((line) => {
+          details.push(receiptDetail('Entry Result', line));
+        });
+      }
+
+      arr(flow.RouteChecks).forEach((check) => {
+        const label = text(check.Label, 'Route check');
+        if (!check.Ready) {
+          details.push(receiptDetail('Route Check', `${label}: ${text(check.BlockedReason, 'Apply the entry effect first, then recheck the route.')}`));
+          return;
+        }
+        const matched = check.MatchedOutcome || {};
+        const formula = text(check.Formula || check.Summary, 'Current sheet check');
+        const value = check.Value !== undefined && check.Value !== null && text(check.Value) !== '' ? `Total ${check.Value}: ` : '';
+        const result = matched.Label ? routeCheckOutcomeText(matched) : 'ready';
+        details.push(receiptDetail('Route Check', `${label}: ${formula} | ${value}${result}`));
+      });
+
+      const lastRoll = flow.LastRoll;
+      if (lastRoll) {
+        const parts = [
+          `Roll ${text(lastRoll.Raw, '?')}`,
+          `total ${text(lastRoll.Total, '?')}`,
+          text(lastRoll.StageLabel),
+          text(lastRoll.Outcome),
+          lastRoll.Route ? `section ${lastRoll.Route}` : ''
+        ].filter(Boolean);
+        details.push(receiptDetail('Roll Result', parts.join(' | ')));
+        arr(lastRoll.ActionMessages).forEach((line) => {
+          details.push(receiptDetail('Roll Effect', line));
+        });
+      }
+
+      arr(entry.status).forEach((status) => {
+        const current = app.state.Automation?.Flags?.[status.key] === true;
+        details.push(receiptDetail('Status Flag', `${text(status.label || status.key, 'Status')}: ${current ? 'On' : 'Off'}`));
+      });
+
+      return details.filter(Boolean);
+    }
+
+    function sectionStatusReceipt() {
+      const details = sectionStatusReceiptDetails();
+      const section = app?.state?.CurrentSection || '?';
+      if (!details.length) {
+        return {
+          summary: `Section ${section} - no automation status`,
+          title: 'Section Status',
+          details: []
+        };
+      }
+      return {
+        summary: `Section ${section} status - ${details[0].value}`,
+        title: 'Section Status',
+        details
+      };
+    }
+
+    function withSectionStatus(receipt) {
+      const details = sectionStatusReceiptDetails();
+      if (!details.length) return receipt;
+      return {
+        ...receipt,
+        details: [
+          ...arr(receipt?.details),
+          receiptDetail('Section Status', 'Current section bookkeeping follows.'),
+          ...details
+        ].filter(Boolean)
+      };
+    }
+
     function renderReceipt() {
       const details = arr(currentReceipt?.details).filter(Boolean);
       const expandable = details.length > 0;
@@ -2060,6 +2140,7 @@
       syncUiPreferences(app.uiPreferences);
       serverStatus.textContent = 'Connected';
       syncBookToState();
+      setReceipt(sectionStatusReceipt());
       render();
     }
 
@@ -2073,7 +2154,7 @@
       app = await response.json();
       if (!response.ok) throw new Error(app.error || 'Action failed');
       syncUiPreferences(app.uiPreferences);
-      setReceipt(buildActionReceipt(payload, beforeAction, app));
+      setReceipt(withSectionStatus(buildActionReceipt(payload, beforeAction, app)));
       showAchievementUnlocks(app.achievementUnlocks);
       syncBookToState();
       render();
@@ -2639,7 +2720,7 @@
     function cardHelp(title, scope) {
       const key = slugCardTitle(title, '');
       const help = {
-        choices: 'This card shows assistant actions found in the current book section: loot, costs, status flags, combat, route checks, and section-aware rolls.',
+        choices: 'This card shows actual section choices and optional actions. Automation receipts and route-check calculations live in the bottom status receipt.',
         map: 'Shows the local Project Aon map image for Flight from the Dark. Open it full-size when you want to inspect the route detail.',
         'section-assistant': 'Use this when a section has rolls, loot, special costs, or combat presets that are not handled by the book link itself.',
         'stored-gear': 'This keeps the inventory record for gear the book has taken away and may return later.',
@@ -3223,25 +3304,6 @@
       `;
     }
 
-    function sectionAutomationRows() {
-      const automation = currentFlow().Automation || {};
-      const messages = arr(automation.Messages);
-      if (!automation.Summary) return '';
-      return `
-        <div class="item-row">
-          <small>${automation.Applied ? 'Applied' : 'Ready'}</small>
-          <span class="wrap">${escapeHtml(automation.Summary)}</span>
-          ${automation.Applied ? '' : modeActionButton('data-automation-apply', 'Apply', 'section effects')}
-        </div>
-        ${messages.map((line) => `
-          <div class="item-row">
-            <small>Result</small>
-            <span class="wrap">${escapeHtml(line)}</span>
-          </div>
-        `).join('')}
-      `;
-    }
-
     function sectionLootRows(entry) {
       return arr(entry.loot).map((loot) => `
         <div class="item-row">
@@ -3260,19 +3322,6 @@
           ${modeActionButton(`data-section-combat-start="${escapeHtml(text(combat.id))}"`, 'Start', 'combat presets')}
         </div>
       `).join('');
-    }
-
-    function sectionStatusRows(entry) {
-      return arr(entry.status).map((status) => {
-        const current = app.state.Automation?.Flags?.[status.key] === true;
-        return `
-          <div class="item-row">
-            <small>${current ? 'On' : 'Off'}</small>
-            <span class="wrap">${escapeHtml(text(status.label || status.key, 'Status'))}</span>
-            <button type="button" data-status-flag="${escapeHtml(status.key)}:${current ? 'false' : 'true'}">${current ? 'Clear' : 'Set'}</button>
-          </div>
-        `;
-      }).join('');
     }
 
     function sectionCostRows(entry) {
@@ -3297,12 +3346,6 @@
             <span class="wrap">Total ${escapeHtml(lastRoll.Total)}${lastRoll.StageLabel ? ` | ${escapeHtml(lastRoll.StageLabel)}` : ''}${lastRoll.Outcome ? ` | ${escapeHtml(lastRoll.Outcome)}` : ''}</span>
             ${lastRoll.Route ? `<button type="button" data-route="${escapeHtml(lastRoll.Route)}">Go ${escapeHtml(lastRoll.Route)}</button>` : ''}
           </div>
-          ${arr(lastRoll.ActionMessages).map((line) => `
-            <div class="item-row">
-              <small>Effect</small>
-              <span class="wrap">${escapeHtml(line)}</span>
-            </div>
-          `).join('')}
         ` : ''}
       `;
     }
@@ -3314,37 +3357,19 @@
       return `${test ? `${test}: ` : ''}${label}${route}`;
     }
 
-    function sectionRouteCheckRows() {
+    function sectionRouteCheckChoiceRows() {
       return arr(currentFlow().RouteChecks).map((check) => {
-        if (!check.Ready) {
-          return `
-            <div class="item-row">
-              <small>Wait</small>
-              <span class="wrap">${escapeHtml(text(check.Label, 'Route check'))}: ${escapeHtml(text(check.BlockedReason, 'Apply the entry effect first, then recheck the route.'))}</span>
-            </div>
-          `;
-        }
+        if (!check.Ready) return '';
         const matched = check.MatchedOutcome || {};
-        const formula = text(check.Formula || check.Summary, 'Current sheet check');
-        const value = check.Value ?? '';
         const currentRoute = matched.Route ? Number(matched.Route) : null;
-        const currentRow = `
+        if (!currentRoute) return '';
+        return `
           <div class="item-row">
-            <small>${value !== '' ? `Total ${escapeHtml(value)}` : 'Check'}</small>
-            <span class="wrap">${escapeHtml(text(check.Label, 'Route check'))}: ${escapeHtml(formula)}${matched.Label ? ` | ${escapeHtml(routeCheckOutcomeText(matched))}` : ''}</span>
-            ${currentRoute ? `<button type="button" data-route="${escapeHtml(currentRoute)}">Go ${escapeHtml(currentRoute)}</button>` : ''}
+            <small>${escapeHtml(currentRoute)}</small>
+            <span class="wrap">${escapeHtml(text(matched.Label || check.Label, 'Available route'))}</span>
+            <button type="button" data-route="${escapeHtml(currentRoute)}">Go</button>
           </div>
         `;
-        const otherRows = arr(check.Outcomes)
-          .filter((outcome) => !outcome.Matched)
-          .map((outcome) => `
-            <div class="item-row">
-              <small>Other</small>
-              <span class="wrap">${escapeHtml(routeCheckOutcomeText(outcome))}</span>
-            </div>
-          `)
-          .join('');
-        return currentRow + otherRows;
       }).join('');
     }
 
@@ -3361,12 +3386,10 @@
     function choicesPanelBody() {
       const entry = currentFlow().Entry || {};
       const groups = [
-        choiceGroup('Entry Effect', sectionAutomationRows()),
+        choiceGroup('Routes', sectionRouteRows()),
+        choiceGroup('Available Checked Routes', sectionRouteCheckChoiceRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
-        '',
         choiceGroup('Section Combat', sectionCombatRows(entry)),
-        choiceGroup('Status Flags', sectionStatusRows(entry)),
-        choiceGroup('Route Check', sectionRouteCheckRows()),
         choiceGroup('Section Roll', sectionRollRows(entry))
       ].filter(Boolean);
       return groups.join('') || '<p class="muted">No section choices recorded for this section.</p>';
