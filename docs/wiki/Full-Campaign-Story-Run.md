@@ -28,6 +28,10 @@ The route uses ordinary book links, route checks, and a section 237 random-numbe
 
 For advice on why this is a comfortable first-clear route, see the [Book 1 Strategy Guide](Book-1-Strategy-Guide).
 
+## Book 2: Fire on the Water
+
+Book 2 setup is underway. The app can prepare the Book 2 starting state after a completed Book 1 run, but we have not added a recommended story route yet.
+
 ## Later Books
 
-Book 2 and later are future pipeline work. When a later book becomes playable, add its story route here only after the rules, handoff, automation, combat, achievements, and guide passes are complete.
+When a later book becomes playable, add its story route here only after the rules, handoff, automation, combat, achievements, and guide passes are complete.

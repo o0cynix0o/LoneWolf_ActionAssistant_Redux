@@ -1045,8 +1045,6 @@
       <div class="toolbar">
         <button class="book-button" type="button" data-book="1">Book 1</button>
         <button class="book-button" type="button" data-book="2">Book 2</button>
-        <button class="book-button" type="button" data-book="3">Book 3</button>
-        <button class="book-button" type="button" data-book="4">Book 4</button>
         <button type="button" id="currentBtn">Current</button>
         <button type="button" id="titleBtn">Title</button>
         <span class="reader-title" id="readerTitle">Loading...</span>
@@ -1090,7 +1088,20 @@
     }
 
     const books = [
-      { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 }
+      { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 },
+      { number: 2, title: 'Fire on the Water', folder: '02fotw', sections: 350 }
+    ];
+    const book2Armoury = [
+      ['sword', 'Sword'],
+      ['short-sword', 'Short Sword'],
+      ['two-meals', 'Two Meals'],
+      ['chainmail-waistcoat', 'Chainmail Waistcoat'],
+      ['mace', 'Mace'],
+      ['healing-potion', 'Healing Potion'],
+      ['quarterstaff', 'Quarterstaff'],
+      ['spear', 'Spear'],
+      ['shield', 'Shield'],
+      ['broadsword', 'Broadsword']
     ];
     const kaiDisciplines = ['Camouflage', 'Hunting', 'Sixth Sense', 'Tracking', 'Healing', 'Weaponskill', 'Mindshield', 'Mindblast', 'Animal Kinship', 'Mind Over Matter'];
     const views = [
@@ -2441,11 +2452,11 @@
       const summary = completion.Summary || {};
       const nextBook = Number(completion.NextBookNumber || 0);
       const nextTitle = text(completion.NextBookTitle, '');
-      const continueControls = completion.CanContinue ? `
-        <form id="continueBookForm" class="grid">
-          <button type="submit">Continue to Book ${escapeHtml(nextBook)}</button>
-        </form>
-      ` : '<p class="muted">The supported Book 1 rebuild is complete.</p>';
+      const continueControls = completion.CanContinue && nextBook === 2 ? book2ContinueForm(completion) : (
+        completion.CanContinue
+          ? '<p class="muted">That next book is not enabled yet.</p>'
+          : '<p class="muted">The supported campaign path is complete.</p>'
+      );
 
       view.innerHTML = `
         <div class="panel">
@@ -2488,6 +2499,45 @@
           <h2>Repeat This Book</h2>
           <button type="button" data-repeat-book>Repeat Book ${escapeHtml(text(summary.BookNumber, currentCharacter().BookNumber))}</button>
         </div>
+      `;
+    }
+
+    function armouryChoiceGrid() {
+      return book2Armoury.map(([id, label]) => `
+        <label class="check-option">
+          <input type="checkbox" name="armouryChoices" value="${escapeHtml(id)}">
+          <span>${escapeHtml(label)}</span>
+        </label>
+      `).join('');
+    }
+
+    function weaponExchangeFields(sourceWeapons) {
+      const weapons = arr(sourceWeapons).map((item) => text(item)).filter(Boolean);
+      if (!weapons.length) return '';
+      const options = ['<option value="">No exchange</option>']
+        .concat(weapons.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`))
+        .join('');
+      return `
+        <label class="field">Exchange Weapon 1<select name="weaponExchanges">${options}</select></label>
+        <label class="field">Exchange Weapon 2<select name="weaponExchanges">${options}</select></label>
+      `;
+    }
+
+    function book2ContinueForm(completion) {
+      const choices = arr(completion.KaiDisciplineChoices);
+      const kaiOptions = choices.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+      const weapons = arr((completion.Summary || {}).Weapons);
+      return `
+        <form id="continueBookForm" class="grid" data-next-book="2">
+          <label class="field">New Kai Discipline<select name="kaiDiscipline">${kaiOptions}</select></label>
+          <label class="field">Gold Roll<input name="goldRoll" type="number" min="0" max="9" placeholder="0-9"></label>
+          <div class="check-field">
+            <span>Royal Armoury - choose 2</span>
+            <div class="check-grid">${armouryChoiceGrid()}</div>
+          </div>
+          ${weaponExchangeFields(weapons)}
+          <button type="submit">Continue to Book 2</button>
+        </form>
       `;
     }
 
@@ -3616,9 +3666,14 @@
         <form id="newForm" class="grid">
           <label class="field">Name<input name="name" value="Lone Wolf"></label>
           <label class="field">Book<select name="bookNumber" data-new-book>${books.map((b) => `<option value="${b.number}">${b.number}. ${b.title}</option>`).join('')}</select></label>
+          <label class="field" data-book2-setup hidden>Book 2 Gold Roll<input name="goldRoll" type="number" min="0" max="9" placeholder="0-9"></label>
           <div class="check-field">
             <span data-discipline-help>Kai Disciplines - choose 5</span>
             <div class="check-grid">${disciplineChoices}</div>
+          </div>
+          <div class="check-field" data-book2-setup hidden>
+            <span>Royal Armoury - choose 2</span>
+            <div class="check-grid">${armouryChoiceGrid()}</div>
           </div>
           <button type="submit">Create</button>
         </form>
@@ -3628,6 +3683,10 @@
     function adjustNewCharacterDisciplines(form) {
       const help = form?.querySelector('[data-discipline-help]');
       if (help) help.textContent = 'Kai Disciplines - choose 5';
+      const bookNumber = Number(form?.querySelector('[data-new-book]')?.value || 1);
+      form?.querySelectorAll('[data-book2-setup]').forEach((item) => {
+        item.hidden = bookNumber !== 2;
+      });
       const boxes = Array.from(form?.querySelectorAll('input[name="kaiDisciplines"]') || []);
       const checked = boxes.filter((box) => box.checked);
       if (checked.length <= 5) return;
@@ -4561,7 +4620,21 @@
       if (form.id === 'noteForm') await action({ action: 'note', text: data.text });
       if (form.id === 'saveForm') await action({ action: 'save', path: data.path });
       if (form.id === 'continueBookForm') {
-        await action({ action: 'continue_book' });
+        const armourySelections = formData.getAll('armouryChoices');
+        if (Number(form.dataset.nextBook || 0) === 2 && armourySelections.length !== 2) {
+          setReceipt({
+            summary: 'Book 2 - Choose exactly 2 armoury items.',
+            details: [receiptDetail('Selected', `${armourySelections.length}/2`)]
+          });
+          return;
+        }
+        await action({
+          action: 'continue_book',
+          kaiDiscipline: data.kaiDiscipline,
+          goldRoll: data.goldRoll,
+          armouryChoices: armourySelections,
+          weaponExchanges: formData.getAll('weaponExchanges').filter(Boolean)
+        });
       }
       if (form.id === 'combatForm') await action({
         action: 'combat_start',
@@ -4577,6 +4650,7 @@
       });
       if (form.id === 'roundForm') await action({ action: 'combat_round', activeWeapon: data.activeWeapon, roll: data.roll });
       if (form.id === 'newForm') {
+        const bookNumber = Number(data.bookNumber || 1);
         const kaiSelections = formData.getAll('kaiDisciplines');
         if (kaiSelections.length !== 5) {
           setReceipt({
@@ -4585,11 +4659,21 @@
           });
           return;
         }
+        const armourySelections = formData.getAll('armouryChoices');
+        if (bookNumber === 2 && armourySelections.length !== 2) {
+          setReceipt({
+            summary: 'Book 2 - Choose exactly 2 armoury items.',
+            details: [receiptDetail('Selected', `${armourySelections.length}/2`)]
+          });
+          return;
+        }
         await action({
           action: 'new',
           name: data.name,
-          bookNumber: Number(data.bookNumber),
-          kaiDisciplines: kaiSelections
+          bookNumber,
+          kaiDisciplines: kaiSelections,
+          goldRoll: data.goldRoll,
+          armouryChoices: armourySelections
         });
       }
       form.reset?.();

@@ -5,7 +5,7 @@ This matrix describes assistant support, not whether the book text exists locall
 |Book|Title|Reader Assets|Assistant Support|Achievements|Status|
 |----|-----|-------------|-----------------|------------|------|
 |1|Flight from the Dark|User-installed Project Aon HTML|Character creation, routes, automation, combat, rolls, loot, death recovery, saves|Implemented|Playable release candidate|
-|2|Fire on the Water|Not wired yet|Not started|Not started|Next pipeline target|
+|2|Fire on the Water|User-installed Project Aon HTML|Setup/start-state only|Not started|Pipeline in progress; not playable yet|
 |3|The Caverns of Kalte|Not wired yet|Not started|Not started|Future pipeline target|
 |4|The Chasm of Doom|Not wired yet|Not started|Not started|Future pipeline target|
 |5|Shadow on the Sand|Not wired yet|Not started|Not started|Future pipeline target|
@@ -29,7 +29,13 @@ Book 1 is the supported starting point:
 - Book 1 achievements
 - Book 1 strategy guide
 
-## Book 2 And Later
+## Book 2
+
+Book 2 setup work has started. The app can prepare a fresh Book 2 character or continue a completed Book 1 save into Book 2, including the extra Kai Discipline, starting Gold, Seal of Hammerdal, carry-over inventory, and Royal Armoury choices.
+
+Book 2 is not fully playable yet. Section automation, combat presets, route checks, achievements, and the strategy guide still need the rest of the pipeline.
+
+## Book 3 And Later
 
 Do not claim support for a later book until the book pipeline has been run.
 

@@ -36,9 +36,19 @@ The `books` folder is for your local personal copies only.
 
 Do not commit it. Do not package it. Do not upload it to a release.
 
+## Book 2
+
+Book 2 setup uses:
+
+```text
+books\lw\02fotw
+```
+
+The setup flow is available now, but the Book 2 adventure sections still need the rest of the pipeline before we call the book playable.
+
 ## Future Books
 
-Book 2 and later will use the same shape:
+Book 3 and later will use the same shape:
 
 ```text
 books\lw\<bookcode>

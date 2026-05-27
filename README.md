@@ -34,6 +34,7 @@ Project Aon links:
 ## What It Includes
 
 - Book 1 support for *Flight from the Dark*.
+- Book 2 setup/start-state support for *Fire on the Water*; section automation is still in the pipeline.
 - Split view with the book reader on the left and the assistant on the right, once the Project Aon book files are installed locally.
 - Book 1 character creation from the rules:
   - Combat Skill = random digit + 10
@@ -54,7 +55,8 @@ Project Aon links:
 ## Current Limitations
 
 - Book 1 is the first supported book and is being prepared as the first public prerelease package.
-- Book 2 and later are not supported yet.
+- Book 2 can be set up from Book 1 completion or as a fresh Book 2 start, but Book 2 section automation, combat presets, achievements, and guide material are not playable yet.
+- Book 3 and later are not supported yet.
 - Later books must be onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` before they are treated as playable.
 
 ## Quick Start

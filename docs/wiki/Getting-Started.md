@@ -1,6 +1,6 @@
 # Getting Started
 
-This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux. We are starting with *Flight from the Dark* and keeping the app local, practical, and faithful to the book text.
+This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 setup now underway. We are keeping the app local, practical, and faithful to the book text.
 
 ## Requirements
 
@@ -8,6 +8,7 @@ This project is the Book 1 release-candidate build of Lone Wolf Action Assistant
 - A modern browser
 - The project files from the repository
 - Your own Project Aon Book 1 HTML files
+- Your own Project Aon Book 2 HTML files if you want to try the Book 2 setup flow
 
 Install Python dependencies from the project folder if needed:
 
@@ -45,6 +46,12 @@ For Book 1, extract the Project Aon standard HTML files here:
 books\lw\01fftd
 ```
 
+For Book 2 setup, use:
+
+```text
+books\lw\02fotw
+```
+
 The local guide page is:
 
 ```text
@@ -70,6 +77,12 @@ Use the assistant buttons when the current section offers them:
 - death recovery controls when a run ends badly
 
 For practical route advice, see [Book 1 Strategy Guide](Book-1-Strategy-Guide).
+
+## Starting Book 2
+
+Book 2 is not a playable adventure yet, but its starting setup is available. You can continue from a completed Book 1 save or create a clearly labeled fresh Book 2 character.
+
+The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices.
 
 ## Choose A Play Mode
 

@@ -130,7 +130,7 @@ Do not treat a future folder as supported just because it exists locally. Each b
 
 Current pipeline target:
 
-- Book 2, `02fotw`, has source verification and rules/handoff logs under `testing/logs/LWBOOK2_*`.
+- Book 2, `02fotw`, has source verification, rules/handoff logs, setup implementation notes, and a setup smoke test under `testing/logs/LWBOOK2_*` and `testing/lwbook2_setup_smoke.py`.
 
 ## Recommended Audit Start Pattern
 

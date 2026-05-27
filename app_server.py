@@ -230,25 +230,39 @@ def book_files_payload() -> dict:
 
 def apply_new_game(payload: dict) -> str:
     name = str(payload.get("name") or "Lone Wolf").strip() or "Lone Wolf"
+    book_number = int(payload.get("bookNumber") or 1)
     disciplines = payload.get("kaiDisciplines")
     if not isinstance(disciplines, list):
         disciplines = lonewolf_redux.KAI_DISCIPLINES[:5]
 
-    ASSISTANT.state = lonewolf_redux.create_book1_character_state(
-        name=name,
-        kai_disciplines=disciplines,
-        section=int(payload.get("section") or 1),
-        combat_skill_roll=payload.get("combatSkillRoll"),
-        endurance_roll=payload.get("enduranceRoll"),
-        gold_roll=payload.get("goldRoll"),
-        starting_find_roll=payload.get("startingFindRoll"),
-        weaponskill_roll=payload.get("weaponskillRoll"),
-    )
+    if book_number == 2:
+        ASSISTANT.state = lonewolf_redux.create_book2_character_state(
+            name=name,
+            kai_disciplines=disciplines,
+            section=int(payload.get("section") or 1),
+            combat_skill_roll=payload.get("combatSkillRoll"),
+            endurance_roll=payload.get("enduranceRoll"),
+            gold_roll=payload.get("goldRoll"),
+            weaponskill_roll=payload.get("weaponskillRoll"),
+            armoury_choices=payload.get("armouryChoices"),
+            weapon_exchanges=payload.get("weaponExchanges"),
+        )
+    else:
+        ASSISTANT.state = lonewolf_redux.create_book1_character_state(
+            name=name,
+            kai_disciplines=disciplines,
+            section=int(payload.get("section") or 1),
+            combat_skill_roll=payload.get("combatSkillRoll"),
+            endurance_roll=payload.get("enduranceRoll"),
+            gold_roll=payload.get("goldRoll"),
+            starting_find_roll=payload.get("startingFindRoll"),
+            weaponskill_roll=payload.get("weaponskillRoll"),
+        )
     ASSISTANT.record_section_visit()
     ASSISTANT.save_section_checkpoint("ready")
     ASSISTANT.write_current_position()
     ASSISTANT.autosave()
-    return f"Created {name}, Book 1."
+    return f"Created {name}, Book {book_number}."
 
 
 def handle_action(payload: dict) -> str:
@@ -351,7 +365,14 @@ def handle_action(payload: dict) -> str:
             print(f"Book {summary['BookNumber']} complete: {summary['BookTitle']}.")
         return capture_output(complete)
     if action == "continue_book":
-        return "No later books are enabled in this Book 1 rebuild yet."
+        return capture_output(
+            lambda: ASSISTANT.continue_completed_book(
+                kai_discipline=str(payload.get("kaiDiscipline") or ""),
+                book2_gold_roll=payload.get("goldRoll"),
+                book2_armoury_choices=payload.get("armouryChoices"),
+                book2_weapon_exchanges=payload.get("weaponExchanges"),
+            )
+        )
     if action == "repeat_book":
         return capture_output(lambda: ASSISTANT.repeat_completed_book())
     if action == "combat_start":

@@ -25,7 +25,7 @@ Common Project Aon Lone Wolf folder codes:
 | Book | Folder code | Status in this app |
 | --- | --- | --- |
 | 1. Flight from the Dark | `01fftd` | Supported |
-| 2. Fire on the Water | `02fotw` | Future pipeline target |
+| 2. Fire on the Water | `02fotw` | Setup/start-state supported |
 | 3. The Caverns of Kalte | `03tcok` | Future pipeline target |
 | 4. The Chasm of Doom | `04tcod` | Future pipeline target |
 | 5. Shadow on the Sand | `05sots` | Future pipeline target |

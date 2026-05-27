@@ -6,7 +6,7 @@ Yes. Book 1 is playable locally as the first release candidate.
 
 You can create a Book 1 character, use the Book 1 Action Chart, follow section routes, apply audited section effects, resolve supported combats and rolls, recover from death, save/load, and unlock achievements.
 
-The next books are not supported yet; we will onboard them one at a time so rule changes, new powers, and new gear choices are not rushed.
+Book 2 setup has started. You can prepare a fresh Book 2 character or continue a completed Book 1 run into the Book 2 starting state, but the Book 2 adventure sections are still going through the pipeline.
 
 ## Which Book Is Supported First?
 
@@ -44,6 +44,6 @@ No. It is a companion for your own local Project Aon book files. Read the book t
 
 ## What Should The Next Book Pipeline Do First?
 
-For Book 2 and later, start with the rules scan and book handoff scan. Later Lone Wolf books can add rule tweaks, new-power choices, new starting gear choices, and carry-over checks.
+For Book 2, the setup scan is complete and the next work is the section-flow baseline. For Book 3 and later, start with the rules scan and book handoff scan. Later Lone Wolf books can add rule tweaks, new-power choices, new starting gear choices, and carry-over checks.
 
 Use [Book Support Matrix](Book-Support-Matrix) to see what is supported now.
