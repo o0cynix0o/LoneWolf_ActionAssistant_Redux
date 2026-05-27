@@ -26,7 +26,7 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 ## Known Scaffold Debt
 
-The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The following debt remains for later passes:
+The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The sixteenth issue pass implemented the approved Book 1 achievement batch with automatic sync/backfill. The following debt remains for later passes:
 
 - Book 2-4 Grey Star completion assumptions.
 - Legacy compatibility code for older Grey Star-derived save fields.
@@ -176,8 +176,16 @@ Issue #15 changed the workflow and guide baseline:
 - `docs\LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` records the reusable per-book onboarding pipeline.
 - `testing\logs\LWBOOK1_PIPELINE_BACKFILL.md` maps Book 1's completed work to that pipeline.
 - `testing\logs\LWBOOK1_AUTOMATION_LEDGER.md` backfills the Book 1 automation ledger from the checked-in data.
-- `testing\logs\LWBOOK1_ACHIEVEMENT_CANDIDATES.md` records candidate Book 1 achievements for later approval.
+- `testing\logs\LWBOOK1_ACHIEVEMENT_CANDIDATES.md` records the approved Book 1 achievement list and issue #16 implementation status.
 - `docs\wiki\Book-1-Strategy-Guide.md` adds the player-facing guide in the Grey Star guide tone: practical, warm, route-aware, and not written like an audit log.
+
+Issue #16 changed the achievement baseline:
+
+- `lonewolf_redux.py` now exposes the approved Book 1 achievement definitions and trigger checks through the existing achievement sync/payload path.
+- `Automation.ItemHistory` records successful `add_item` automation pickups so item achievements can survive later inventory changes.
+- Route-resource achievements use the route journal when available and section-history fallback for older saves.
+- `testing\lwbook1_achievement_smoke.py` covers definitions, story route completion, combat/item achievements, paid routes, failure branches, exploration, and summary backfill.
+- `testing\logs\LWBOOK1_ACHIEVEMENT_IMPLEMENTATION.md` records the implementation pass; `lw1_route_gauntlet` remains deferred as internal playtest proof.
 
 ## GitHub Workflow
 

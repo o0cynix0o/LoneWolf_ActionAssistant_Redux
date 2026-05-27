@@ -120,10 +120,24 @@ HIGHER_MAGICKS: list[str] = []
 LONE_WOLF_BOOK1_ACHIEVEMENTS = [
     {
         "Id": "lw1_complete",
-        "Name": "Flight from the Dark Complete",
+        "Name": "Flight from the Dark",
         "BookNumber": 1,
-        "Category": "Journey",
+        "Category": "Story",
         "Description": "Complete Book 1.",
+    },
+    {
+        "Id": "lw1_reach_holmgard",
+        "Name": "To The King's Citadel",
+        "BookNumber": 1,
+        "Category": "Story",
+        "Description": "Reach section 350.",
+    },
+    {
+        "Id": "lw1_clean_story_route",
+        "Name": "Messenger To The King",
+        "BookNumber": 1,
+        "Category": "Route",
+        "Description": "Complete the checked story route to Holmgard.",
     },
     {
         "Id": "lw1_first_blood",
@@ -133,6 +147,83 @@ LONE_WOLF_BOOK1_ACHIEVEMENTS = [
         "Description": "Win your first recorded Book 1 combat.",
     },
     {
+        "Id": "lw1_gourgaz_victory",
+        "Name": "Gourgaz Slayer",
+        "BookNumber": 1,
+        "Category": "Combat",
+        "Description": "Win the recorded section 255 combat.",
+    },
+    {
+        "Id": "lw1_princes_sword",
+        "Name": "Prince's Sword",
+        "BookNumber": 1,
+        "Category": "Item",
+        "Description": "Take the Prince's Sword.",
+    },
+    {
+        "Id": "lw1_vordak_gem_backlash",
+        "Name": "Dark Gem Burn",
+        "BookNumber": 1,
+        "Category": "Danger",
+        "Description": "Reach the dark-gem backlash outcome.",
+    },
+    {
+        "Id": "lw1_vordak_gem_failure",
+        "Name": "Too Late To Turn Back",
+        "BookNumber": 1,
+        "Category": "Failure",
+        "Description": "Record the dark-gem failure outcome.",
+    },
+    {
+        "Id": "lw1_capture_escape",
+        "Name": "Captive No More",
+        "BookNumber": 1,
+        "Category": "Route",
+        "Description": "Escape from captivity.",
+    },
+    {
+        "Id": "lw1_capture_death",
+        "Name": "No Way Out",
+        "BookNumber": 1,
+        "Category": "Failure",
+        "Description": "Record the captive-death outcome.",
+    },
+    {
+        "Id": "lw1_paid_ferry",
+        "Name": "Paid Passage",
+        "BookNumber": 1,
+        "Category": "Resource",
+        "Description": "Use the paid ferry route.",
+    },
+    {
+        "Id": "lw1_caravan_fare",
+        "Name": "Caravan Fare",
+        "BookNumber": 1,
+        "Category": "Resource",
+        "Description": "Use the caravan fare route.",
+    },
+    {
+        "Id": "lw1_backpack_lost",
+        "Name": "Travel Light",
+        "BookNumber": 1,
+        "Category": "Inventory",
+        "Description": "Reach a checked gear-loss section.",
+    },
+    {
+        "Id": "lw1_marsh_escape",
+        "Name": "Out Of The Morass",
+        "BookNumber": 1,
+        "Category": "Random",
+        "Description": "Survive the marsh-roll branch.",
+    },
+    {
+        "Id": "lw1_crystal_star_pendant",
+        "Name": "Crystal Star Pendant",
+        "BookNumber": 1,
+        "Category": "Item",
+        "Description": "Take the Crystal Star Pendant.",
+    },
+    {
         "Id": "lw1_long_road",
         "Name": "Long Road to Holmgard",
         "BookNumber": 1,
@@ -140,6 +231,45 @@ LONE_WOLF_BOOK1_ACHIEVEMENTS = [
         "Description": "Visit 75 or more unique Book 1 sections.",
     },
 ]
+
+LW1_STORY_ROUTE = [
+    1,
+    141,
+    56,
+    222,
+    252,
+    70,
+    157,
+    30,
+    261,
+    264,
+    6,
+    200,
+    168,
+    64,
+    16,
+    192,
+    171,
+    303,
+    237,
+    265,
+    142,
+    135,
+    223,
+    75,
+    163,
+    321,
+    273,
+    51,
+    288,
+    129,
+    3,
+    196,
+    332,
+    350,
+]
+
+LW1_GEAR_LOSS_SECTIONS = {174, 258, 294}
 
 ACHIEVEMENT_DEFINITIONS = [
     {
@@ -897,6 +1027,7 @@ def default_automation() -> dict[str, Any]:
         "AppliedHealing": [],
         "AppliedLossChoices": [],
         "AppliedRouteActions": [],
+        "ItemHistory": [],
         "StagedRolls": {},
         "Ending": None,
         "DeathState": {"Active": False},
@@ -1096,6 +1227,7 @@ def normalize_state(state: dict[str, Any]) -> dict[str, Any]:
         ("Automation", "AppliedHealing"),
         ("Automation", "AppliedLossChoices"),
         ("Automation", "AppliedRouteActions"),
+        ("Automation", "ItemHistory"),
         ("Automation", "Journal"),
         ("Automation", "DeathHistory"),
         ("Automation", "SectionCheckpoints"),
@@ -1891,10 +2023,46 @@ class LoneWolfReduxAssistant:
         for summary in self.summaries_for_book(book_number):
             for key in ("Weapons", "BackpackItems", "SpecialItems", "HerbPouchItems"):
                 items.extend(str(item) for item in as_list(summary.get(key)) if str(item).strip())
+        for entry in as_list(self.automation.get("ItemHistory")):
+            if not isinstance(entry, dict) or int(entry.get("BookNumber") or 0) != book_number:
+                continue
+            name = str(entry.get("Name") or "").strip()
+            if name:
+                items.append(name)
         if int(self.character.get("BookNumber") or 0) == book_number:
             for key in ("Weapons", "BackpackItems", "SpecialItems", "HerbPouchItems"):
                 items.extend(str(item) for item in as_list(self.inventory.get(key)) if str(item).strip())
         return {item.lower() for item in items}
+
+    def death_history_has_section(self, book_number: int, section: int) -> bool:
+        return any(
+            isinstance(entry, dict)
+            and int(entry.get("BookNumber") or 0) == int(book_number)
+            and int(entry.get("Section") or 0) == int(section)
+            for entry in as_list(self.automation.get("DeathHistory"))
+        )
+
+    def has_route_transition(self, book_number: int, source: int, target: int) -> bool:
+        source = int(source)
+        target = int(target)
+        for entry in as_list(self.automation.get("Journal")):
+            if (
+                isinstance(entry, dict)
+                and str(entry.get("Kind") or "").lower() == "route"
+                and int(entry.get("BookNumber") or 0) == int(book_number)
+                and int(entry.get("Section") or 0) == source
+                and int(entry.get("TargetSection") or 0) == target
+            ):
+                return True
+
+        ordered = [
+            int(entry.get("Section"))
+            for entry in as_list(self.state.get("SectionHistory"))
+            if isinstance(entry, dict)
+            and int(entry.get("BookNumber") or 0) == int(book_number)
+            and str(entry.get("Section") or "").strip()
+        ]
+        return any(left == source and right == target for left, right in zip(ordered, ordered[1:]))
 
     def summary_metric_for_book(self, book_number: int, key: str) -> int:
         values: list[int] = []
@@ -1944,8 +2112,34 @@ class LoneWolfReduxAssistant:
 
         if achievement_id == "lw1_complete":
             return self.book_completed(1)
+        if achievement_id == "lw1_reach_holmgard":
+            return 350 in sections or self.book_completed(1)
+        if achievement_id == "lw1_clean_story_route":
+            return all(section in sections for section in LW1_STORY_ROUTE)
         if achievement_id == "lw1_first_blood":
             return victory_count >= 1
+        if achievement_id == "lw1_gourgaz_victory":
+            return any(int(entry.get("Section") or 0) == 255 for entry in victories)
+        if achievement_id == "lw1_princes_sword":
+            return "prince's sword" in items
+        if achievement_id == "lw1_vordak_gem_backlash":
+            return 236 in sections
+        if achievement_id == "lw1_vordak_gem_failure":
+            return 292 in sections or self.death_history_has_section(1, 292)
+        if achievement_id == "lw1_capture_escape":
+            return self.has_sections(1, 162, 258)
+        if achievement_id == "lw1_capture_death":
+            return 127 in sections or self.death_history_has_section(1, 127)
+        if achievement_id == "lw1_paid_ferry":
+            return self.has_route_transition(1, 46, 246) or self.has_sections(1, 46, 246)
+        if achievement_id == "lw1_caravan_fare":
+            return self.has_route_transition(1, 12, 262) or self.has_sections(1, 12, 262)
+        if achievement_id == "lw1_backpack_lost":
+            return any(section in sections for section in LW1_GEAR_LOSS_SECTIONS)
+        if achievement_id == "lw1_marsh_escape":
+            return 21 in sections and self.has_any_section(1, 189, 312)
+        if achievement_id == "lw1_crystal_star_pendant":
+            return "crystal star pendant" in items
         if achievement_id == "lw1_long_road":
             return max(len(sections), self.summary_metric_for_book(1, "UniqueSectionsVisited")) >= 75
 
@@ -2480,6 +2674,20 @@ class LoneWolfReduxAssistant:
             if remaining <= 0:
                 break
         return removed_count
+
+    def record_item_seen(self, name: str, container: str) -> None:
+        name = str(name or "").strip()
+        if not name:
+            return
+        entry = {
+            "BookNumber": int(self.character["BookNumber"]),
+            "Section": int(self.state["CurrentSection"]),
+            "Name": name,
+            "Container": str(container or ""),
+            "RecordedAt": datetime.now().isoformat(timespec="seconds"),
+        }
+        history = as_list(self.automation.get("ItemHistory"))
+        self.automation["ItemHistory"] = (history + [entry])[-500:]
 
     def add_inventory_item(self, container: str, item: str) -> bool:
         key = self.container_key(container)
@@ -3826,6 +4034,8 @@ class LoneWolfReduxAssistant:
                 added = self.add_flexible_storage_item(name)
             else:
                 added = self.add_inventory_item(container, name)
+            if added:
+                self.record_item_seen(name, container)
             return f"added {name}" if added else f"could not add {name}"
         if action_type == "flag":
             key = str(action.get("key") or "")

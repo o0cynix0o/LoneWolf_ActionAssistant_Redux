@@ -118,20 +118,19 @@ The third mistake is treating route checks like mandatory commands. A route chec
 
 The fourth mistake is hand-editing around bad outcomes. If the book takes your gear, lets you die, or marks failure, let the app record it. Use Repeat or Rewind when you want another try.
 
-## Replay And Future Achievement Targets
+## Replay And Achievements
 
-Achievements are not implemented yet in Lone Wolf Redux, but Book 1 already has good candidate goals:
+Book 1 achievements are now live. Treat them as replay hooks, not chores for your first clear.
 
-- complete the book
-- defeat the Gourgaz
-- take the Prince's Sword
-- survive the capture route with Mind Over Matter
-- see the Vordak Gem backlash
-- recover from a death or failure
-- find the Crystal Star Pendant
-- survive the marsh staged roll
+- Finish the book and reach Holmgard.
+- Follow the checked messenger route from the end-to-end playtest.
+- Win your first combat and defeat the Gourgaz.
+- Take the Prince's Sword and find the Crystal Star Pendant.
+- Try the paid ferry and caravan routes when you can spare the Gold Crowns.
+- Escape captivity, survive the marsh branch, and see how the Vordak Gem outcomes play out.
+- Explore broadly enough to visit 75 unique sections.
 
-When achievements are approved, these should become replay hooks rather than first-run chores.
+The app backfills achievements automatically from save history where it has reliable state.
 
 ## Final Word
 

@@ -2,7 +2,7 @@
 
 Date: 2026-05-27
 
-Scope: issues #1-#14, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, the combat edge playtest, and the broader route gauntlet.
+Scope: issues #1-#16, covering the Book 1 character/sheet rebuild, section-flow baseline, simple automation, combat presets, route/random helpers, the first repeatable end-to-end playtest route, early branch playtests, random/recovery side effects, Healing, explicit loss-choice helpers, the section 21 staged roll helper, the section 307 weapon exchange helper, the completed section-by-section automation-language pass, the combat edge playtest, the broader route gauntlet, the reusable book pipeline backfill, and the approved Book 1 achievement batch.
 
 ## Checks
 
@@ -23,6 +23,7 @@ Scope: issues #1-#14, covering the Book 1 character/sheet rebuild, section-flow 
 - End-to-end route playtest with `testing\lwbook1_end_to_end_playtest.py`.
 - Branch playtest with `testing\lwbook1_branch_playtest.py`.
 - Route gauntlet playtest with `testing\lwbook1_route_gauntlet_playtest.py`.
+- Achievement smoke with `testing\lwbook1_achievement_smoke.py`.
 - Local HTTP smoke on `http://127.0.0.1:8797`.
 
 ## Results
@@ -63,10 +64,12 @@ Scope: issues #1-#14, covering the Book 1 character/sheet rebuild, section-flow 
 - Automation-language smoke covered the issue #12 rulings: section 15 Sword, section 193 Scroll, section 255 Prince's Sword, section 267 Message and Dagger, section 346 Spear, section 349 Crystal Star Pendant, section 258 gear loss, section 46 Sixth Sense warning, section 12/46 Gold Crown route costs, the section 115/150 no-sheet-change Meal ruling, and representative reviewed route checks.
 - Automation-language audit now reports zero uncovered signal categories.
 - Section-flow data now includes 24 optional loot helpers, 3 explicit loss/exchange-choice helpers, 36 route-check sections, and 1 staged roll helper.
+- Achievement smoke covered Book 1 definitions, story-route completion, first blood, Gourgaz victory, durable item history for Prince's Sword and Crystal Star Pendant, paid route achievements, Vordak Gem outcomes, capture outcomes, gear loss, marsh escape, 75-section exploration, and completed-book summary backfill.
 
 ## Remaining Risk
 
 - The checked routes are broader playable baselines, not exhaustive route coverage.
+- The first achievement batch is conservative; `lw1_route_gauntlet` remains deferred as internal playtest proof.
 - Additional player-choice aftermaths may still surface during broader route playtesting.
 - Later route playtests may still find context-specific combat-adjacent inventory, death, or recovery edge cases.
 - Packaging/release is still blocked until a manual browser ergonomics pass confirms the app feels playable through ordinary use.
