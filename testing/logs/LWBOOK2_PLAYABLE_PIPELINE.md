@@ -14,6 +14,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Added Book 2-specific combat support for the Sommerswerd, Magic Spear, Shield, undead double-loss rules, doubled nonlethal enemy loss, timed modifiers, no-weapon penalties, and arm-wrestling END restoration.
 - Added route/item helpers for Red Pass, White Pass, Access Papers, Ticket to Port Bax, Sommerswerd, Magic Spear, Chainmail Waistcoat loss, required Meals, Gold Crown gains/losses, and Green Sceptre aftermaths.
 - Tightened section 240 recovery so Healing restores END to maximum, while non-Healing recovery restores half of tracked Book 2 combat END loss only.
+- Kept route-effect helpers out of the browser Choices card; route effects still apply through route buttons and report through receipts/status output.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation
@@ -22,6 +23,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - `python .\testing\lwbook2_automation_language_audit.py --write`
 - `python .\testing\lwbook2_setup_smoke.py`
 - `python .\testing\lwbook2_playable_pipeline_smoke.py`
+- `python .\testing\browser_choices_static_smoke.py`
 
 ## Current Risk
 

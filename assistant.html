@@ -3579,24 +3579,9 @@
       }).join('');
     }
 
-    function routeHasAssistantEffect(route) {
-      return Boolean(route?.EffectLabel || arr(route?.Actions).length);
-    }
-
-    function sectionRouteEffectRows() {
-      return arr(currentFlow().SourceRoutes).filter(routeHasAssistantEffect).map((route) => (
-        `<div class="item-row">
-          <small>${escapeHtml(route.Section)}</small>
-          <span class="wrap">${escapeHtml(routeLabel(route))}</span>
-          <button type="button" data-route="${escapeHtml(route.Section)}">Go</button>
-        </div>`
-      )).join('');
-    }
-
     function choicesPanelBody() {
       const entry = currentFlow().Entry || {};
       const groups = [
-        choiceGroup('Route Effects', sectionRouteEffectRows()),
         choiceGroup('Available Checked Routes', sectionRouteCheckChoiceRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),
