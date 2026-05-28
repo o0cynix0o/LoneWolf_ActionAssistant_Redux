@@ -132,6 +132,8 @@ def test_route_costs_and_pass_checks() -> None:
     assistant.inventory["GoldCrowns"] = 12
     quiet(assistant.set_section, 75)
     assert_matched_route(assistant, "75-gold-gte-10", 142, "section 75 pass purchase route")
+    pass_route = next(route for route in assistant.current_section_flow_payload()["SourceRoutes"] if route["Section"] == 142)
+    assert_equal(pass_route["EffectLabel"], "Purchase White Pass", "section 75 pass route label")
     quiet(assistant.follow_route, 142)
     assert_equal(assistant.inventory["GoldCrowns"], 2, "section 75 route removes 10 Gold")
     assert_true("White Pass" in assistant.inventory["SpecialItems"], "section 75 route adds White Pass")

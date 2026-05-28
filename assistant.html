@@ -3563,6 +3563,19 @@
       return `${test ? `${test}: ` : ''}${label}${route}`;
     }
 
+    function sourceRouteForSection(section) {
+      const target = Number(section);
+      return arr(currentFlow().SourceRoutes).find((route) => Number(route.Section) === target) || null;
+    }
+
+    function routeCheckChoiceLabel(check, matched) {
+      const route = sourceRouteForSection(matched.Route);
+      return text(
+        route?.EffectLabel || route?.Label || matched.ChoiceLabel || matched.Label || check.Label,
+        'Available route'
+      );
+    }
+
     function sectionRouteCheckChoiceRows() {
       return arr(currentFlow().RouteChecks).map((check) => {
         if (!check.Ready) return '';
@@ -3572,7 +3585,7 @@
         return `
           <div class="item-row">
             <small>${escapeHtml(currentRoute)}</small>
-            <span class="wrap">${escapeHtml(text(matched.Label || check.Label, 'Available route'))}</span>
+            <span class="wrap">${escapeHtml(routeCheckChoiceLabel(check, matched))}</span>
             <button type="button" data-route="${escapeHtml(currentRoute)}">Go</button>
           </div>
         `;

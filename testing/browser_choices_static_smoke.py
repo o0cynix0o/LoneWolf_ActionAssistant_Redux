@@ -34,6 +34,14 @@ def main() -> int:
         "choiceGroup('Loot And Section Items'" in source,
         "Choices card should still show optional loot and section item helpers.",
     )
+    assert_true(
+        "routeCheckChoiceLabel(check, matched)" in source,
+        "Checked-route choices should use the player-facing label helper.",
+    )
+    assert_true(
+        "route?.EffectLabel || route?.Label" in source,
+        "Checked-route labels should prefer source route action text before audit labels.",
+    )
 
     print("Browser Choices static smoke passed.")
     return 0

@@ -17,6 +17,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Kept route-effect helpers out of the browser Choices card; route effects still apply through route buttons and report through receipts/status output.
 - Corrected section 106 so the Magic Spear is available before the Helghast combat, selected as the active weapon, and required to wound the enemy.
 - Updated the landing page and simple library so Book 2 appears beside Book 1.
+- Improved checked-route choice labels so player-facing route actions, such as Purchase White Pass, are shown before audit-condition text.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation

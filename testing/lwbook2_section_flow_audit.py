@@ -519,7 +519,7 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
     "72": {"sourceRoutes": [{"Section": 226}, route_action(56, [{"type": "stat", "stat": "gold", "delta": -2}], "Pay 2 Gold Crowns for a room"), {"Section": 276}]},
     "75": {
         **stat_route_check(75, "gold", 10, 142, 318, label="White Pass fee"),
-        "sourceRoutes": [route_action(142, [{"type": "stat", "stat": "gold", "delta": -10}, {"type": "add_item", "container": "special", "name": "White Pass"}], "Buy White Pass"), {"Section": 318}],
+        "sourceRoutes": [route_action(142, [{"type": "stat", "stat": "gold", "delta": -10}, {"type": "add_item", "container": "special", "name": "White Pass"}], "Purchase White Pass"), {"Section": 318}],
     },
     "80": item_route_check(80, "Seal of Hammerdal", 15, 189, label="Seal of Hammerdal proof"),
     "81": section_roll("Random longboat result.", [roll_range(0, 4, 260, "Rescue the fishermen"), roll_range(5, 9, 281, "Sail onward")]),
