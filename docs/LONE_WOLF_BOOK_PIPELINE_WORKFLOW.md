@@ -55,6 +55,7 @@ Each book pass should produce or update:
 - `testing/logs/LWBOOKN_AUTOMATION_LEDGER.md`
 - `testing/logs/LWBOOKN_COMBAT_AND_RANDOM_AUDIT.md`
 - `testing/logs/LWBOOKN_ROUTE_AUDIT.md`
+- `testing/logs/LWBOOKN_ROUTE_GRAPH_CHECK.md` when a Project Aon SVG route graph is available
 - `testing/logs/LWBOOKN_PLAYABLE_PIPELINE.md`
 - `testing/logs/LWBOOKN_ROUTE_GAUNTLET_PLAYTEST.md`
 - `testing/logs/LWBOOKN_PLAYTEST_REPORT.md`
@@ -71,6 +72,8 @@ Reports must record mechanics, section numbers, file references, decisions, and 
 - Confirm every expected `sect*.htm` exists.
 - Confirm every linked section target exists.
 - Confirm source route reachability from section 1.
+- Probe the optional Project Aon route graph at `https://www.projectaon.org/en/svg/lw/NNslug.svgz`.
+- If the route graph exists, record its status, title links, section nodes, and edge count as an external cross-check only.
 - Record missing pages, invalid links, unreachable sections, and source irregularities.
 - Refuse to package or commit source book files.
 
@@ -112,6 +115,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
 
 - Crawl all `sect*.htm`.
 - Extract legal source route links.
+- If the Project Aon SVG/SVGZ route graph exists, parse its Graphviz SVG nodes/edges and compare it with the local source-link graph.
 - Classify route shape:
   - single route
   - player choice
@@ -122,6 +126,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - no-route terminal
 - Generate or update `data/bookN-section-flows.json`.
 - Write the section-flow baseline log.
+- Write `LWBOOKN_ROUTE_GRAPH_CHECK.md` if an online route graph was available.
 
 ## 5. Automation-Language Scan
 
@@ -367,6 +372,7 @@ The playtesting ladder turns the audit into repeatable confidence. It should run
 - Confirm every expected `sect*.htm` file exists.
 - Confirm every source section link points to an existing section.
 - Confirm rules/support pages exist or are documented as missing.
+- Confirm the optional Project Aon SVG/SVGZ route graph is reachable or documented as unavailable.
 - Confirm JSON data files load.
 - Confirm Python files compile.
 - Confirm the web API starts and returns state.
