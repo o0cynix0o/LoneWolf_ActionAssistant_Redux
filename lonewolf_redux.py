@@ -494,6 +494,7 @@ def default_state() -> dict[str, Any]:
         "Settings": {
             "SavePath": "",
             "AutoSave": True,
+            "PreferredCombatWeapon": "",
         },
         "Automation": default_automation(),
     }
@@ -3338,11 +3339,16 @@ class LoneWolfReduxAssistant:
             return "Sommerswerd"
         return weapons[0] if weapons else ""
 
-    def preferred_combat_weapon(self, previous_weapon: str | None = None) -> str:
-        previous = str(previous_weapon or "").strip()
+    def preferred_combat_weapon(self) -> str:
+        previous = str(self.settings.get("PreferredCombatWeapon") or "").strip()
         if previous and previous in self.available_combat_weapons(include_jewelled_dagger=False):
             return previous
         return self.default_combat_weapon()
+
+    def remember_combat_weapon(self, weapon: str) -> None:
+        value = str(weapon or "").strip()
+        if value:
+            self.settings["PreferredCombatWeapon"] = value
 
     def resolve_combat_weapon(self, weapon: str) -> str | None:
         value = str(weapon or "").strip()
@@ -3379,6 +3385,7 @@ class LoneWolfReduxAssistant:
         self.combat["ForceUnarmed"] = False
         self.combat["ActiveWeapon"] = resolved
         self.combat["UseStaff"] = False
+        self.remember_combat_weapon(resolved)
         if save:
             self.autosave()
             print(f"Combat weapon: {resolved or 'Unarmed'}")
@@ -5292,6 +5299,7 @@ class LoneWolfReduxAssistant:
             if resolved_weapon is not None:
                 self.combat["ActiveWeapon"] = resolved_weapon
                 self.combat["UseStaff"] = False
+        self.remember_combat_weapon(self.combat_active_weapon())
         for message in messages:
             print(message)
         print(f"Section combat loaded: {preset.get('label') or name}")
@@ -5523,7 +5531,7 @@ class LoneWolfReduxAssistant:
             enemy_cs = read_int("Enemy Combat Skill", 10, 0, 99)
             enemy_end = read_int("Enemy Endurance", 10, 1, 999)
 
-        active_weapon = self.preferred_combat_weapon(self.combat.get("ActiveWeapon"))
+        active_weapon = self.preferred_combat_weapon()
         self.combat.update(
             {
                 "Active": True,
@@ -5573,6 +5581,7 @@ class LoneWolfReduxAssistant:
                 "Log": [],
             }
         )
+        self.remember_combat_weapon(active_weapon)
         weapon_modifier, weapon_notes = self.combat_weapon_modifier_and_notes()
         if weapon_modifier:
             print("; ".join(weapon_notes))

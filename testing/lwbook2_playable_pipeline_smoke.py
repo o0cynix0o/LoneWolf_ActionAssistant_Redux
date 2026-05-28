@@ -244,8 +244,13 @@ def test_book2_combat_helpers() -> None:
     assistant = fresh_assistant()
     assistant.inventory["Weapons"] = ["Sword"]
     assistant.inventory["SpecialItems"] = ["Sommerswerd"]
+    assistant.combat["ActiveWeapon"] = "Sword"
     quiet(assistant.start_combat, ["combat", "start", "Practice Raider", "10", "10"])
-    assert_equal(assistant.combat["ActiveWeapon"], "Sommerswerd", "Sommerswerd is the default combat weapon")
+    assert_equal(
+        assistant.combat["ActiveWeapon"],
+        "Sommerswerd",
+        "Sommerswerd is the default combat weapon despite stale active weapon",
+    )
     quiet(assistant.set_combat_weapon, "Sword")
     assistant.combat["Active"] = False
     quiet(assistant.start_combat, ["combat", "start", "Practice Raider 2", "10", "10"])
