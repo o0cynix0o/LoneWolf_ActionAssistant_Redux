@@ -8701,23 +8701,43 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 118
+          "Section": 118,
+          "actions": [
+            {
+              "type": "remove_item",
+              "containers": [
+                "special"
+              ],
+              "name": "Magic Spear",
+              "condition": {
+                "type": "item",
+                "name": "Magic Spear",
+                "containers": [
+                  "special"
+                ],
+                "match": "exact"
+              }
+            }
+          ],
+          "effectLabel": "Give Magic Spear to Rhygar"
         },
         {
-          "Section": 102
+          "Section": 102,
+          "Label": "Keep Magic Spear"
         }
       ],
       "incomingRouteCount": 1,
       "routeChecks": [
         {
           "id": "299-magic-spear",
-          "label": "Keep Magic Spear route",
-          "summary": "Checks whether Lone Wolf has Magic Spear.",
+          "label": "Magic Spear decision",
+          "summary": "Checks whether Lone Wolf can keep or give away the Magic Spear.",
           "outcomes": [
             {
               "label": "Magic Spear available",
               "route": 102,
               "testLabel": "Has Magic Spear",
+              "choiceLabel": "Keep Magic Spear",
               "conditions": [
                 {
                   "type": "item",
@@ -8733,6 +8753,7 @@
               "label": "No Magic Spear",
               "route": 118,
               "testLabel": "No Magic Spear",
+              "choiceLabel": "Continue without Magic Spear",
               "conditions": [
                 {
                   "type": "no_item",

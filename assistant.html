@@ -3571,7 +3571,7 @@
     function routeCheckChoiceLabel(check, matched) {
       const route = sourceRouteForSection(matched.Route);
       return text(
-        route?.EffectLabel || route?.Label || matched.ChoiceLabel || matched.Label || check.Label,
+        matched.ChoiceLabel || route?.EffectLabel || route?.Label || matched.Label || check.Label,
         'Available route'
       );
     }

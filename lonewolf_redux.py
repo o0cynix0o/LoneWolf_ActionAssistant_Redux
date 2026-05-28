@@ -2541,6 +2541,7 @@ class LoneWolfReduxAssistant:
                 matched = ready and matched_outcome is None and self.route_check_outcome_matches(outcome, value)
                 payload = {
                     "Label": str(outcome.get("label") or ""),
+                    "ChoiceLabel": str(outcome.get("choiceLabel") or ""),
                     "Route": int(outcome.get("route")) if outcome.get("route") is not None else None,
                     "Matched": matched,
                     "Test": self.route_check_test_label(outcome),

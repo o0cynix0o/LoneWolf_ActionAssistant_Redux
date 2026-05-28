@@ -87,8 +87,11 @@ def condition_outcome(
     route: int,
     condition: dict[str, Any] | None,
     test_label: str,
+    choice_label: str = "",
 ) -> dict[str, Any]:
     outcome = {"label": label, "route": route, "testLabel": test_label}
+    if choice_label:
+        outcome["choiceLabel"] = choice_label
     if condition:
         outcome["conditions"] = [condition]
     return outcome
@@ -585,7 +588,25 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
     "278": section_roll("Random cloak signal result.", [roll_range(0, 6, 41, "Fishing boat sees you"), roll_range(7, 9, 180, "No rescue")]),
     "280": section_roll("Random Wildlands accident.", [roll_range(0, 4, 2, "Accident route"), roll_range(5, 9, 108, "Injury route")]),
     "289": {"sourceRoutes": [route_action(165, [{"type": "stat", "stat": "gold", "delta": 40}, {"type": "remove_item", "containers": ["special"], "name": "Seal of Hammerdal"}], "Sell the Seal of Hammerdal"), {"Section": 186}]},
-    "299": item_route_check(299, "Magic Spear", 102, 118, label="Keep Magic Spear route"),
+    "299": {
+        **route_check(
+            "299-magic-spear",
+            "Magic Spear decision",
+            "Checks whether Lone Wolf can keep or give away the Magic Spear.",
+            [
+                condition_outcome("Magic Spear available", 102, cond_item("Magic Spear"), "Has Magic Spear", "Keep Magic Spear"),
+                condition_outcome("No Magic Spear", 118, cond_no_item("Magic Spear"), "No Magic Spear", "Continue without Magic Spear"),
+            ],
+        ),
+        "sourceRoutes": [
+            route_action(
+                118,
+                [{"type": "remove_item", "containers": ["special"], "name": "Magic Spear", "condition": cond_item("Magic Spear")}],
+                "Give Magic Spear to Rhygar",
+            ),
+            {"Section": 102, "Label": "Keep Magic Spear"},
+        ],
+    },
     "300": section_roll("Random departure from Holmgard.", [roll_range(0, 1, 224, "Sea route"), roll_range(2, 3, 316, "Distress ship"), roll_range(4, 5, 81, "Longboat"), roll_range(6, 7, 22, "Wreckage"), roll_range(8, 9, 99, "Pirate ship")]),
     "314": {
         **power_route_check(314, "Hunting", 290, None, label="Hunting poisoned food warning"),

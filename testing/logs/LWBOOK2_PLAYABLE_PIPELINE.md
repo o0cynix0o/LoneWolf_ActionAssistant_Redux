@@ -18,6 +18,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Corrected section 106 so the Magic Spear is available before the Helghast combat, selected as the active weapon, and required to wound the enemy.
 - Updated the landing page and simple library so Book 2 appears beside Book 1.
 - Improved checked-route choice labels so player-facing route actions, such as Purchase White Pass, are shown before audit-condition text.
+- Corrected section 299 so giving the Magic Spear to Rhygar removes it, while the no-spear route remains harmless.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation

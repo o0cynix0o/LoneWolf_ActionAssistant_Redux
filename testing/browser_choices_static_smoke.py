@@ -39,8 +39,8 @@ def main() -> int:
         "Checked-route choices should use the player-facing label helper.",
     )
     assert_true(
-        "route?.EffectLabel || route?.Label" in source,
-        "Checked-route labels should prefer source route action text before audit labels.",
+        "matched.ChoiceLabel || route?.EffectLabel || route?.Label" in source,
+        "Checked-route labels should prefer explicit choice text before source route action text.",
     )
 
     print("Browser Choices static smoke passed.")

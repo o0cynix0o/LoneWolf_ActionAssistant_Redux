@@ -162,6 +162,26 @@ def test_route_costs_and_pass_checks() -> None:
     quiet(assistant.set_section, 246)
     assert_matched_route(assistant, "246-pass", 202, "section 246 Red Pass route")
 
+    assistant = fresh_assistant()
+    assistant.inventory["SpecialItems"] = ["Magic Spear"]
+    quiet(assistant.set_section, 299)
+    matched = route_check_by_id(assistant, "299-magic-spear")["MatchedOutcome"]
+    assert_equal(matched["Route"], 102, "section 299 keep-spear route")
+    assert_equal(matched["ChoiceLabel"], "Keep Magic Spear", "section 299 keep-spear choice label")
+    give_route = next(route for route in assistant.current_section_flow_payload()["SourceRoutes"] if route["Section"] == 118)
+    assert_equal(give_route["EffectLabel"], "Give Magic Spear to Rhygar", "section 299 give-spear route label")
+    quiet(assistant.follow_route, 118)
+    assert_true("Magic Spear" not in assistant.inventory["SpecialItems"], "section 299 route 118 gives away Magic Spear")
+
+    assistant = fresh_assistant()
+    assistant.inventory["SpecialItems"] = []
+    quiet(assistant.set_section, 299)
+    matched = route_check_by_id(assistant, "299-magic-spear")["MatchedOutcome"]
+    assert_equal(matched["Route"], 118, "section 299 no-spear route")
+    assert_equal(matched["ChoiceLabel"], "Continue without Magic Spear", "section 299 no-spear choice label")
+    quiet(assistant.follow_route, 118)
+    assert_equal(assistant.inventory["SpecialItems"], [], "section 299 route 118 is harmless without Magic Spear")
+
 
 def test_section_240_recovers_combat_loss_only() -> None:
     assistant = fresh_assistant()
