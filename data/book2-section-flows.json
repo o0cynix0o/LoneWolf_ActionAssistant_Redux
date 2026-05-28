@@ -47,7 +47,38 @@
           "Section": 168
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "2-sixth-sense",
+          "label": "Sixth Sense coach warning",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 42,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            },
+            {
+              "label": "No Sixth Sense",
+              "route": 168,
+              "testLabel": "No Sixth Sense",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "3": {
       "auditStatus": "source-link-baseline",
@@ -99,7 +130,21 @@
           "Section": 166
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "5-wounded-helghast",
+          "label": "Wounded Helghast",
+          "enemy": {
+            "name": "Wounded Helghast",
+            "cs": 22,
+            "endurance": 20
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 166
+        }
+      ]
     },
     "6": {
       "auditStatus": "source-link-baseline",
@@ -132,7 +177,27 @@
           "Section": 33
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "7-dorier-ganon",
+          "label": "Dorier and Ganon",
+          "enemy": {
+            "name": "Dorier and Ganon",
+            "cs": 28,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "timedModifiers": [
+            {
+              "startRound": 1,
+              "endRound": 1,
+              "modifier": 2
+            }
+          ],
+          "victoryRoute": 33
+        }
+      ]
     },
     "8": {
       "auditStatus": "source-link-baseline",
@@ -175,7 +240,33 @@
           "Section": 339
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random event on the coach journey.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "route": 51,
+            "label": "Coach event"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 6,
+            "route": 195,
+            "label": "Rymerift toll"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 339,
+            "label": "Exit tax"
+          }
+        ]
+      }
     },
     "11": {
       "auditStatus": "source-link-baseline",
@@ -206,7 +297,43 @@
           "Section": 329
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Samor wager outcome.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "route": 58,
+            "label": "Lose the game"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 6,
+            "route": 167,
+            "label": "Drawn game"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 11,
+            "route": 329,
+            "label": "Win the game"
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Sixth Sense",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Sixth Sense"
+            }
+          }
+        ]
+      }
     },
     "13": {
       "auditStatus": "source-link-baseline",
@@ -251,7 +378,85 @@
           "Section": 244
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "broadsword",
+          "label": "Take Broadsword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Broadsword"
+            }
+          ]
+        },
+        {
+          "id": "mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        },
+        {
+          "id": "quarterstaff",
+          "label": "Take Quarterstaff",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        },
+        {
+          "id": "healing-potion",
+          "label": "Take Healing Potion",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Healing Potion"
+            }
+          ]
+        },
+        {
+          "id": "food",
+          "label": "Take Food for 3 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "gold",
+          "label": "Take 12 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 12
+            }
+          ]
+        }
+      ]
     },
     "16": {
       "auditStatus": "source-link-baseline",
@@ -280,7 +485,21 @@
           "Section": 166
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "17-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 22,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 166
+        }
+      ]
     },
     "18": {
       "auditStatus": "source-link-baseline",
@@ -342,7 +561,175 @@
           "Section": 314
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "card-sharp-dagger",
+          "label": "Take Card Sharp's Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ],
+      "roll": {
+        "summary": "Gold left on the table after the card sharp fight.",
+        "outcomes": [
+          {
+            "test": "values",
+            "values": [
+              0
+            ],
+            "route": 314,
+            "label": "30 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 29
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              1
+            ],
+            "route": 314,
+            "label": "3 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 2
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              2
+            ],
+            "route": 314,
+            "label": "6 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 5
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              3
+            ],
+            "route": 314,
+            "label": "9 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 8
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              4
+            ],
+            "route": 314,
+            "label": "12 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 11
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              5
+            ],
+            "route": 314,
+            "label": "15 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 14
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              6
+            ],
+            "route": 314,
+            "label": "18 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 17
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              7
+            ],
+            "route": 314,
+            "label": "21 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 20
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              8
+            ],
+            "route": 314,
+            "label": "24 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 23
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              9
+            ],
+            "route": 314,
+            "label": "27 Crowns on the table; pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 26
+              }
+            ]
+          }
+        ]
+      }
     },
     "22": {
       "auditStatus": "source-link-baseline",
@@ -359,7 +746,26 @@
           "Section": 341
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random wreckage result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 119,
+            "label": "Wreckage route"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 341,
+            "label": "Alternative wreckage route"
+          }
+        ]
+      }
     },
     "23": {
       "auditStatus": "source-link-baseline",
@@ -376,7 +782,38 @@
           "Section": 295
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "23-animal-kinship",
+          "label": "Animal Kinship bird route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 144,
+              "testLabel": "Has Animal Kinship",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ]
+            },
+            {
+              "label": "No Animal Kinship",
+              "route": 295,
+              "testLabel": "No Animal Kinship",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Animal Kinship"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "24": {
       "auditStatus": "source-link-baseline",
@@ -412,7 +849,58 @@
           "Section": 153
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "25-sixth-sense-or-mind-over-matter",
+          "label": "Sixth Sense or Mind Over Matter",
+          "summary": "Checks whether Lone Wolf has either discipline.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 116,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            },
+            {
+              "label": "Mind Over Matter available",
+              "route": 116,
+              "testLabel": "Has Mind Over Matter",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ]
+            },
+            {
+              "label": "Neither discipline",
+              "route": 153,
+              "testLabel": "No matching discipline",
+              "conditions": [
+                {
+                  "type": "any",
+                  "conditions": [
+                    {
+                      "type": "no_power",
+                      "name": "Sixth Sense"
+                    },
+                    {
+                      "type": "no_power",
+                      "name": "Mind Over Matter"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "26": {
       "auditStatus": "source-link-baseline",
@@ -489,7 +977,21 @@
           "Section": 258
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "30-zombie-crew",
+          "label": "Zombie Crew",
+          "enemy": {
+            "name": "Zombie Crew",
+            "cs": 13,
+            "endurance": 16
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 258
+        }
+      ]
     },
     "31": {
       "auditStatus": "source-link-baseline",
@@ -509,7 +1011,26 @@
           "Section": 254
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route from Rhygar's garden.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 176,
+            "label": "Ride to the gate"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 254,
+            "label": "Enemy ahead"
+          }
+        ]
+      }
     },
     "32": {
       "auditStatus": "source-link-baseline",
@@ -521,10 +1042,30 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 136
+          "Section": 136,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 238
+          "Section": 238,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         }
       ],
       "incomingRouteCount": 6
@@ -558,7 +1099,19 @@
           "Section": 345
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "34-giaks",
+          "label": "Giaks",
+          "enemy": {
+            "name": "Giaks",
+            "cs": 16,
+            "endurance": 14
+          },
+          "victoryRoute": 345
+        }
+      ]
     },
     "35": {
       "auditStatus": "source-link-baseline",
@@ -578,7 +1131,27 @@
           "Section": 293
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "35-tracking",
+          "label": "Tracking fork route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 13,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "36": {
       "auditStatus": "source-link-baseline",
@@ -599,7 +1172,66 @@
           "Section": 275
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "36-laumspur-or-healing",
+          "label": "Poison response",
+          "summary": "Checks whether Lone Wolf has Laumspur or Healing.",
+          "outcomes": [
+            {
+              "label": "Laumspur available",
+              "route": 145,
+              "testLabel": "Has Laumspur",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Laumspur",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Healing available",
+              "route": 210,
+              "testLabel": "Has Healing",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Healing"
+                }
+              ]
+            },
+            {
+              "label": "No aid available",
+              "route": 275,
+              "testLabel": "No Laumspur or Healing",
+              "conditions": [
+                {
+                  "type": "any",
+                  "conditions": [
+                    {
+                      "type": "no_item",
+                      "name": "Laumspur",
+                      "containers": [
+                        "backpack"
+                      ],
+                      "match": "exact"
+                    },
+                    {
+                      "type": "no_power",
+                      "name": "Healing"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "37": {
       "auditStatus": "source-link-baseline",
@@ -611,13 +1243,43 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 122
+          "Section": 122,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 323
+          "Section": 323,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 257
+          "Section": 257,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         }
       ],
       "incomingRouteCount": 2
@@ -653,7 +1315,46 @@
           "Section": 156
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "39-ticket-to-port-bax",
+          "label": "Ticket discount route",
+          "summary": "Checks whether Lone Wolf has Ticket to Port Bax.",
+          "outcomes": [
+            {
+              "label": "Ticket to Port Bax available",
+              "route": 346,
+              "testLabel": "Has Ticket to Port Bax",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Ticket to Port Bax",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Ticket to Port Bax",
+              "route": 156,
+              "testLabel": "No Ticket to Port Bax",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Ticket to Port Bax",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "40": {
       "auditStatus": "source-link-baseline",
@@ -672,7 +1373,38 @@
           "Section": 242
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "40-sixth-sense",
+          "label": "Sixth Sense Hammerdal route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 97,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            },
+            {
+              "label": "No Sixth Sense",
+              "route": 242,
+              "testLabel": "No Sixth Sense",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "41": {
       "auditStatus": "source-link-baseline",
@@ -684,7 +1416,15 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 194
+          "Section": 194,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": 1
+            }
+          ],
+          "effectLabel": "Restore 1 END"
         },
         {
           "Section": 251
@@ -742,7 +1482,26 @@
           "Section": 159
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random route after the black staff blast.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 7,
+            "route": 311,
+            "label": "Thrown into the undergrowth"
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 9,
+            "route": 159,
+            "label": "Worse fall"
+          }
+        ]
+      }
     },
     "46": {
       "auditStatus": "source-link-baseline",
@@ -846,7 +1605,46 @@
           "Section": 234
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "52-magic-spear",
+          "label": "Magic Spear route",
+          "summary": "Checks whether Lone Wolf has Magic Spear.",
+          "outcomes": [
+            {
+              "label": "Magic Spear available",
+              "route": 338,
+              "testLabel": "Has Magic Spear",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Magic Spear",
+              "route": 234,
+              "testLabel": "No Magic Spear",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "53": {
       "auditStatus": "source-link-baseline",
@@ -890,7 +1688,25 @@
           "Section": 3
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "buy-broadsword",
+          "label": "Buy Broadsword (12 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -12
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Broadsword"
+            }
+          ]
+        }
+      ]
     },
     "56": {
       "auditStatus": "source-link-baseline",
@@ -918,7 +1734,162 @@
           "Section": 282
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random Gold loss at the Rymerift.",
+        "outcomes": [
+          {
+            "test": "values",
+            "values": [
+              0
+            ],
+            "route": 282,
+            "label": "Lose 10 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -10
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              1
+            ],
+            "route": 282,
+            "label": "Lose 1 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -1
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              2
+            ],
+            "route": 282,
+            "label": "Lose 2 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -2
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              3
+            ],
+            "route": 282,
+            "label": "Lose 3 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -3
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              4
+            ],
+            "route": 282,
+            "label": "Lose 4 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -4
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              5
+            ],
+            "route": 282,
+            "label": "Lose 5 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -5
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              6
+            ],
+            "route": 282,
+            "label": "Lose 6 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -6
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              7
+            ],
+            "route": 282,
+            "label": "Lose 7 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -7
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              8
+            ],
+            "route": 282,
+            "label": "Lose 8 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -8
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              9
+            ],
+            "route": 282,
+            "label": "Lose 9 Gold Crowns",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": -9
+              }
+            ]
+          }
+        ]
+      }
     },
     "58": {
       "auditStatus": "source-link-baseline",
@@ -950,7 +1921,46 @@
           "Section": 311
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "59-magic-spear",
+          "label": "Magic Spear route",
+          "summary": "Checks whether Lone Wolf has Magic Spear.",
+          "outcomes": [
+            {
+              "label": "Magic Spear available",
+              "route": 332,
+              "testLabel": "Has Magic Spear",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Magic Spear",
+              "route": 311,
+              "testLabel": "No Magic Spear",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "60": {
       "auditStatus": "source-link-baseline",
@@ -966,7 +1976,20 @@
           "Section": 76
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "60-halvorc",
+          "label": "Halvorc",
+          "enemy": {
+            "name": "Halvorc",
+            "cs": 8,
+            "endurance": 11
+          },
+          "ignorePlayerLossRounds": 2,
+          "victoryRoute": 76
+        }
+      ]
     },
     "61": {
       "auditStatus": "source-link-baseline",
@@ -998,7 +2021,74 @@
           "Section": 318
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "62-documents-or-seal",
+          "label": "Documents or Seal",
+          "summary": "Checks access papers and the Seal of Hammerdal.",
+          "outcomes": [
+            {
+              "label": "Access Papers available",
+              "route": 126,
+              "testLabel": "Has Access Papers",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Access Papers",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Seal of Hammerdal available",
+              "route": 263,
+              "testLabel": "Has Seal",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Neither available",
+              "route": 318,
+              "testLabel": "No papers or Seal",
+              "conditions": [
+                {
+                  "type": "any",
+                  "conditions": [
+                    {
+                      "type": "no_item",
+                      "name": "Access Papers",
+                      "containers": [
+                        "special"
+                      ],
+                      "match": "exact"
+                    },
+                    {
+                      "type": "no_item",
+                      "name": "Seal of Hammerdal",
+                      "containers": [
+                        "special"
+                      ],
+                      "match": "exact"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "63": {
       "auditStatus": "source-link-baseline",
@@ -1018,7 +2108,27 @@
           "Section": 201
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "63-animal-kinship",
+          "label": "Animal Kinship snake route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 264,
+              "testLabel": "Has Animal Kinship",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "64": {
       "auditStatus": "source-link-baseline",
@@ -1039,7 +2149,27 @@
           "Section": 208
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "64-sixth-sense",
+          "label": "Sixth Sense wagon route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 229,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "65": {
       "auditStatus": "source-link-baseline",
@@ -1068,7 +2198,21 @@
           "Section": 218
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "66-zombie-captain",
+          "label": "Zombie Captain",
+          "enemy": {
+            "name": "Zombie Captain",
+            "cs": 15,
+            "endurance": 15
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 218
+        }
+      ]
     },
     "67": {
       "auditStatus": "source-link-baseline",
@@ -1126,7 +2270,46 @@
           "Section": 44
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "70-crystal-star-pendant",
+          "label": "Crystal Star Pendant route",
+          "summary": "Checks whether Lone Wolf has Crystal Star Pendant.",
+          "outcomes": [
+            {
+              "label": "Crystal Star Pendant available",
+              "route": 219,
+              "testLabel": "Has Crystal Star Pendant",
+              "conditions": [
+                {
+                  "type": "item_history",
+                  "name": "Crystal Star Pendant",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Crystal Star Pendant",
+              "route": 44,
+              "testLabel": "No Crystal Star Pendant",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Crystal Star Pendant",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "71": {
       "auditStatus": "source-link-baseline",
@@ -1160,7 +2343,15 @@
           "Section": 226
         },
         {
-          "Section": 56
+          "Section": 56,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            }
+          ],
+          "effectLabel": "Pay 2 Gold Crowns for a room"
         },
         {
           "Section": 276
@@ -1205,13 +2396,55 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 142
+          "Section": 142,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -10
+            },
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "White Pass"
+            }
+          ],
+          "effectLabel": "Buy White Pass"
         },
         {
           "Section": 318
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "75-gold-gte-10",
+          "label": "White Pass fee",
+          "summary": "Checks current Gold Crowns.",
+          "outcomes": [
+            {
+              "label": "Gold Crowns 10 or more",
+              "test": "gte",
+              "value": 10,
+              "route": 142
+            },
+            {
+              "label": "Gold Crowns less than 10",
+              "test": "lt",
+              "value": 10,
+              "route": 318
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          }
+        }
+      ]
     },
     "76": {
       "auditStatus": "source-link-baseline",
@@ -1225,7 +2458,31 @@
           "Section": 33
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "halvorc-gold",
+          "label": "Take 2 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "id": "halvorc-dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "77": {
       "auditStatus": "source-link-baseline",
@@ -1292,7 +2549,46 @@
           "Section": 189
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "80-seal-of-hammerdal",
+          "label": "Seal of Hammerdal proof",
+          "summary": "Checks whether Lone Wolf has Seal of Hammerdal.",
+          "outcomes": [
+            {
+              "label": "Seal of Hammerdal available",
+              "route": 15,
+              "testLabel": "Has Seal of Hammerdal",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Seal of Hammerdal",
+              "route": 189,
+              "testLabel": "No Seal of Hammerdal",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "81": {
       "auditStatus": "source-link-baseline",
@@ -1309,7 +2605,26 @@
           "Section": 281
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random longboat result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 260,
+            "label": "Rescue the fishermen"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 281,
+            "label": "Sail onward"
+          }
+        ]
+      }
     },
     "82": {
       "auditStatus": "source-link-baseline",
@@ -1371,7 +2686,19 @@
           "Section": 124
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "85-viveka",
+          "label": "Viveka",
+          "enemy": {
+            "name": "Viveka",
+            "cs": 24,
+            "endurance": 27
+          },
+          "victoryRoute": 124
+        }
+      ]
     },
     "86": {
       "auditStatus": "source-link-baseline",
@@ -1421,7 +2748,27 @@
           "Section": 71
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "routeChecks": [
+        {
+          "id": "88-camouflage",
+          "label": "Camouflage escape route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 179,
+              "testLabel": "Has Camouflage",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "89": {
       "auditStatus": "source-link-baseline",
@@ -1454,7 +2801,43 @@
           "Section": 274
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "90-villagers-szalls",
+          "label": "Villagers and Szalls",
+          "enemies": [
+            {
+              "name": "Villager 1",
+              "cs": 10,
+              "endurance": 16
+            },
+            {
+              "name": "Szall 1",
+              "cs": 6,
+              "endurance": 9
+            },
+            {
+              "name": "Villager 2",
+              "cs": 11,
+              "endurance": 14
+            },
+            {
+              "name": "Szall 2",
+              "cs": 5,
+              "endurance": 8
+            },
+            {
+              "name": "Villager 3",
+              "cs": 11,
+              "endurance": 17
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 132,
+          "victoryRoute": 274
+        }
+      ]
     },
     "91": {
       "auditStatus": "source-link-baseline",
@@ -1469,7 +2852,79 @@
           "Section": 245
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "quarterstaff",
+          "label": "Take Quarterstaff",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        },
+        {
+          "id": "blanket",
+          "label": "Take Blanket",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Blanket"
+            }
+          ]
+        },
+        {
+          "id": "two-meals",
+          "label": "Take Food for 2 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "backpack",
+          "label": "Take Backpack",
+          "actions": [
+            {
+              "type": "backpack",
+              "available": true
+            }
+          ]
+        },
+        {
+          "id": "dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "rope",
+          "label": "Take 30 Feet of Rope",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "30 Feet of Rope"
+            }
+          ]
+        }
+      ]
     },
     "92": {
       "auditStatus": "source-link-baseline",
@@ -1526,7 +2981,57 @@
           "Section": 28
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "95-healing-aid",
+          "label": "Healing aid",
+          "summary": "Checks Healing, Healing Potion, or Laumspur.",
+          "outcomes": [
+            {
+              "label": "Healing available",
+              "route": 239,
+              "testLabel": "Has Healing",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Healing"
+                }
+              ]
+            },
+            {
+              "label": "Healing Potion available",
+              "route": 239,
+              "testLabel": "Has Healing Potion",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Healing Potion",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Laumspur available",
+              "route": 239,
+              "testLabel": "Has Laumspur",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Laumspur",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "96": {
       "auditStatus": "source-link-baseline",
@@ -1586,7 +3091,26 @@
           "Section": 163
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random ship sighting.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 326,
+            "label": "Pirate ship closes"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 163,
+            "label": "Sighting passes"
+          }
+        ]
+      }
     },
     "100": {
       "auditStatus": "source-link-baseline",
@@ -1636,7 +3160,27 @@
           "Section": 164
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "102-tracking",
+          "label": "Tracking tunnel route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 325,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "103": {
       "auditStatus": "source-link-baseline",
@@ -1653,7 +3197,31 @@
           "Section": 249
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "store-meal",
+          "label": "Store the Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "eat-meal",
+          "label": "Eat the Meal",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": 3
+            }
+          ]
+        }
+      ]
     },
     "104": {
       "auditStatus": "source-link-baseline",
@@ -1686,7 +3254,26 @@
           "Section": 120
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random rope check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 286,
+            "label": "Rope fails"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 120,
+            "label": "Rope holds"
+          }
+        ]
+      }
     },
     "106": {
       "auditStatus": "source-link-baseline",
@@ -1703,7 +3290,38 @@
           "Section": 320
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "106-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 22,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "perRoundActions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "afterVictoryActions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Magic Spear"
+            }
+          ],
+          "victoryRoute": 320
+        }
+      ]
     },
     "107": {
       "auditStatus": "source-link-baseline",
@@ -1720,7 +3338,38 @@
           "Section": 294
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "107-healing",
+          "label": "Healing survivor route",
+          "summary": "Checks whether Lone Wolf has Healing.",
+          "outcomes": [
+            {
+              "label": "Healing available",
+              "route": 74,
+              "testLabel": "Has Healing",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Healing"
+                }
+              ]
+            },
+            {
+              "label": "No Healing",
+              "route": 294,
+              "testLabel": "No Healing",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Healing"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "108": {
       "auditStatus": "source-link-baseline",
@@ -1738,7 +3387,38 @@
           "Section": 168
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "108-sixth-sense",
+          "label": "Sixth Sense last words route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 343,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            },
+            {
+              "label": "No Sixth Sense or decline",
+              "route": 168,
+              "testLabel": "No Sixth Sense",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "109": {
       "auditStatus": "source-link-baseline",
@@ -1771,7 +3451,21 @@
           "Section": 331
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "110-watchtower-guard",
+          "label": "Watchtower Guard",
+          "enemy": {
+            "name": "Watchtower Guard",
+            "cs": 15,
+            "endurance": 22
+          },
+          "canEvade": true,
+          "evadeRoute": 65,
+          "victoryRoute": 331
+        }
+      ]
     },
     "111": {
       "auditStatus": "source-link-baseline",
@@ -1835,7 +3529,33 @@
           "Section": 8
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "roll": {
+        "summary": "Random roadside camp result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "route": 206,
+            "label": "Camp route"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 7,
+            "route": 63,
+            "label": "Snake route"
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 9,
+            "route": 8,
+            "label": "Danger route"
+          }
+        ]
+      }
     },
     "115": {
       "auditStatus": "source-link-baseline",
@@ -1871,7 +3591,162 @@
           "Section": 314
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Cup game winnings with Sixth Sense.",
+        "outcomes": [
+          {
+            "test": "values",
+            "values": [
+              0
+            ],
+            "route": 314,
+            "label": "Win 5 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 4
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              1
+            ],
+            "route": 314,
+            "label": "Win 6 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 5
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              2
+            ],
+            "route": 314,
+            "label": "Win 7 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 6
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              3
+            ],
+            "route": 314,
+            "label": "Win 8 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 7
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              4
+            ],
+            "route": 314,
+            "label": "Win 9 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 8
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              5
+            ],
+            "route": 314,
+            "label": "Win 10 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 9
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              6
+            ],
+            "route": 314,
+            "label": "Win 11 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 10
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              7
+            ],
+            "route": 314,
+            "label": "Win 12 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 11
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              8
+            ],
+            "route": 314,
+            "label": "Win 13 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 12
+              }
+            ]
+          },
+          {
+            "test": "values",
+            "values": [
+              9
+            ],
+            "route": 314,
+            "label": "Win 14 Gold Crowns and pay 1 for the room",
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "gold",
+                "delta": 13
+              }
+            ]
+          }
+        ]
+      }
     },
     "117": {
       "auditStatus": "source-link-baseline",
@@ -1882,10 +3757,26 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 37
+          "Section": 37,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            }
+          ],
+          "effectLabel": "Pay 3 Gold Crowns for coach seat"
         },
         {
-          "Section": 148
+          "Section": 148,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown for roof passage"
         },
         {
           "Section": 292
@@ -1911,7 +3802,27 @@
           "Section": 340
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "118-animal-kinship",
+          "label": "Animal Kinship creature route",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 279,
+              "testLabel": "Has Animal Kinship",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "119": {
       "auditStatus": "source-link-baseline",
@@ -1971,7 +3882,46 @@
           "Section": 112
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "122-sixth-sense",
+          "label": "Sixth Sense orange door route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 96,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "roll": {
+        "summary": "Random orange-door route if Sixth Sense is unavailable.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 46,
+            "label": "Orange door danger"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 112,
+            "label": "Alternative route"
+          }
+        ]
+      }
     },
     "123": {
       "auditStatus": "source-link-baseline",
@@ -1999,7 +3949,42 @@
           "Section": 33
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 42 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 42
+            }
+          ]
+        },
+        {
+          "id": "short-sword",
+          "label": "Take Short Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            }
+          ]
+        },
+        {
+          "id": "dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "125": {
       "auditStatus": "source-link-baseline",
@@ -2034,10 +4019,30 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 217
+          "Section": 217,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 143
+          "Section": 143,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         }
       ],
       "incomingRouteCount": 1
@@ -2055,7 +4060,20 @@
           "Section": 237
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "128-zombie-crew",
+          "label": "Zombie Crew",
+          "enemy": {
+            "name": "Zombie Crew",
+            "cs": 13,
+            "endurance": 19
+          },
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 237
+        }
+      ]
     },
     "129": {
       "auditStatus": "source-link-baseline",
@@ -2101,7 +4119,34 @@
           "Section": 301
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "131-street-thieves",
+          "label": "Street Thieves",
+          "enemies": [
+            {
+              "name": "Street Thief Leader",
+              "cs": 15,
+              "endurance": 23
+            },
+            {
+              "name": "Street Thief 1",
+              "cs": 13,
+              "endurance": 21
+            },
+            {
+              "name": "Street Thief 2",
+              "cs": 13,
+              "endurance": 20
+            }
+          ],
+          "forceUnarmed": true,
+          "canEvade": true,
+          "evadeRoute": 121,
+          "victoryRoute": 301
+        }
+      ]
     },
     "132": {
       "auditStatus": "source-link-baseline",
@@ -2118,7 +4163,20 @@
           "Section": 150
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "spear",
+          "label": "Keep the Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        }
+      ]
     },
     "133": {
       "auditStatus": "source-link-baseline",
@@ -2148,7 +4206,46 @@
           "Section": 304
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "134-magic-spear",
+          "label": "Magic Spear route",
+          "summary": "Checks whether Lone Wolf has Magic Spear.",
+          "outcomes": [
+            {
+              "label": "Magic Spear available",
+              "route": 38,
+              "testLabel": "Has Magic Spear",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Magic Spear",
+              "route": 304,
+              "testLabel": "No Magic Spear",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "135": {
       "auditStatus": "source-link-baseline",
@@ -2172,13 +4269,55 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 10
+          "Section": 10,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -20
+            },
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Ticket to Port Bax"
+            }
+          ],
+          "effectLabel": "Buy ticket to Port Bax"
         },
         {
           "Section": 238
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "136-gold-gte-20",
+          "label": "Port Bax coach fare",
+          "summary": "Checks current Gold Crowns.",
+          "outcomes": [
+            {
+              "label": "Gold Crowns 20 or more",
+              "test": "gte",
+              "value": 20,
+              "route": 10
+            },
+            {
+              "label": "Gold Crowns less than 20",
+              "test": "lt",
+              "value": 20,
+              "route": 238
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          }
+        }
+      ]
     },
     "137": {
       "auditStatus": "source-link-baseline",
@@ -2334,7 +4473,19 @@
           "Section": 345
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "146-giaks",
+          "label": "Giaks",
+          "enemy": {
+            "name": "Giaks",
+            "cs": 15,
+            "endurance": 15
+          },
+          "victoryRoute": 345
+        }
+      ]
     },
     "147": {
       "auditStatus": "source-link-baseline",
@@ -2359,13 +4510,43 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 122
+          "Section": 122,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 323
+          "Section": 323,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         },
         {
-          "Section": 257
+          "Section": 257,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         }
       ],
       "incomingRouteCount": 2
@@ -2384,7 +4565,46 @@
           "Section": 250
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "149-seal-of-hammerdal",
+          "label": "Seal of Hammerdal route",
+          "summary": "Checks whether Lone Wolf has Seal of Hammerdal.",
+          "outcomes": [
+            {
+              "label": "Seal of Hammerdal available",
+              "route": 223,
+              "testLabel": "Has Seal of Hammerdal",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Seal of Hammerdal",
+              "route": 250,
+              "testLabel": "No Seal of Hammerdal",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "150": {
       "auditStatus": "source-link-baseline",
@@ -2397,10 +4617,30 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 261
+          "Section": 261,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or use Hunting"
         },
         {
-          "Section": 334
+          "Section": 334,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": true
+            }
+          ],
+          "effectLabel": "Eat a Meal or use Hunting"
         }
       ],
       "incomingRouteCount": 5
@@ -2420,7 +4660,26 @@
           "Section": 110
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random bluff result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 262,
+            "label": "Bluff succeeds"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 110,
+            "label": "Bluff fails"
+          }
+        ]
+      }
     },
     "152": {
       "auditStatus": "source-link-baseline",
@@ -2440,7 +4699,33 @@
           "Section": 193
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random route after leaving Port Bax.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "route": 216,
+            "label": "At sea route"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 6,
+            "route": 49,
+            "label": "At sea route"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 193,
+            "label": "At sea route"
+          }
+        ]
+      }
     },
     "153": {
       "auditStatus": "source-link-baseline",
@@ -2520,7 +4805,21 @@
           "Section": 331
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "157-watchtower-guard",
+          "label": "Watchtower Guard",
+          "enemy": {
+            "name": "Watchtower Guard",
+            "cs": 15,
+            "endurance": 22
+          },
+          "canEvade": true,
+          "evadeRoute": 65,
+          "victoryRoute": 331
+        }
+      ]
     },
     "158": {
       "auditStatus": "source-link-baseline",
@@ -2534,7 +4833,19 @@
           "Section": 220
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "158-priest",
+          "label": "Priest",
+          "enemy": {
+            "name": "Priest",
+            "cs": 16,
+            "endurance": 23
+          },
+          "victoryRoute": 220
+        }
+      ]
     },
     "159": {
       "auditStatus": "source-link-baseline",
@@ -2573,7 +4884,99 @@
           "Section": 348
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "160-healing",
+          "label": "Healing proof",
+          "summary": "Checks whether Lone Wolf has Healing.",
+          "outcomes": [
+            {
+              "label": "Healing available",
+              "route": 16,
+              "testLabel": "Has Healing",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Healing"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "160-mindblast",
+          "label": "Mindblast proof",
+          "summary": "Checks whether Lone Wolf has Mindblast.",
+          "outcomes": [
+            {
+              "label": "Mindblast available",
+              "route": 133,
+              "testLabel": "Has Mindblast",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mindblast"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "160-weaponskill",
+          "label": "Weaponskill proof",
+          "summary": "Checks whether Lone Wolf has Weaponskill.",
+          "outcomes": [
+            {
+              "label": "Weaponskill available",
+              "route": 255,
+              "testLabel": "Has Weaponskill",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Weaponskill"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "160-animal-kinship",
+          "label": "Animal Kinship proof",
+          "summary": "Checks whether Lone Wolf has Animal Kinship.",
+          "outcomes": [
+            {
+              "label": "Animal Kinship available",
+              "route": 203,
+              "testLabel": "Has Animal Kinship",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Animal Kinship"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "160-mind-over-matter",
+          "label": "Mind Over Matter proof",
+          "summary": "Checks whether Lone Wolf has Mind Over Matter.",
+          "outcomes": [
+            {
+              "label": "Mind Over Matter available",
+              "route": 48,
+              "testLabel": "Has Mind Over Matter",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "161": {
       "auditStatus": "source-link-baseline",
@@ -2603,7 +5006,21 @@
           "Section": 302
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "combat": [
+        {
+          "id": "162-knight",
+          "label": "Knight of the White Mountain",
+          "enemy": {
+            "name": "Knight of the White Mountain",
+            "cs": 20,
+            "endurance": 27
+          },
+          "canEvade": true,
+          "evadeRoute": 244,
+          "victoryRoute": 302
+        }
+      ]
     },
     "163": {
       "auditStatus": "source-link-baseline",
@@ -2636,7 +5053,27 @@
           "Section": 256
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "164-sixth-sense",
+          "label": "Sixth Sense platform route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 172,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "165": {
       "auditStatus": "source-link-baseline",
@@ -2689,13 +5126,50 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 314
+          "Section": 314,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown for a room"
         },
         {
           "Section": 25
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "168-gold-gte-1",
+          "label": "Room cost",
+          "summary": "Checks current Gold Crowns.",
+          "outcomes": [
+            {
+              "label": "Gold Crowns 1 or more",
+              "test": "gte",
+              "value": 1,
+              "route": 314
+            },
+            {
+              "label": "Gold Crowns less than 1",
+              "test": "lt",
+              "value": 1,
+              "route": 25
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          }
+        }
+      ]
     },
     "169": {
       "auditStatus": "source-link-baseline",
@@ -2715,7 +5189,33 @@
           "Section": 339
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random coach route.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "route": 39,
+            "label": "Inn stop"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 6,
+            "route": 249,
+            "label": "Rymerift route"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 339,
+            "label": "Exit tax route"
+          }
+        ]
+      }
     },
     "170": {
       "auditStatus": "source-link-baseline",
@@ -2813,7 +5313,26 @@
           "Section": 209
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "roll": {
+        "summary": "Random sea-fog result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 53,
+            "label": "Fire aftermath"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 209,
+            "label": "Ship route"
+          }
+        ]
+      }
     },
     "176": {
       "auditStatus": "source-link-baseline",
@@ -2833,7 +5352,27 @@
           "Section": 277
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "176-sixth-sense",
+          "label": "Sixth Sense gate route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 322,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "177": {
       "auditStatus": "source-link-baseline",
@@ -2883,7 +5422,27 @@
           "Section": 71
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "179-camouflage",
+          "label": "Camouflage hay-cart route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 82,
+              "testLabel": "Has Camouflage",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "180": {
       "auditStatus": "source-link-baseline",
@@ -2911,7 +5470,136 @@
           "Section": 186
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "buy-sword",
+          "label": "Buy Sword (4 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -4
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "buy-dagger",
+          "label": "Buy Dagger (2 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "buy-short-sword",
+          "label": "Buy Short Sword (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            }
+          ]
+        },
+        {
+          "id": "buy-warhammer",
+          "label": "Buy Warhammer (6 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -6
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Warhammer"
+            }
+          ]
+        },
+        {
+          "id": "buy-spear",
+          "label": "Buy Spear (5 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -5
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "buy-mace",
+          "label": "Buy Mace (4 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -4
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        },
+        {
+          "id": "buy-blanket",
+          "label": "Buy Fur Blanket (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Fur Blanket"
+            }
+          ]
+        },
+        {
+          "id": "buy-backpack",
+          "label": "Buy Backpack (1 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            },
+            {
+              "type": "backpack",
+              "available": true
+            }
+          ]
+        }
+      ]
     },
     "182": {
       "auditStatus": "source-link-baseline",
@@ -2941,7 +5629,26 @@
           "Section": 159
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "roll": {
+        "summary": "Random fall in the forest.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 8,
+            "route": 311,
+            "label": "Hard fall"
+          },
+          {
+            "test": "range",
+            "min": 9,
+            "max": 9,
+            "route": 159,
+            "label": "Worst fall"
+          }
+        ]
+      }
     },
     "184": {
       "auditStatus": "source-link-baseline",
@@ -2971,7 +5678,28 @@
           "Section": 120
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "185-drakkarim",
+          "label": "Drakkarim",
+          "enemies": [
+            {
+              "name": "Drakkar 1",
+              "cs": 17,
+              "endurance": 25
+            },
+            {
+              "name": "Drakkar 2",
+              "cs": 16,
+              "endurance": 26
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 286,
+          "victoryRoute": 120
+        }
+      ]
     },
     "186": {
       "auditStatus": "source-link-baseline",
@@ -3002,7 +5730,64 @@
           "Section": 265
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 6 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            }
+          ]
+        },
+        {
+          "id": "spear-1",
+          "label": "Take Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "spear-2",
+          "label": "Take second Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "sword-1",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "sword-2",
+          "label": "Take second Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        }
+      ]
     },
     "188": {
       "auditStatus": "source-link-baseline",
@@ -3119,13 +5904,50 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 249
+          "Section": 249,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown toll"
         },
         {
           "Section": 50
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "195-gold-gte-1",
+          "label": "Rymerift toll",
+          "summary": "Checks current Gold Crowns.",
+          "outcomes": [
+            {
+              "label": "Gold Crowns 1 or more",
+              "test": "gte",
+              "value": 1,
+              "route": 249
+            },
+            {
+              "label": "Gold Crowns less than 1",
+              "test": "lt",
+              "value": 1,
+              "route": 50
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          }
+        }
+      ]
     },
     "196": {
       "auditStatus": "source-link-baseline",
@@ -3143,7 +5965,38 @@
           "Section": 123
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "196-sixth-sense",
+          "label": "Sixth Sense Sommerswerd revelation",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 79,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            },
+            {
+              "label": "No Sixth Sense",
+              "route": 123,
+              "testLabel": "No Sixth Sense",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "197": {
       "auditStatus": "source-link-baseline",
@@ -3163,7 +6016,33 @@
           "Section": 247
         }
       ],
-      "incomingRouteCount": 7
+      "incomingRouteCount": 7,
+      "roll": {
+        "summary": "Random falling mast result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 1,
+            "max": 4,
+            "route": 78,
+            "label": "Mast strikes nearby"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 141,
+            "label": "Thrown into sea"
+          },
+          {
+            "test": "range",
+            "min": 0,
+            "max": 0,
+            "route": 247,
+            "label": "Clean dodge"
+          }
+        ]
+      }
     },
     "198": {
       "auditStatus": "source-link-baseline",
@@ -3232,7 +6111,26 @@
           "Section": 70
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random snake strike result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 285,
+            "label": "Snake misses"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 70,
+            "label": "Snake bites"
+          }
+        ]
+      }
     },
     "202": {
       "auditStatus": "source-link-baseline",
@@ -3359,7 +6257,26 @@
           "Section": 330
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random poison struggle.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 275,
+            "label": "Poison wins"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 330,
+            "label": "Survive the poison"
+          }
+        ]
+      }
     },
     "211": {
       "auditStatus": "source-link-baseline",
@@ -3441,7 +6358,15 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 199
+          "Section": 199,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown for directions"
         },
         {
           "Section": 143
@@ -3493,7 +6418,20 @@
           "Section": 33
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "poisoner-purse",
+          "label": "Take 23 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 23
+            }
+          ]
+        }
+      ]
     },
     "221": {
       "auditStatus": "source-link-baseline",
@@ -3577,7 +6515,15 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 56
+          "Section": 56,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            }
+          ],
+          "effectLabel": "Pay 2 Gold Crowns for a room"
         },
         {
           "Section": 276
@@ -3677,7 +6623,42 @@
           "Section": 319
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 5 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 5
+            }
+          ]
+        },
+        {
+          "id": "dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "seal",
+          "label": "Recover Seal of Hammerdal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Seal of Hammerdal"
+            }
+          ]
+        }
+      ]
     },
     "232": {
       "auditStatus": "source-link-baseline",
@@ -3700,7 +6681,49 @@
           "Section": 223
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "232-sixth-sense",
+          "label": "Sixth Sense guard route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 149,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "232-seal-of-hammerdal",
+          "label": "Seal of Hammerdal route",
+          "summary": "Checks whether Lone Wolf has Seal of Hammerdal.",
+          "outcomes": [
+            {
+              "label": "Seal of Hammerdal available",
+              "route": 223,
+              "testLabel": "Has Seal of Hammerdal",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Seal of Hammerdal",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "233": {
       "auditStatus": "source-link-baseline",
@@ -3711,10 +6734,26 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 37
+          "Section": 37,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            }
+          ],
+          "effectLabel": "Pay 3 Gold Crowns for coach seat"
         },
         {
-          "Section": 148
+          "Section": 148,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown for roof passage"
         },
         {
           "Section": 292
@@ -3746,7 +6785,20 @@
           "Section": 90
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "short-sword",
+          "label": "Take Short Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            }
+          ]
+        }
+      ]
     },
     "236": {
       "auditStatus": "source-link-baseline",
@@ -3776,7 +6828,21 @@
           "Section": 309
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "237-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 23,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "victoryRoute": 309
+        }
+      ]
     },
     "238": {
       "auditStatus": "source-link-baseline",
@@ -3789,10 +6855,24 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 169
+          "Section": 169,
+          "actions": [
+            {
+              "type": "weapons",
+              "available": true
+            }
+          ],
+          "effectLabel": "Recover checked Weapons"
         },
         {
-          "Section": 186
+          "Section": 186,
+          "actions": [
+            {
+              "type": "weapons",
+              "available": true
+            }
+          ],
+          "effectLabel": "Recover checked Weapons"
         }
       ],
       "incomingRouteCount": 3
@@ -3812,7 +6892,38 @@
           "Section": 28
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "239-camouflage",
+          "label": "Camouflage Szall route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 77,
+              "testLabel": "Has Camouflage",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ]
+            },
+            {
+              "label": "No Camouflage",
+              "route": 28,
+              "testLabel": "No Camouflage",
+              "conditions": [
+                {
+                  "type": "no_power",
+                  "name": "Camouflage"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "240": {
       "auditStatus": "source-link-baseline",
@@ -3824,13 +6935,76 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 29
+          "Section": 29,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_max",
+              "condition": {
+                "type": "power",
+                "name": "Healing"
+              }
+            },
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_missing_half_floor",
+              "condition": {
+                "type": "no_power",
+                "name": "Healing"
+              }
+            }
+          ],
+          "effectLabel": "Recover after the fire"
         },
         {
-          "Section": 236
+          "Section": 236,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_max",
+              "condition": {
+                "type": "power",
+                "name": "Healing"
+              }
+            },
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_missing_half_floor",
+              "condition": {
+                "type": "no_power",
+                "name": "Healing"
+              }
+            }
+          ],
+          "effectLabel": "Recover after the fire"
         },
         {
-          "Section": 101
+          "Section": 101,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_max",
+              "condition": {
+                "type": "power",
+                "name": "Healing"
+              }
+            },
+            {
+              "type": "stat",
+              "stat": "end",
+              "mode": "restore_missing_half_floor",
+              "condition": {
+                "type": "no_power",
+                "name": "Healing"
+              }
+            }
+          ],
+          "effectLabel": "Recover after the fire"
         }
       ],
       "incomingRouteCount": 10
@@ -3847,7 +7021,19 @@
           "Section": 21
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "241-trickster",
+          "label": "Trickster",
+          "enemy": {
+            "name": "Trickster",
+            "cs": 17,
+            "endurance": 25
+          },
+          "victoryRoute": 21
+        }
+      ]
     },
     "242": {
       "auditStatus": "source-link-baseline",
@@ -3897,7 +7083,27 @@
           "Section": 207
         }
       ],
-      "incomingRouteCount": 10
+      "incomingRouteCount": 10,
+      "routeChecks": [
+        {
+          "id": "244-tracking",
+          "label": "Tracking bridge route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 147,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "245": {
       "auditStatus": "source-link-baseline",
@@ -3933,7 +7139,74 @@
           "Section": 327
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "246-pass",
+          "label": "Harbour pass",
+          "summary": "Checks White Pass and Red Pass.",
+          "outcomes": [
+            {
+              "label": "White Pass available",
+              "route": 170,
+              "testLabel": "Has White Pass",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "White Pass",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Red Pass available",
+              "route": 202,
+              "testLabel": "Has Red Pass",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Red Pass",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No pass",
+              "route": 327,
+              "testLabel": "No pass",
+              "conditions": [
+                {
+                  "type": "any",
+                  "conditions": [
+                    {
+                      "type": "no_item",
+                      "name": "White Pass",
+                      "containers": [
+                        "special"
+                      ],
+                      "match": "exact"
+                    },
+                    {
+                      "type": "no_item",
+                      "name": "Red Pass",
+                      "containers": [
+                        "special"
+                      ],
+                      "match": "exact"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "247": {
       "auditStatus": "source-link-baseline",
@@ -4046,7 +7319,27 @@
           "Section": 183
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "254-sixth-sense",
+          "label": "Sixth Sense ambush route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 344,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "255": {
       "auditStatus": "source-link-baseline",
@@ -4111,7 +7404,27 @@
           "Section": 5
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "258-sixth-sense",
+          "label": "Sixth Sense hold route",
+          "summary": "Checks whether Lone Wolf has Sixth Sense.",
+          "outcomes": [
+            {
+              "label": "Sixth Sense available",
+              "route": 272,
+              "testLabel": "Has Sixth Sense",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "259": {
       "auditStatus": "source-link-baseline",
@@ -4139,7 +7452,20 @@
           "Section": 240
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "sword",
+          "label": "Accept the Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        }
+      ]
     },
     "261": {
       "auditStatus": "source-link-baseline",
@@ -4171,7 +7497,75 @@
           "Section": 65
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "sword",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        },
+        {
+          "id": "quarterstaff",
+          "label": "Take Quarterstaff",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        },
+        {
+          "id": "meal",
+          "label": "Take Food for 1 Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "gold",
+          "label": "Take 6 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            }
+          ]
+        },
+        {
+          "id": "orange-potion",
+          "label": "Take Potion of Orange Liquid",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Orange Liquid"
+            }
+          ]
+        }
+      ]
     },
     "263": {
       "auditStatus": "source-link-baseline",
@@ -4219,7 +7613,27 @@
           "Section": 191
         }
       ],
-      "incomingRouteCount": 5
+      "incomingRouteCount": 5,
+      "routeChecks": [
+        {
+          "id": "265-tracking",
+          "label": "Tracking city route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 252,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "266": {
       "auditStatus": "source-link-baseline",
@@ -4234,7 +7648,153 @@
           "Section": 32
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "buy-sword",
+          "label": "Buy Sword (4 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -4
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "buy-dagger",
+          "label": "Buy Dagger (2 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "buy-broadsword",
+          "label": "Buy Broadsword (7 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -7
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Broadsword"
+            }
+          ]
+        },
+        {
+          "id": "buy-short-sword",
+          "label": "Buy Short Sword (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            }
+          ]
+        },
+        {
+          "id": "buy-warhammer",
+          "label": "Buy Warhammer (6 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -6
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Warhammer"
+            }
+          ]
+        },
+        {
+          "id": "buy-spear",
+          "label": "Buy Spear (5 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -5
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "buy-mace",
+          "label": "Buy Mace (4 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -4
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        },
+        {
+          "id": "buy-axe",
+          "label": "Buy Axe (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Axe"
+            }
+          ]
+        },
+        {
+          "id": "buy-quarterstaff",
+          "label": "Buy Quarterstaff (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        }
+      ]
     },
     "267": {
       "auditStatus": "source-link-baseline",
@@ -4267,7 +7827,22 @@
           "Section": 333
         }
       ],
-      "incomingRouteCount": 5
+      "incomingRouteCount": 5,
+      "combat": [
+        {
+          "id": "268-harbour-thugs",
+          "label": "Harbour Thugs",
+          "enemy": {
+            "name": "Harbour Thugs",
+            "cs": 16,
+            "endurance": 25
+          },
+          "canEvade": true,
+          "evadeAfterRounds": 2,
+          "evadeRoute": 125,
+          "victoryRoute": 333
+        }
+      ]
     },
     "269": {
       "auditStatus": "source-link-baseline",
@@ -4296,7 +7871,27 @@
           "Section": 33
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "270-ganon-dorier",
+          "label": "Ganon and Dorier",
+          "enemy": {
+            "name": "Ganon and Dorier",
+            "cs": 28,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "timedModifiers": [
+            {
+              "startRound": 1,
+              "endRound": 1,
+              "modifier": 2
+            }
+          ],
+          "victoryRoute": 33
+        }
+      ]
     },
     "271": {
       "auditStatus": "source-link-baseline",
@@ -4316,7 +7911,27 @@
           "Section": 65
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "271-camouflage",
+          "label": "Camouflage password route",
+          "summary": "Checks whether Lone Wolf has Camouflage.",
+          "outcomes": [
+            {
+              "label": "Camouflage available",
+              "route": 151,
+              "testLabel": "Has Camouflage",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Camouflage"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "272": {
       "auditStatus": "source-link-baseline",
@@ -4358,7 +7973,42 @@
           "Section": 132
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 6 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 6
+            }
+          ]
+        },
+        {
+          "id": "sword",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        }
+      ]
     },
     "275": {
       "auditStatus": "source-link-baseline",
@@ -4391,7 +8041,43 @@
           "Section": 305
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "combat": [
+        {
+          "id": "276-arm-wrestling",
+          "label": "Arm-wrestling sailor",
+          "enemy": {
+            "name": "Sailor",
+            "cs": 18,
+            "endurance": 25
+          },
+          "fixedPlayerCombatSkill": "current",
+          "restorePlayerEnduranceAfterCombat": true,
+          "victoryRoute": 305,
+          "defeatRoute": 192,
+          "defeatEnduranceMinimum": 1
+        }
+      ],
+      "routeChecks": [
+        {
+          "id": "276-mindblast",
+          "label": "Mindblast arm-wrestling route",
+          "summary": "Checks whether Lone Wolf has Mindblast.",
+          "outcomes": [
+            {
+              "label": "Mindblast available",
+              "route": 14,
+              "testLabel": "Has Mindblast",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mindblast"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "277": {
       "auditStatus": "source-link-baseline",
@@ -4426,7 +8112,26 @@
           "Section": 180
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random cloak signal result.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "route": 41,
+            "label": "Fishing boat sees you"
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "route": 180,
+            "label": "No rescue"
+          }
+        ]
+      }
     },
     "279": {
       "auditStatus": "source-link-baseline",
@@ -4459,7 +8164,26 @@
           "Section": 108
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random Wildlands accident.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 2,
+            "label": "Accident route"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 108,
+            "label": "Injury route"
+          }
+        ]
+      }
     },
     "281": {
       "auditStatus": "source-link-baseline",
@@ -4486,7 +8210,26 @@
           "Section": 187
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "282-bridge-guards",
+          "label": "Bridge Guards",
+          "enemies": [
+            {
+              "name": "Bridge Guard 1",
+              "cs": 16,
+              "endurance": 24
+            },
+            {
+              "name": "Bridge Guard 2",
+              "cs": 16,
+              "endurance": 22
+            }
+          ],
+          "victoryRoute": 187
+        }
+      ]
     },
     "283": {
       "auditStatus": "source-link-baseline",
@@ -4502,7 +8245,136 @@
           "Section": 245
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "buy-sword",
+          "label": "Buy Sword (4 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -4
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "buy-dagger",
+          "label": "Buy Dagger (2 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "buy-broadsword",
+          "label": "Buy Broadsword (6 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -6
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Broadsword"
+            }
+          ]
+        },
+        {
+          "id": "buy-spear",
+          "label": "Buy Spear (5 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -5
+            },
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "buy-meal",
+          "label": "Buy Fine Food Meal (2 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "buy-gold-ring",
+          "label": "Buy Gold Ring (8 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -8
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Gold Ring"
+            }
+          ]
+        },
+        {
+          "id": "buy-blanket",
+          "label": "Buy Fur Blanket (3 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -3
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Fur Blanket"
+            }
+          ]
+        },
+        {
+          "id": "buy-backpack",
+          "label": "Buy Backpack (1 Gold)",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            },
+            {
+              "type": "backpack",
+              "available": true
+            }
+          ]
+        }
+      ]
     },
     "284": {
       "auditStatus": "source-link-baseline",
@@ -4582,7 +8454,22 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 165
+          "Section": 165,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 40
+            },
+            {
+              "type": "remove_item",
+              "containers": [
+                "special"
+              ],
+              "name": "Seal of Hammerdal"
+            }
+          ],
+          "effectLabel": "Sell the Seal of Hammerdal"
         },
         {
           "Section": 186
@@ -4681,7 +8568,48 @@
           "Section": 221
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "296-town-guard",
+          "label": "Town Guard",
+          "enemies": [
+            {
+              "name": "Town Guard Sergeant",
+              "cs": 13,
+              "endurance": 22
+            },
+            {
+              "name": "Town Guard Corporal",
+              "cs": 12,
+              "endurance": 20
+            },
+            {
+              "name": "Town Guard 1",
+              "cs": 11,
+              "endurance": 19
+            },
+            {
+              "name": "Town Guard 2",
+              "cs": 11,
+              "endurance": 19
+            },
+            {
+              "name": "Town Guard 3",
+              "cs": 10,
+              "endurance": 18
+            },
+            {
+              "name": "Town Guard 4",
+              "cs": 10,
+              "endurance": 17
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 88,
+          "victoryRoute": 221
+        }
+      ]
     },
     "297": {
       "auditStatus": "source-link-baseline",
@@ -4713,7 +8641,34 @@
           "Section": 301
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "298-street-thieves",
+          "label": "Street Thieves",
+          "enemies": [
+            {
+              "name": "Street Thief Leader",
+              "cs": 15,
+              "endurance": 23
+            },
+            {
+              "name": "Street Thief 1",
+              "cs": 13,
+              "endurance": 21
+            },
+            {
+              "name": "Street Thief 2",
+              "cs": 13,
+              "endurance": 20
+            }
+          ],
+          "forceUnarmed": true,
+          "canEvade": true,
+          "evadeRoute": 121,
+          "victoryRoute": 301
+        }
+      ]
     },
     "299": {
       "auditStatus": "source-link-baseline",
@@ -4730,7 +8685,46 @@
           "Section": 102
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "299-magic-spear",
+          "label": "Keep Magic Spear route",
+          "summary": "Checks whether Lone Wolf has Magic Spear.",
+          "outcomes": [
+            {
+              "label": "Magic Spear available",
+              "route": 102,
+              "testLabel": "Has Magic Spear",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "No Magic Spear",
+              "route": 118,
+              "testLabel": "No Magic Spear",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Magic Spear",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "300": {
       "auditStatus": "source-link-baseline",
@@ -4756,7 +8750,47 @@
           "Section": 99
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "roll": {
+        "summary": "Random departure from Holmgard.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 1,
+            "route": 224,
+            "label": "Sea route"
+          },
+          {
+            "test": "range",
+            "min": 2,
+            "max": 3,
+            "route": 316,
+            "label": "Distress ship"
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 5,
+            "route": 81,
+            "label": "Longboat"
+          },
+          {
+            "test": "range",
+            "min": 6,
+            "max": 7,
+            "route": 22,
+            "label": "Wreckage"
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 9,
+            "route": 99,
+            "label": "Pirate ship"
+          }
+        ]
+      }
     },
     "301": {
       "auditStatus": "source-link-baseline",
@@ -4771,7 +8805,64 @@
           "Section": 20
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 3 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "id": "dagger-1",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "dagger-2",
+          "label": "Take second Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "dagger-3",
+          "label": "Take third Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "short-sword",
+          "label": "Take Short Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Short Sword"
+            }
+          ]
+        }
+      ]
     },
     "302": {
       "auditStatus": "source-link-baseline",
@@ -4789,7 +8880,95 @@
           "Section": 244
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        },
+        {
+          "id": "broadsword",
+          "label": "Take Broadsword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Broadsword"
+            }
+          ]
+        },
+        {
+          "id": "quarterstaff",
+          "label": "Take Quarterstaff",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Quarterstaff"
+            }
+          ]
+        },
+        {
+          "id": "healing-potion",
+          "label": "Take Healing Potion",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Healing Potion"
+            }
+          ]
+        },
+        {
+          "id": "food",
+          "label": "Take Food for 3 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "backpack",
+          "label": "Take Backpack",
+          "actions": [
+            {
+              "type": "backpack",
+              "available": true
+            }
+          ]
+        },
+        {
+          "id": "gold",
+          "label": "Take 12 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 12
+            }
+          ]
+        }
+      ]
     },
     "303": {
       "auditStatus": "source-link-baseline",
@@ -4844,7 +9023,20 @@
           "Section": 35
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "306-border-guard",
+          "label": "Border Guard",
+          "enemy": {
+            "name": "Border Guard",
+            "cs": 16,
+            "endurance": 24
+          },
+          "doubleEnemyLoss": true,
+          "victoryRoute": 35
+        }
+      ]
     },
     "307": {
       "auditStatus": "source-link-baseline",
@@ -4968,10 +9160,40 @@
           "Section": 36
         },
         {
-          "Section": 178
+          "Section": 178,
+          "actions": [
+            {
+              "type": "meal",
+              "count": 1,
+              "mode": "all_or_loss",
+              "enduranceLoss": 3,
+              "huntingExempt": false
+            }
+          ],
+          "effectLabel": "Eat a Meal or lose 3 END"
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "routeChecks": [
+        {
+          "id": "314-hunting",
+          "label": "Hunting poisoned food warning",
+          "summary": "Checks whether Lone Wolf has Hunting.",
+          "outcomes": [
+            {
+              "label": "Hunting available",
+              "route": 290,
+              "testLabel": "Has Hunting",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Hunting"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "315": {
       "auditStatus": "source-link-baseline",
@@ -4991,7 +9213,27 @@
           "Section": 175
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "315-mind-over-matter",
+          "label": "Mind Over Matter lock route",
+          "summary": "Checks whether Lone Wolf has Mind Over Matter.",
+          "outcomes": [
+            {
+              "label": "Mind Over Matter available",
+              "route": 287,
+              "testLabel": "Has Mind Over Matter",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "316": {
       "auditStatus": "source-link-baseline",
@@ -5008,7 +9250,26 @@
           "Section": 94
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Random distress-ship route.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 107,
+            "label": "Survivor route"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 94,
+            "label": "Sail on"
+          }
+        ]
+      }
     },
     "317": {
       "auditStatus": "source-link-baseline",
@@ -5165,7 +9426,19 @@
           "Section": 184
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "326-drakkar",
+          "label": "Drakkar",
+          "enemy": {
+            "name": "Drakkar",
+            "cs": 15,
+            "endurance": 25
+          },
+          "victoryRoute": 184
+        }
+      ]
     },
     "327": {
       "auditStatus": "source-link-baseline",
@@ -5182,7 +9455,30 @@
           "Section": 84
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "buy-access-papers",
+          "label": "Buy access papers",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -6
+            },
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Access Papers"
+            },
+            {
+              "type": "flag",
+              "key": "hasAccessPapers",
+              "value": true
+            }
+          ]
+        }
+      ]
     },
     "328": {
       "auditStatus": "source-link-baseline",
@@ -5205,7 +9501,49 @@
           "Section": 267
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "328-crystal-star-pendant",
+          "label": "Crystal Star Pendant history route",
+          "summary": "Checks whether Lone Wolf has Crystal Star Pendant.",
+          "outcomes": [
+            {
+              "label": "Crystal Star Pendant available",
+              "route": 113,
+              "testLabel": "Has Crystal Star Pendant",
+              "conditions": [
+                {
+                  "type": "item_history",
+                  "name": "Crystal Star Pendant",
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "328-tracking",
+          "label": "Tracking staff route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 204,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "329": {
       "auditStatus": "source-link-baseline",
@@ -5249,7 +9587,42 @@
           "Section": 65
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "gold",
+          "label": "Take 3 Gold Crowns",
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": 3
+            }
+          ]
+        },
+        {
+          "id": "sword",
+          "label": "Take Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Sword"
+            }
+          ]
+        },
+        {
+          "id": "dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        }
+      ]
     },
     "332": {
       "auditStatus": "source-link-baseline",
@@ -5268,7 +9641,33 @@
           "Section": 183
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "332-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 21,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "perRoundActions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 183,
+          "victoryRoute": 92
+        }
+      ]
     },
     "333": {
       "auditStatus": "source-link-baseline",
@@ -5304,7 +9703,27 @@
           "Section": 291
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "334-tracking",
+          "label": "Tracking forest route",
+          "summary": "Checks whether Lone Wolf has Tracking.",
+          "outcomes": [
+            {
+              "label": "Tracking available",
+              "route": 98,
+              "testLabel": "Has Tracking",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "335": {
       "auditStatus": "source-link-baseline",
@@ -5356,7 +9775,15 @@
           "Section": 228
         },
         {
-          "Section": 171
+          "Section": 171,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": -3
+            }
+          ],
+          "effectLabel": "Decline fruit and lose 3 END"
         }
       ],
       "incomingRouteCount": 3
@@ -5373,7 +9800,17 @@
           "Section": 269
         },
         {
-          "Section": 349
+          "Section": 349,
+          "actions": [
+            {
+              "type": "remove_item",
+              "containers": [
+                "special"
+              ],
+              "name": "Magic Spear"
+            }
+          ],
+          "effectLabel": "Leave the Magic Spear behind"
         }
       ],
       "incomingRouteCount": 1
@@ -5386,13 +9823,50 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 249
+          "Section": 249,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Pay 1 Gold Crown exit tax"
         },
         {
           "Section": 50
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "339-gold-gte-1",
+          "label": "Exit tax",
+          "summary": "Checks current Gold Crowns.",
+          "outcomes": [
+            {
+              "label": "Gold Crowns 1 or more",
+              "test": "gte",
+              "value": 1,
+              "route": 249
+            },
+            {
+              "label": "Gold Crowns less than 1",
+              "test": "lt",
+              "value": 1,
+              "route": 50
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          }
+        }
+      ]
     },
     "340": {
       "auditStatus": "source-link-baseline",
@@ -5432,10 +9906,26 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 72
+          "Section": 72,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -1
+            }
+          ],
+          "effectLabel": "Buy ale for 1 Gold Crown"
         },
         {
-          "Section": 56
+          "Section": 56,
+          "actions": [
+            {
+              "type": "stat",
+              "stat": "gold",
+              "delta": -2
+            }
+          ],
+          "effectLabel": "Pay 2 Gold Crowns for a room"
         },
         {
           "Section": 226
@@ -5483,7 +9973,19 @@
           "Section": 243
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "345-drakkar",
+          "label": "Drakkar",
+          "enemy": {
+            "name": "Drakkar",
+            "cs": 16,
+            "endurance": 24
+          },
+          "victoryRoute": 243
+        }
+      ]
     },
     "346": {
       "auditStatus": "source-link-baseline",
@@ -5497,13 +9999,66 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
-          "Section": 280
+          "Section": 280,
+          "actions": [
+            {
+              "type": "meal_or_gold",
+              "count": 1,
+              "goldCost": 1
+            }
+          ],
+          "effectLabel": "Eat a Meal or pay 1 Gold Crown"
         },
         {
           "Section": 205
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "routeChecks": [
+        {
+          "id": "346-meal-or-gold",
+          "label": "Wildlands Meal",
+          "summary": "Checks whether Lone Wolf can eat a Meal or pay for one.",
+          "outcomes": [
+            {
+              "label": "Meal available",
+              "route": 280,
+              "testLabel": "Has Meal",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Meal",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "exact"
+                }
+              ]
+            },
+            {
+              "label": "Gold Crown available",
+              "test": "gte",
+              "value": 1,
+              "route": 280
+            },
+            {
+              "label": "No Meal or Gold",
+              "test": "lt",
+              "value": 1,
+              "route": 205
+            }
+          ],
+          "formula": {
+            "label": "Gold Crowns",
+            "terms": [
+              {
+                "stat": "gold"
+              }
+            ]
+          },
+          "requiresAutomationApplied": true
+        }
+      ]
     },
     "347": {
       "auditStatus": "source-link-baseline",
@@ -5534,7 +10089,22 @@
           "Section": 333
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "348-harbour-thugs",
+          "label": "Harbour Thugs",
+          "enemy": {
+            "name": "Harbour Thugs",
+            "cs": 16,
+            "endurance": 25
+          },
+          "canEvade": true,
+          "evadeAfterRounds": 2,
+          "evadeRoute": 125,
+          "victoryRoute": 333
+        }
+      ]
     },
     "349": {
       "auditStatus": "source-link-baseline",

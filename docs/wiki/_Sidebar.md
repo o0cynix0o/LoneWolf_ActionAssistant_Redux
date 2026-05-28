@@ -13,5 +13,7 @@
 - [Book Support Matrix](Book-Support-Matrix)
 - [Strategy Guide](Strategy-Guide)
   - [Full Campaign Story Run](Full-Campaign-Story-Run)
+  - [Book 1 Strategy Guide](Book-1-Strategy-Guide)
+  - [Book 2 Strategy Guide](Book-2-Strategy-Guide)
   - [100 Percent Achievement Guide](Achievement-100-Percent-Guide)
 - [FAQ](FAQ)

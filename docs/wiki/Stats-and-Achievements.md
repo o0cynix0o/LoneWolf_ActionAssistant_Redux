@@ -4,7 +4,7 @@ The app tracks book progress and achievements as part of the save.
 
 ## Stats
 
-Book 1 progress can include:
+Book progress can include:
 
 - current section
 - section history
@@ -32,6 +32,19 @@ Book 1 achievements can be tied to:
 - gear loss
 - broad exploration
 
+Book 2 achievements can be tied to:
+
+- book completion
+- reaching Hammerdal
+- claiming the Sommerswerd
+- finding the Magic Spear
+- recorded Helghast victories
+- arm-wrestling trouble that somehow becomes profitable
+- surviving the Green Sceptre disaster
+- getting through Port Bax with the right pass
+- dangerous forged-paper outcomes
+- broad exploration
+
 ## Unlock Alerts
 
 When an achievement unlocks, the app shows a browser notification-style alert so you notice it during play.
@@ -57,3 +70,5 @@ For cleanup advice, see the [100 Percent Achievement Guide](Achievement-100-Perc
 Use **Repeat Book 1** when you want another run at routes or achievements. The app returns you to section 1, restores full Endurance and base Combat Skill, rebuilds your original Book 1 starting gear, and keeps your Kai Disciplines and Weaponskill.
 
 Achievement history and combat history stay in the save, so a replay feels like a fresh run without erasing what you already proved.
+
+Book 2 achievements work the same way: once the save has durable evidence, the app can keep the unlock even if a later replay takes a different path.

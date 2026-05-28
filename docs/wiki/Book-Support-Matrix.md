@@ -5,7 +5,7 @@ This matrix describes assistant support, not whether the book text exists locall
 |Book|Title|Reader Assets|Assistant Support|Achievements|Status|
 |----|-----|-------------|-----------------|------------|------|
 |1|Flight from the Dark|User-installed Project Aon HTML|Character creation, routes, automation, combat, rolls, loot, death recovery, saves|Implemented|Playable release candidate|
-|2|Fire on the Water|User-installed Project Aon HTML|Setup/start-state and source-link routes|Not started|Pipeline in progress; not playable yet|
+|2|Fire on the Water|User-installed Project Aon HTML|Setup, routes, automation, combat, rolls, loot, death recovery, completion, saves|Implemented|Playable helper build; needs more real-route time|
 |3|The Caverns of Kalte|Not wired yet|Not started|Not started|Future pipeline target|
 |4|The Chasm of Doom|Not wired yet|Not started|Not started|Future pipeline target|
 |5|Shadow on the Sand|Not wired yet|Not started|Not started|Future pipeline target|
@@ -31,9 +31,24 @@ Book 1 is the supported starting point:
 
 ## Book 2
 
-Book 2 setup and source-link routing have started. The app can prepare a fresh Book 2 character or continue a completed Book 1 save into Book 2, including the extra Kai Discipline, starting Gold, Seal of Hammerdal, carry-over inventory, and Royal Armoury choices. The assistant also has the checked source-route graph for all 350 Book 2 sections.
+Book 2 has the playable helper pipeline in place:
 
-Book 2 is not fully playable yet. Section automation, combat presets, route checks, achievements, and the strategy guide still need the rest of the pipeline.
+- 350 section files expected in `books\lw\02fotw`
+- fresh Book 2 creation or completed Book 1 campaign handoff
+- extra Kai Discipline, starting Gold, Seal of Hammerdal, carry-over inventory, and Royal Armoury choices
+- source-link section routes
+- route checks for Kai Discipline, item, pass, Gold, and Endurance branches
+- simple section automation
+- required Meal handling, including places where Hunting does not help
+- combat presets for checked Book 2 combats
+- random helpers for straightforward rolls
+- loot and shop buttons
+- death recovery
+- Book 2 completion flow
+- Book 2 achievements
+- Book 2 strategy guide
+
+The next useful step is more real-route time. The helper coverage is there; now we want ordinary play to shake out anything that feels clumsy.
 
 ## Book 3 And Later
 

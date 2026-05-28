@@ -113,15 +113,18 @@ def assert_unlocked(assistant: lonewolf_redux.LoneWolfReduxAssistant, *ids: str)
     assert_equal(missing, [], "missing achievements")
 
 
-def test_book1_definitions_only() -> None:
+def test_achievement_definitions() -> None:
     assistant = fresh_assistant()
     definitions = assistant.achievement_definitions()
     ids = [str(definition.get("Id") or "") for definition in definitions]
 
-    assert_true(all(achievement_id.startswith("lw1_") for achievement_id in ids), "Book 1 achievement IDs")
+    assert_true(any(achievement_id.startswith("lw1_") for achievement_id in ids), "Book 1 achievement IDs")
+    assert_true(any(achievement_id.startswith("lw2_") for achievement_id in ids), "Book 2 achievement IDs")
     assert_true("lw1_complete" in ids, "completion achievement keeps existing ID")
     assert_true("lw1_gourgaz_victory" in ids, "Gourgaz achievement defined")
     assert_true("lw1_crystal_star_pendant" in ids, "Pendant achievement defined")
+    assert_true("lw2_complete" in ids, "Book 2 completion achievement defined")
+    assert_true("lw2_claim_sommerswerd" in ids, "Sommerswerd achievement defined")
     assert_equal(len(ids), len(set(ids)), "unique achievement IDs")
 
 
@@ -219,12 +222,62 @@ def test_summary_backfill_unlocks() -> None:
     )
 
 
+def test_book2_achievement_unlocks() -> None:
+    assistant = fresh_assistant()
+    assistant.state = lonewolf_redux.create_book2_character_state(
+        name="Book 2 Achievement Smoke",
+        kai_disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Weaponskill"],
+        combat_skill_roll=4,
+        endurance_roll=6,
+        gold_roll=5,
+        weaponskill_roll=5,
+        armoury_choices=["sword", "two-meals"],
+    )
+    assistant.record_section_visit()
+    assistant.save_section_checkpoint("ready")
+
+    assistant.record_item_seen("Sommerswerd", "special")
+    assistant.record_item_seen("Magic Spear", "special")
+    assistant.record_item_seen("Red Pass", "special")
+    assistant.state["CombatHistory"] = [
+        {
+            "BookNumber": 2,
+            "Section": 106,
+            "Outcome": "Victory",
+            "EnemyName": "Helghast",
+            "EnemyCombatSkill": 22,
+            "EnemyEnduranceMax": 30,
+            "RoundCount": 3,
+        }
+    ]
+    for section in [78, 126, 196, 202, 305, 350]:
+        quiet(assistant.set_section, section)
+    assistant.character["CompletedBooks"] = [2]
+    assistant.state["CurrentBookStats"]["VisitedSections"] = list(range(1, 91))
+    assistant.state["CurrentBookStats"]["UniqueSectionsVisited"] = 90
+
+    assert_unlocked(
+        assistant,
+        "lw2_complete",
+        "lw2_reach_hammerdal",
+        "lw2_claim_sommerswerd",
+        "lw2_magic_spear",
+        "lw2_helghast_victory",
+        "lw2_arm_wrestling_win",
+        "lw2_survive_green_sceptre",
+        "lw2_red_pass",
+        "lw2_deadly_documents",
+        "lw2_long_road",
+    )
+
+
 def main() -> int:
-    test_book1_definitions_only()
+    test_achievement_definitions()
     test_story_route_unlocks()
     test_combat_and_durable_item_unlocks()
     test_route_failure_and_random_unlocks()
     test_summary_backfill_unlocks()
+    test_book2_achievement_unlocks()
     print("Book 1 achievement smoke passed.")
     return 0
 

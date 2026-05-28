@@ -6,7 +6,7 @@ Yes. Book 1 is playable locally as the first release candidate.
 
 You can create a Book 1 character, use the Book 1 Action Chart, follow section routes, apply audited section effects, resolve supported combats and rolls, recover from death, save/load, and unlock achievements.
 
-Book 2 setup and source-link routing have started. You can prepare a fresh Book 2 character or continue a completed Book 1 run into the Book 2 starting state, and the assistant can follow the checked Book 2 source routes. Book 2 automation is still going through the pipeline.
+Book 2 is also playable as a helper build. You can prepare a fresh Book 2 character or continue a completed Book 1 run into the Book 2 starting state, then use checked routes, section helpers, combat presets, death recovery, completion, and achievements. It still needs more real-route time before we package it as a public release candidate.
 
 ## Which Book Is Supported First?
 
@@ -14,6 +14,12 @@ Start with **Book 1: Flight from the Dark**:
 
 ```text
 books\lw\01fftd
+```
+
+Book 2 uses:
+
+```text
+books\lw\02fotw
 ```
 
 ## Are The Books In The Repo?
@@ -44,6 +50,6 @@ No. It is a companion for your own local Project Aon book files. Read the book t
 
 ## What Should The Next Book Pipeline Do First?
 
-For Book 2, the next work is the automation-language audit. For Book 3 and later, start with the rules scan and book handoff scan. Later Lone Wolf books can add rule tweaks, new-power choices, new starting gear choices, and carry-over checks.
+For Book 2, the next work is polish from real routes. For Book 3 and later, start with the rules scan and book handoff scan. Later Lone Wolf books can add rule tweaks, new-power choices, new starting gear choices, and carry-over checks.
 
 Use [Book Support Matrix](Book-Support-Matrix) to see what is supported now.

@@ -56,7 +56,7 @@ If the layout gets strange, open **Settings** and use **Reset All Card Layouts**
 
 Before packaging a release:
 
-- record the manual browser playtest result
+- record the manual browser run result
 - confirm new character flow, saves, imports, route buttons, loot, combat, death recovery, and achievements in the browser
 - confirm Book 1 files are not packaged
 - confirm personal saves are not packaged

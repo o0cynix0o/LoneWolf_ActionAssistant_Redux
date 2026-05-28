@@ -44,10 +44,27 @@ After the first clear, come back for the dangerous and optional branches:
 
 These are better replay targets than first-run chores.
 
+## Book 2 Achievement List
+
+|Achievement|How to approach it|
+|-----------|------------------|
+|Fire on the Water|Complete Book 2.|
+|The Hammerdal Road|Reach the Hammerdal story stretch.|
+|The Sun-Sword Returns|Claim the Sommerswerd.|
+|Borrowed Thunder|Take the Magic Spear.|
+|Helghast Breaker|Win a recorded Book 2 Helghast combat.|
+|Table Manners|Win the tavern arm-wrestling purse.|
+|Shipwrecked But Moving|Survive a Green Sceptre disaster route.|
+|Red Pass, Green Light|Secure harbour access in Port Bax.|
+|Paper Trail|Record the forged access-papers death.|
+|Across The Lastlands|Visit 90 or more unique Book 2 sections.|
+
+For a first Book 2 clear, we recommend focusing on the mission first: keep the Seal safe, reach Durenor, claim the Sommerswerd, and get home. The riskier unlocks make better replay targets.
+
 ## Backfill
 
 The app backfills achievements automatically from save history when it has reliable evidence. If a route or item never happened in the save, the achievement should stay locked until you actually do it.
 
 ## Later Books
 
-Book 2 and later achievements should be added here only after each book's achievement pass is implemented.
+Later-book achievements should be added here only after each book's achievement pass is implemented.

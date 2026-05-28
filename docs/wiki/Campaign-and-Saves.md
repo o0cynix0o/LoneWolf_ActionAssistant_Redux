@@ -33,9 +33,9 @@ Not every death can be repeated safely. Some terminal entry effects are better h
 
 Book 1 completion records a completed-book summary. Achievements can use that summary for backfill.
 
-Book 1 can now continue into the Book 2 starting setup. The assistant keeps the completed Book 1 character, adds the new Kai Discipline step, applies Book 2 starting Gold with the 50 Crown cap, preserves carry-over inventory, and handles Royal Armoury choices.
+Book 1 can continue into the Book 2 starting setup. The assistant keeps the completed Book 1 character, adds the new Kai Discipline step, applies Book 2 starting Gold with the 50 Crown cap, preserves carry-over inventory, and handles Royal Armoury choices.
 
-Book 2 adventure play is still in the pipeline. Book 3 and later will each need their own rules scan, carry-over scan, new-power step, new gear step, automation pass, and guide updates.
+Book 2 adventure helpers are now in place, including section effects, combat presets, death recovery, completion, and achievements. Book 3 and later will each need their own rules scan, carry-over scan, new-power step, new gear step, automation pass, and guide updates.
 
 ## Moving The App
 

@@ -249,6 +249,81 @@ LONE_WOLF_BOOK1_ACHIEVEMENTS = [
     },
 ]
 
+LONE_WOLF_BOOK2_ACHIEVEMENTS = [
+    {
+        "Id": "lw2_complete",
+        "Name": "Fire on the Water",
+        "BookNumber": 2,
+        "Category": "Story",
+        "Description": "Complete Book 2.",
+    },
+    {
+        "Id": "lw2_reach_hammerdal",
+        "Name": "The Hammerdal Road",
+        "BookNumber": 2,
+        "Category": "Story",
+        "Description": "Reach Hammerdal.",
+    },
+    {
+        "Id": "lw2_claim_sommerswerd",
+        "Name": "The Sun-Sword Returns",
+        "BookNumber": 2,
+        "Category": "Item",
+        "Description": "Claim the Sommerswerd.",
+    },
+    {
+        "Id": "lw2_magic_spear",
+        "Name": "Borrowed Thunder",
+        "BookNumber": 2,
+        "Category": "Item",
+        "Description": "Take the Magic Spear.",
+    },
+    {
+        "Id": "lw2_helghast_victory",
+        "Name": "Helghast Breaker",
+        "BookNumber": 2,
+        "Category": "Combat",
+        "Description": "Win a recorded Book 2 Helghast combat.",
+    },
+    {
+        "Id": "lw2_arm_wrestling_win",
+        "Name": "Table Manners",
+        "BookNumber": 2,
+        "Category": "Resource",
+        "Description": "Win the tavern arm-wrestling purse.",
+    },
+    {
+        "Id": "lw2_survive_green_sceptre",
+        "Name": "Shipwrecked But Moving",
+        "BookNumber": 2,
+        "Category": "Danger",
+        "Description": "Survive the Green Sceptre disaster route.",
+    },
+    {
+        "Id": "lw2_red_pass",
+        "Name": "Red Pass, Green Light",
+        "BookNumber": 2,
+        "Category": "Route",
+        "Description": "Secure harbour access in Port Bax.",
+    },
+    {
+        "Id": "lw2_deadly_documents",
+        "Name": "Paper Trail",
+        "BookNumber": 2,
+        "Category": "Failure",
+        "Description": "Record the forged access-papers death.",
+    },
+    {
+        "Id": "lw2_long_road",
+        "Name": "Across The Lastlands",
+        "BookNumber": 2,
+        "Category": "Exploration",
+        "Description": "Visit 90 or more unique Book 2 sections.",
+    },
+]
+
+LONE_WOLF_ACHIEVEMENTS = LONE_WOLF_BOOK1_ACHIEVEMENTS + LONE_WOLF_BOOK2_ACHIEVEMENTS
+
 LW1_STORY_ROUTE = [
     1,
     141,
@@ -287,6 +362,7 @@ LW1_STORY_ROUTE = [
 ]
 
 LW1_GEAR_LOSS_SECTIONS = {174, 258, 294}
+LW2_GREEN_SCEPTRE_SECTIONS = {78, 141, 337}
 
 
 def default_inventory() -> dict[str, Any]:
@@ -1499,7 +1575,7 @@ class LoneWolfReduxAssistant:
         return state
 
     def achievement_definitions(self) -> list[dict[str, Any]]:
-        return json_clone(LONE_WOLF_BOOK1_ACHIEVEMENTS)
+        return json_clone(LONE_WOLF_ACHIEVEMENTS)
 
     def achievement_unlocked_ids(self) -> set[str]:
         unlocked_ids: set[str] = set()
@@ -1665,6 +1741,30 @@ class LoneWolfReduxAssistant:
             return "crystal star pendant" in items
         if achievement_id == "lw1_long_road":
             return max(len(sections), self.summary_metric_for_book(1, "UniqueSectionsVisited")) >= 75
+        if achievement_id == "lw2_complete":
+            return self.book_completed(2)
+        if achievement_id == "lw2_reach_hammerdal":
+            return self.has_any_section(2, 196, 40, 97, 123, 242) or self.book_completed(2)
+        if achievement_id == "lw2_claim_sommerswerd":
+            return "sommerswerd" in items
+        if achievement_id == "lw2_magic_spear":
+            return "magic spear" in items
+        if achievement_id == "lw2_helghast_victory":
+            return any(
+                "helghast" in str(entry.get("EnemyName") or "").lower()
+                or int(entry.get("Section") or 0) in {5, 17, 106, 237, 332}
+                for entry in victories
+            )
+        if achievement_id == "lw2_arm_wrestling_win":
+            return 305 in sections
+        if achievement_id == "lw2_survive_green_sceptre":
+            return any(section in sections for section in LW2_GREEN_SCEPTRE_SECTIONS)
+        if achievement_id == "lw2_red_pass":
+            return "red pass" in items or 202 in sections
+        if achievement_id == "lw2_deadly_documents":
+            return 126 in sections or self.death_history_has_section(2, 126)
+        if achievement_id == "lw2_long_road":
+            return max(len(sections), self.summary_metric_for_book(2, "UniqueSectionsVisited")) >= 90
 
         return False
 
@@ -2045,6 +2145,30 @@ class LoneWolfReduxAssistant:
     def has_item(self, name: str, containers: Any = None, match_mode: str = "exact") -> bool:
         return self.count_items(name, containers, match_mode) > 0
 
+    def has_item_history(self, name: str, containers: Any = None, match_mode: str = "exact") -> bool:
+        if self.has_item(name, containers, match_mode):
+            return True
+        container_keys = set(self.automation_containers(containers)) if containers else set()
+        for entry in as_list(self.automation.get("ItemHistory")):
+            if not isinstance(entry, dict):
+                continue
+            if container_keys:
+                key = self.container_key(str(entry.get("Container") or ""))
+                if key not in container_keys:
+                    continue
+            if self.item_matches(entry.get("Name", ""), name, match_mode):
+                return True
+        for summary in as_list(self.state.get("BookHistory")):
+            if not isinstance(summary, dict):
+                continue
+            for key in ("Weapons", "BackpackItems", "SpecialItems"):
+                if container_keys and key not in container_keys:
+                    continue
+                for item in as_list(summary.get(key)):
+                    if self.item_matches(item, name, match_mode):
+                        return True
+        return False
+
     def has_power(self, name: str) -> bool:
         return name in as_list(self.character.get("KaiDisciplines"))
 
@@ -2252,12 +2376,33 @@ class LoneWolfReduxAssistant:
         if not condition:
             return True
         kind = str(condition.get("type") or "").lower()
+        if kind == "any":
+            return any(
+                self.evaluate_flow_condition(item)
+                for item in as_list(condition.get("conditions"))
+                if isinstance(item, dict)
+            )
+        if kind == "all":
+            conditions = [item for item in as_list(condition.get("conditions")) if isinstance(item, dict)]
+            return bool(conditions) and all(self.evaluate_flow_condition(item) for item in conditions)
         if kind == "power":
             return self.has_power(str(condition.get("name") or ""))
         if kind == "no_power":
             return not self.has_power(str(condition.get("name") or ""))
         if kind == "item":
             return self.has_item(
+                str(condition.get("name") or ""),
+                condition.get("containers"),
+                str(condition.get("match") or "exact"),
+            )
+        if kind == "item_history":
+            return self.has_item_history(
+                str(condition.get("name") or ""),
+                condition.get("containers"),
+                str(condition.get("match") or "exact"),
+            )
+        if kind == "no_item_history":
+            return not self.has_item_history(
                 str(condition.get("name") or ""),
                 condition.get("containers"),
                 str(condition.get("match") or "exact"),
@@ -3134,6 +3279,27 @@ class LoneWolfReduxAssistant:
         self.automation_flags["backpackItemsAvailable"] = False
         return f"gear discarded: {weapon_count} Weapon(s); {backpack_count} Backpack Item(s)"
 
+    def clear_special_items(self) -> str:
+        count = len(as_list(self.inventory.get("SpecialItems")))
+        self.inventory["SpecialItems"] = []
+        return f"Special Items discarded: {count}"
+
+    def remove_chainmail_waistcoat(self) -> str:
+        removed = self.remove_inventory_items("Chainmail Waistcoat", 1, ["special"])
+        before_max = int(self.character["EnduranceMax"])
+        before_current = int(self.character["EnduranceCurrent"])
+        if removed and bool(self.character.get("Book2Setup", {}).get("ChainmailApplied")):
+            self.character["EnduranceMax"] = max(0, before_max - 4)
+            self.character["EnduranceCurrent"] = min(
+                before_current, int(self.character["EnduranceMax"])
+            )
+            self.character.setdefault("Book2Setup", {})["ChainmailApplied"] = False
+            return (
+                "removed Chainmail Waistcoat; "
+                f"END max {before_max}->{self.character['EnduranceMax']}"
+            )
+        return f"removed {removed} Chainmail Waistcoat"
+
     def has_available_staff(self) -> bool:
         return False
 
@@ -3142,6 +3308,15 @@ class LoneWolfReduxAssistant:
         for item in as_list(self.inventory.get("Weapons")):
             name = str(item)
             if name not in weapons:
+                weapons.append(name)
+        special_weapon_items = {
+            "sommerswerd": "Sommerswerd",
+            "magic spear": "Magic Spear",
+        }
+        for item in as_list(self.inventory.get("SpecialItems")):
+            key = str(item).strip().lower()
+            name = special_weapon_items.get(key)
+            if name and name not in weapons:
                 weapons.append(name)
         return weapons
 
@@ -3199,12 +3374,26 @@ class LoneWolfReduxAssistant:
 
         modifier = 0
         notes = [f"Weapon: {active}"]
-        if (
+        active_key = active.lower()
+        weaponskill_weapon = str(self.character.get("WeaponskillWeapon") or "").lower()
+        if active_key == "sommerswerd":
+            sword_skills = {"sword", "short sword", "broadsword"}
+            bonus = 10 if "Weaponskill" in as_list(self.character.get("KaiDisciplines")) and weaponskill_weapon in sword_skills else 8
+            modifier += bonus
+            notes.append(f"Sommerswerd: +{bonus} CS")
+        elif active_key == "magic spear":
+            if "Weaponskill" in as_list(self.character.get("KaiDisciplines")) and weaponskill_weapon == "spear":
+                modifier += 2
+                notes.append("Weaponskill (Spear): +2 CS")
+        elif (
             "Weaponskill" in as_list(self.character.get("KaiDisciplines"))
-            and active.lower() == str(self.character.get("WeaponskillWeapon") or "").lower()
+            and active_key == weaponskill_weapon
         ):
             modifier += 2
             notes.append(f"Weaponskill ({active}): +2 CS")
+        if self.has_item("Shield", ["special"]):
+            modifier += 2
+            notes.append("Shield: +2 CS")
         if "Mindblast" in as_list(self.character.get("KaiDisciplines")) and not bool(self.combat.get("EnemyImmune")):
             modifier += 2
             notes.append("Mindblast: +2 CS")
@@ -3264,6 +3453,9 @@ class LoneWolfReduxAssistant:
             if mode == "half_recover_floor":
                 gain = int(self.character["EnduranceCurrent"]) // 2
                 return self.change_endurance(gain)
+            if mode == "restore_missing_half_floor":
+                missing = max(0, int(self.character["EnduranceMax"]) - int(self.character["EnduranceCurrent"]))
+                return self.change_endurance(missing // 2)
             if mode == "half_loss_floor":
                 loss = int(self.character["EnduranceCurrent"]) // 2
                 return self.change_endurance(-loss)
@@ -3326,6 +3518,21 @@ class LoneWolfReduxAssistant:
             parts.append(self.change_endurance(-(loss * missing)))
         return "; ".join(parts)
 
+    def apply_automation_meal_or_gold(self, action: dict[str, Any]) -> str:
+        meal_count = max(1, int(action.get("count") or 1))
+        gold_cost = max(0, int(action.get("goldCost") or 0))
+        available = self.count_items("Meal", ["backpack"])
+        if available >= meal_count:
+            removed = self.remove_inventory_items("Meal", meal_count, ["backpack"])
+            return f"Meals {available}->{available - removed}"
+        before_gold = int(self.inventory.get("GoldCrowns") or 0)
+        if before_gold >= gold_cost:
+            return self.change_gold_crowns(-gold_cost)
+        loss = int(action.get("enduranceLoss") or 0)
+        if loss:
+            return f"no Meal or Gold; {self.change_endurance(-loss)}"
+        return f"no Meal or Gold available; follow the book route"
+
     def apply_automation_action(self, action: dict[str, Any]) -> str:
         if isinstance(action.get("condition"), dict) and not self.evaluate_flow_condition(action.get("condition")):
             return ""
@@ -3334,6 +3541,8 @@ class LoneWolfReduxAssistant:
             return self.apply_automation_stat(action)
         if action_type == "meal":
             return self.apply_automation_meal(action)
+        if action_type == "meal_or_gold":
+            return self.apply_automation_meal_or_gold(action)
         if action_type == "remove_item":
             name = str(action.get("name") or "")
             removed = self.remove_inventory_items(
@@ -3390,6 +3599,10 @@ class LoneWolfReduxAssistant:
             return self.clear_backpack_items()
         if action_type == "discard_gear":
             return self.discard_gear()
+        if action_type == "discard_special_items":
+            return self.clear_special_items()
+        if action_type == "remove_chainmail":
+            return self.remove_chainmail_waistcoat()
         if action_type == "ending":
             ending = str(action.get("ending") or "death")
             book_number = int(self.character["BookNumber"])
@@ -3691,6 +3904,8 @@ class LoneWolfReduxAssistant:
                 return {"stat": "end", "delta": 2, "label": "Small Vial of Laumspur"}
             if "+6" in text:
                 return {"stat": "end", "delta": 6, "label": "Potion of Laumspur"}
+            if "+5" in text or "potent" in text:
+                return {"stat": "end", "delta": 5, "label": "Potent Laumspur Potion"}
             if "+4" in text:
                 return {"stat": "end", "delta": 4, "label": "Potion of Laumspur"}
             if "potion" in text:
@@ -4987,6 +5202,8 @@ class LoneWolfReduxAssistant:
         fixed_cs = preset.get("fixedPlayerCombatSkill")
         if fixed_cs == "wp_plus_end":
             fixed_cs = int(self.character["EnduranceCurrent"])
+        elif fixed_cs == "current":
+            fixed_cs = int(self.character["CombatSkillCurrent"])
         elif fixed_cs is not None:
             fixed_cs = int(fixed_cs)
 
@@ -5019,6 +5236,12 @@ class LoneWolfReduxAssistant:
                 "TimedModifiers": as_list(preset.get("timedModifiers")),
                 "AppliedConditionalModifierLabels": modifier_labels,
                 "IgnorePlayerLossRounds": max(0, int(preset.get("ignorePlayerLossRounds") or 0)),
+                "DoubleEnemyLoss": bool(preset.get("doubleEnemyLoss", False)),
+                "DoubleEnemyLossWithSommerswerd": bool(preset.get("doubleEnemyLossWithSommerswerd", False)),
+                "RestorePlayerEnduranceAfterCombat": bool(preset.get("restorePlayerEnduranceAfterCombat", False)),
+                "StoredPlayerEnduranceBeforeCombat": int(self.character["EnduranceCurrent"])
+                if bool(preset.get("restorePlayerEnduranceAfterCombat", False))
+                else None,
                 "FixedPlayerCombatSkill": fixed_cs,
                 "EnemyQueue": enemies,
                 "EnemyIndex": 0,
@@ -5074,9 +5297,20 @@ class LoneWolfReduxAssistant:
     def route_after_combat_round(self) -> bool:
         round_count = self.combat_round_count()
         threshold = self.combat.get("PostRoundWpThreshold")
+        def restore_player_endurance_after_combat() -> None:
+            if not bool(self.combat.get("RestorePlayerEnduranceAfterCombat")):
+                return
+            stored = self.combat.get("StoredPlayerEnduranceBeforeCombat")
+            if stored is None:
+                return
+            self.character["EnduranceCurrent"] = max(
+                0,
+                min(int(stored), int(self.character["EnduranceMax"])),
+            )
         if isinstance(threshold, dict) and round_count >= int(threshold.get("round") or 1):
             route = int(threshold.get("ltRoute") or threshold.get("gteRoute") or 0)
             self.archive_current_combat("Completed")
+            restore_player_endurance_after_combat()
             self.combat["Active"] = False
             print(f"Post-round route: section {route}.")
             if route:
@@ -5087,6 +5321,7 @@ class LoneWolfReduxAssistant:
             print("Lone Wolf has fallen.")
             enemy_name = str(self.combat.get("EnemyName") or "the enemy")
             self.archive_current_combat("Defeat")
+            restore_player_endurance_after_combat()
             self.combat["Active"] = False
             defeat_route = self.combat.get("DefeatRoute")
             if defeat_route:
@@ -5107,6 +5342,7 @@ class LoneWolfReduxAssistant:
         if limit and self.combat.get("SurvivalRoute") and round_count >= limit:
             route = self.combat.get("SurvivalRoute")
             self.archive_current_combat("Survived")
+            restore_player_endurance_after_combat()
             self.combat["Active"] = False
             print(f"Survived route: section {route}.")
             self.set_section(int(route))
@@ -5123,6 +5359,7 @@ class LoneWolfReduxAssistant:
                     if message:
                         print(message)
             self.archive_current_combat("Victory")
+            restore_player_endurance_after_combat()
             self.combat["Active"] = False
             route = self.combat.get("VictoryRoute")
             player_loss_total = self.combat_player_loss_total()
@@ -5144,6 +5381,7 @@ class LoneWolfReduxAssistant:
             route = self.combat.get("RoundExceededRoute")
             outcome = "Timed Out"
             self.archive_current_combat(outcome)
+            restore_player_endurance_after_combat()
             self.combat["Active"] = False
             if route:
                 print(f"{outcome} route: section {route}.")
@@ -5204,6 +5442,10 @@ class LoneWolfReduxAssistant:
                 "TimedModifiers": [],
                 "AppliedConditionalModifierLabels": [],
                 "IgnorePlayerLossRounds": 0,
+                "DoubleEnemyLoss": False,
+                "DoubleEnemyLossWithSommerswerd": False,
+                "RestorePlayerEnduranceAfterCombat": False,
+                "StoredPlayerEnduranceBeforeCombat": None,
                 "FixedPlayerCombatSkill": None,
                 "EnemyQueue": [],
                 "EnemyIndex": 0,
@@ -5287,6 +5529,10 @@ class LoneWolfReduxAssistant:
 
         if not evade:
             multiplier = max(1, wp_spend) if use_staff else 1
+            if bool(self.combat.get("DoubleEnemyLoss")):
+                multiplier *= 2
+            if bool(self.combat.get("DoubleEnemyLossWithSommerswerd")) and self.combat_active_weapon() == "Sommerswerd":
+                multiplier *= 2
             enemy_loss = min(int(self.combat["EnemyEnduranceCurrent"]), base_enemy_loss * multiplier)
 
         if (

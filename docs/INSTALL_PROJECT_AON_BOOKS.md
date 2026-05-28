@@ -12,11 +12,12 @@ Read the license here:
 
 Download the **standard** edition for each supported Lone Wolf book. This is the full-featured, multi-page HTML edition that matches the assistant's reader paths.
 
-Current supported book:
+Current supported books:
 
 | Book | Status | Project Aon page | Standard ZIP |
 | --- | --- | --- | --- |
 | 1. Flight from the Dark | Playable release candidate | https://www.projectaon.org/en/Main/FlightFromTheDark | https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip |
+| 2. Fire on the Water | Playable helper build | https://www.projectaon.org/en/Main/FireOnTheWater | https://www.projectaon.org/en/xhtml/lw/02fotw/02fotw.zip |
 
 Future books must be installed locally before they can be audited through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
 
@@ -25,7 +26,7 @@ Common Project Aon Lone Wolf folder codes:
 | Book | Folder code | Status in this app |
 | --- | --- | --- |
 | 1. Flight from the Dark | `01fftd` | Supported |
-| 2. Fire on the Water | `02fotw` | Setup/source routes supported |
+| 2. Fire on the Water | `02fotw` | Supported; needs more real-route time |
 | 3. The Caverns of Kalte | `03tcok` | Future pipeline target |
 | 4. The Chasm of Doom | `04tcod` | Future pipeline target |
 | 5. Shadow on the Sand | `05sots` | Future pipeline target |
@@ -49,15 +50,20 @@ LoneWolf_ActionAssistant_Redux/
         title.htm
         sect1.htm
         ...
+      02fotw/
+        title.htm
+        sect1.htm
+        ...
 ```
 
-The app currently expects this folder name for Book 1:
+The app currently expects these folder names:
 
 - `01fftd`
+- `02fotw`
 
 ## Manual Install
 
-1. Download the Book 1 standard ZIP from Project Aon.
+1. Download the Book 1 and Book 2 standard ZIPs from Project Aon.
 2. Open your Lone Wolf Action Assistant Redux folder.
 3. Create this folder if it does not exist:
 
@@ -71,6 +77,8 @@ The app currently expects this folder name for Book 1:
    ```text
    books\lw\01fftd\title.htm
    books\lw\01fftd\sect1.htm
+   books\lw\02fotw\title.htm
+   books\lw\02fotw\sect1.htm
    ```
 
 If you see an extra nested folder after extraction, move the book folder so the path matches the examples above.
@@ -83,9 +91,12 @@ From the project folder:
 New-Item -ItemType Directory -Force .\books\lw
 
 Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\02fotw.zip" -DestinationPath .\books\lw -Force
 
 Test-Path .\books\lw\01fftd\title.htm
 Test-Path .\books\lw\01fftd\sect1.htm
+Test-Path .\books\lw\02fotw\title.htm
+Test-Path .\books\lw\02fotw\sect1.htm
 ```
 
 Each `Test-Path` command should return `True`.

@@ -22,9 +22,15 @@ CHECKS: list[list[str]] = [
         "ws_server.py",
         "testing/lwbook2_setup_smoke.py",
         "testing/lwbook2_section_flow_audit.py",
+        "testing/lwbook2_automation_language_audit.py",
+        "testing/lwbook2_playable_pipeline_smoke.py",
+        "testing/lwbook1_achievement_smoke.py",
     ],
     [sys.executable, "testing/lwbook2_setup_smoke.py"],
     [sys.executable, "testing/lwbook2_section_flow_audit.py", "--check"],
+    [sys.executable, "testing/lwbook2_automation_language_audit.py", "--write"],
+    [sys.executable, "testing/lwbook2_playable_pipeline_smoke.py"],
+    [sys.executable, "testing/lwbook1_achievement_smoke.py"],
 ]
 
 

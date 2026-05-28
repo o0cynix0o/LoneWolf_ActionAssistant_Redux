@@ -118,4 +118,4 @@ then every wiki edit must keep both folders in sync.
 
 ## Release Honesty
 
-Do not call a package release-ready until the packaging checks are complete. Book 1 is now the playable release candidate; later books remain future pipeline work.
+Do not call a package release-ready until the packaging checks are complete. Book 1 is now the playable release candidate. Book 2 is playable in the helper build, but needs more real-route time before release-candidate wording.

@@ -20,6 +20,22 @@ sect2.htm
 sect350.htm
 ```
 
+## Book 2
+
+Book 2 should live here:
+
+```text
+books\lw\02fotw
+```
+
+It uses the same standard Project Aon HTML shape:
+
+```text
+sect1.htm
+sect2.htm
+sect350.htm
+```
+
 ## Local Install Page
 
 When the app is running, open:
@@ -36,15 +52,7 @@ The `books` folder is for your local personal copies only.
 
 Do not commit it. Do not package it. Do not upload it to a release.
 
-## Book 2
-
-Book 2 setup and source-route support use:
-
-```text
-books\lw\02fotw
-```
-
-The setup flow and checked source-route graph are available now, but the Book 2 adventure sections still need the rest of the automation pipeline before we call the book playable.
+Book 2 helper support is in place now. We still recommend treating it as a ready-to-try build until it has had more real-route time.
 
 ## Future Books
 

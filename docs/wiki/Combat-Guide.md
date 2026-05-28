@@ -1,16 +1,18 @@
 # Combat Guide
 
-The Combat tab tracks fights using Lone Wolf Book 1 rules.
+The Combat tab tracks fights using Lone Wolf Kai rules for the supported books.
 
 ## Combat Skill
 
-Your current Combat Skill starts from your Book 1 character roll and changes when the book or your equipment changes it.
+Your current Combat Skill starts from your character roll and changes when the book or your equipment changes it.
 
 Combat can also include temporary modifiers:
 
 - no Weapon penalty
 - Weaponskill bonus
 - Mindblast bonus when the enemy is not immune
+- Shield bonus
+- Sommerswerd and Magic Spear handling
 - enemy-specific modifiers
 - timed modifiers for special fights
 
@@ -43,7 +45,17 @@ If you are resolving combat by hand, check the section text before adding Mindbl
 
 Some fights allow evasion. If the book offers an evasion route, the app can show that route and resolve the required round when needed.
 
-Do not treat evasion as failure. In Book 1, surviving long enough to carry the message can be the smarter win.
+Do not treat evasion as failure. Surviving long enough to finish the mission is often the smarter win.
+
+## Book 2 Specials
+
+Book 2 adds several combat rules the app now handles in checked presets:
+
+- The **Sommerswerd** is a Special Item, but can be selected as a combat weapon.
+- The Sommerswerd adds its Combat Skill bonus and doubles undead enemy Endurance losses where the book says it does.
+- The **Magic Spear** is also treated as a weapon-like Special Item.
+- Some Helghast fights apply extra Mindforce damage if Lone Wolf lacks Mindshield.
+- The arm-wrestling contest restores Lone Wolf's Endurance to the pre-contest value afterwards.
 
 ## Victory Choices
 
@@ -51,4 +63,4 @@ Some fights do not have a single automatic victory route. When the book gives yo
 
 ## Combat History
 
-Completed fights are archived in combat history. Achievements use that durable history for combat milestones such as first victory and the Gourgaz fight.
+Completed fights are archived in combat history. Achievements use that durable history for combat milestones such as first victory, the Gourgaz fight, and Book 2 Helghast victories.

@@ -60,15 +60,15 @@ Some Project Aon book folders include extra notes, footnotes, or support pages. 
 
 ## Lone Wolf Book Folder Map
 
-Current implemented/audited folder:
+Current implemented/audited folders:
 
 - `01fftd`
   `Flight from the Dark`
+- `02fotw`
+  `Fire on the Water`
 
 Installed local corpus:
 
-- `02fotw`
-  `Fire on the Water`
 - `03tcok`
   `The Caverns of Kalte`
 - `04tcod`
@@ -130,7 +130,7 @@ Do not treat a future folder as supported just because it exists locally. Each b
 
 Current pipeline target:
 
-- Book 2, `02fotw`, has source verification, rules/handoff logs, setup implementation notes, a setup smoke test, and a checked-in section-flow baseline under `testing/logs/LWBOOK2_*`, `testing/lwbook2_setup_smoke.py`, and `testing/lwbook2_section_flow_audit.py`.
+- Book 3, `03tcok`, is the next natural pipeline target after Book 2 playtesting.
 
 ## Recommended Audit Start Pattern
 
@@ -184,12 +184,23 @@ Expected section range:
 Checked-in data artifacts:
 
 - `data/book2-section-flows.json`
+- `data/book2-simple-automations.json`
 
 Primary technical audit logs:
 
 - `testing/logs/LWBOOK2_PASS1_RULES_BASELINE.md`
 - `testing/logs/LWBOOK2_SETUP_IMPLEMENTATION.md`
 - `testing/logs/LWBOOK2_SECTION_FLOW_BASELINE.md`
+- `testing/logs/LWBOOK2_AUTOMATION_LANGUAGE_AUDIT.md`
+- `testing/logs/LWBOOK2_PLAYABLE_PIPELINE.md`
+- `testing/logs/LWBOOK2_ACHIEVEMENT_PASS.md`
+
+Primary validation:
+
+- `testing/lwbook2_setup_smoke.py`
+- `testing/lwbook2_section_flow_audit.py`
+- `testing/lwbook2_automation_language_audit.py`
+- `testing/lwbook2_playable_pipeline_smoke.py`
 
 ## Repo Hygiene
 

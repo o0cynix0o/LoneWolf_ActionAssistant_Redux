@@ -9,7 +9,7 @@ Lone Wolf inventory is tracked by category.
 - **Special Items**
 - **Gold Crowns**
 
-Book 1 also tracks whether Lone Wolf still has a Backpack.
+The app also tracks whether Lone Wolf still has a Backpack.
 
 ## Weapons
 
@@ -21,7 +21,7 @@ Weaponskill matters only when your chosen Weaponskill Weapon is actually the act
 
 ## Backpack Items
 
-Backpack Items are ordinary carried supplies. Book 1 uses them for Meals, potions, scrolls, and other small gear.
+Backpack Items are ordinary carried supplies. The supported books use them for Meals, potions, scrolls, and other small gear.
 
 The Backpack has limited space. If it is lost, Backpack Items are no longer available until the book gives you a way forward.
 
@@ -34,17 +34,21 @@ Use:
 - **Eat Meal** when the book tells you to eat or consume provisions.
 - **Missed Meal** when the book says you lose Endurance for not eating.
 
-Hunting can exempt some Meal requirements. The app applies that exemption only where the audited section supports it.
+Hunting can exempt some Meal requirements. The app applies that exemption only where the audited section supports it. Book 2 has some travel stretches where the text says Hunting does not help, and the app follows that.
 
 ## Special Items
 
-Special Items are tracked separately from the Backpack. Book 1 starts with the **Map of Sommerlund** and can add other story objects as you travel.
+Special Items are tracked separately from the Backpack. Book 1 starts with the **Map of Sommerlund** and can add other story objects as you travel. Book 2 adds important Special Items such as the **Seal of Hammerdal**, passes, the **Sommerswerd**, and sometimes the **Magic Spear**.
 
 Special Items often matter for route checks. Do not drop them casually unless the book tells you to.
 
+The Sommerswerd and Magic Spear are Special Items, but the combat helper also treats them as weapon-like choices when a fight calls for them.
+
 ## Gold Crowns
 
-Gold Crowns are not decoration. Book 1 has paid travel options, including routes where choosing the paid option deducts Gold automatically.
+Gold Crowns are not decoration. The supported books have paid travel options, passes, shops, and other routes where choosing the paid option deducts Gold automatically.
+
+Gold has a hard cap of 50. If you are already at the cap, extra Gold is not picked up.
 
 Keep enough Gold if you are taking roads through settlements, ferries, or caravans.
 

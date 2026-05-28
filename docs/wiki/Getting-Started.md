@@ -1,6 +1,6 @@
 # Getting Started
 
-This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 setup and source routes now underway. We are keeping the app local, practical, and faithful to the book text.
+This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 now available as a playable helper build. We are keeping the app local, practical, and faithful to the book text.
 
 ## Requirements
 
@@ -8,7 +8,7 @@ This project is the Book 1 release-candidate build of Lone Wolf Action Assistant
 - A modern browser
 - The project files from the repository
 - Your own Project Aon Book 1 HTML files
-- Your own Project Aon Book 2 HTML files if you want to try the Book 2 setup flow
+- Your own Project Aon Book 2 HTML files if you want to continue into Fire on the Water
 
 Install Python dependencies from the project folder if needed:
 
@@ -46,7 +46,7 @@ For Book 1, extract the Project Aon standard HTML files here:
 books\lw\01fftd
 ```
 
-For Book 2 setup, use:
+For Book 2, use:
 
 ```text
 books\lw\02fotw
@@ -80,9 +80,11 @@ For practical route advice, see [Book 1 Strategy Guide](Book-1-Strategy-Guide).
 
 ## Starting Book 2
 
-Book 2 is not a playable adventure yet, but its starting setup and source-link route graph are available. You can continue from a completed Book 1 save or create a clearly labeled fresh Book 2 character.
+Book 2 has setup, checked routes, section helpers, combat presets, death recovery, completion, achievements, and a first strategy guide. You can continue from a completed Book 1 save or create a clearly labeled fresh Book 2 character.
 
-The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices. Section effects, combat presets, achievements, and route advice still come later.
+The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices.
+
+We still want more real-route time before calling Book 2 a public release candidate, so please treat it as ready to play and ready to report rough edges.
 
 ## Choose A Play Mode
 

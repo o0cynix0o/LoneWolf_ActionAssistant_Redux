@@ -30,7 +30,11 @@ For advice on why this is a comfortable first-clear route, see the [Book 1 Strat
 
 ## Book 2: Fire on the Water
 
-Book 2 setup and source-link routing are underway. The app can prepare the Book 2 starting state after a completed Book 1 run, but we have not added a recommended story route yet.
+Book 2 is now playable in the assistant pipeline. We have setup, routing, section helpers, combat presets, completion, and achievements in place.
+
+We have not promoted a single recommended campaign route yet. The next step is more real-route time so the route we publish here feels like a dependable first-clear path rather than just the shortest possible graph path.
+
+For now, use the [Book 2 Strategy Guide](Book-2-Strategy-Guide): protect the Seal, reach Durenor, claim the Sommerswerd, and keep the riskier branches for replay.
 
 ## Later Books
 

@@ -43,11 +43,14 @@ This report records section numbers, graph counts, and audit classifications onl
 
 - `data/book2-section-flows.json` now contains one entry for every discovered section.
 - `sourceRoutes` is the compact legal-link baseline used by the assistant.
-- `classification` is heuristic and marks candidates for the later human section automation audit.
-- No Book 2 section effects, route checks, combats, random helpers, achievements, or strategy routes are implemented by this slice.
+- `classification` is heuristic and remains useful for future review slices.
+- 22 sections include confirmed optional loot buttons.
+- 31 sections include confirmed combat presets.
+- 25 sections include confirmed roll helpers.
+- 48 sections include confirmed route checks.
 
-## Remaining Work
+## Remaining Risk
 
-- Run the full Book 2 automation-language audit section by section.
-- Add route checks, section effects, loot/loss helpers, random helpers, and combat presets only after each candidate is confirmed against the book text.
-- Add Book 2 achievements and strategy docs after the automation/combat pass is stable.
+- The automation-language audit currently reports zero uncovered signal categories.
+- Broader real-route play may still find helper wording or timing that deserves polish.
+- Stake-based gambling sections remain manual because the player chooses the wager.
