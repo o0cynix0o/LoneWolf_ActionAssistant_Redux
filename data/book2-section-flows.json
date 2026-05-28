@@ -3291,6 +3291,19 @@
         }
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "magic-spear",
+          "label": "Take the Magic Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Magic Spear"
+            }
+          ]
+        }
+      ],
       "combat": [
         {
           "id": "106-helghast",
@@ -3301,6 +3314,15 @@
             "endurance": 30
           },
           "enemyImmune": true,
+          "preActions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Magic Spear"
+            }
+          ],
+          "activeWeapon": "Magic Spear",
+          "requiredWeapon": "Magic Spear",
           "perRoundActions": [
             {
               "type": "stat",

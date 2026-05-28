@@ -220,11 +220,24 @@ def test_book2_combat_helpers() -> None:
     assert_equal(assistant.combat_skill_for_round(), 24, "Sommerswerd plus Weaponskill Sword gives +10 CS")
 
     assistant = fresh_assistant(weaponskill_roll=1)
-    assistant.inventory["Weapons"] = []
-    assistant.inventory["SpecialItems"] = ["Magic Spear"]
+    assistant.inventory["Weapons"] = ["Sword"]
+    assistant.inventory["SpecialItems"] = []
     quiet(assistant.set_section, 106)
+    loot_ids = [item["id"] for item in assistant.current_section_flow_payload()["Entry"]["loot"]]
+    assert_true("magic-spear" in loot_ids, "section 106 offers Magic Spear pickup")
+    quiet(assistant.apply_flow_loot, "magic-spear")
+    assert_true("Magic Spear" in assistant.inventory["SpecialItems"], "section 106 pickup adds Magic Spear")
     quiet(assistant.start_section_combat, "106-helghast")
+    assert_equal(assistant.combat["ActiveWeapon"], "Magic Spear", "section 106 selects Magic Spear for combat")
     assert_equal(assistant.combat_skill_for_round(), 16, "Magic Spear uses Spear Weaponskill only")
+    quiet(assistant.set_combat_weapon, "Sword")
+    enemy_before = assistant.combat["EnemyEnduranceCurrent"]
+    quiet(assistant.combat_round, ["combat", "round", "9"])
+    assert_equal(
+        assistant.combat["EnemyEnduranceCurrent"],
+        enemy_before,
+        "section 106 normal weapons cannot wound the Helghast",
+    )
 
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Healing"])
     assistant.character["EnduranceCurrent"] = 19
@@ -240,11 +253,14 @@ def test_book2_combat_helpers() -> None:
 
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Healing"])
     assistant.inventory["SpecialItems"] = []
+    assistant.inventory["Weapons"] = ["Sword"]
     quiet(assistant.set_section, 106)
     quiet(assistant.start_section_combat, "106-helghast")
+    assert_true("Magic Spear" in assistant.inventory["SpecialItems"], "section 106 combat start puts Magic Spear in hand")
+    assert_equal(assistant.combat["ActiveWeapon"], "Magic Spear", "section 106 combat start selects Magic Spear")
     assistant.combat["EnemyEnduranceCurrent"] = 0
     quiet(assistant.route_after_combat_round)
-    assert_true("Magic Spear" in assistant.inventory["SpecialItems"], "section 106 victory adds Magic Spear")
+    assert_true("Magic Spear" in assistant.inventory["SpecialItems"], "section 106 victory keeps Magic Spear")
     assert_equal(assistant.state["CurrentSection"], 320, "section 106 victory route")
 
 

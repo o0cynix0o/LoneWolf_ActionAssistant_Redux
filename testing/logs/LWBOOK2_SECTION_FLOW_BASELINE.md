@@ -44,7 +44,7 @@ This report records section numbers, graph counts, and audit classifications onl
 - `data/book2-section-flows.json` now contains one entry for every discovered section.
 - `sourceRoutes` is the compact legal-link baseline used by the assistant.
 - `classification` is heuristic and remains useful for future review slices.
-- 22 sections include confirmed optional loot buttons.
+- 23 sections include confirmed optional loot buttons.
 - 31 sections include confirmed combat presets.
 - 25 sections include confirmed roll helpers.
 - 48 sections include confirmed route checks.

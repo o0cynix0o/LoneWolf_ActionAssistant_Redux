@@ -479,6 +479,7 @@ def default_state() -> dict[str, Any]:
             "AppliedConditionalModifierLabels": [],
             "IgnorePlayerLossRounds": 0,
             "FixedPlayerCombatSkill": None,
+            "RequiredWeapon": "",
             "EnemyQueue": [],
             "EnemyIndex": 0,
             "SectionCombatId": "",
@@ -5061,6 +5062,8 @@ class LoneWolfReduxAssistant:
                 notes.append(f"Round limit {int(self.combat['RoundLimit'])}")
             if bool(self.combat.get("IgnorePlayerLossIfEnemyLossGreater")):
                 notes.append("Ignore Lone Wolf END loss when enemy loss is higher.")
+            if str(self.combat.get("RequiredWeapon") or "").strip():
+                notes.append(f"Only {self.combat['RequiredWeapon']} can wound this enemy.")
             notes.extend(
                 str(label)
                 for label in as_list(self.combat.get("AppliedConditionalModifierLabels"))
@@ -5257,6 +5260,7 @@ class LoneWolfReduxAssistant:
                 if bool(preset.get("restorePlayerEnduranceAfterCombat", False))
                 else None,
                 "FixedPlayerCombatSkill": fixed_cs,
+                "RequiredWeapon": str(preset.get("requiredWeapon") or ""),
                 "EnemyQueue": enemies,
                 "EnemyIndex": 0,
                 "SectionCombatId": str(preset.get("id") or ""),
@@ -5269,6 +5273,11 @@ class LoneWolfReduxAssistant:
         if self.combat.get("ForceUnarmed"):
             self.combat["ActiveWeapon"] = ""
             self.combat["UseStaff"] = False
+        elif preset.get("activeWeapon"):
+            resolved_weapon = self.resolve_combat_weapon(str(preset.get("activeWeapon") or ""))
+            if resolved_weapon is not None:
+                self.combat["ActiveWeapon"] = resolved_weapon
+                self.combat["UseStaff"] = False
         for message in messages:
             print(message)
         print(f"Section combat loaded: {preset.get('label') or name}")
@@ -5461,6 +5470,7 @@ class LoneWolfReduxAssistant:
                 "RestorePlayerEnduranceAfterCombat": False,
                 "StoredPlayerEnduranceBeforeCombat": None,
                 "FixedPlayerCombatSkill": None,
+                "RequiredWeapon": "",
                 "EnemyQueue": [],
                 "EnemyIndex": 0,
                 "SectionCombatId": "",
@@ -5540,8 +5550,11 @@ class LoneWolfReduxAssistant:
             ignored_player_loss = player_loss
             player_loss = 0
         enemy_loss = 0
+        required_weapon = str(self.combat.get("RequiredWeapon") or "").strip()
+        active_weapon = self.combat_active_weapon()
+        weapon_can_wound = not required_weapon or active_weapon.lower() == required_weapon.lower()
 
-        if not evade:
+        if not evade and weapon_can_wound:
             multiplier = max(1, wp_spend) if use_staff else 1
             if bool(self.combat.get("DoubleEnemyLoss")):
                 multiplier *= 2
@@ -5580,6 +5593,8 @@ class LoneWolfReduxAssistant:
         print(f"Roll {roll}, ratio {ratio} (CRT {column})")
         if not evade:
             print(f"Enemy loss: {enemy_loss}")
+            if required_weapon and not weapon_can_wound:
+                print(f"Only {required_weapon} can wound this enemy.")
         else:
             print("Evading: enemy loss ignored.")
         if ignored_player_loss:

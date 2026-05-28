@@ -15,6 +15,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Added route/item helpers for Red Pass, White Pass, Access Papers, Ticket to Port Bax, Sommerswerd, Magic Spear, Chainmail Waistcoat loss, required Meals, Gold Crown gains/losses, and Green Sceptre aftermaths.
 - Tightened section 240 recovery so Healing restores END to maximum, while non-Healing recovery restores half of tracked Book 2 combat END loss only.
 - Kept route-effect helpers out of the browser Choices card; route effects still apply through route buttons and report through receipts/status output.
+- Corrected section 106 so the Magic Spear is available before the Helghast combat, selected as the active weapon, and required to wound the enemy.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation

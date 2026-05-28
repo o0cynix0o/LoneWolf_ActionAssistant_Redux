@@ -275,6 +275,11 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("eat-meal", "Eat the Meal", [{"type": "stat", "stat": "end", "delta": 3}]),
         ]
     },
+    "106": {
+        "loot": [
+            loot_option("magic-spear", "Take the Magic Spear", [{"type": "add_item", "container": "special", "name": "Magic Spear"}])
+        ]
+    },
     "124": {
         "loot": [
             loot_option("gold", "Take 42 Gold Crowns", [{"type": "stat", "stat": "gold", "delta": 42}]),
@@ -417,7 +422,7 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
     "66": {"combat": [{"id": "66-zombie-captain", "label": "Zombie Captain", "enemy": combat_enemy("Zombie Captain", 15, 15), "enemyImmune": True, "doubleEnemyLossWithSommerswerd": True, "victoryRoute": 218}]},
     "85": {"combat": [{"id": "85-viveka", "label": "Viveka", "enemy": combat_enemy("Viveka", 24, 27), "victoryRoute": 124}]},
     "90": {"combat": [{"id": "90-villagers-szalls", "label": "Villagers and Szalls", "enemies": [combat_enemy("Villager 1", 10, 16), combat_enemy("Szall 1", 6, 9), combat_enemy("Villager 2", 11, 14), combat_enemy("Szall 2", 5, 8), combat_enemy("Villager 3", 11, 17)], "canEvade": True, "evadeRoute": 132, "victoryRoute": 274}]},
-    "106": {"combat": [{"id": "106-helghast", "label": "Helghast", "enemy": combat_enemy("Helghast", 22, 30), "enemyImmune": True, "perRoundActions": [{"type": "stat", "stat": "end", "delta": -2, "condition": cond_no_power("Mindshield")}], "afterVictoryActions": [{"type": "add_item", "container": "special", "name": "Magic Spear"}], "victoryRoute": 320}]},
+    "106": {"combat": [{"id": "106-helghast", "label": "Helghast", "enemy": combat_enemy("Helghast", 22, 30), "enemyImmune": True, "preActions": [{"type": "add_item", "container": "special", "name": "Magic Spear"}], "activeWeapon": "Magic Spear", "requiredWeapon": "Magic Spear", "perRoundActions": [{"type": "stat", "stat": "end", "delta": -2, "condition": cond_no_power("Mindshield")}], "afterVictoryActions": [{"type": "add_item", "container": "special", "name": "Magic Spear"}], "victoryRoute": 320}]},
     "110": {"combat": [{"id": "110-watchtower-guard", "label": "Watchtower Guard", "enemy": combat_enemy("Watchtower Guard", 15, 22), "canEvade": True, "evadeRoute": 65, "victoryRoute": 331}]},
     "128": {"combat": [{"id": "128-zombie-crew", "label": "Zombie Crew", "enemy": combat_enemy("Zombie Crew", 13, 19), "doubleEnemyLossWithSommerswerd": True, "victoryRoute": 237}]},
     "131": {"combat": [{"id": "131-street-thieves", "label": "Street Thieves", "enemies": [combat_enemy("Street Thief Leader", 15, 23), combat_enemy("Street Thief 1", 13, 21), combat_enemy("Street Thief 2", 13, 20)], "forceUnarmed": True, "canEvade": True, "evadeRoute": 121, "victoryRoute": 301}]},
