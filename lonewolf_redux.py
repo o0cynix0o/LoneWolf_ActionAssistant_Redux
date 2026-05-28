@@ -5934,6 +5934,79 @@ class LoneWolfReduxAssistant:
         for message in messages:
             print(message)
 
+    def book_start_checkpoint(self, book_number: int) -> dict[str, Any] | None:
+        checkpoints = [
+            checkpoint
+            for checkpoint in self.section_checkpoints()
+            if int(checkpoint.get("BookNumber") or 0) == int(book_number)
+            and int(checkpoint.get("Section") or 0) == 1
+            and isinstance(checkpoint.get("Snapshot"), dict)
+        ]
+        return checkpoints[-1] if checkpoints else None
+
+    def repeat_completed_book_from_start_checkpoint(self, book_number: int) -> bool:
+        checkpoint = self.book_start_checkpoint(book_number)
+        if not checkpoint:
+            print(f"Book {book_number} start checkpoint is not available for repeat.")
+            return False
+
+        snapshot = checkpoint.get("Snapshot")
+        if not isinstance(snapshot, dict):
+            print(f"Book {book_number} start checkpoint is missing its saved state.")
+            return False
+
+        save_path = str(self.settings.get("SavePath") or "")
+        achievements = json_clone(self.state.get("Achievements"))
+        book_history = json_clone(as_list(self.state.get("BookHistory")))
+        combat_history = json_clone(as_list(self.state.get("CombatHistory")))
+        completed_books = sorted(
+            {int(item) for item in as_list(self.character.get("CompletedBooks")) if str(item).strip()}
+            | {book_number}
+        )
+        notes = json_clone(as_list(self.character.get("Notes")))
+        settings = json_clone(self.state.get("Settings"))
+        automation_enabled = bool(self.automation.get("Enabled", True))
+
+        restored = normalize_state(json_clone(snapshot))
+        restored["CurrentSection"] = 1
+        restored["Character"]["CompletedBooks"] = completed_books
+        restored["Character"]["Notes"] = notes
+        restored["Character"]["EnduranceCurrent"] = int(restored["Character"]["EnduranceMax"])
+        restored["Character"]["CombatSkillCurrent"] = int(restored["Character"]["CombatSkillBase"])
+        restored["Combat"] = json_clone(default_state()["Combat"])
+        restored["Combat"]["StartedSection"] = 1
+        restored["SectionHistory"] = []
+        restored["BookHistory"] = book_history
+        restored["CombatHistory"] = combat_history
+        restored["Achievements"] = achievements if isinstance(achievements, dict) else default_achievements()
+        restored["Settings"] = settings if isinstance(settings, dict) else default_state()["Settings"]
+        restored["Settings"]["SavePath"] = save_path
+        restored["Settings"]["AutoSave"] = True
+        restored["Automation"] = default_automation()
+        restored["Automation"]["Enabled"] = automation_enabled
+        restored["CurrentBookStats"] = {
+            "BookNumber": book_number,
+            "BookTitle": BOOKS[book_number]["Title"],
+            "StartSection": 1,
+            "LastSection": 1,
+            "SectionsVisited": 0,
+            "VisitedSections": [],
+            "StartingEnduranceMax": int(restored["Character"]["EnduranceMax"]),
+            "StartingGoldCrowns": int(restored["Inventory"].get("GoldCrowns") or 0),
+        }
+
+        self.state = normalize_state(restored)
+        self.record_section_visit()
+        self.save_section_checkpoint("ready")
+        self.write_current_position()
+        self.autosave()
+        print(
+            f"Restarted Book {book_number}: {BOOKS[book_number]['Title']} "
+            f"with END {self.character['EnduranceCurrent']}/{self.character['EnduranceMax']} "
+            f"and CS {self.character['CombatSkillCurrent']}."
+        )
+        return True
+
     def repeat_completed_book(self) -> None:
         completion = self.book_completion_payload()
         if not completion.get("Active"):
@@ -5945,7 +6018,10 @@ class LoneWolfReduxAssistant:
         self.ensure_book_completed(book_number)
 
         if book_number != 1:
-            print("Only Book 1 repeat is enabled in this rebuild.")
+            if book_number == 2:
+                self.repeat_completed_book_from_start_checkpoint(book_number)
+                return
+            print(f"Book {book_number} repeat is not enabled yet.")
             return
 
         def saved_digit(key: str, fallback: int) -> int:

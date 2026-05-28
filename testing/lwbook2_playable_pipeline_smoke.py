@@ -354,6 +354,54 @@ def test_book2_terminal_and_completion() -> None:
     assert_equal(assistant.automation["Ending"]["Type"], "success", "Book 2 success ending")
 
 
+def test_book2_repeat_reset() -> None:
+    assistant = fresh_assistant()
+    start_inventory = lonewolf_redux.json_clone(assistant.inventory)
+    start_endurance_max = int(assistant.character["EnduranceMax"])
+    start_combat_skill = int(assistant.character["CombatSkillBase"])
+
+    quiet(assistant.set_section, 350)
+    assert_true(assistant.book_completion_payload().get("Active"), "Book 2 completion screen active")
+
+    assistant.character["EnduranceCurrent"] = 3
+    assistant.character["CombatSkillCurrent"] = start_combat_skill - 2
+    assistant.inventory["Weapons"] = ["Dagger"]
+    assistant.inventory["BackpackItems"] = ["Potion"]
+    assistant.inventory["SpecialItems"] = ["Sommerswerd"]
+    assistant.inventory["GoldCrowns"] = 1
+    assistant.inventory["Nobles"] = 1
+    assistant.state["Combat"]["Active"] = True
+    assistant.state["CombatHistory"] = [{"BookNumber": 2, "Outcome": "Victory"}]
+    assistant.achievement_state()["Unlocked"] = [{"Id": "kept", "Name": "Kept Achievement"}]
+    assistant.automation["LastRoll"] = {"Raw": 9}
+    assistant.automation["AppliedVisitEffects"] = ["old"]
+    assistant.automation["AppliedRouteActions"] = ["old"]
+    assistant.automation["Stored"] = {"old": True}
+
+    quiet(assistant.repeat_completed_book)
+
+    assert_equal(assistant.state["CurrentSection"], 1, "Book 2 repeat starts at section 1")
+    assert_equal(assistant.book_completion_payload().get("Active"), False, "Book 2 repeat clears completion screen")
+    assert_equal(assistant.character["BookNumber"], 2, "Book 2 repeat stays in Book 2")
+    assert_equal(assistant.character["EnduranceMax"], start_endurance_max, "Book 2 repeat keeps starting END max")
+    assert_equal(assistant.character["EnduranceCurrent"], start_endurance_max, "Book 2 repeat restores full END")
+    assert_equal(assistant.character["CombatSkillCurrent"], start_combat_skill, "Book 2 repeat restores base CS")
+    assert_equal(assistant.inventory, start_inventory, "Book 2 repeat restores starting inventory")
+    assert_true(2 in assistant.character["CompletedBooks"], "Book 2 repeat preserves completed-book history")
+    assert_equal(assistant.achievement_state()["Unlocked"][0]["Id"], "kept", "Book 2 repeat preserves achievements")
+    assert_equal(assistant.automation.get("Ending"), None, "Book 2 repeat clears ending")
+    assert_equal(assistant.automation.get("AppliedVisitEffects"), [], "Book 2 repeat clears applied entry effects")
+    assert_equal(assistant.automation.get("AppliedRouteActions"), [], "Book 2 repeat clears route effects")
+    assert_equal(assistant.automation.get("Stored"), {}, "Book 2 repeat clears stored gear")
+    assert_equal(assistant.state["Combat"]["Active"], False, "Book 2 repeat clears combat")
+    assert_equal(
+        assistant.state["CombatHistory"],
+        [{"BookNumber": 2, "Outcome": "Victory"}],
+        "Book 2 repeat preserves combat history",
+    )
+    assert_equal([entry["Section"] for entry in assistant.state["SectionHistory"]], [1], "Book 2 repeat resets route history")
+
+
 def main() -> int:
     test_chainmail_loss_and_required_meals()
     test_route_costs_and_pass_checks()
@@ -361,6 +409,7 @@ def main() -> int:
     test_book2_loot_and_item_effects()
     test_book2_combat_helpers()
     test_book2_terminal_and_completion()
+    test_book2_repeat_reset()
     print("Book 2 playable pipeline smoke passed.")
     return 0
 
