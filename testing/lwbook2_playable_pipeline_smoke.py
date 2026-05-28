@@ -241,6 +241,39 @@ def test_book2_combat_helpers() -> None:
     quiet(assistant.start_section_combat, "5-wounded-helghast")
     assert_equal(assistant.combat_skill_for_round(), 24, "Sommerswerd plus Weaponskill Sword gives +10 CS")
 
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
+    assistant.inventory["Weapons"] = []
+    assistant.inventory["SpecialItems"] = ["Sommerswerd"]
+    quiet(assistant.set_section, 30)
+    quiet(assistant.start_section_combat, "30-zombie-crew")
+    base_cs = int(assistant.character["CombatSkillCurrent"])
+    assert_equal(assistant.combat["EnemyImmune"], True, "section 30 Zombie Crew is immune to Mindblast")
+    assert_equal(assistant.combat_skill_for_round(), base_cs + 8, "section 30 ignores Mindblast with Sommerswerd")
+    assert_true(
+        "Mindblast: +2 CS" not in assistant.combat_weapon_modifier_and_notes()[1],
+        "section 30 combat notes omit Mindblast bonus",
+    )
+
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
+    assistant.inventory["Weapons"] = []
+    assistant.inventory["SpecialItems"] = ["Sommerswerd"]
+    quiet(assistant.set_section, 30)
+    quiet(assistant.start_combat, ["combat", "start", "Zombie Crew", "13", "16"])
+    assistant.combat["EnemyImmune"] = False
+    base_cs = int(assistant.character["CombatSkillCurrent"])
+    payload = assistant.combat_status_payload()
+    assert_equal(payload["EnemyImmune"], True, "section 30 repairs matching manual combat immunity")
+    assert_equal(payload["SectionCombatId"], "30-zombie-crew", "section 30 repairs matching combat preset id")
+    assert_equal(payload["PlayerCombatSkill"], base_cs + 8, "section 30 repaired combat ignores Mindblast")
+    assert_true(
+        "Enemy immune to Mindblast" in payload["CombatNotes"],
+        "section 30 repaired combat reports Mindblast immunity",
+    )
+    assert_true(
+        "Mindblast: +2 CS" not in payload["CombatNotes"],
+        "section 30 repaired combat notes omit Mindblast bonus",
+    )
+
     assistant = fresh_assistant(weaponskill_roll=1)
     assistant.inventory["Weapons"] = ["Sword"]
     assistant.inventory["SpecialItems"] = []

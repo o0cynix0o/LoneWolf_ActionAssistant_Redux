@@ -19,6 +19,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Updated the landing page and simple library so Book 2 appears beside Book 1.
 - Improved checked-route choice labels so player-facing route actions, such as Purchase White Pass, are shown before audit-condition text.
 - Corrected section 299 so giving the Magic Spear to Rhygar removes it, while the no-spear route remains harmless.
+- Hardened section 30 Zombie Crew combat so Mindblast immunity is restored onto matching active fights before combat ratio is shown or resolved.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation

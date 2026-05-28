@@ -5035,6 +5035,7 @@ class LoneWolfReduxAssistant:
         return int(self.combat["EnemyCombatSkill"])
 
     def combat_status_payload(self) -> dict[str, Any]:
+        self.sync_active_combat_with_section_preset()
         payload = json.loads(json.dumps(self.combat))
         payload["PlayerEnduranceCurrent"] = int(self.character["EnduranceCurrent"])
         payload["PlayerEnduranceMax"] = int(self.character["EnduranceMax"])
@@ -5151,6 +5152,7 @@ class LoneWolfReduxAssistant:
         return total, labels
 
     def combat_skill_for_round(self, round_number: int | None = None) -> int:
+        self.sync_active_combat_with_section_preset()
         fixed = self.combat.get("FixedPlayerCombatSkill")
         if fixed is not None:
             return int(fixed) + int(self.combat.get("Modifier") or 0) + self.combat_timed_modifier_for_round(round_number)
@@ -5187,9 +5189,12 @@ class LoneWolfReduxAssistant:
         except (TypeError, ValueError):
             return 0
 
-    def flow_combat_entries(self) -> list[dict[str, Any]]:
-        flow = self.current_section_flow_entry() or {}
+    def flow_combat_entries_for_entry(self, flow: dict[str, Any] | None) -> list[dict[str, Any]]:
+        flow = flow or {}
         return [entry for entry in as_list(flow.get("combat")) if isinstance(entry, dict)]
+
+    def flow_combat_entries(self) -> list[dict[str, Any]]:
+        return self.flow_combat_entries_for_entry(self.current_section_flow_entry())
 
     def start_section_combat(self, combat_id: str = "") -> None:
         entries = self.flow_combat_entries()
@@ -5318,7 +5323,85 @@ class LoneWolfReduxAssistant:
                 total += int(round_entry.get("PlayerLoss") or round_entry.get("LoneWolfReduxLoss") or 0)
         return total
 
+    def active_combat_matches_preset(self, preset: dict[str, Any]) -> bool:
+        enemies = [enemy for enemy in as_list(preset.get("enemies") or preset.get("enemy")) if isinstance(enemy, dict)]
+        if len(enemies) != 1:
+            return False
+        enemy = enemies[0]
+        return (
+            str(enemy.get("name") or preset.get("label") or "").strip().lower()
+            == str(self.combat.get("EnemyName") or "").strip().lower()
+            and int(enemy.get("cs") or 0) == int(self.combat.get("EnemyCombatSkill") or 0)
+            and int(enemy.get("endurance") or enemy.get("end") or 0) == int(self.combat.get("EnemyEnduranceMax") or 0)
+        )
+
+    def sync_active_combat_with_section_preset(self) -> bool:
+        if not self.combat.get("Active"):
+            return False
+        book_number = int(self.character.get("BookNumber") or 1)
+        section = int(self.combat.get("StartedSection") or self.state.get("CurrentSection") or 1)
+        entry = self.section_flow_entry(book_number, section) or {}
+        for preset in self.flow_combat_entries_for_entry(entry):
+            if not self.active_combat_matches_preset(preset):
+                continue
+
+            changed = False
+            for key, source_key, default in (
+                ("EnemyImmune", "enemyImmune", False),
+                ("DoubleEnemyLoss", "doubleEnemyLoss", False),
+                ("DoubleEnemyLossWithSommerswerd", "doubleEnemyLossWithSommerswerd", False),
+                ("IgnorePlayerLossIfEnemyLossGreater", "ignorePlayerLossIfEnemyLossGreater", False),
+                ("CanEvade", "canEvade", False),
+            ):
+                value = bool(preset.get(source_key, default))
+                if bool(self.combat.get(key)) != value:
+                    self.combat[key] = value
+                    changed = True
+
+            numeric_fields = (
+                ("EvadeAfterRounds", "evadeAfterRounds"),
+                ("IgnorePlayerLossRounds", "ignorePlayerLossRounds"),
+                ("RoundLimit", "roundLimit"),
+                ("WinWithinRounds", "winWithinRounds"),
+            )
+            for key, source_key in numeric_fields:
+                value = max(0, int(preset.get(source_key) or 0))
+                if int(self.combat.get(key) or 0) != value:
+                    self.combat[key] = value
+                    changed = True
+
+            for key, source_key in (
+                ("VictoryRoute", "victoryRoute"),
+                ("DefeatRoute", "defeatRoute"),
+                ("EvadeRoute", "evadeRoute"),
+                ("SurvivalRoute", "survivalRoute"),
+                ("RoundExceededRoute", "roundExceededRoute"),
+                ("WinWithinRoute", "winWithinRoute"),
+                ("TooLateRoute", "tooLateRoute"),
+                ("RequiredWeapon", "requiredWeapon"),
+            ):
+                value = preset.get(source_key)
+                if value is not None and self.combat.get(key) != value:
+                    self.combat[key] = value
+                    changed = True
+
+            if preset.get("perRoundActions") and not as_list(self.combat.get("PerRoundActions")):
+                self.combat["PerRoundActions"] = as_list(preset.get("perRoundActions"))
+                changed = True
+            if preset.get("timedModifiers") and not as_list(self.combat.get("TimedModifiers")):
+                self.combat["TimedModifiers"] = as_list(preset.get("timedModifiers"))
+                changed = True
+            if preset.get("id") and not str(self.combat.get("SectionCombatId") or ""):
+                self.combat["SectionCombatId"] = str(preset.get("id") or "")
+                changed = True
+
+            if changed and bool(self.settings.get("AutoSave", True)):
+                self.autosave()
+            return changed
+        return False
+
     def route_after_combat_round(self) -> bool:
+        self.sync_active_combat_with_section_preset()
         round_count = self.combat_round_count()
         threshold = self.combat.get("PostRoundWpThreshold")
         def restore_player_endurance_after_combat() -> None:
@@ -5513,6 +5596,7 @@ class LoneWolfReduxAssistant:
         if not self.crt:
             print("Combat Results Table is not loaded.")
             return
+        self.sync_active_combat_with_section_preset()
 
         arg_index = 2
         wp_spend = 0
