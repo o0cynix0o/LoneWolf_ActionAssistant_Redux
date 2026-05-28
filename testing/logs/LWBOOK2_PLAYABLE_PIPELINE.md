@@ -13,6 +13,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Added terminal death/failure handling for checked no-route death sections and completion handling for section 350.
 - Added Book 2-specific combat support for the Sommerswerd, Magic Spear, Shield, undead double-loss rules, doubled nonlethal enemy loss, timed modifiers, no-weapon penalties, and arm-wrestling END restoration.
 - Added route/item helpers for Red Pass, White Pass, Access Papers, Ticket to Port Bax, Sommerswerd, Magic Spear, Chainmail Waistcoat loss, required Meals, Gold Crown gains/losses, and Green Sceptre aftermaths.
+- Tightened section 240 recovery so Healing restores END to maximum, while non-Healing recovery restores half of tracked Book 2 combat END loss only.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation

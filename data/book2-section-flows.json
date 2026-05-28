@@ -6949,7 +6949,7 @@
             {
               "type": "stat",
               "stat": "end",
-              "mode": "restore_missing_half_floor",
+              "mode": "restore_combat_loss_half_floor",
               "condition": {
                 "type": "no_power",
                 "name": "Healing"
@@ -6973,7 +6973,7 @@
             {
               "type": "stat",
               "stat": "end",
-              "mode": "restore_missing_half_floor",
+              "mode": "restore_combat_loss_half_floor",
               "condition": {
                 "type": "no_power",
                 "name": "Healing"
@@ -6997,7 +6997,7 @@
             {
               "type": "stat",
               "stat": "end",
-              "mode": "restore_missing_half_floor",
+              "mode": "restore_combat_loss_half_floor",
               "condition": {
                 "type": "no_power",
                 "name": "Healing"

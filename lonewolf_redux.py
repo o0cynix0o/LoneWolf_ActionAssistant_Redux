@@ -1457,6 +1457,16 @@ class LoneWolfReduxAssistant:
             "HighestEnemyEnduranceFaced": highest_enemy_end,
         }
 
+    def combat_player_loss_for_book(self, book_number: int) -> int:
+        total = 0
+        for entry in self.combat_entries_for_book(book_number):
+            for round_entry in as_list(entry.get("Rounds")):
+                if isinstance(round_entry, dict):
+                    total += int(round_entry.get("PlayerLoss") or round_entry.get("LoneWolfReduxLoss") or 0)
+        if self.combat.get("Active") and int(self.character.get("BookNumber") or 0) == int(book_number):
+            total += self.combat_player_loss_total()
+        return total
+
     def death_count_for_book(self, book_number: int) -> int:
         return sum(
             1
@@ -3456,6 +3466,10 @@ class LoneWolfReduxAssistant:
             if mode == "restore_missing_half_floor":
                 missing = max(0, int(self.character["EnduranceMax"]) - int(self.character["EnduranceCurrent"]))
                 return self.change_endurance(missing // 2)
+            if mode == "restore_combat_loss_half_floor":
+                loss = self.combat_player_loss_for_book(int(self.character["BookNumber"]))
+                message = self.change_endurance(loss // 2)
+                return f"{message}; combat END loss {loss}"
             if mode == "half_loss_floor":
                 loss = int(self.character["EnduranceCurrent"]) // 2
                 return self.change_endurance(-loss)

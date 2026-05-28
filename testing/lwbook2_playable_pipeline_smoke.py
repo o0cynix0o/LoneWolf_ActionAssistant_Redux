@@ -84,6 +84,28 @@ def assert_matched_route(
     assert_equal(actual, expected, label)
 
 
+def set_combat_history(assistant: lonewolf_redux.LoneWolfReduxAssistant) -> None:
+    assistant.state["CombatHistory"] = [
+        {
+            "BookNumber": 2,
+            "Outcome": "Victory",
+            "EnemyName": "Smoke Test Raider",
+            "Rounds": [
+                {"PlayerLoss": 3, "EnemyLoss": 4},
+                {"PlayerLoss": 1, "EnemyLoss": 6},
+            ],
+            "RoundCount": 2,
+        },
+        {
+            "BookNumber": 1,
+            "Outcome": "Victory",
+            "EnemyName": "Ignored Book 1 Fight",
+            "Rounds": [{"PlayerLoss": 8, "EnemyLoss": 4}],
+            "RoundCount": 1,
+        },
+    ]
+
+
 def test_chainmail_loss_and_required_meals() -> None:
     assistant = fresh_assistant(armoury_choices=["chainmail-waistcoat", "two-meals"])
     assistant.character["EnduranceCurrent"] = assistant.character["EnduranceMax"]
@@ -137,6 +159,36 @@ def test_route_costs_and_pass_checks() -> None:
     assistant.inventory["SpecialItems"] = ["Red Pass"]
     quiet(assistant.set_section, 246)
     assert_matched_route(assistant, "246-pass", 202, "section 246 Red Pass route")
+
+
+def test_section_240_recovers_combat_loss_only() -> None:
+    assistant = fresh_assistant()
+    max_endurance = int(assistant.character["EnduranceMax"])
+    assistant.character["EnduranceCurrent"] = max_endurance - 8
+    set_combat_history(assistant)
+    quiet(assistant.set_section, 240)
+    messages = quiet(assistant.apply_route_actions, 29)
+    assert_equal(
+        assistant.character["EnduranceCurrent"],
+        max_endurance - 6,
+        "section 240 without Healing restores half of Book 2 combat END loss",
+    )
+    assert_true(
+        any("combat END loss 4" in message for message in messages),
+        "section 240 no-Healing receipt reports combat loss basis",
+    )
+
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Healing"])
+    max_endurance = int(assistant.character["EnduranceMax"])
+    assistant.character["EnduranceCurrent"] = max_endurance - 8
+    set_combat_history(assistant)
+    quiet(assistant.set_section, 240)
+    quiet(assistant.apply_route_actions, 29)
+    assert_equal(
+        assistant.character["EnduranceCurrent"],
+        max_endurance,
+        "section 240 with Healing restores END to maximum",
+    )
 
 
 def test_book2_loot_and_item_effects() -> None:
@@ -211,6 +263,7 @@ def test_book2_terminal_and_completion() -> None:
 def main() -> int:
     test_chainmail_loss_and_required_meals()
     test_route_costs_and_pass_checks()
+    test_section_240_recovers_combat_loss_only()
     test_book2_loot_and_item_effects()
     test_book2_combat_helpers()
     test_book2_terminal_and_completion()
