@@ -147,7 +147,8 @@
 
   <script>
     const books = [
-      { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 }
+      { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350, status: 'Playable release candidate' },
+      { number: 2, title: 'Fire on the Water', folder: '02fotw', sections: 350, status: 'Playable helper build' }
     ];
 
     const booksEl = document.getElementById('books');
@@ -158,7 +159,7 @@
       a.innerHTML = `
         <small>Book ${book.number}</small>
         <strong>${book.number}. ${book.title}</strong>
-        <span>${book.sections} numbered sections. Requires local Project Aon book files.</span>
+        <span>${book.status}. ${book.sections} numbered sections. Requires local Project Aon book files.</span>
       `;
       booksEl.appendChild(a);
     });

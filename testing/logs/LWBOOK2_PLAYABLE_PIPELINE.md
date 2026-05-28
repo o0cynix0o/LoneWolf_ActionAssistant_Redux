@@ -16,6 +16,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Tightened section 240 recovery so Healing restores END to maximum, while non-Healing recovery restores half of tracked Book 2 combat END loss only.
 - Kept route-effect helpers out of the browser Choices card; route effects still apply through route buttons and report through receipts/status output.
 - Corrected section 106 so the Magic Spear is available before the Helghast combat, selected as the active weapon, and required to wound the enemy.
+- Updated the landing page and simple library so Book 2 appears beside Book 1.
 - Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation
@@ -25,6 +26,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - `python .\testing\lwbook2_setup_smoke.py`
 - `python .\testing\lwbook2_playable_pipeline_smoke.py`
 - `python .\testing\browser_choices_static_smoke.py`
+- `python .\testing\browser_landing_static_smoke.py`
 
 ## Current Risk
 

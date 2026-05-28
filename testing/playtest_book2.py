@@ -26,6 +26,7 @@ CHECKS: list[list[str]] = [
         "testing/lwbook2_playable_pipeline_smoke.py",
         "testing/lwbook1_achievement_smoke.py",
         "testing/browser_choices_static_smoke.py",
+        "testing/browser_landing_static_smoke.py",
     ],
     [sys.executable, "testing/lwbook2_setup_smoke.py"],
     [sys.executable, "testing/lwbook2_section_flow_audit.py", "--check"],
@@ -33,6 +34,7 @@ CHECKS: list[list[str]] = [
     [sys.executable, "testing/lwbook2_playable_pipeline_smoke.py"],
     [sys.executable, "testing/lwbook1_achievement_smoke.py"],
     [sys.executable, "testing/browser_choices_static_smoke.py"],
+    [sys.executable, "testing/browser_landing_static_smoke.py"],
 ]
 
 
