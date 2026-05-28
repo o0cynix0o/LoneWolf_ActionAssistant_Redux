@@ -3334,7 +3334,15 @@ class LoneWolfReduxAssistant:
 
     def default_combat_weapon(self) -> str:
         weapons = self.available_combat_weapons(include_jewelled_dagger=False)
+        if "Sommerswerd" in weapons:
+            return "Sommerswerd"
         return weapons[0] if weapons else ""
+
+    def preferred_combat_weapon(self, previous_weapon: str | None = None) -> str:
+        previous = str(previous_weapon or "").strip()
+        if previous and previous in self.available_combat_weapons(include_jewelled_dagger=False):
+            return previous
+        return self.default_combat_weapon()
 
     def resolve_combat_weapon(self, weapon: str) -> str | None:
         value = str(weapon or "").strip()
@@ -5515,7 +5523,7 @@ class LoneWolfReduxAssistant:
             enemy_cs = read_int("Enemy Combat Skill", 10, 0, 99)
             enemy_end = read_int("Enemy Endurance", 10, 1, 999)
 
-        active_weapon = self.default_combat_weapon()
+        active_weapon = self.preferred_combat_weapon(self.combat.get("ActiveWeapon"))
         self.combat.update(
             {
                 "Active": True,

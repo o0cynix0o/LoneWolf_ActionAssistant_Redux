@@ -241,6 +241,24 @@ def test_book2_combat_helpers() -> None:
     quiet(assistant.start_section_combat, "5-wounded-helghast")
     assert_equal(assistant.combat_skill_for_round(), 24, "Sommerswerd plus Weaponskill Sword gives +10 CS")
 
+    assistant = fresh_assistant()
+    assistant.inventory["Weapons"] = ["Sword"]
+    assistant.inventory["SpecialItems"] = ["Sommerswerd"]
+    quiet(assistant.start_combat, ["combat", "start", "Practice Raider", "10", "10"])
+    assert_equal(assistant.combat["ActiveWeapon"], "Sommerswerd", "Sommerswerd is the default combat weapon")
+    quiet(assistant.set_combat_weapon, "Sword")
+    assistant.combat["Active"] = False
+    quiet(assistant.start_combat, ["combat", "start", "Practice Raider 2", "10", "10"])
+    assert_equal(assistant.combat["ActiveWeapon"], "Sword", "last used combat weapon is preserved")
+    assistant.inventory["Weapons"] = []
+    assistant.combat["Active"] = False
+    quiet(assistant.start_combat, ["combat", "start", "Practice Raider 3", "10", "10"])
+    assert_equal(
+        assistant.combat["ActiveWeapon"],
+        "Sommerswerd",
+        "invalid previous combat weapon falls back to Sommerswerd",
+    )
+
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
     assistant.inventory["Weapons"] = []
     assistant.inventory["SpecialItems"] = ["Sommerswerd"]
