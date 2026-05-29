@@ -1118,6 +1118,7 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+  <script src="assets/js/lw-settings.js"></script>
   <script>
     if (window.LONEWOLF_REDUX_FILE_MODE_BLOCKED) {
       throw new Error('Lone Wolf assistant must be opened from localhost.');
@@ -1176,6 +1177,8 @@
     const message = document.getElementById('message');
     const appMenu = document.getElementById('appMenu');
     const modeIndicator = document.getElementById('modeIndicator');
+    const settingsApi = window.LoneWolfReduxSettings;
+    let assistantSettings = settingsApi.apply(settingsApi.readLocal());
     let app = null;
     let activeView = 'sheet';
     let activeBook = 1;
@@ -1201,7 +1204,8 @@
     const cardClosedPrefix = 'lonewolf_redux.cards.closed.';
     const cardCollapsedPrefix = 'lonewolf_redux.cards.collapsed.';
     const cardLabelPrefix = 'lonewolf_redux.cards.labels.';
-    const uiPreferenceStaticKeys = [topLayoutKey, topSizeKey, sheetLayoutKey, sheetSizeKey];
+    const appearancePreferenceKeys = Object.values(settingsApi.keys);
+    const uiPreferenceStaticKeys = [topLayoutKey, topSizeKey, sheetLayoutKey, sheetSizeKey, ...appearancePreferenceKeys];
     const uiPreferencePrefixes = [cardLayoutPrefix, cardSizePrefix, cardClosedPrefix, cardCollapsedPrefix, cardLabelPrefix];
     const sizeOrder = ['compact', 'normal', 'full'];
     const sizeLabels = { compact: 'Compact', normal: 'Normal', full: 'Full' };
@@ -2875,6 +2879,8 @@
       });
       uiPreferenceSaveSuspended = false;
       uiPreferencesReady = true;
+      assistantSettings = settingsApi.apply(settingsApi.readLocal());
+      settingsApi.injectReaderTheme(bookFrame, assistantSettings);
     }
 
     function syncUiPreferences(preferences) {
@@ -2905,6 +2911,13 @@
       } else {
         uiPreferenceSaveTimer = window.setTimeout(save, 180);
       }
+    }
+
+    async function updateAssistantSetting(kind, id) {
+      assistantSettings = await settingsApi.savePatch({ [kind]: id });
+      settingsApi.injectReaderTheme(bookFrame, assistantSettings);
+      persistUiPreferences(true);
+      render();
     }
 
     function getJsonStorage(key, fallback) {
@@ -4179,11 +4192,89 @@
       `;
     }
 
+    function settingsOptionButton(kind, id, label, note, active, extraClass = '') {
+      return `
+        <button type="button" class="settings-option ${extraClass} ${active ? 'active' : ''}" data-setting-kind="${escapeHtml(kind)}" data-setting-id="${escapeHtml(id)}">
+          <strong>${escapeHtml(label)}</strong>
+          ${note ? `<small>${escapeHtml(note)}</small>` : ''}
+        </button>
+      `;
+    }
+
+    function renderAppearanceSettings() {
+      const current = settingsApi.readLocal();
+      const coverOn = current.coverArt !== 'off';
+      const readerOn = current.readerStyleEnabled === 'on';
+      return `
+        <div class="panel">
+          <h2>Appearance</h2>
+          <h3 class="section-subtitle">Title Banner</h3>
+          <div class="settings-grid">
+            ${settingsApi.titleBanners.map((banner) => `
+              <button type="button" class="settings-option banner-option ${current.titleBanner === banner.id ? 'active' : ''}" data-setting-kind="titleBanner" data-setting-id="${escapeHtml(banner.id)}">
+                <img src="${escapeHtml(banner.path)}" alt="${escapeHtml(banner.name)}">
+                <strong>${escapeHtml(banner.name)}</strong>
+              </button>
+            `).join('')}
+          </div>
+          <h3 class="section-subtitle">Book Covers</h3>
+          <div class="settings-grid">
+            ${settingsOptionButton('coverArt', 'on', 'Show Cover Art', 'Use the larger cover cards on the home and library screens.', coverOn)}
+            ${settingsOptionButton('coverArt', 'off', 'Compact Books', 'Hide cover art and tighten the book cards.', !coverOn)}
+          </div>
+          <h3 class="section-subtitle">Color Theme</h3>
+          <div class="settings-grid">
+            ${settingsApi.themes.map((theme) => settingsOptionButton('theme', theme.id, theme.name, theme.note, current.theme === theme.id)).join('')}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Reader Page Styling</h2>
+          <p class="muted">Project Aon pages stay original unless this is switched on. When enabled, the style is injected into the local iframe only.</p>
+          <div class="settings-grid">
+            ${settingsOptionButton('readerStyleEnabled', 'off', 'Project Aon Original', 'Leave the book iframe untouched.', !readerOn)}
+            ${settingsOptionButton('readerStyleEnabled', 'on', 'Apply Reader Theme', 'Restyle the local book iframe while you read.', readerOn)}
+          </div>
+          <div class="settings-grid" style="margin-top:.55rem">
+            ${settingsApi.readerThemes.map((theme) => settingsOptionButton('readerTheme', theme.id, theme.name, '', current.readerTheme === theme.id)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSaveSlotRows() {
+      const slots = arr(app.saveSlots);
+      if (!slots.length) return '<p class="muted">No save slots are available yet.</p>';
+      return slots.map((slot) => {
+        const occupied = slot.Occupied === true;
+        const title = occupied
+          ? `${text(slot.Name, `Slot ${slot.Slot}`)} - Book ${text(slot.BookNumber, '?')}, Sec ${text(slot.Section, '?')}`
+          : 'Empty';
+        const meta = occupied
+          ? `END ${text(slot.Endurance, '?')} | Gold ${text(slot.GoldCrowns, '?')} | ${text(slot.Modified, '')}`
+          : 'No save in this slot yet.';
+        return `
+          <div class="slot-row">
+            <div>
+              <strong>Slot ${escapeHtml(slot.Slot)}: ${escapeHtml(title)}</strong><br>
+              <small class="muted">${escapeHtml(meta)}</small>
+            </div>
+            <button type="button" data-slot-save="${escapeHtml(slot.Slot)}">Save</button>
+            <button type="button" data-slot-load="${escapeHtml(slot.Slot)}" ${occupied ? '' : 'disabled'}>Load</button>
+            <button type="button" data-slot-clear="${escapeHtml(slot.Slot)}" ${occupied ? '' : 'disabled'}>Clear</button>
+          </div>
+        `;
+      }).join('');
+    }
+
     function renderSaves() {
       view.innerHTML = `
         <div class="panel">
           <h2>Save</h2>
           <form id="saveForm" class="controls"><input name="path" placeholder="Optional save name/path"><button type="submit">Save Now</button><button type="button" data-autosave>Autosave On</button></form>
+        </div>
+        <div class="panel">
+          <h2>Save Slots</h2>
+          ${renderSaveSlotRows()}
         </div>
         <div class="panel">
           <h2>Save Tools</h2>
@@ -4227,6 +4318,11 @@
             <button type="button" data-card-reset-scope="${escapeHtml(currentScope)}">Reset Current Layout</button>
             <button type="button" data-card-reset-all>Reset All Card Layouts</button>
           </div>
+        </div>
+        ${renderAppearanceSettings()}
+        <div class="panel">
+          <h2>Save Slots</h2>
+          ${renderSaveSlotRows()}
         </div>
         <div class="panel">
           <h2>Closed Cards</h2>
@@ -4467,6 +4563,24 @@
         if (wasHidden) {
           renderAppMenu();
           appMenu.hidden = false;
+        }
+        return;
+      }
+      if (button.dataset.settingKind) {
+        await updateAssistantSetting(button.dataset.settingKind, button.dataset.settingId);
+        return;
+      }
+      if (button.dataset.slotSave) {
+        await action({ action: 'save_slot', slot: Number(button.dataset.slotSave) });
+        return;
+      }
+      if (button.dataset.slotLoad) {
+        await action({ action: 'load_slot', slot: Number(button.dataset.slotLoad) });
+        return;
+      }
+      if (button.dataset.slotClear) {
+        if (window.confirm(`Clear save slot ${button.dataset.slotClear}?`)) {
+          await action({ action: 'clear_slot', slot: Number(button.dataset.slotClear) });
         }
         return;
       }
@@ -4834,6 +4948,11 @@
     document.getElementById('currentBtn').addEventListener('click', () => syncBookToState());
     document.getElementById('titleBtn').addEventListener('click', () => loadBook(activeBook, null));
 
+    window.addEventListener('lonewolf-settings-changed', (event) => {
+      assistantSettings = settingsApi.apply(event.detail || settingsApi.readLocal());
+      settingsApi.injectReaderTheme(bookFrame, assistantSettings);
+    });
+
     bookFrame.addEventListener('load', () => {
       try {
         const url = new URL(bookFrame.contentWindow.location.href);
@@ -4848,6 +4967,7 @@
         }
         const doc = bookFrame.contentDocument;
         if (!doc) return;
+        settingsApi.injectReaderTheme(bookFrame, assistantSettings);
         doc.addEventListener('click', async (event) => {
           const link = event.target.closest?.('a[href]');
           if (!link) return;

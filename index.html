@@ -9,8 +9,8 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #12150f;
-      color: #f0ead8;
+      background: var(--lw-bg, #12150f);
+      color: var(--lw-text, #f0ead8);
       font-family: Georgia, "Times New Roman", serif;
     }
     header {
@@ -22,7 +22,7 @@
         radial-gradient(circle at 84% 28%, rgba(98, 78, 142, 0.34), transparent 34%),
         linear-gradient(90deg, rgba(18,21,15,0.98) 0%, rgba(18,21,15,0.76) 58%, rgba(18,21,15,0.42) 100%),
         #12150f;
-      border-bottom: 1px solid #7b6a3b;
+      border-bottom: 1px solid var(--lw-border-strong, #7b6a3b);
     }
     .hero-inner {
       display: grid;
@@ -55,12 +55,12 @@
       font-size: clamp(2rem, 6vw, 5rem);
       line-height: 0.95;
       letter-spacing: 0;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
     }
     .subtitle {
       margin: 12px 0 0;
       max-width: 740px;
-      color: #d8d0b8;
+      color: var(--lw-muted-2, #d8d0b8);
       font-size: clamp(1rem, 2vw, 1.25rem);
     }
     main {
@@ -80,27 +80,27 @@
       grid-template-rows: auto auto 1fr auto;
       min-height: 500px;
       padding: 14px;
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 6px;
-      background: #1a1d14;
+      background: var(--lw-panel, #1a1d14);
       color: inherit;
       text-decoration: none;
       overflow: hidden;
       transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
     }
-    .book:hover, .panel a:hover { border-color: #d1b865; color: #ffe08a; }
+    .book:hover, .panel a:hover, .panel button:hover { border-color: var(--lw-accent-2, #d1b865); color: var(--lw-accent, #ffe08a); }
     .book:hover {
       transform: translateY(-2px);
-      background: #202417;
+      background: var(--lw-panel-2, #202417);
     }
     .cover-frame {
       display: grid;
       place-items: center;
       min-height: 350px;
       margin: 14px 0 14px;
-      border: 1px solid rgba(123,106,59,0.38);
+      border: 1px solid var(--lw-border, rgba(123,106,59,0.38));
       border-radius: 4px;
-      background: #10130d;
+      background: var(--lw-bg, #10130d);
     }
     .cover-frame img {
       width: auto;
@@ -112,7 +112,7 @@
     .cover-frame.cover-missing::after {
       content: attr(data-fallback);
       padding: 16px;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
       text-align: center;
       font-size: 1.12rem;
       line-height: 1.2;
@@ -120,50 +120,50 @@
     .book strong {
       display: block;
       font-size: 1.12rem;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
     }
     .book span {
       display: block;
       margin-top: 8px;
-      color: #c6bea5;
+      color: var(--lw-muted-2, #c6bea5);
       font-family: Arial, sans-serif;
       font-size: 0.84rem;
     }
     .book small {
       display: block;
       margin-bottom: 10px;
-      color: #a9a088;
+      color: var(--lw-muted, #a9a088);
       font: 0.78rem Arial, sans-serif;
       text-transform: uppercase;
     }
     .panel {
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 6px;
-      background: #171a12;
+      background: var(--lw-panel, #171a12);
       padding: 16px;
       height: fit-content;
     }
     .panel h2 {
       margin: 0 0 12px;
       font-size: 1.05rem;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
     }
     .panel a, .panel button {
       display: block;
       width: 100%;
       margin-top: 10px;
       padding: 10px 12px;
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 4px;
-      background: #202417;
-      color: #f0ead8;
+      background: var(--lw-panel-2, #202417);
+      color: var(--lw-text, #f0ead8);
       text-align: left;
       text-decoration: none;
       font: 0.9rem Arial, sans-serif;
       cursor: pointer;
     }
     .panel .muted {
-      color: #a9a088;
+      color: var(--lw-muted, #a9a088);
       font: 0.84rem Arial, sans-serif;
       line-height: 1.45;
     }
@@ -184,8 +184,9 @@
       </div>
       <div class="series-mark" aria-label="Lone Wolf series mark">
         <img
-          src="assets/images/lone-wolf-title-banner.png"
+          src="assets/images/title-banners/title1.png"
           alt="Lone Wolf"
+          data-lw-title-banner
           onerror="this.closest('.series-mark').classList.add('logo-missing')"
         >
         <span class="series-mark-text">Lone Wolf</span>
@@ -202,10 +203,22 @@
       <button id="currentBtn" type="button">Open Current Section</button>
       <a href="library.html">Simple Book List</a>
       <a href="install-books.html">Install Project Aon Books</a>
+      <button id="settingsBtn" type="button">Settings</button>
       <p class="muted">Book files are not included in the release package. Download the standard Lone Wolf HTML ZIPs from Project Aon and extract them into <code>books\lw</code>.</p>
     </aside>
   </main>
 
+  <div class="settings-modal" id="settingsModal" hidden>
+    <section class="settings-dialog" aria-label="Settings">
+      <div class="controls">
+        <h2 style="margin-right:auto">Settings</h2>
+        <button type="button" id="closeSettingsBtn">Close</button>
+      </div>
+      <div id="settingsContent"></div>
+    </section>
+  </div>
+
+  <script src="assets/js/lw-settings.js"></script>
   <script>
     const loreLines = [
       'Carry the message to Holmgard, trust your Kai training, and let no turn of the page go unmarked.',
@@ -245,6 +258,13 @@
 
     const quoteEl = document.getElementById('loreQuote');
     quoteEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
+
+    const settingsApi = window.LoneWolfReduxSettings;
+    let homeSettings = settingsApi.apply(settingsApi.readLocal());
+    settingsApi.syncFromRemote().then((settings) => {
+      homeSettings = settings;
+      renderSettingsContent();
+    });
 
     const booksEl = document.getElementById('books');
     books.forEach((book) => {
@@ -290,6 +310,137 @@
         return;
       }
       window.location.href = `assistant.html?book=${book.number}&section=${section}`;
+    });
+
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsContent = document.getElementById('settingsContent');
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
+    }
+
+    function optionButton(kind, id, label, note, active, extra = '') {
+      return `
+        <button type="button" class="settings-option ${active ? 'active' : ''} ${escapeHtml(extra)}" data-setting-kind="${escapeHtml(kind)}" data-setting-id="${escapeHtml(id)}">
+          <strong>${escapeHtml(label)}</strong>
+          ${note ? `<small>${escapeHtml(note)}</small>` : ''}
+        </button>
+      `;
+    }
+
+    function saveSlotRow(slot) {
+      const title = slot.Occupied
+        ? `${slot.Name} - Book ${slot.BookNumber}, Sec ${slot.Section}`
+        : 'Empty';
+      const meta = slot.Occupied
+        ? `END ${slot.Endurance || '?'} | Gold ${slot.GoldCrowns || '?'} | ${slot.Modified || ''}`
+        : 'No save in this slot yet.';
+      return `
+        <div class="slot-row">
+          <div>
+            <strong>Slot ${escapeHtml(slot.Slot)}: ${escapeHtml(title)}</strong><br>
+            <small class="muted">${escapeHtml(meta)}</small>
+          </div>
+          <button type="button" data-slot-save="${escapeHtml(slot.Slot)}">Save</button>
+          <button type="button" data-slot-load="${escapeHtml(slot.Slot)}" ${slot.Occupied ? '' : 'disabled'}>Load</button>
+          <button type="button" data-slot-clear="${escapeHtml(slot.Slot)}" ${slot.Occupied ? '' : 'disabled'}>Clear</button>
+        </div>
+      `;
+    }
+
+    async function getSaveSlots() {
+      try {
+        const response = await fetch('/api/save-slots', { cache: 'no-store' });
+        if (!response.ok) return [];
+        return (await response.json()).slots || [];
+      } catch {
+        return [];
+      }
+    }
+
+    async function renderSettingsContent() {
+      const slots = await getSaveSlots();
+      const coverOn = homeSettings.coverArt !== 'off';
+      const readerOn = homeSettings.readerStyleEnabled === 'on';
+      settingsContent.innerHTML = `
+        <h3>Title Banner</h3>
+        <div class="settings-grid">
+          ${settingsApi.titleBanners.map((banner) => `
+            <button type="button" class="settings-option banner-option ${homeSettings.titleBanner === banner.id ? 'active' : ''}" data-setting-kind="titleBanner" data-setting-id="${escapeHtml(banner.id)}">
+              <img src="${escapeHtml(banner.path)}" alt="${escapeHtml(banner.name)}">
+              <strong>${escapeHtml(banner.name)}</strong>
+            </button>
+          `).join('')}
+        </div>
+        <h3>Book Covers</h3>
+        <div class="settings-grid">
+          ${optionButton('coverArt', 'on', 'Show Cover Art', 'Big book cards with cover art.', coverOn)}
+          ${optionButton('coverArt', 'off', 'Compact Books', 'Hide covers and tighten the book cards.', !coverOn)}
+        </div>
+        <h3>Color Theme</h3>
+        <div class="settings-grid">
+          ${settingsApi.themes.map((theme) => optionButton('theme', theme.id, theme.name, theme.note, homeSettings.theme === theme.id)).join('')}
+        </div>
+        <h3>Reader Page Styling</h3>
+        <div class="settings-grid">
+          ${optionButton('readerStyleEnabled', 'off', 'Project Aon Original', 'Leave the book iframe untouched.', !readerOn)}
+          ${optionButton('readerStyleEnabled', 'on', 'Apply Reader Theme', 'Restyle the local book iframe while you read.', readerOn)}
+        </div>
+        <div class="settings-grid" style="margin-top:.55rem">
+          ${settingsApi.readerThemes.map((theme) => optionButton('readerTheme', theme.id, theme.name, '', homeSettings.readerTheme === theme.id)).join('')}
+        </div>
+        <h3>Save Slots</h3>
+        ${slots.length ? slots.map(saveSlotRow).join('') : '<p class="muted">Start the local server to use save slots.</p>'}
+      `;
+    }
+
+    async function updateSetting(kind, id) {
+      homeSettings = await settingsApi.savePatch({ [kind]: id });
+      renderSettingsContent();
+    }
+
+    async function slotAction(actionName, slot) {
+      const response = await fetch('/api/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: actionName, slot: Number(slot) })
+      });
+      if (response.ok && actionName === 'load_slot') {
+        window.location.href = 'assistant.html';
+        return;
+      }
+      await renderSettingsContent();
+    }
+
+    document.getElementById('settingsBtn').addEventListener('click', async () => {
+      homeSettings = settingsApi.apply(settingsApi.readLocal());
+      await renderSettingsContent();
+      settingsModal.hidden = false;
+    });
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+      settingsModal.hidden = true;
+    });
+    settingsModal.addEventListener('click', (event) => {
+      if (event.target === settingsModal) settingsModal.hidden = true;
+    });
+    settingsContent.addEventListener('click', async (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      if (button.dataset.settingKind) {
+        await updateSetting(button.dataset.settingKind, button.dataset.settingId);
+        return;
+      }
+      if (button.dataset.slotSave) await slotAction('save_slot', button.dataset.slotSave);
+      if (button.dataset.slotLoad) await slotAction('load_slot', button.dataset.slotLoad);
+      if (button.dataset.slotClear && window.confirm(`Clear save slot ${button.dataset.slotClear}?`)) {
+        await slotAction('clear_slot', button.dataset.slotClear);
+      }
     });
   </script>
 </body>

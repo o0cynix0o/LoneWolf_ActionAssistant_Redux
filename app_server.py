@@ -23,6 +23,8 @@ import lonewolf_redux
 
 ROOT = Path(__file__).resolve().parent
 UI_PREFERENCES_FILE = ROOT / "data" / "ui-preferences.json"
+SAVE_SLOT_DIR = ROOT / "saves" / "slots"
+SAVE_SLOT_COUNT = 6
 STATE_LOCK = threading.RLock()
 ASSISTANT = lonewolf_redux.LoneWolfReduxAssistant(save_dir=ROOT / "saves", data_dir=ROOT / "data")
 LAST_OUTPUT = ""
@@ -32,12 +34,20 @@ UI_PREFERENCE_KEYS = {
     "lonewolf_redux.top.sizes.v1",
     "lonewolf_redux.sheet.layout.v1",
     "lonewolf_redux.sheet.sizes.v1",
+    "lonewolf_redux.appearance.titleBanner.v1",
+    "lonewolf_redux.appearance.coverArt.v1",
+    "lonewolf_redux.appearance.theme.v1",
+    "lonewolf_redux.reader.styleEnabled.v1",
+    "lonewolf_redux.reader.theme.v1",
 }
 UI_PREFERENCE_PREFIXES = (
     "lonewolf_redux.cards.layout.",
     "lonewolf_redux.cards.size.",
     "lonewolf_redux.cards.closed.",
+    "lonewolf_redux.cards.collapsed.",
     "lonewolf_redux.cards.labels.",
+    "lonewolf_redux.appearance.",
+    "lonewolf_redux.reader.",
 )
 
 
@@ -83,6 +93,76 @@ def public_save_entries() -> list[dict]:
         clean["Path"] = str(clean["Path"])
         entries.append(clean)
     return entries
+
+
+def save_slot_path(slot: int) -> Path:
+    slot = max(1, min(SAVE_SLOT_COUNT, int(slot or 1)))
+    return SAVE_SLOT_DIR / f"slot-{slot}.json"
+
+
+def save_slot_entry(slot: int) -> dict:
+    path = save_slot_path(slot)
+    entry = {
+        "Slot": slot,
+        "Occupied": path.exists(),
+        "Path": str(path),
+        "Name": f"Slot {slot}",
+        "BookNumber": "",
+        "BookTitle": "",
+        "Section": "",
+        "Endurance": "",
+        "GoldCrowns": "",
+        "Modified": "",
+    }
+    if not path.exists():
+        return entry
+    entry["Modified"] = datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        character = data.get("Character", {}) if isinstance(data, dict) else {}
+        inventory = data.get("Inventory", {}) if isinstance(data, dict) else {}
+        book_number = int(character.get("BookNumber", 1))
+        entry.update(
+            {
+                "Name": character.get("Name") or f"Slot {slot}",
+                "BookNumber": book_number,
+                "BookTitle": lonewolf_redux.book_title(book_number),
+                "Section": int(data.get("CurrentSection", 1)),
+                "Endurance": f"{character.get('EnduranceCurrent', '?')}/{character.get('EnduranceMax', '?')}",
+                "GoldCrowns": inventory.get("GoldCrowns", inventory.get("Nobles", "?")),
+            }
+        )
+    except Exception:
+        entry["BookTitle"] = "Unreadable save"
+    return entry
+
+
+def public_save_slots() -> list[dict]:
+    return [save_slot_entry(slot) for slot in range(1, SAVE_SLOT_COUNT + 1)]
+
+
+def save_to_slot(slot: int) -> str:
+    slot = max(1, min(SAVE_SLOT_COUNT, int(slot or 1)))
+    path = save_slot_path(slot)
+    ASSISTANT.save_game(str(path), quiet=True)
+    return f"Saved to slot {slot}."
+
+
+def load_from_slot(slot: int) -> str:
+    slot = max(1, min(SAVE_SLOT_COUNT, int(slot or 1)))
+    path = save_slot_path(slot)
+    if not path.exists():
+        return f"Save slot {slot} is empty."
+    return capture_output(lambda: ASSISTANT.load_game(str(path)))
+
+
+def clear_save_slot(slot: int) -> str:
+    slot = max(1, min(SAVE_SLOT_COUNT, int(slot or 1)))
+    path = save_slot_path(slot)
+    if path.exists():
+        path.unlink()
+        return f"Cleared save slot {slot}."
+    return f"Save slot {slot} is already empty."
 
 
 def truthy(value) -> bool:
@@ -193,6 +273,7 @@ def state_payload(message: str = "", achievement_unlocks: list[dict] | None = No
         "achievements": ASSISTANT.achievement_payload(),
         "achievementUnlocks": achievement_unlocks or [],
         "saves": public_save_entries(),
+        "saveSlots": public_save_slots(),
         "uiPreferences": load_ui_preferences(),
         "paths": {
             "SaveDir": str(ASSISTANT.save_dir),
@@ -377,6 +458,12 @@ def handle_action(payload: dict) -> str:
         return capture_output(lambda: ASSISTANT.save_game(str(payload.get("path") or "")))
     if action == "load":
         return capture_output(lambda: ASSISTANT.load_game(str(payload.get("path") or "")))
+    if action == "save_slot":
+        return save_to_slot(int(payload.get("slot") or 1))
+    if action == "load_slot":
+        return load_from_slot(int(payload.get("slot") or 1))
+    if action == "clear_slot":
+        return clear_save_slot(int(payload.get("slot") or 1))
     if action == "reload_last_save":
         load_last_save()
         return "Reloaded the latest save from disk."
@@ -487,6 +574,10 @@ class LoneWolfReduxHandler(BaseHTTPRequestHandler):
             with STATE_LOCK:
                 self.send_json({"saves": public_save_entries()})
             return
+        if parsed.path == "/api/save-slots":
+            with STATE_LOCK:
+                self.send_json({"slots": public_save_slots()})
+            return
         if parsed.path == "/api/ui-preferences":
             with STATE_LOCK:
                 self.send_json(load_ui_preferences())
@@ -543,7 +634,7 @@ class LoneWolfReduxHandler(BaseHTTPRequestHandler):
                 ]
                 if after_unlocks:
                     ASSISTANT.save_game(quiet=True)
-                if action_name in {"load", "save", "autosave"}:
+                if action_name in {"load", "save", "autosave", "load_slot", "save_slot", "clear_slot"}:
                     after_unlocks = []
                 LAST_OUTPUT = message
                 self.send_json(state_payload(message=message, achievement_unlocks=after_unlocks))

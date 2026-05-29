@@ -32,8 +32,20 @@ def main() -> int:
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")
     assert_true("number: 3" in index_source, "index.html should include Book 3 in its card data.")
     assert_true(
-        "assets/images/lone-wolf-title-banner.png" in index_source,
-        "index.html should include the local Lone Wolf title banner.",
+        "assets/images/title-banners/title1.png" in index_source,
+        "index.html should include the default local Lone Wolf title banner.",
+    )
+    assert_true(
+        "data-lw-title-banner" in index_source,
+        "index.html should let the shared settings script swap title banners.",
+    )
+    assert_true(
+        "assets/js/lw-settings.js" in index_source,
+        "index.html should load the shared settings script.",
+    )
+    assert_true(
+        "Settings" in index_source and "settingsModal" in index_source,
+        "index.html should expose the settings modal from the Reader panel.",
     )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
@@ -43,6 +55,10 @@ def main() -> int:
     assert_true("assistant.html?book=1" in library_source, "library.html should link Book 1 to the assistant.")
     assert_true("assistant.html?book=2" in library_source, "library.html should link Book 2 to the assistant.")
     assert_true("assistant.html?book=3" in library_source, "library.html should link Book 3 to the assistant.")
+    assert_true(
+        "assets/js/lw-settings.js" in library_source,
+        "library.html should load the shared settings script.",
+    )
 
     print("Browser landing static smoke passed.")
     return 0
