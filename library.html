@@ -40,7 +40,10 @@
       gap: 12px;
     }
     .book {
-      display: block;
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
       border: 1px solid #5d5130;
       border-radius: 6px;
       padding: 14px;
@@ -49,6 +52,28 @@
       background: #1a1d14;
     }
     .book:hover { border-color: #d1b865; }
+    .book img {
+      width: 64px;
+      height: 86px;
+      object-fit: contain;
+      border: 1px solid rgba(123,106,59,0.72);
+      background: #10130d;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.28);
+    }
+    .cover-fallback {
+      display: none;
+      width: 64px;
+      min-height: 86px;
+      place-items: center;
+      border: 1px solid rgba(123,106,59,0.72);
+      background: #10130d;
+      color: #f2d27a;
+      text-align: center;
+      font-size: 0.82rem;
+      line-height: 1.1;
+    }
+    .book.cover-missing img { display: none; }
+    .book.cover-missing .cover-fallback { display: grid; }
     .book strong {
       color: #f2d27a;
       font-size: 1.1rem;
@@ -86,15 +111,18 @@
     <p>Book files are not included in the release package. Download the standard Lone Wolf HTML ZIPs from Project Aon and extract them into <code>books\lw</code>.</p>
     <section class="list">
       <a class="book" href="assistant.html?book=1">
-        <small>Book 1</small>
+        <img src="https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago_thumbnail.jpg" alt="Cover art for Flight from the Dark" onerror="this.closest('.book').classList.add('cover-missing')">
+        <span class="cover-fallback">Book 1</span>
         <div><strong>1. Flight from the Dark</strong><span>350 sections - playable release candidate</span></div>
       </a>
       <a class="book" href="assistant.html?book=2">
-        <small>Book 2</small>
+        <img src="https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago_thumbnail.jpg" alt="Cover art for Fire on the Water" onerror="this.closest('.book').classList.add('cover-missing')">
+        <span class="cover-fallback">Book 2</span>
         <div><strong>2. Fire on the Water</strong><span>350 sections - playable helper build</span></div>
       </a>
       <a class="book" href="assistant.html?book=3">
-        <small>Book 3</small>
+        <img src="https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago_thumbnail.jpg" alt="Cover art for The Caverns of Kalte" onerror="this.closest('.book').classList.add('cover-missing')">
+        <span class="cover-fallback">Book 3</span>
         <div><strong>3. The Caverns of Kalte</strong><span>350 sections - onboarding helper build</span></div>
       </a>
     </section>

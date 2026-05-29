@@ -23,15 +23,23 @@ def main() -> int:
     for source_name, source in (("index.html", index_source), ("library.html", library_source)):
         assert_true("Flight from the Dark" in source, f"{source_name} should list Book 1.")
         assert_true("Fire on the Water" in source, f"{source_name} should list Book 2.")
+        assert_true("The Caverns of Kalte" in source, f"{source_name} should list Book 3.")
+        assert_true("LW01_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 1 cover art.")
+        assert_true("LW02_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 2 cover art.")
+        assert_true("LW03_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 3 cover art.")
 
     assert_true("number: 1" in index_source, "index.html should include Book 1 in its card data.")
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")
+    assert_true("number: 3" in index_source, "index.html should include Book 3 in its card data.")
+    assert_true("lone-wolf-logo.jpg" in index_source, "index.html should include the Lone Wolf logo banner.")
+    assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
         "assistant.html?book=${book.number}" in index_source,
         "index.html should generate assistant links for book cards.",
     )
     assert_true("assistant.html?book=1" in library_source, "library.html should link Book 1 to the assistant.")
     assert_true("assistant.html?book=2" in library_source, "library.html should link Book 2 to the assistant.")
+    assert_true("assistant.html?book=3" in library_source, "library.html should link Book 3 to the assistant.")
 
     print("Browser landing static smoke passed.")
     return 0
