@@ -23,17 +23,18 @@ Scope: build plan for Book 3 after the rulings queue is answered.
 - Add one new Kai Discipline during Book 3 setup.
 - Add Book 3 starting Gold roll, carry-over addition, and hard 50-Crown cap.
 - Add Map of Kalte, winter gear handling, and two equipment choices.
-- Enforce Weapon, Backpack, body armor, and helmet limits according to rulings.
+- Enforce Weapon, Backpack, and helmet limits according to rulings.
+- Allow Padded Leather Waistcoat to stack with prior armour bonuses.
 - Create Book 3 start checkpoint for repeat-book replay.
 
 ## Build Slice 2: Rule Helpers
 
 - Add Book 3 Hunting suppression for Meal requirements in Kalte.
-- Add ice-sledge food/provisions state and receipt text.
+- Default Book 3 Meal helpers to Backpack Meals or END loss unless a section explicitly uses sledge provisions.
 - Add Red Laumspur as a distinct item.
-- Add Baknar oil as a Book 3-only story flag.
+- Add Baknar oil as a usable Backpack item that sets a Book 3 flag when consumed.
 - Add Blue Stone Triangle and Silver Helm item models.
-- Add mission-failure ending support for section 61.
+- Add mission-failure/death-state support for section 61 that records failure without implying Lone Wolf died.
 
 ## Build Slice 3: Section Automation Ledger
 

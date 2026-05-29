@@ -235,7 +235,19 @@ def apply_new_game(payload: dict) -> str:
     if not isinstance(disciplines, list):
         disciplines = lonewolf_redux.KAI_DISCIPLINES[:5]
 
-    if book_number == 2:
+    if book_number == 3:
+        ASSISTANT.state = lonewolf_redux.create_book3_character_state(
+            name=name,
+            kai_disciplines=disciplines,
+            section=int(payload.get("section") or 1),
+            combat_skill_roll=payload.get("combatSkillRoll"),
+            endurance_roll=payload.get("enduranceRoll"),
+            gold_roll=payload.get("goldRoll"),
+            weaponskill_roll=payload.get("weaponskillRoll"),
+            equipment_choices=payload.get("equipmentChoices") or payload.get("armouryChoices"),
+            weapon_exchanges=payload.get("weaponExchanges"),
+        )
+    elif book_number == 2:
         ASSISTANT.state = lonewolf_redux.create_book2_character_state(
             name=name,
             kai_disciplines=disciplines,
@@ -371,6 +383,9 @@ def handle_action(payload: dict) -> str:
                 book2_gold_roll=payload.get("goldRoll"),
                 book2_armoury_choices=payload.get("armouryChoices"),
                 book2_weapon_exchanges=payload.get("weaponExchanges"),
+                book3_gold_roll=payload.get("goldRoll"),
+                book3_equipment_choices=payload.get("equipmentChoices") or payload.get("armouryChoices"),
+                book3_weapon_exchanges=payload.get("weaponExchanges"),
             )
         )
     if action == "repeat_book":

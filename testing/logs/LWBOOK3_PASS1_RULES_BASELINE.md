@@ -55,12 +55,12 @@ Book 3 keeps the familiar Kai-series rules shape:
 Book 3 changes the campaign and environment model:
 
 - A continuing character carries Combat Skill, Endurance, current Kai Disciplines, Weapons, and Special Items into Book 3.
-- The rules mention the eight-Backpack-Item limit but do not explicitly say Backpack Items carry forward; this needs a ruling because the app currently carries Backpack Items from Book 1 into Book 2 by user ruling.
+- Backpack Items carry forward by user ruling, even where Book 3 setup text names Weapons and Special Items explicitly.
 - A continuing character should add one new Kai Discipline beyond the current campaign set.
 - Gold from previous books can be added to the Book 3 starting gold roll, still capped at 50.
 - Book 3 gives winter expedition gear, a Map of Kalte, and access to an equipment list with two picks.
 - Hunting is not a reliable Meal exemption in Kalte because the book identifies Kalte as an icy desert.
-- The ice-sledge food supply changes Meal handling: some Meal instructions may consume mission provisions instead of Backpack Meals, depending on whether the sledge food is still available.
+- Meal handling defaults to Backpack Meals or Endurance loss by user ruling; only explicit section text should use the ice-sledge food supply instead.
 
 ## Book 3 Start-State Handoff
 
@@ -104,7 +104,7 @@ Book 3 needs these app changes before it is playable:
 - Gold carry-over plus Book 3 starting Gold roll with the hard 50-Crown cap.
 - Book 3 Special Item/flag handling for Map of Kalte and winter expedition gear.
 - Book 3 Meal context where Hunting is suppressed in Kalte.
-- Ice-sledge food/provisions model for Meal instructions where the story supply is still available.
+- Ice-sledge food/provisions handling only where section text explicitly says the sledge food is used.
 - Section-flow data from `data/book3-section-flows.json`.
 - Route graph check from `testing/logs/LWBOOK3_ROUTE_GRAPH_CHECK.md`.
 - Automation ledger, combat/random audit, route audit, achievements scan, UI-readiness scan, and playtest gauntlet after rulings.
@@ -174,4 +174,5 @@ Recommended next issue slice after rulings:
 
 - This pass did not implement Book 3 behavior.
 - Book 3 carry-forward has open rulings around Backpack Items, winter gear tracking, food supply, armor stacking, and Collector's Edition notes.
+- Setup and rules rulings are answered; later section-by-section playtesting may still reveal smaller route-specific questions.
 - Section automations, combat presets, route checks, random helpers, achievements, strategy docs, and UI polish remain future work.

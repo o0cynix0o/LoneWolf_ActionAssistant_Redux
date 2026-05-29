@@ -66,11 +66,11 @@ Current implemented/audited folders:
   `Flight from the Dark`
 - `02fotw`
   `Fire on the Water`
+- `03tcok`
+  `The Caverns of Kalte`
 
 Installed local corpus:
 
-- `03tcok`
-  `The Caverns of Kalte`
 - `04tcod`
   `The Chasm of Doom`
 - `05sots`
@@ -130,7 +130,8 @@ Do not treat a future folder as supported just because it exists locally. Each b
 
 Current pipeline target:
 
-- Book 3, `03tcok`, is the next natural pipeline target after Book 2 playtesting.
+- Book 3, `03tcok`, has the first onboarding helper build in place and still needs broader route-helper/playtest work.
+- Book 4, `04tcod`, is the next natural pipeline target after Book 3 playtesting.
 
 ## Recommended Audit Start Pattern
 

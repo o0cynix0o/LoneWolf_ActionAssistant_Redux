@@ -71,6 +71,7 @@ _ANSI_SUPPORT: bool | None = None
 BOOKS = {
     1: {"Title": "Flight from the Dark", "Folder": "01fftd", "MaxSection": 350},
     2: {"Title": "Fire on the Water", "Folder": "02fotw", "MaxSection": 350},
+    3: {"Title": "The Caverns of Kalte", "Folder": "03tcok", "MaxSection": 350},
 }
 
 KAI_DISCIPLINES = [
@@ -126,6 +127,27 @@ BOOK2_ARMOURY_OPTIONS = {
     "quarterstaff": {"Label": "Quarterstaff", "Items": [("weapon", "Quarterstaff")]},
     "spear": {"Label": "Spear", "Items": [("weapon", "Spear")]},
     "shield": {"Label": "Shield", "Items": [("special", "Shield")]},
+    "broadsword": {"Label": "Broadsword", "Items": [("weapon", "Broadsword")]},
+}
+
+BOOK3_EQUIPMENT_OPTIONS = {
+    "sword": {"Label": "Sword", "Items": [("weapon", "Sword")]},
+    "short-sword": {"Label": "Short Sword", "Items": [("weapon", "Short Sword")]},
+    "padded-leather-waistcoat": {
+        "Label": "Padded Leather Waistcoat",
+        "Items": [("special", "Padded Leather Waistcoat")],
+        "EnduranceBonus": 2,
+    },
+    "spear": {"Label": "Spear", "Items": [("weapon", "Spear")]},
+    "mace": {"Label": "Mace", "Items": [("weapon", "Mace")]},
+    "warhammer": {"Label": "Warhammer", "Items": [("weapon", "Warhammer")]},
+    "axe": {"Label": "Axe", "Items": [("weapon", "Axe")]},
+    "potion-of-laumspur": {
+        "Label": "Potion of Laumspur",
+        "Items": [("backpack", "Potion of Laumspur (+4 END)")],
+    },
+    "quarterstaff": {"Label": "Quarterstaff", "Items": [("weapon", "Quarterstaff")]},
+    "special-rations": {"Label": "Special Rations", "Items": [("backpack", "Meal")]},
     "broadsword": {"Label": "Broadsword", "Items": [("weapon", "Broadsword")]},
 }
 
@@ -754,10 +776,35 @@ def clean_book2_armoury_choices(values: Any) -> list[str]:
     return selected
 
 
+def clean_book3_equipment_choices(values: Any) -> list[str]:
+    selected: list[str] = []
+    label_map = {
+        normalized_choice_key(option.get("Label")): key
+        for key, option in BOOK3_EQUIPMENT_OPTIONS.items()
+    }
+    for raw in as_list(values):
+        key = normalized_choice_key(raw)
+        key = label_map.get(key, key)
+        if key in BOOK3_EQUIPMENT_OPTIONS and key not in selected:
+            selected.append(key)
+    if len(selected) != 2:
+        raise ValueError("Book 3 equipment setup requires exactly two different choices.")
+    return selected
+
+
 def book2_armoury_labels(choice_ids: Any) -> list[str]:
     labels: list[str] = []
     for choice_id in as_list(choice_ids):
         option = BOOK2_ARMOURY_OPTIONS.get(str(choice_id))
+        if option:
+            labels.append(str(option["Label"]))
+    return labels
+
+
+def book3_equipment_labels(choice_ids: Any) -> list[str]:
+    labels: list[str] = []
+    for choice_id in as_list(choice_ids):
+        option = BOOK3_EQUIPMENT_OPTIONS.get(str(choice_id))
         if option:
             labels.append(str(option["Label"]))
     return labels
@@ -771,6 +818,16 @@ def add_unique_item(items: Any, item: str) -> list[Any]:
 
 
 def apply_book2_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> tuple[int, int, int, int]:
+    roll = coerce_random_digit(gold_roll)
+    before = int(inventory.get("GoldCrowns") or 0)
+    gain = 10 + roll
+    after = min(50, before + gain)
+    inventory["GoldCrowns"] = after
+    inventory["Nobles"] = after
+    return roll, before, gain, after
+
+
+def apply_book3_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> tuple[int, int, int, int]:
     roll = coerce_random_digit(gold_roll)
     before = int(inventory.get("GoldCrowns") or 0)
     gain = 10 + roll
@@ -853,9 +910,95 @@ def apply_book2_armoury_to_state(
     return messages
 
 
+def apply_book3_equipment_to_state(
+    state: dict[str, Any],
+    choices: Any,
+    weapon_exchanges: Any = None,
+) -> list[str]:
+    choice_ids = clean_book3_equipment_choices(choices)
+    exchanges = [str(item).strip() for item in as_list(weapon_exchanges) if str(item).strip()]
+    exchange_index = 0
+    messages: list[str] = []
+    inventory = state["Inventory"]
+    character = state["Character"]
+
+    for choice_id in choice_ids:
+        option = BOOK3_EQUIPMENT_OPTIONS[choice_id]
+        label = str(option["Label"])
+        option_added_special = False
+        messages.append(f"Equipment choice: {label}")
+
+        for container, item in as_list(option.get("Items")):
+            if container == "weapon":
+                weapons = as_list(inventory.get("Weapons"))
+                if len(weapons) >= 2:
+                    exchanged = ""
+                    while exchange_index < len(exchanges):
+                        candidate = exchanges[exchange_index]
+                        exchange_index += 1
+                        removed, weapons = remove_first_matching(weapons, candidate)
+                        if removed:
+                            exchanged = candidate
+                            break
+                    if not exchanged and len(weapons) >= 2:
+                        raise ValueError(
+                            f"Taking {item} needs a Weapon exchange because the Weapon limit is 2."
+                        )
+                    if exchanged:
+                        messages.append(f"Exchanged Weapon: {exchanged} -> {item}")
+                weapons.append(item)
+                inventory["Weapons"] = weapons
+                continue
+
+            if container == "backpack":
+                backpack_items = as_list(inventory.get("BackpackItems"))
+                if len(backpack_items) >= 8:
+                    raise ValueError(
+                        f"Taking {item} needs Backpack space because the Backpack limit is 8."
+                    )
+                backpack_items.append(item)
+                inventory["BackpackItems"] = backpack_items
+                inventory["HasBackpack"] = True
+                state["Automation"]["Flags"]["backpackAvailable"] = True
+                state["Automation"]["Flags"]["backpackItemsAvailable"] = True
+                continue
+
+            if container == "special":
+                before = as_list(inventory.get("SpecialItems"))
+                option_added_special = item not in before
+                inventory["SpecialItems"] = add_unique_item(before, item)
+
+        endurance_bonus = int(option.get("EnduranceBonus") or 0)
+        setup = character.setdefault("Book3Setup", {})
+        applied_key = f"{choice_id}Applied"
+        if endurance_bonus:
+            if option_added_special and not bool(setup.get(applied_key)):
+                character["EnduranceMax"] = int(character["EnduranceMax"]) + endurance_bonus
+                character["EnduranceCurrent"] = int(character["EnduranceCurrent"]) + endurance_bonus
+                setup[applied_key] = True
+                messages.append(f"{label}: END +{endurance_bonus}")
+            else:
+                messages.append(f"{label} already recorded; no extra END bonus.")
+
+    return messages
+
+
 def ensure_book2_mandatory_items(inventory: dict[str, Any]) -> None:
     inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Map of Sommerlund")
     inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Seal of Hammerdal")
+
+
+def ensure_book3_mandatory_state(state: dict[str, Any]) -> None:
+    inventory = state["Inventory"]
+    automation = state["Automation"]
+    inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Map of Kalte")
+    flags = automation.setdefault("Flags", {})
+    flags["book3WinterGear"] = True
+    flags["winterBoots"] = True
+    flags["winterTunic"] = True
+    flags["furLinedCloak"] = True
+    flags["mittens"] = True
+    flags["kalteHuntingSuppressed"] = True
 
 
 def create_book1_character_state(
@@ -1038,6 +1181,94 @@ def create_book2_character_state(
         "StartingGoldCrowns": int(inventory["GoldCrowns"]),
         "Book2GoldRoll": gold_digit,
         "Book2ArmouryChoices": book2_armoury_labels(choice_ids),
+    }
+    return normalize_state(state)
+
+
+def create_book3_character_state(
+    *,
+    name: str = "Lone Wolf",
+    kai_disciplines: Any = None,
+    section: int = 1,
+    combat_skill_roll: Any | None = None,
+    endurance_roll: Any | None = None,
+    gold_roll: Any | None = None,
+    weaponskill_roll: Any | None = None,
+    equipment_choices: Any = None,
+    weapon_exchanges: Any = None,
+) -> dict[str, Any]:
+    disciplines = clean_kai_disciplines(kai_disciplines)
+    if len(disciplines) != 5:
+        raise ValueError("Standalone Book 3 requires exactly five Kai Disciplines.")
+
+    choice_ids = clean_book3_equipment_choices(equipment_choices)
+    cs_roll = coerce_random_digit(combat_skill_roll)
+    end_roll = coerce_random_digit(endurance_roll)
+
+    state = normalize_state(default_state())
+    state["RuleSet"] = "Lone Wolf Kai"
+    state["CurrentSection"] = max(1, min(BOOKS[3]["MaxSection"], int(section or 1)))
+
+    character = state["Character"]
+    character["Name"] = str(name or "Lone Wolf").strip() or "Lone Wolf"
+    character["BookNumber"] = 3
+    character["CombatSkillBase"] = 10 + cs_roll
+    character["CombatSkillCurrent"] = 10 + cs_roll
+    character["EnduranceBase"] = 20 + end_roll
+    character["EnduranceMax"] = 20 + end_roll
+    character["EnduranceCurrent"] = 20 + end_roll
+    character["KaiDisciplines"] = disciplines
+    character["WeaponskillWeapon"] = ""
+    character["LesserMagicks"] = []
+    character["HigherMagicks"] = []
+    character["Book3Setup"] = {"Mode": "standalone", "EquipmentChoices": choice_ids}
+    character.pop("WillpowerBase", None)
+    character.pop("WillpowerCurrent", None)
+
+    if "Weaponskill" in disciplines:
+        ws_roll = coerce_random_digit(weaponskill_roll)
+        character["WeaponskillWeapon"] = weaponskill_weapon_for_roll(ws_roll)
+    else:
+        ws_roll = None
+
+    inventory = state["Inventory"]
+    inventory["Weapons"] = []
+    inventory["BackpackItems"] = []
+    inventory["SpecialItems"] = []
+    inventory["GoldCrowns"] = 0
+    inventory["Nobles"] = 0
+    inventory["HasBackpack"] = True
+    inventory["HasHerbPouch"] = False
+    inventory["HerbPouchItems"] = []
+    ensure_book3_mandatory_state(state)
+
+    gold_digit, before_gold, gold_gain, after_gold = apply_book3_gold_roll(inventory, gold_roll)
+    setup_messages = apply_book3_equipment_to_state(state, choice_ids, weapon_exchanges)
+
+    character["CreationRolls"] = {
+        "CombatSkill": cs_roll,
+        "Endurance": end_roll,
+        "Weaponskill": ws_roll,
+        "Book3Gold": gold_digit,
+        "Book3GoldGain": gold_gain,
+        "Book3GoldBefore": before_gold,
+        "Book3GoldAfter": after_gold,
+        "Book3Equipment": choice_ids,
+    }
+    character["Book3Setup"]["Messages"] = setup_messages
+
+    state["SectionHistory"] = []
+    state["CurrentBookStats"] = {
+        "BookNumber": 3,
+        "BookTitle": BOOKS[3]["Title"],
+        "StartSection": int(state["CurrentSection"]),
+        "LastSection": int(state["CurrentSection"]),
+        "SectionsVisited": 0,
+        "VisitedSections": [],
+        "StartingEnduranceMax": int(character["EnduranceMax"]),
+        "StartingGoldCrowns": int(inventory["GoldCrowns"]),
+        "Book3GoldRoll": gold_digit,
+        "Book3EquipmentChoices": book3_equipment_labels(choice_ids),
     }
     return normalize_state(state)
 
@@ -3325,6 +3556,7 @@ class LoneWolfReduxAssistant:
         special_weapon_items = {
             "sommerswerd": "Sommerswerd",
             "magic spear": "Magic Spear",
+            "bone sword": "Bone Sword",
         }
         for item in as_list(self.inventory.get("SpecialItems")):
             key = str(item).strip().lower()
@@ -3412,6 +3644,10 @@ class LoneWolfReduxAssistant:
             if "Weaponskill" in as_list(self.character.get("KaiDisciplines")) and weaponskill_weapon == "spear":
                 modifier += 2
                 notes.append("Weaponskill (Spear): +2 CS")
+        elif active_key == "bone sword":
+            if int(self.character.get("BookNumber") or 0) == 3:
+                modifier += 1
+                notes.append("Bone Sword: +1 CS in Kalte")
         elif (
             "Weaponskill" in as_list(self.character.get("KaiDisciplines"))
             and active_key == weaponskill_weapon
@@ -3923,6 +4159,13 @@ class LoneWolfReduxAssistant:
             }
         if "potion of alether" in text:
             return {"stat": "cs", "delta": 2, "label": "Potion of Alether"}
+        if "baknar oil" in text:
+            return {
+                "stat": "flag",
+                "key": "baknarOilApplied",
+                "value": True,
+                "label": "Baknar Oil",
+            }
         if "tarama seed" in text:
             return {
                 "stat": "flag",
@@ -3931,6 +4174,8 @@ class LoneWolfReduxAssistant:
                 "label": "Tarama Seed",
             }
         if "laumspur" in text:
+            if "red" in text:
+                return {"stat": "end", "delta": 4, "label": "Red Laumspur"}
             if "small" in text:
                 return {"stat": "end", "delta": 2, "label": "Small Vial of Laumspur"}
             if "+6" in text:
@@ -5825,6 +6070,9 @@ class LoneWolfReduxAssistant:
         book2_gold_roll: int | None = None,
         book2_armoury_choices: Any = None,
         book2_weapon_exchanges: Any = None,
+        book3_gold_roll: int | None = None,
+        book3_equipment_choices: Any = None,
+        book3_weapon_exchanges: Any = None,
         lesser_magick: str = "",
         higher_magicks: Any = None,
         willpower_roll: int | None = None,
@@ -5837,7 +6085,7 @@ class LoneWolfReduxAssistant:
         summary = completion.get("Summary") if isinstance(completion.get("Summary"), dict) else {}
         current = int(summary.get("BookNumber") or self.character["BookNumber"])
         next_book = current + 1
-        if next_book != 2:
+        if next_book not in {2, 3}:
             print(f"Book {next_book} setup is not enabled yet.")
             return
 
@@ -5846,9 +6094,12 @@ class LoneWolfReduxAssistant:
         missing_disciplines = [item for item in KAI_DISCIPLINES if item not in existing_disciplines]
         selected_discipline = str(kai_discipline or "").strip()
         if selected_discipline not in missing_disciplines:
-            raise ValueError("Continuing to Book 2 requires one new Kai Discipline.")
+            raise ValueError(f"Continuing to Book {next_book} requires one new Kai Discipline.")
 
-        choice_ids = clean_book2_armoury_choices(book2_armoury_choices)
+        if next_book == 2:
+            choice_ids = clean_book2_armoury_choices(book2_armoury_choices)
+        else:
+            choice_ids = clean_book3_equipment_choices(book3_equipment_choices)
         messages: list[str] = []
 
         self.character["BookNumber"] = next_book
@@ -5868,19 +6119,38 @@ class LoneWolfReduxAssistant:
         self.automation["Journal"] = journal[-100:]
         self.automation["DeathHistory"] = death_history
 
-        ensure_book2_mandatory_items(self.inventory)
-        gold_digit, before_gold, gold_gain, after_gold = apply_book2_gold_roll(
-            self.inventory, book2_gold_roll
-        )
         messages.append(f"Added Kai Discipline: {selected_discipline}")
-        messages.append(f"Book 2 Gold roll {gold_digit}: +{gold_gain} Crowns")
-        if after_gold < before_gold + gold_gain:
-            messages.append(f"Gold cap: {before_gold}+{gold_gain} capped at 50")
-        messages.extend(
-            apply_book2_armoury_to_state(
+        if next_book == 2:
+            ensure_book2_mandatory_items(self.inventory)
+            gold_digit, before_gold, gold_gain, after_gold = apply_book2_gold_roll(
+                self.inventory, book2_gold_roll
+            )
+            setup_messages = apply_book2_armoury_to_state(
                 self.state, choice_ids, book2_weapon_exchanges
             )
-        )
+            setup_key = "Book2Setup"
+            setup_choice_key = "ArmouryChoices"
+            setup_label_key = "ArmouryLabels"
+            roll_prefix = "Book2"
+            choice_labels = book2_armoury_labels(choice_ids)
+        else:
+            ensure_book3_mandatory_state(self.state)
+            gold_digit, before_gold, gold_gain, after_gold = apply_book3_gold_roll(
+                self.inventory, book3_gold_roll
+            )
+            setup_messages = apply_book3_equipment_to_state(
+                self.state, choice_ids, book3_weapon_exchanges
+            )
+            setup_key = "Book3Setup"
+            setup_choice_key = "EquipmentChoices"
+            setup_label_key = "EquipmentLabels"
+            roll_prefix = "Book3"
+            choice_labels = book3_equipment_labels(choice_ids)
+
+        messages.append(f"Book {next_book} Gold roll {gold_digit}: +{gold_gain} Crowns")
+        if after_gold < before_gold + gold_gain:
+            messages.append(f"Gold cap: {before_gold}+{gold_gain} capped at 50")
+        messages.extend(setup_messages)
 
         setup = {
             "Mode": "campaign",
@@ -5890,26 +6160,31 @@ class LoneWolfReduxAssistant:
             "GoldBefore": before_gold,
             "GoldGain": gold_gain,
             "GoldAfter": after_gold,
-            "ArmouryChoices": choice_ids,
-            "ArmouryLabels": book2_armoury_labels(choice_ids),
-            "ChainmailApplied": bool(
-                self.character.get("Book2Setup", {}).get("ChainmailApplied")
-            ),
+            setup_choice_key: choice_ids,
+            setup_label_key: choice_labels,
         }
-        self.character["Book2Setup"] = setup
+        existing_setup = self.character.get(setup_key)
+        if isinstance(existing_setup, dict):
+            for key, value in existing_setup.items():
+                if str(key).endswith("Applied") and key not in setup:
+                    setup[key] = value
+        self.character[setup_key] = setup
         rolls = self.character.get("CreationRolls")
         if not isinstance(rolls, dict):
             rolls = {}
         rolls.update(
             {
-                "Book2Gold": gold_digit,
-                "Book2GoldGain": gold_gain,
-                "Book2GoldBefore": before_gold,
-                "Book2GoldAfter": after_gold,
-                "Book2Armoury": choice_ids,
-                "Book2KaiDiscipline": selected_discipline,
+                f"{roll_prefix}Gold": gold_digit,
+                f"{roll_prefix}GoldGain": gold_gain,
+                f"{roll_prefix}GoldBefore": before_gold,
+                f"{roll_prefix}GoldAfter": after_gold,
+                f"{roll_prefix}KaiDiscipline": selected_discipline,
             }
         )
+        if next_book == 2:
+            rolls["Book2Armoury"] = choice_ids
+        else:
+            rolls["Book3Equipment"] = choice_ids
         self.character["CreationRolls"] = rolls
 
         self.state["CurrentBookStats"] = {
@@ -5921,10 +6196,13 @@ class LoneWolfReduxAssistant:
             "VisitedSections": [],
             "StartingEnduranceMax": int(self.character["EnduranceMax"]),
             "StartingGoldCrowns": int(self.inventory.get("GoldCrowns") or 0),
-            "Book2GoldRoll": gold_digit,
-            "Book2ArmouryChoices": book2_armoury_labels(choice_ids),
+            f"Book{next_book}GoldRoll": gold_digit,
             "NewKaiDiscipline": selected_discipline,
         }
+        if next_book == 2:
+            self.state["CurrentBookStats"]["Book2ArmouryChoices"] = choice_labels
+        else:
+            self.state["CurrentBookStats"]["Book3EquipmentChoices"] = choice_labels
         self.automation["Ending"] = None
         self.record_section_visit()
         self.save_section_checkpoint("ready")
@@ -6018,10 +6296,9 @@ class LoneWolfReduxAssistant:
         self.ensure_book_completed(book_number)
 
         if book_number != 1:
-            if book_number == 2:
-                self.repeat_completed_book_from_start_checkpoint(book_number)
+            if self.repeat_completed_book_from_start_checkpoint(book_number):
                 return
-            print(f"Book {book_number} repeat is not enabled yet.")
+            print(f"Book {book_number} repeat is not enabled because no start checkpoint is available yet.")
             return
 
         def saved_digit(key: str, fallback: int) -> int:

@@ -1,0 +1,20 @@
+{
+  "3": {
+    "61": {
+      "summary": "Mission failed. Lone Wolf survives, but the run cannot continue.",
+      "actions": [{"type": "ending", "ending": "failure", "cause": "Section 61 ends the mission in failure. Lone Wolf lives, but he cannot continue to future adventures from this run."}]
+    },
+    "132": {
+      "summary": "Use a Backpack Meal or lose 3 END from hunger.",
+      "actions": [{"type": "meal", "count": 1, "mode": "all_or_loss", "enduranceLoss": 3, "huntingExempt": false}]
+    },
+    "144": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 144 ends the mission."}]
+    },
+    "350": {
+      "summary": "Complete Book 3.",
+      "actions": [{"type": "ending", "ending": "success", "completeBook": 3}]
+    }
+  }
+}

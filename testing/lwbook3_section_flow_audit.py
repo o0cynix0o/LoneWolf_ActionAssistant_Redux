@@ -27,6 +27,271 @@ MAX_SECTION = 350
 SVG_GRAPH_URL = f"https://www.projectaon.org/en/svg/lw/{BOOK_CODE}.svgz"
 
 
+def combat_enemy(name: str, cs: int, endurance: int) -> dict[str, Any]:
+    return {"name": name, "cs": cs, "endurance": endurance}
+
+
+def combat_preset(
+    section: int,
+    label: str,
+    enemies: list[dict[str, Any]] | dict[str, Any],
+    **kwargs: Any,
+) -> dict[str, Any]:
+    preset: dict[str, Any] = {
+        "id": f"{section}-{re.sub(r'[^a-z0-9]+', '-', label.lower()).strip('-')}",
+        "label": label,
+    }
+    if isinstance(enemies, list) and len(enemies) > 1:
+        preset["enemies"] = enemies
+    elif isinstance(enemies, list):
+        preset["enemy"] = enemies[0]
+    else:
+        preset["enemy"] = enemies
+    preset.update(kwargs)
+    return preset
+
+
+def loot_option(option_id: str, label: str, actions: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"id": option_id, "label": label, "actions": actions}
+
+
+MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
+    "4": {
+        "loot": [
+            loot_option("bone-sword", "Take Bone Sword", [{"type": "add_item", "container": "special", "name": "Bone Sword"}]),
+            loot_option("blue-stone-disc", "Take Blue Stone Disc", [{"type": "add_item", "container": "special", "name": "Blue Stone Disc"}]),
+        ]
+    },
+    "8": {
+        "loot": [
+            loot_option("baknar-oil", "Take Baknar Oil", [{"type": "add_item", "container": "backpack", "name": "Baknar Oil"}])
+        ]
+    },
+    "26": {
+        "loot": [
+            loot_option("dagger", "Take Dagger", [{"type": "add_item", "container": "weapon", "name": "Dagger"}]),
+            loot_option("mace", "Take Mace", [{"type": "add_item", "container": "weapon", "name": "Mace"}]),
+        ]
+    },
+    "84": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
+        ]
+    },
+    "91": {
+        "loot": [
+            loot_option("baknar-oil", "Take Baknar Oil", [{"type": "add_item", "container": "backpack", "name": "Baknar Oil"}])
+        ]
+    },
+    "139": {
+        "routeChecks": [
+            {
+                "id": "139-red-laumspur",
+                "label": "Red Laumspur check",
+                "summary": "Checks whether Lone Wolf has Red Laumspur.",
+                "outcomes": [
+                    {
+                        "label": "Red Laumspur available",
+                        "route": 116,
+                        "testLabel": "Has Red Laumspur",
+                        "conditions": [{"type": "item", "name": "Red", "containers": ["backpack"], "match": "contains"}],
+                    },
+                    {
+                        "label": "No Red Laumspur",
+                        "route": 239,
+                        "testLabel": "No Red Laumspur",
+                        "conditions": [{"type": "no_item", "name": "Red", "containers": ["backpack"], "match": "contains"}],
+                    },
+                ],
+            }
+        ]
+    },
+    "194": {
+        "loot": [
+            loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
+        ]
+    },
+    "303": {
+        "sourceRoutes": [
+            {"Section": 127, "actions": [{"type": "remove_item", "containers": ["special"], "name": "Ornate Silver Key"}], "effectLabel": "Use Ornate Silver Key"},
+            {"Section": 308},
+            {"Section": 323},
+        ]
+    },
+    "308": {
+        "loot": [
+            loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
+        ]
+    },
+    "321": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
+        ]
+    },
+}
+
+
+MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
+    "14": {"combat": [combat_preset(14, "Ice Barbarian", combat_enemy("Ice Barbarian", 15, 14), victoryRoute=254)]},
+    "32": {
+        "combat": [
+            combat_preset(
+                32,
+                "Kalkoth",
+                [
+                    combat_enemy("Kalkoth 1", 11, 35),
+                    combat_enemy("Kalkoth 2", 10, 32),
+                    combat_enemy("Kalkoth 3", 8, 30),
+                ],
+                flawlessVictoryRoute=25,
+                woundedVictoryRoute=66,
+            )
+        ]
+    },
+    "68": {"combat": [combat_preset(68, "Ice Barbarian", combat_enemy("Ice Barbarian", 18, 28), victoryRoute=9)]},
+    "78": {"combat": [combat_preset(78, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=325)]},
+    "83": {"combat": [combat_preset(83, "Ice Barbarian Mutants", combat_enemy("Ice Barbarian Mutants", 18, 24), victoryRoute=43)]},
+    "88": {"combat": [combat_preset(88, "Javek", combat_enemy("Javek", 15, 15), victoryRoute=310)]},
+    "89": {
+        "combat": [
+            combat_preset(
+                89,
+                "Doomwolves",
+                [
+                    combat_enemy("Doomwolf 1", 15, 24),
+                    combat_enemy("Doomwolf 2", 14, 23),
+                    combat_enemy("Doomwolf 3", 14, 20),
+                ],
+                victoryRoute=28,
+            )
+        ]
+    },
+    "99": {
+        "combat": [
+            combat_preset(
+                99,
+                "Helghast",
+                combat_enemy("Helghast", 22, 30),
+                enemyImmune=True,
+                doubleEnemyLossWithSommerswerd=True,
+                perRoundActions=[{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_power", "name": "Mindshield"}}],
+                victoryRoute=230,
+            )
+        ]
+    },
+    "103": {"combat": [combat_preset(103, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=325)]},
+    "106": {"combat": [combat_preset(106, "Ice Barbarians", combat_enemy("Ice Barbarians", 19, 36), victoryRoute=13)]},
+    "108": {"combat": [combat_preset(108, "Ice Barbarian", combat_enemy("Ice Barbarian", 16, 24), victoryRoute=21)]},
+    "123": {"combat": [combat_preset(123, "Kalkoth", combat_enemy("Kalkoth", 11, 30), victoryRoute=25, woundedVictoryRoute=66)]},
+    "137": {
+        "combat": [
+            combat_preset(
+                137,
+                "Ice Barbarian and Doomwolf",
+                combat_enemy("Ice Barbarian + Doomwolf", 30, 30),
+                conditionalModifiers=[{"condition": {"type": "power", "name": "Mindblast"}, "modifier": -1, "label": "Partial Mindblast immunity"}],
+                victoryRoute=28,
+            )
+        ]
+    },
+    "138": {
+        "combat": [
+            combat_preset(
+                138,
+                "Kalkoth",
+                [combat_enemy("Kalkoth 1", 11, 35), combat_enemy("Kalkoth 2", 10, 32)],
+                canEvade=True,
+                evadeRoute=277,
+                flawlessVictoryRoute=25,
+                woundedVictoryRoute=66,
+            )
+        ]
+    },
+    "147": {"combat": [combat_preset(147, "Kalkoth", combat_enemy("Kalkoth", 10, 28), victoryRoute=235)]},
+    "158": {"combat": [combat_preset(158, "Ice Barbarian Scout", combat_enemy("Ice Barbarian Scout", 20, 28), victoryRoute=35)]},
+    "161": {"combat": [combat_preset(161, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=133)]},
+    "164": {
+        "combat": [
+            combat_preset(
+                164,
+                "Akraa'Neonor",
+                combat_enemy("Akraa'Neonor", 23, 50),
+                doubleEnemyLossWithSommerswerd=True,
+                winWithinRounds=5,
+                winWithinRoute=272,
+                tooLateRoute=324,
+            )
+        ]
+    },
+    "180": {"combat": [combat_preset(180, "Kalkoth", combat_enemy("Kalkoth", 11, 35), victoryRoute=56, canEvade=True, evadeRoute=322)]},
+    "200": {
+        "combat": [
+            combat_preset(
+                200,
+                "Akraa'Neonor",
+                combat_enemy("Akraa'Neonor", 22, 50),
+                doubleEnemyLossWithSommerswerd=True,
+                winWithinRounds=7,
+                winWithinRoute=272,
+                tooLateRoute=324,
+            )
+        ]
+    },
+    "208": {"combat": [combat_preset(208, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 30), victoryRoute=227)]},
+    "241": {"combat": [combat_preset(241, "Ice Barbarian", combat_enemy("Ice Barbarian", 18, 28), victoryRoute=93)]},
+    "259": {"combat": [combat_preset(259, "Kalkoth", combat_enemy("Kalkoth", 11, 35), victoryRoute=321)]},
+    "260": {"combat": [combat_preset(260, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=118)]},
+    "263": {
+        "combat": [
+            combat_preset(
+                263,
+                "Kalkoth",
+                [
+                    combat_enemy("Kalkoth 1", 11, 35),
+                    combat_enemy("Kalkoth 2", 10, 32),
+                    combat_enemy("Kalkoth 3", 8, 30),
+                ],
+                canEvade=True,
+                evadeRoute=277,
+                flawlessVictoryRoute=25,
+                woundedVictoryRoute=66,
+            )
+        ]
+    },
+    "265": {"combat": [combat_preset(265, "Crystal Frostwyrm", combat_enemy("Crystal Frostwyrm", 15, 30), enemyImmune=True, victoryRoute=3)]},
+    "270": {"combat": [combat_preset(270, "Ice Barbarian", combat_enemy("Ice Barbarian", 14, 25), victoryRoute=134)]},
+    "296": {"combat": [combat_preset(296, "Ice Barbarians", combat_enemy("Ice Barbarians", 17, 30), victoryRoute=170)]},
+    "304": {
+        "combat": [
+            combat_preset(
+                304,
+                "Helghast",
+                combat_enemy("Helghast", 22, 30),
+                enemyImmune=True,
+                doubleEnemyLossWithSommerswerd=True,
+                perRoundActions=[{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_power", "name": "Mindshield"}}],
+                victoryRoute=20,
+            )
+        ]
+    },
+    "343": {
+        "combat": [
+            combat_preset(
+                343,
+                "Cell Guards",
+                [
+                    combat_enemy("Doomwolf 1", 15, 24),
+                    combat_enemy("Doomwolf 2", 14, 23),
+                    combat_enemy("Doomwolf 3", 14, 20),
+                    combat_enemy("Ice Barbarian", 17, 29),
+                ],
+                victoryRoute=28,
+            )
+        ]
+    },
+}
+
+
 def clean_text(source: str) -> str:
     text = re.sub(r"<[^>]+>", " ", source)
     text = html.unescape(text)
@@ -188,6 +453,11 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
     for section, entry in sections.items():
         entry["incomingRouteCount"] = len(incoming.get(section, []))
 
+    for manual_audit in (MANUAL_FLOW_AUDIT, MANUAL_COMBAT_AUDIT):
+        for section, override in manual_audit.items():
+            if int(section) in sections:
+                sections[int(section)].update(override)
+
     reachable: set[int] = set()
     queue: deque[int] = deque([1])
     while queue:
@@ -262,6 +532,10 @@ def build_graph() -> tuple[dict[str, Any], dict[str, Any]]:
         "section1Routes": [route["Section"] for route in sections.get(1, {}).get("sourceRoutes", [])],
         "section350Classes": sections.get(350, {}).get("classification", []),
         "routeGraphCheck": graph_check,
+        "manualFlowAuditCount": len(MANUAL_FLOW_AUDIT),
+        "manualLootAuditCount": sum(1 for entry in MANUAL_FLOW_AUDIT.values() if "loot" in entry),
+        "manualCombatAuditCount": len(MANUAL_COMBAT_AUDIT),
+        "manualRouteCheckAuditCount": sum(1 for entry in MANUAL_FLOW_AUDIT.values() if "routeChecks" in entry),
     }
     return data, artifact
 
@@ -286,6 +560,9 @@ def render_report(artifact: dict[str, Any]) -> str:
         f"- Missing section files: {meta['missingSectionCount']}",
         f"- Invalid section links: {meta['invalidSectionLinkCount']}",
         f"- Project Aon SVG route graph available: {'yes' if meta['svgRouteGraphAvailable'] else 'no'}",
+        f"- Confirmed optional loot/helper sections: {artifact['manualLootAuditCount']}",
+        f"- Confirmed combat preset sections: {artifact['manualCombatAuditCount']}",
+        f"- Confirmed route-check sections: {artifact['manualRouteCheckAuditCount']}",
         "",
         "## Baseline Checks",
         "",
@@ -312,7 +589,8 @@ def render_report(artifact: dict[str, Any]) -> str:
             "## Remaining Risk",
             "",
             "- This pass is source-link and heuristic classification only.",
-            "- Combat presets, route checks, random helpers, loot, automations, achievements, and lifecycle support are not implemented yet.",
+            "- Some combat presets and loot helpers are now recorded; random helpers, full route checks, achievements, and lifecycle support are covered by later implementation/testing passes.",
+            "- Combat/loot helper coverage is partial and should grow during Book 3 playtesting.",
         ]
     )
     return "\n".join(lines) + "\n"

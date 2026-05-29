@@ -14,6 +14,9 @@ This report records section numbers, graph counts, and audit classifications onl
 - Missing section files: 0
 - Invalid section links: 0
 - Project Aon SVG route graph available: yes
+- Confirmed optional loot/helper sections: 8
+- Confirmed combat preset sections: 30
+- Confirmed route-check sections: 1
 
 ## Baseline Checks
 
@@ -49,4 +52,5 @@ This report records section numbers, graph counts, and audit classifications onl
 ## Remaining Risk
 
 - This pass is source-link and heuristic classification only.
-- Combat presets, route checks, random helpers, loot, automations, achievements, and lifecycle support are not implemented yet.
+- Some combat presets and loot helpers are now recorded; random helpers, full route checks, achievements, and lifecycle support are covered by later implementation/testing passes.
+- Combat/loot helper coverage is partial and should grow during Book 3 playtesting.

@@ -77,7 +77,31 @@
           "Section": 332
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "bone-sword",
+          "label": "Take Bone Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Bone Sword"
+            }
+          ]
+        },
+        {
+          "id": "blue-stone-disc",
+          "label": "Take Blue Stone Disc",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Disc"
+            }
+          ]
+        }
+      ]
     },
     "5": {
       "auditStatus": "source-link-baseline",
@@ -147,7 +171,20 @@
           "Section": 325
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "baknar-oil",
+          "label": "Take Baknar Oil",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Baknar Oil"
+            }
+          ]
+        }
+      ]
     },
     "9": {
       "auditStatus": "source-link-baseline",
@@ -251,7 +288,19 @@
           "Section": 309
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "14-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 15,
+            "endurance": 14
+          },
+          "victoryRoute": 254
+        }
+      ]
     },
     "15": {
       "auditStatus": "source-link-baseline",
@@ -439,7 +488,31 @@
           "Section": 63
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "dagger",
+          "label": "Take Dagger",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Dagger"
+            }
+          ]
+        },
+        {
+          "id": "mace",
+          "label": "Take Mace",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Mace"
+            }
+          ]
+        }
+      ]
     },
     "27": {
       "auditStatus": "source-link-baseline",
@@ -549,7 +622,32 @@
           "Section": 25
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "32-kalkoth",
+          "label": "Kalkoth",
+          "enemies": [
+            {
+              "name": "Kalkoth 1",
+              "cs": 11,
+              "endurance": 35
+            },
+            {
+              "name": "Kalkoth 2",
+              "cs": 10,
+              "endurance": 32
+            },
+            {
+              "name": "Kalkoth 3",
+              "cs": 8,
+              "endurance": 30
+            }
+          ],
+          "flawlessVictoryRoute": 25,
+          "woundedVictoryRoute": 66
+        }
+      ]
     },
     "33": {
       "auditStatus": "source-link-baseline",
@@ -1097,7 +1195,19 @@
           "Section": 186
         }
       ],
-      "incomingRouteCount": 5
+      "incomingRouteCount": 5,
+      "combat": [
+        {
+          "id": "68-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 18,
+            "endurance": 28
+          },
+          "victoryRoute": 9
+        }
+      ]
     },
     "69": {
       "auditStatus": "source-link-baseline",
@@ -1260,7 +1370,19 @@
           "Section": 245
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "78-baknar",
+          "label": "Baknar",
+          "enemy": {
+            "name": "Baknar",
+            "cs": 19,
+            "endurance": 30
+          },
+          "victoryRoute": 325
+        }
+      ]
     },
     "79": {
       "auditStatus": "source-link-baseline",
@@ -1345,7 +1467,19 @@
           "Section": 313
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "83-ice-barbarian-mutants",
+          "label": "Ice Barbarian Mutants",
+          "enemy": {
+            "name": "Ice Barbarian Mutants",
+            "cs": 18,
+            "endurance": 24
+          },
+          "victoryRoute": 43
+        }
+      ]
     },
     "84": {
       "auditStatus": "source-link-baseline",
@@ -1359,7 +1493,20 @@
           "Section": 221
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        }
+      ]
     },
     "85": {
       "auditStatus": "source-link-baseline",
@@ -1431,7 +1578,19 @@
           "Section": 269
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "88-javek",
+          "label": "Javek",
+          "enemy": {
+            "name": "Javek",
+            "cs": 15,
+            "endurance": 15
+          },
+          "victoryRoute": 310
+        }
+      ]
     },
     "89": {
       "auditStatus": "source-link-baseline",
@@ -1446,7 +1605,31 @@
           "Section": 161
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "89-doomwolves",
+          "label": "Doomwolves",
+          "enemies": [
+            {
+              "name": "Doomwolf 1",
+              "cs": 15,
+              "endurance": 24
+            },
+            {
+              "name": "Doomwolf 2",
+              "cs": 14,
+              "endurance": 23
+            },
+            {
+              "name": "Doomwolf 3",
+              "cs": 14,
+              "endurance": 20
+            }
+          ],
+          "victoryRoute": 28
+        }
+      ]
     },
     "90": {
       "auditStatus": "source-link-baseline",
@@ -1478,7 +1661,20 @@
           "Section": 134
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "baknar-oil",
+          "label": "Take Baknar Oil",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Baknar Oil"
+            }
+          ]
+        }
+      ]
     },
     "92": {
       "auditStatus": "source-link-baseline",
@@ -1597,7 +1793,32 @@
           "Section": 230
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "99-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 22,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "perRoundActions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 230
+        }
+      ]
     },
     "100": {
       "auditStatus": "source-link-baseline",
@@ -1658,7 +1879,19 @@
           "Section": 305
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "103-baknar",
+          "label": "Baknar",
+          "enemy": {
+            "name": "Baknar",
+            "cs": 19,
+            "endurance": 30
+          },
+          "victoryRoute": 325
+        }
+      ]
     },
     "104": {
       "auditStatus": "source-link-baseline",
@@ -1711,7 +1944,19 @@
           "Section": 338
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "106-ice-barbarians",
+          "label": "Ice Barbarians",
+          "enemy": {
+            "name": "Ice Barbarians",
+            "cs": 19,
+            "endurance": 36
+          },
+          "victoryRoute": 13
+        }
+      ]
     },
     "107": {
       "auditStatus": "source-link-baseline",
@@ -1750,7 +1995,19 @@
           "Section": 282
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "108-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 16,
+            "endurance": 24
+          },
+          "victoryRoute": 21
+        }
+      ]
     },
     "109": {
       "auditStatus": "source-link-baseline",
@@ -1988,7 +2245,20 @@
           "Section": 174
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "123-kalkoth",
+          "label": "Kalkoth",
+          "enemy": {
+            "name": "Kalkoth",
+            "cs": 11,
+            "endurance": 30
+          },
+          "victoryRoute": 25,
+          "woundedVictoryRoute": 66
+        }
+      ]
     },
     "124": {
       "auditStatus": "source-link-baseline",
@@ -2211,7 +2481,29 @@
           "Section": 28
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "137-ice-barbarian-and-doomwolf",
+          "label": "Ice Barbarian and Doomwolf",
+          "enemy": {
+            "name": "Ice Barbarian + Doomwolf",
+            "cs": 30,
+            "endurance": 30
+          },
+          "conditionalModifiers": [
+            {
+              "condition": {
+                "type": "power",
+                "name": "Mindblast"
+              },
+              "modifier": -1,
+              "label": "Partial Mindblast immunity"
+            }
+          ],
+          "victoryRoute": 28
+        }
+      ]
     },
     "138": {
       "auditStatus": "source-link-baseline",
@@ -2232,7 +2524,29 @@
           "Section": 277
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "combat": [
+        {
+          "id": "138-kalkoth",
+          "label": "Kalkoth",
+          "enemies": [
+            {
+              "name": "Kalkoth 1",
+              "cs": 11,
+              "endurance": 35
+            },
+            {
+              "name": "Kalkoth 2",
+              "cs": 10,
+              "endurance": 32
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 277,
+          "flawlessVictoryRoute": 25,
+          "woundedVictoryRoute": 66
+        }
+      ]
     },
     "139": {
       "auditStatus": "source-link-baseline",
@@ -2248,7 +2562,46 @@
           "Section": 239
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "routeChecks": [
+        {
+          "id": "139-red-laumspur",
+          "label": "Red Laumspur check",
+          "summary": "Checks whether Lone Wolf has Red Laumspur.",
+          "outcomes": [
+            {
+              "label": "Red Laumspur available",
+              "route": 116,
+              "testLabel": "Has Red Laumspur",
+              "conditions": [
+                {
+                  "type": "item",
+                  "name": "Red",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "contains"
+                }
+              ]
+            },
+            {
+              "label": "No Red Laumspur",
+              "route": 239,
+              "testLabel": "No Red Laumspur",
+              "conditions": [
+                {
+                  "type": "no_item",
+                  "name": "Red",
+                  "containers": [
+                    "backpack"
+                  ],
+                  "match": "contains"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "140": {
       "auditStatus": "source-link-baseline",
@@ -2375,7 +2728,19 @@
           "Section": 84
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "147-kalkoth",
+          "label": "Kalkoth",
+          "enemy": {
+            "name": "Kalkoth",
+            "cs": 10,
+            "endurance": 28
+          },
+          "victoryRoute": 235
+        }
+      ]
     },
     "148": {
       "auditStatus": "source-link-baseline",
@@ -2559,7 +2924,19 @@
           "Section": 337
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "158-ice-barbarian-scout",
+          "label": "Ice Barbarian Scout",
+          "enemy": {
+            "name": "Ice Barbarian Scout",
+            "cs": 20,
+            "endurance": 28
+          },
+          "victoryRoute": 35
+        }
+      ]
     },
     "159": {
       "auditStatus": "source-link-baseline",
@@ -2610,7 +2987,19 @@
           "Section": 210
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "combat": [
+        {
+          "id": "161-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 17,
+            "endurance": 29
+          },
+          "victoryRoute": 133
+        }
+      ]
     },
     "162": {
       "auditStatus": "source-link-baseline",
@@ -2659,7 +3048,22 @@
           "Section": 324
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "164-akraa-neonor",
+          "label": "Akraa'Neonor",
+          "enemy": {
+            "name": "Akraa'Neonor",
+            "cs": 23,
+            "endurance": 50
+          },
+          "doubleEnemyLossWithSommerswerd": true,
+          "winWithinRounds": 5,
+          "winWithinRoute": 272,
+          "tooLateRoute": 324
+        }
+      ]
     },
     "165": {
       "auditStatus": "source-link-baseline",
@@ -2906,7 +3310,21 @@
           "Section": 70
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "180-kalkoth",
+          "label": "Kalkoth",
+          "enemy": {
+            "name": "Kalkoth",
+            "cs": 11,
+            "endurance": 35
+          },
+          "victoryRoute": 56,
+          "canEvade": true,
+          "evadeRoute": 322
+        }
+      ]
     },
     "181": {
       "auditStatus": "source-link-baseline",
@@ -3150,7 +3568,20 @@
           "Section": 323
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "silver-helm",
+          "label": "Take Silver Helm",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Silver Helm"
+            }
+          ]
+        }
+      ]
     },
     "195": {
       "auditStatus": "source-link-baseline",
@@ -3239,7 +3670,22 @@
           "Section": 324
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "200-akraa-neonor",
+          "label": "Akraa'Neonor",
+          "enemy": {
+            "name": "Akraa'Neonor",
+            "cs": 22,
+            "endurance": 50
+          },
+          "doubleEnemyLossWithSommerswerd": true,
+          "winWithinRounds": 7,
+          "winWithinRoute": 272,
+          "tooLateRoute": 324
+        }
+      ]
     },
     "201": {
       "auditStatus": "source-link-baseline",
@@ -3364,7 +3810,19 @@
           "Section": 81
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "208-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 17,
+            "endurance": 30
+          },
+          "victoryRoute": 227
+        }
+      ]
     },
     "209": {
       "auditStatus": "source-link-baseline",
@@ -3882,7 +4340,19 @@
           "Section": 186
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "241-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 18,
+            "endurance": 28
+          },
+          "victoryRoute": 93
+        }
+      ]
     },
     "242": {
       "auditStatus": "source-link-baseline",
@@ -4155,7 +4625,19 @@
           "Section": 151
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "259-kalkoth",
+          "label": "Kalkoth",
+          "enemy": {
+            "name": "Kalkoth",
+            "cs": 11,
+            "endurance": 35
+          },
+          "victoryRoute": 321
+        }
+      ]
     },
     "260": {
       "auditStatus": "source-link-baseline",
@@ -4170,7 +4652,19 @@
           "Section": 210
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "260-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 17,
+            "endurance": 29
+          },
+          "victoryRoute": 118
+        }
+      ]
     },
     "261": {
       "auditStatus": "source-link-baseline",
@@ -4225,7 +4719,34 @@
           "Section": 25
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "263-kalkoth",
+          "label": "Kalkoth",
+          "enemies": [
+            {
+              "name": "Kalkoth 1",
+              "cs": 11,
+              "endurance": 35
+            },
+            {
+              "name": "Kalkoth 2",
+              "cs": 10,
+              "endurance": 32
+            },
+            {
+              "name": "Kalkoth 3",
+              "cs": 8,
+              "endurance": 30
+            }
+          ],
+          "canEvade": true,
+          "evadeRoute": 277,
+          "flawlessVictoryRoute": 25,
+          "woundedVictoryRoute": 66
+        }
+      ]
     },
     "264": {
       "auditStatus": "source-link-baseline",
@@ -4258,7 +4779,20 @@
           "Section": 3
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "combat": [
+        {
+          "id": "265-crystal-frostwyrm",
+          "label": "Crystal Frostwyrm",
+          "enemy": {
+            "name": "Crystal Frostwyrm",
+            "cs": 15,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "victoryRoute": 3
+        }
+      ]
     },
     "266": {
       "auditStatus": "source-link-baseline",
@@ -4331,7 +4865,19 @@
           "Section": 340
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "270-ice-barbarian",
+          "label": "Ice Barbarian",
+          "enemy": {
+            "name": "Ice Barbarian",
+            "cs": 14,
+            "endurance": 25
+          },
+          "victoryRoute": 134
+        }
+      ]
     },
     "271": {
       "auditStatus": "source-link-baseline",
@@ -4765,7 +5311,19 @@
           "Section": 173
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "296-ice-barbarians",
+          "label": "Ice Barbarians",
+          "enemy": {
+            "name": "Ice Barbarians",
+            "cs": 17,
+            "endurance": 30
+          },
+          "victoryRoute": 170
+        }
+      ]
     },
     "297": {
       "auditStatus": "source-link-baseline",
@@ -4889,7 +5447,17 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 127
+          "Section": 127,
+          "actions": [
+            {
+              "type": "remove_item",
+              "containers": [
+                "special"
+              ],
+              "name": "Ornate Silver Key"
+            }
+          ],
+          "effectLabel": "Use Ornate Silver Key"
         },
         {
           "Section": 308
@@ -4914,7 +5482,32 @@
           "Section": 20
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "304-helghast",
+          "label": "Helghast",
+          "enemy": {
+            "name": "Helghast",
+            "cs": 22,
+            "endurance": 30
+          },
+          "enemyImmune": true,
+          "doubleEnemyLossWithSommerswerd": true,
+          "perRoundActions": [
+            {
+              "type": "stat",
+              "stat": "end",
+              "delta": -2,
+              "condition": {
+                "type": "no_power",
+                "name": "Mindshield"
+              }
+            }
+          ],
+          "victoryRoute": 20
+        }
+      ]
     },
     "305": {
       "auditStatus": "source-link-baseline",
@@ -4979,7 +5572,20 @@
           "Section": 323
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "loot": [
+        {
+          "id": "silver-helm",
+          "label": "Take Silver Helm",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Silver Helm"
+            }
+          ]
+        }
+      ]
     },
     "309": {
       "auditStatus": "source-link-baseline",
@@ -5171,7 +5777,20 @@
           "Section": 235
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        }
+      ]
     },
     "322": {
       "auditStatus": "source-link-baseline",
@@ -5529,7 +6148,36 @@
           "Section": 28
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "combat": [
+        {
+          "id": "343-cell-guards",
+          "label": "Cell Guards",
+          "enemies": [
+            {
+              "name": "Doomwolf 1",
+              "cs": 15,
+              "endurance": 24
+            },
+            {
+              "name": "Doomwolf 2",
+              "cs": 14,
+              "endurance": 23
+            },
+            {
+              "name": "Doomwolf 3",
+              "cs": 14,
+              "endurance": 20
+            },
+            {
+              "name": "Ice Barbarian",
+              "cs": 17,
+              "endurance": 29
+            }
+          ],
+          "victoryRoute": 28
+        }
+      ]
     },
     "344": {
       "auditStatus": "source-link-baseline",
