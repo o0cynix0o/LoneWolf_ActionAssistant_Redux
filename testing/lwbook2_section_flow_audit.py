@@ -575,7 +575,23 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
     "226": {"sourceRoutes": [route_action(56, [{"type": "stat", "stat": "gold", "delta": -2}], "Pay 2 Gold Crowns for a room"), {"Section": 276}]},
     "232": combined_route_checks(power_route_check(232, "Sixth Sense", 149, None, label="Sixth Sense guard route"), item_route_check(232, "Seal of Hammerdal", 223, None, label="Seal of Hammerdal route")),
     "233": {"sourceRoutes": [route_action(37, [{"type": "stat", "stat": "gold", "delta": -3}], "Pay 3 Gold Crowns for coach seat"), route_action(148, [{"type": "stat", "stat": "gold", "delta": -1}], "Pay 1 Gold Crown for roof passage"), {"Section": 292}]},
-    "238": {"sourceRoutes": [route_action(169, [{"type": "weapons", "available": True}], "Recover checked Weapons"), route_action(186, [{"type": "weapons", "available": True}], "Recover checked Weapons")]},
+    "238": {
+        "cartwheel": {
+            "id": "book2-section238-cartwheel",
+            "label": "Play Cartwheel",
+            "summary": "Choose a number and stake, then roll 0-9. Exact hits win 8x stake; adjacent hits win 5x stake.",
+            "winLimit": 40,
+            "exactMultiplier": 8,
+            "adjacentMultiplier": 5,
+            "freeTokenFlag": "book2CartwheelFreeTokenUsed",
+            "freeTokenValue": 1,
+            "zeroAdjacent": True,
+        },
+        "sourceRoutes": [
+            route_action(169, [{"type": "weapons", "available": True}], "Recover checked Weapons"),
+            route_action(186, [{"type": "weapons", "available": True}], "Recover checked Weapons"),
+        ],
+    },
     "239": power_route_check(239, "Camouflage", 77, 28, label="Camouflage Szall route"),
     "240": {"sourceRoutes": [route_action(29, [{"type": "stat", "stat": "end", "mode": "restore_max", "condition": cond_power("Healing")}, {"type": "stat", "stat": "end", "mode": "restore_combat_loss_half_floor", "condition": cond_no_power("Healing")}], "Recover after the fire"), route_action(236, [{"type": "stat", "stat": "end", "mode": "restore_max", "condition": cond_power("Healing")}, {"type": "stat", "stat": "end", "mode": "restore_combat_loss_half_floor", "condition": cond_no_power("Healing")}], "Recover after the fire"), route_action(101, [{"type": "stat", "stat": "end", "mode": "restore_max", "condition": cond_power("Healing")}, {"type": "stat", "stat": "end", "mode": "restore_combat_loss_half_floor", "condition": cond_no_power("Healing")}], "Recover after the fire")]},
     "244": power_route_check(244, "Tracking", 147, None, label="Tracking bridge route"),
@@ -877,7 +893,7 @@ def render_report(artifact: dict[str, Any]) -> str:
             "",
             "- The automation-language audit currently reports zero uncovered signal categories.",
             "- Broader real-route play may still find helper wording or timing that deserves polish.",
-            "- Stake-based gambling sections remain manual because the player chooses the wager.",
+            "- Section 238 Cartwheel has a mini-game helper; other arbitrary-stake gambling remains manual until reviewed.",
         ]
     )
     return "\n".join(lines) + "\n"

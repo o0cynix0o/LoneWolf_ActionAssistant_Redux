@@ -22,7 +22,7 @@ This report records implementation coverage and tests only. It does not copy Boo
 - Hardened section 30 Zombie Crew combat so Mindblast immunity is restored onto matching active fights before combat ratio is shown or resolved.
 - Improved combat weapon defaults so section overrides still win, the last valid weapon is remembered, and the Sommerswerd is preferred when no prior choice applies.
 - Enabled Repeat Book 2 so the completion screen restarts Fire on the Water from section 1 with full END, base CS, starting Book 2 inventory, and preserved combat history.
-- Left arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
+- Added a Cartwheel mini-game for section 238; left other arbitrary-stake gambling and arbitrary donations as reviewed manual cases.
 
 ## Validation
 
@@ -36,5 +36,5 @@ This report records implementation coverage and tests only. It does not copy Boo
 ## Current Risk
 
 - Book 2 is now playable by helper coverage, but still needs broader human route playtesting.
-- Section 238 Cartwheel and section 308 Portholes remain manual because the player chooses stakes and numbers.
+- Section 238 Cartwheel now has a Choices-card mini-game. Section 308 Portholes remains manual because the player chooses stakes and numbers.
 - Shop buttons trust the player to choose purchases they can afford, matching the existing helper style.

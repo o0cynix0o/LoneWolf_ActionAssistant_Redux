@@ -68,7 +68,7 @@
       font-size: clamp(1rem, 2vw, 1.25rem);
     }
     main {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1320px, calc(100% - 32px));
       margin: 24px auto 42px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) 320px;
@@ -76,14 +76,14 @@
     }
     .books {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
     }
     .book {
       display: grid;
       grid-template-rows: auto auto 1fr auto;
-      min-height: 360px;
-      padding: 16px;
+      min-height: 500px;
+      padding: 14px;
       border: 1px solid #5d5130;
       border-radius: 6px;
       background: #1a1d14;
@@ -100,20 +100,18 @@
     .cover-frame {
       display: grid;
       place-items: center;
-      min-height: 185px;
-      margin: 18px 0 16px;
-      border: 1px solid rgba(123,106,59,0.72);
+      min-height: 350px;
+      margin: 14px 0 14px;
+      border: 1px solid rgba(123,106,59,0.38);
       border-radius: 4px;
-      background:
-        linear-gradient(145deg, rgba(242,210,122,0.12), rgba(18,21,15,0.16)),
-        #10130d;
+      background: #10130d;
     }
     .cover-frame img {
       width: auto;
-      max-width: calc(100% - 24px);
-      max-height: 170px;
+      max-width: calc(100% - 8px);
+      max-height: 338px;
       object-fit: contain;
-      box-shadow: 0 14px 24px rgba(0,0,0,0.36);
+      box-shadow: 0 14px 24px rgba(0,0,0,0.38);
     }
     .cover-frame.cover-missing::after {
       content: attr(data-fallback);
@@ -229,7 +227,7 @@
         folder: '01fftd',
         sections: 350,
         status: 'Playable release candidate',
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago_thumbnail.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago.jpg'
       },
       {
         number: 2,
@@ -237,7 +235,7 @@
         folder: '02fotw',
         sections: 350,
         status: 'Playable helper build',
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago_thumbnail.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago.jpg'
       },
       {
         number: 3,
@@ -245,7 +243,7 @@
         folder: '03tcok',
         sections: 350,
         status: 'Onboarding helper build',
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago_thumbnail.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago.jpg'
       }
     ];
 

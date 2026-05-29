@@ -213,6 +213,54 @@ def test_section_240_recovers_combat_loss_only() -> None:
     )
 
 
+def test_book2_cartwheel_minigame() -> None:
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 10
+    assistant.inventory["Nobles"] = 10
+    quiet(assistant.set_section, 238)
+    payload = assistant.current_section_flow_payload()["Cartwheel"]
+    assert_true(payload["Available"], "section 238 exposes Cartwheel mini-game")
+    assert_equal(payload["MaxStake"], 11, "section 238 includes the free silver token in stake capacity")
+
+    quiet(assistant.play_cartwheel, 4, 5, 4, True)
+    payload = assistant.current_section_flow_payload()["Cartwheel"]
+    assert_equal(assistant.inventory["GoldCrowns"], 50, "exact Cartwheel hit pays up to table and carry caps")
+    assert_equal(payload["TableWinnings"], 40, "Cartwheel table winnings cap at 40")
+    assert_equal(payload["FreeTokenAvailable"], False, "Cartwheel token is once-only")
+
+    quiet(assistant.play_cartwheel, 4, 1, 4, True)
+    assert_equal(assistant.inventory["GoldCrowns"], 50, "Cartwheel cap blocks further winnings")
+    assert_equal(
+        assistant.current_section_flow_payload()["Cartwheel"]["TableWinnings"],
+        40,
+        "Cartwheel table cap remains fixed after further wins",
+    )
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 3
+    assistant.inventory["Nobles"] = 3
+    quiet(assistant.set_section, 238)
+    quiet(assistant.play_cartwheel, 5, 4, 8, True)
+    assert_equal(assistant.inventory["GoldCrowns"], 0, "Cartwheel miss loses the gold-backed stake")
+    assert_equal(
+        assistant.current_section_flow_payload()["Cartwheel"]["FreeTokenAvailable"],
+        False,
+        "Cartwheel miss still spends the free token",
+    )
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 15
+    assistant.inventory["Nobles"] = 15
+    quiet(assistant.set_section, 238)
+    quiet(assistant.play_cartwheel, 0, 1, 9, False)
+    assert_equal(assistant.inventory["GoldCrowns"], 20, "Cartwheel treats 9 as adjacent to 0")
+    assert_equal(
+        assistant.current_section_flow_payload()["Cartwheel"]["FreeTokenAvailable"],
+        True,
+        "Cartwheel token remains available when not used",
+    )
+
+
 def test_book2_loot_and_item_effects() -> None:
     assistant = fresh_assistant()
     assistant.inventory["Weapons"] = []
@@ -406,6 +454,7 @@ def main() -> int:
     test_chainmail_loss_and_required_meals()
     test_route_costs_and_pass_checks()
     test_section_240_recovers_combat_loss_only()
+    test_book2_cartwheel_minigame()
     test_book2_loot_and_item_effects()
     test_book2_combat_helpers()
     test_book2_terminal_and_completion()

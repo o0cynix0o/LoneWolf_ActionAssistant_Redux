@@ -53,4 +53,4 @@ This report records section numbers, graph counts, and audit classifications onl
 
 - The automation-language audit currently reports zero uncovered signal categories.
 - Broader real-route play may still find helper wording or timing that deserves polish.
-- Stake-based gambling sections remain manual because the player chooses the wager.
+- Section 238 Cartwheel has a mini-game helper; other arbitrary-stake gambling remains manual until reviewed.

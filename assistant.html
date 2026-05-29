@@ -610,6 +610,41 @@
       font-size: 0.76rem;
       text-transform: uppercase;
     }
+    .cartwheel-game {
+      display: grid;
+      gap: 0.45rem;
+      padding: 0.55rem;
+      border: 1px solid #4e4528;
+      border-radius: 6px;
+      background: #10130e;
+    }
+    .cartwheel-fields {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(58px, 1fr));
+      gap: 0.35rem;
+    }
+    .cartwheel-fields label {
+      display: grid;
+      gap: 0.18rem;
+      color: #aeb091;
+      font-size: 0.72rem;
+    }
+    .cartwheel-token {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #d8d0b8;
+      font-size: 0.78rem;
+    }
+    .cartwheel-token input {
+      width: 16px;
+      height: 16px;
+      min-height: 0;
+      padding: 0;
+    }
+    .cartwheel-game p {
+      margin: 0;
+    }
     .panel {
       padding: 0.7rem;
       margin-bottom: 0.65rem;
@@ -1419,6 +1454,9 @@
       if (kind === 'section loot') {
         return `This is a pick-up or section choice the guide team pulled forward because inventory decisions are easy to skip while following the story.`;
       }
+      if (kind === 'cartwheel') {
+        return `Cartwheel has player-chosen stakes, a wraparound number wheel, and a 40 Crown table limit. The mini-game keeps that math in one place while you choose how bold to be.`;
+      }
       if (kind === 'section costs') {
         return `Manual Mode keeps the choice with you, while the guide keeps the cost visible.`;
       }
@@ -1537,6 +1575,13 @@
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
         details.push(receiptDetail('What I would do', compactAdviceSummary(actions, text(option?.label, 'Record the loot choice'))));
         actions.forEach((item) => details.push(receiptDetail('How to do it', item.how)));
+      } else if (kind === 'cartwheel') {
+        const game = flow.Cartwheel || {};
+        summary = 'Manual Advice - Cartwheel';
+        title = 'Manual Cartwheel';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('Table', `Exact hit pays ${text(game.ExactMultiplier, 8)}x. Adjacent hit pays ${text(game.AdjacentMultiplier, 5)}x. Table winnings cap at ${text(game.WinLimit, 40)} Gold Crowns.`));
+        details.push(receiptDetail('How to do it', 'Choose a number 0-9, choose a stake you can cover, roll 0-9, then use Gold Crowns controls to add the payout or subtract the lost stake.'));
       } else if (kind === 'healing') {
         const healing = flow.Healing || {};
         summary = 'Manual Advice - Kai Healing';
@@ -1888,6 +1933,10 @@
       return text(option?.label || id, 'Loot');
     }
 
+    function cartwheelResult(snapshot) {
+      return snapshot?.sectionFlow?.Cartwheel?.LastResult || null;
+    }
+
     function routeLabel(route) {
       const label = text(route?.Label, `Go to ${text(route?.Section, '?')}`);
       return route?.EffectLabel ? `${label} (${route.EffectLabel})` : label;
@@ -1999,6 +2048,27 @@
             ...changes.details,
             receiptDetail('Why', 'This section offers an audited loot or item choice.'),
             receiptDetail('How', 'You clicked the loot Apply button. The assistant updated inventory or flags and saved.'),
+            output,
+            ...achievements
+          ].filter(Boolean)
+        };
+      }
+
+      if (actionName === 'cartwheel') {
+        const result = cartwheelResult(afterSnapshot) || {};
+        const outcome = text(result.Outcome, text(afterSnapshot?.message, 'Cartwheel played'));
+        return {
+          summary: `Cartwheel - ${outcome}`,
+          title: 'Cartwheel Result',
+          details: [
+            receiptDetail('Bet', `Number ${text(result.Bet, payload.bet)} for ${text(result.Stake, payload.stake)} Gold Crown${Number(result.Stake || payload.stake) === 1 ? '' : 's'}`),
+            receiptDetail('Roll', text(result.Roll, payload.raw || '?')),
+            receiptDetail('Result', result.Multiplier ? `${outcome}: payout ${text(result.Payout, 0)} Gold Crowns` : `${outcome}: lost ${text(result.GoldStaked, 0)} Gold Crowns`),
+            result.TokenUsed ? receiptDetail('Token', 'Free silver token used for this stake.') : null,
+            receiptDetail('Table', `Winnings ${text(result.TableWinningsAfter, 0)} / ${text(result.WinLimit, 40)}`),
+            result.Note ? receiptDetail('Limit', result.Note) : null,
+            ...changes.details,
+            receiptDetail('Why', 'Cartwheel pays exact hits at 8x stake and adjacent hits at 5x; 0 sits between 9 and 1. The table caps winnings at 40 Gold Crowns.'),
             output,
             ...achievements
           ].filter(Boolean)
@@ -3577,6 +3647,44 @@
       `;
     }
 
+    function sectionCartwheelRows() {
+      const game = currentFlow().Cartwheel || {};
+      if (!game.Available) return '';
+      const maxStake = Math.max(0, Number(game.MaxStake || 0));
+      const defaultStake = maxStake > 0 ? 1 : 0;
+      const last = game.LastResult || null;
+      return `
+        <div class="cartwheel-game" data-cartwheel-game>
+          <p class="muted">${escapeHtml(text(game.Summary, 'Pick a number, stake Gold Crowns, and roll 0-9.'))}</p>
+          <div class="cartwheel-fields">
+            <label>Bet
+              <input data-cartwheel-bet type="number" min="0" max="9" value="0">
+            </label>
+            <label>Stake
+              <input data-cartwheel-stake type="number" min="1" max="${escapeHtml(maxStake || 1)}" value="${escapeHtml(defaultStake)}">
+            </label>
+            <label>Roll
+              <input data-cartwheel-roll type="number" min="0" max="9" placeholder="auto">
+            </label>
+          </div>
+          <label class="cartwheel-token">
+            <input data-cartwheel-token type="checkbox" ${game.FreeTokenAvailable ? 'checked' : 'disabled'}>
+            <span>${game.FreeTokenAvailable ? `Use free silver token (+${escapeHtml(game.FreeTokenValue)})` : 'Free silver token spent'}</span>
+          </label>
+          <div class="controls">
+            ${maxStake > 0 ? modeActionButton('data-cartwheel-play', 'Play Cartwheel', 'cartwheel') : '<button type="button" disabled>Play Cartwheel</button>'}
+            <span class="muted">Table winnings ${escapeHtml(game.TableWinnings || 0)} / ${escapeHtml(game.WinLimit || 40)}</span>
+          </div>
+          ${last ? `
+            <div class="item-row">
+              <small>${escapeHtml(text(last.Roll, '?'))}</small>
+              <span class="wrap">${escapeHtml(text(last.Outcome, 'Result'))}: ${escapeHtml(last.Multiplier ? `+${last.Payout} Gold` : `-${last.GoldStaked} Gold`)}</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function routeCheckOutcomeText(outcome) {
       const label = text(outcome.Label, 'Result');
       const test = text(outcome.Test);
@@ -3617,6 +3725,7 @@
       const entry = currentFlow().Entry || {};
       const groups = [
         choiceGroup('Available Checked Routes', sectionRouteCheckChoiceRows()),
+        choiceGroup('Cartwheel', sectionCartwheelRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),
         choiceGroup('Section Roll', sectionRollRows(entry))
@@ -4504,6 +4613,10 @@
         manualSectionAdvice('section loot', { id: button.dataset.flowLoot });
         return;
       }
+      if (isManualMode() && button.dataset.cartwheelPlay !== undefined) {
+        manualSectionAdvice('cartwheel');
+        return;
+      }
       if (isManualMode() && button.dataset.healing !== undefined) {
         manualSectionAdvice('healing');
         return;
@@ -4533,6 +4646,16 @@
       if (button.dataset.route) await action({ action: 'route', section: Number(button.dataset.route) });
       if (button.dataset.sectionCombatStart !== undefined) await action({ action: 'section_combat_start', id: button.dataset.sectionCombatStart });
       if (button.dataset.flowLoot) await action({ action: 'flow_loot', id: button.dataset.flowLoot });
+      if (button.dataset.cartwheelPlay !== undefined) {
+        const game = button.closest('[data-cartwheel-game]');
+        await action({
+          action: 'cartwheel',
+          bet: Number(game?.querySelector('[data-cartwheel-bet]')?.value || 0),
+          stake: Number(game?.querySelector('[data-cartwheel-stake]')?.value || 0),
+          raw: game?.querySelector('[data-cartwheel-roll]')?.value || '',
+          useToken: Boolean(game?.querySelector('[data-cartwheel-token]')?.checked)
+        });
+      }
       if (button.dataset.healing !== undefined) await action({ action: 'healing' });
       if (button.dataset.sectionLoss) {
         const [id, type, slot] = button.dataset.sectionLoss.split(':');

@@ -3108,6 +3108,177 @@ class LoneWolfReduxAssistant:
         self.autosave()
         return result
 
+    def cartwheel_session_key(self) -> str:
+        return f"cartwheelWinnings:{self.current_visit_key()}"
+
+    def current_cartwheel_payload(self, entry: dict[str, Any]) -> dict[str, Any] | None:
+        game = entry.get("cartwheel") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            return None
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.cartwheel_session_key()
+        win_limit = max(0, int(game.get("winLimit") or 40))
+        table_winnings = max(0, int(stored.get(session_key) or 0))
+        token_flag = str(game.get("freeTokenFlag") or "book2CartwheelFreeTokenUsed")
+        token_value = max(0, int(game.get("freeTokenValue") or 0))
+        free_token_available = token_value > 0 and not bool(self.automation_flags.get(token_flag))
+        gold = int(self.inventory.get("GoldCrowns") or 0)
+        last_result = stored.get(f"{session_key}:last")
+        if not isinstance(last_result, dict) or last_result.get("VisitKey") != self.current_visit_key():
+            last_result = None
+        return {
+            "Available": True,
+            "Id": str(game.get("id") or "cartwheel"),
+            "Label": str(game.get("label") or "Play Cartwheel"),
+            "Summary": str(game.get("summary") or ""),
+            "WinLimit": win_limit,
+            "TableWinnings": min(table_winnings, win_limit),
+            "RemainingWinnings": max(0, win_limit - table_winnings),
+            "ExactMultiplier": max(0, int(game.get("exactMultiplier") or 8)),
+            "AdjacentMultiplier": max(0, int(game.get("adjacentMultiplier") or 5)),
+            "FreeTokenAvailable": free_token_available,
+            "FreeTokenValue": token_value,
+            "MaxStake": gold + (token_value if free_token_available else 0),
+            "LastResult": json_clone(last_result) if last_result else None,
+        }
+
+    def play_cartwheel(
+        self,
+        bet_number: Any,
+        stake: Any,
+        raw_roll: Any | None = None,
+        use_free_token: Any = True,
+    ) -> dict[str, Any] | None:
+        entry = self.current_section_flow_entry() or {}
+        game = entry.get("cartwheel") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            print("Cartwheel is not available in this section.")
+            return None
+
+        try:
+            bet = max(0, min(9, int(bet_number)))
+            wager = int(stake)
+        except (TypeError, ValueError):
+            print("Cartwheel needs a bet number and stake.")
+            return None
+        if wager < 1:
+            print("Cartwheel stake must be at least 1 Gold Crown.")
+            return None
+
+        roll = coerce_random_digit(raw_roll)
+        win_limit = max(0, int(game.get("winLimit") or 40))
+        exact_multiplier = max(0, int(game.get("exactMultiplier") or 8))
+        adjacent_multiplier = max(0, int(game.get("adjacentMultiplier") or 5))
+        token_flag = str(game.get("freeTokenFlag") or "book2CartwheelFreeTokenUsed")
+        token_value = max(0, int(game.get("freeTokenValue") or 0))
+        token_available = token_value > 0 and not bool(self.automation_flags.get(token_flag))
+        use_token_text = str(use_free_token).strip().lower()
+        use_token = use_free_token is True or use_token_text not in {"", "0", "false", "no", "off"}
+        token_used = use_token and token_available
+        token_credit = min(wager, token_value) if token_used else 0
+        gold_staked = max(0, wager - token_credit)
+        gold_before = int(self.inventory.get("GoldCrowns") or 0)
+        if gold_staked > gold_before:
+            print(
+                f"Cartwheel stake {wager} needs {gold_staked} Gold Crowns, "
+                f"but only {gold_before} are carried."
+            )
+            return None
+
+        if token_used:
+            self.automation_flags[token_flag] = True
+
+        clockwise = (roll - bet) % 10
+        if roll == bet:
+            outcome = "Exact hit"
+            multiplier = exact_multiplier
+        elif clockwise in {1, 9}:
+            outcome = "Adjacent hit"
+            multiplier = adjacent_multiplier
+        else:
+            outcome = "Miss"
+            multiplier = 0
+
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.cartwheel_session_key()
+        winnings_before = max(0, int(stored.get(session_key) or 0))
+        payout = 0
+        gold_delta = 0
+        cap_note = ""
+
+        if multiplier:
+            requested = wager * multiplier
+            remaining = max(0, win_limit - winnings_before)
+            payout = min(requested, remaining)
+            before_add = int(self.inventory.get("GoldCrowns") or 0)
+            self.inventory["GoldCrowns"] = max(0, min(50, before_add + payout))
+            self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+            gold_delta = int(self.inventory["GoldCrowns"]) - before_add
+            if payout < requested:
+                cap_note = f"Cartwheel table limit capped payout at {payout}."
+            if gold_delta < payout:
+                cap_note = (cap_note + " " if cap_note else "") + "Gold carry limit capped carried winnings."
+        else:
+            if gold_staked:
+                self.inventory["GoldCrowns"] = max(0, gold_before - gold_staked)
+                self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+            gold_delta = int(self.inventory.get("GoldCrowns") or 0) - gold_before
+
+        winnings_after = min(win_limit, winnings_before + max(0, gold_delta))
+        stored[session_key] = winnings_after
+        result = {
+            "Game": "Cartwheel",
+            "VisitKey": self.current_visit_key(),
+            "Bet": bet,
+            "Stake": wager,
+            "Roll": roll,
+            "Outcome": outcome,
+            "Multiplier": multiplier,
+            "Payout": payout,
+            "GoldDelta": gold_delta,
+            "GoldBefore": gold_before,
+            "GoldAfter": int(self.inventory.get("GoldCrowns") or 0),
+            "GoldStaked": gold_staked,
+            "TokenUsed": token_used,
+            "TableWinningsBefore": winnings_before,
+            "TableWinningsAfter": winnings_after,
+            "WinLimit": win_limit,
+            "Note": cap_note,
+        }
+        stored[f"{session_key}:last"] = result
+        journal = as_list(self.automation.get("Journal"))
+        journal.append(
+            {
+                "Kind": "cartwheel",
+                "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                "BookNumber": int(self.character["BookNumber"]),
+                "Section": int(self.state["CurrentSection"]),
+                "VisitKey": self.current_visit_key(),
+                "Summary": f"Cartwheel {outcome}",
+                "Result": json_clone(result),
+            }
+        )
+        self.automation["Journal"] = journal[-100:]
+        self.autosave()
+
+        print(f"Cartwheel: bet {bet}, stake {wager}, roll {roll} - {outcome}.")
+        if token_used:
+            print(f"Free silver token used for {token_credit} of the stake.")
+        if multiplier:
+            print(f"Payout {payout} Gold Crowns; table winnings {winnings_before}->{winnings_after}.")
+        else:
+            print(f"Lost {gold_staked} Gold Crowns.")
+        if cap_note:
+            print(cap_note)
+        print(f"Gold Crowns {gold_before}->{self.inventory['GoldCrowns']}")
+        return result
+
     def current_section_automation_payload(self) -> dict[str, Any]:
         book_number = int(self.character["BookNumber"])
         section = int(self.state["CurrentSection"])
@@ -3366,6 +3537,7 @@ class LoneWolfReduxAssistant:
             "LastRoll": last_roll,
             "RouteChecks": self.evaluate_route_checks(entry, automation),
             "StagedRoll": self.current_staged_roll_payload(entry),
+            "Cartwheel": self.current_cartwheel_payload(entry),
             "Healing": self.current_healing_payload(),
             "LossChoices": self.current_loss_choices_payload(entry),
             "Automation": automation,

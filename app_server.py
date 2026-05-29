@@ -308,6 +308,17 @@ def handle_action(payload: dict) -> str:
         return capture_output(lambda: ASSISTANT.follow_route(int(payload.get("section") or 1)))
     if action == "flow_loot":
         return capture_output(lambda: ASSISTANT.apply_flow_loot(str(payload.get("id") or "")))
+    if action == "cartwheel":
+        raw = payload.get("raw")
+        raw_roll = int(raw) if str(raw or "").strip() else None
+        return capture_output(
+            lambda: ASSISTANT.play_cartwheel(
+                payload.get("bet"),
+                payload.get("stake"),
+                raw_roll,
+                payload.get("useToken", True),
+            )
+        )
     if action == "healing":
         return capture_output(lambda: ASSISTANT.apply_healing())
     if action == "section_loss":

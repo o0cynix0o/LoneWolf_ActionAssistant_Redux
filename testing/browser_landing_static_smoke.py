@@ -24,9 +24,9 @@ def main() -> int:
         assert_true("Flight from the Dark" in source, f"{source_name} should list Book 1.")
         assert_true("Fire on the Water" in source, f"{source_name} should list Book 2.")
         assert_true("The Caverns of Kalte" in source, f"{source_name} should list Book 3.")
-        assert_true("LW01_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 1 cover art.")
-        assert_true("LW02_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 2 cover art.")
-        assert_true("LW03_Mongoose_Alberto_Del_Lago_thumbnail.jpg" in source, f"{source_name} should show Book 3 cover art.")
+        assert_true("LW01_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 1 cover art.")
+        assert_true("LW02_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 2 cover art.")
+        assert_true("LW03_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 3 cover art.")
 
     assert_true("number: 1" in index_source, "index.html should include Book 1 in its card data.")
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")

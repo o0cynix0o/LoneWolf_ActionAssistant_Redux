@@ -6897,7 +6897,18 @@
           "effectLabel": "Recover checked Weapons"
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "cartwheel": {
+        "id": "book2-section238-cartwheel",
+        "label": "Play Cartwheel",
+        "summary": "Choose a number and stake, then roll 0-9. Exact hits win 8x stake; adjacent hits win 5x stake.",
+        "winLimit": 40,
+        "exactMultiplier": 8,
+        "adjacentMultiplier": 5,
+        "freeTokenFlag": "book2CartwheelFreeTokenUsed",
+        "freeTokenValue": 1,
+        "zeroAdjacent": true
+      }
     },
     "239": {
       "auditStatus": "source-link-baseline",

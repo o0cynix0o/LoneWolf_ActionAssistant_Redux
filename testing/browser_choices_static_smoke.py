@@ -42,6 +42,18 @@ def main() -> int:
         "matched.ChoiceLabel || route?.EffectLabel || route?.Label" in source,
         "Checked-route labels should prefer explicit choice text before source route action text.",
     )
+    assert_true(
+        "choiceGroup('Cartwheel'" in source,
+        "Choices card should render the Cartwheel mini-game group when available.",
+    )
+    assert_true(
+        "data-cartwheel-play" in source,
+        "Cartwheel mini-game should have a play action button.",
+    )
+    assert_true(
+        "action: 'cartwheel'" in source,
+        "Cartwheel mini-game should call the cartwheel action endpoint.",
+    )
 
     print("Browser Choices static smoke passed.")
     return 0
