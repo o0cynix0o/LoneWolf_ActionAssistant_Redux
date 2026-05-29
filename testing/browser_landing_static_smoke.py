@@ -31,7 +31,10 @@ def main() -> int:
     assert_true("number: 1" in index_source, "index.html should include Book 1 in its card data.")
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")
     assert_true("number: 3" in index_source, "index.html should include Book 3 in its card data.")
-    assert_true("lone-wolf-logo.jpg" in index_source, "index.html should include the Lone Wolf logo banner.")
+    assert_true(
+        "assets/images/lone-wolf-title-banner.png" in index_source,
+        "index.html should include the local Lone Wolf title banner.",
+    )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
         "assistant.html?book=${book.number}" in index_source,
