@@ -12,6 +12,8 @@ Book 3, **The Caverns of Kalte**, has its first onboarding helper build in place
 
 Book 4, **The Chasm of Doom**, now has its first onboarding helper build in place. It supports Book 3 -> Book 4 continuation, standalone Book 4 setup, source routes, confirmed simple section effects, route checks, random helpers, loss-choice helpers, loot buttons, combat presets, death recovery, completion, and repeat-book reset. Keep treating it as an onboarding helper build until human route playtesting fills in achievements and polish.
 
+Book 5, **Shadow on the Sand**, now has its first onboarding helper build in place. It supports Book 4 -> Book 5 continuation, standalone Book 5 setup, Special Item safekeeping, source routes, confirmed simple section effects, route checks, random helpers, loss-choice helpers, loot buttons, combat presets, death/failure recovery, completion, and repeat-book reset. Keep treating it as an onboarding helper build until human route playtesting fills in achievements and polish.
+
 Local source:
 
 ```text
@@ -36,6 +38,12 @@ Book 4 source is installed locally:
 C:\Scripts\LoneWolf_ActionAssistant_Redux\books\lw\04tcod
 ```
 
+Book 5 source is installed locally:
+
+```text
+C:\Scripts\LoneWolf_ActionAssistant_Redux\books\lw\05sots
+```
+
 Do not use Grey Star rules as the source of truth. Grey Star supplied the workflow, cards, receipts, layout system, and testing discipline. Lone Wolf rules must come from the local Project Aon Lone Wolf book files and the original Lone Wolf project.
 
 ## What Was Bootstrapped
@@ -52,11 +60,11 @@ Do not use Grey Star rules as the source of truth. Grey Star supplied the workfl
 
 The first issue pass replaced the visible Book 1 character creation and sheet model. The second issue pass generated the Book 1 section-flow baseline from the local Project Aon `sect*.htm` files and wired route buttons to that checked-in graph. The third issue pass added the first conservative Book 1 simple automations. The fourth issue pass added the first Book 1 combat preset baseline. The fifth issue pass added the first Book 1 route-check and random outcome baseline. The sixth issue pass added the first repeatable end-to-end Book 1 playtest route to section 350. The seventh issue pass added branch playtests for early combat, death recovery, and inventory/stat consequences. The eighth issue pass added same-section random side effects and corrected Laumspur recovery behavior. The ninth issue pass added explicit Kai Healing and player-choice loss helpers. The tenth issue pass added the section 21 staged marsh roll helper. The eleventh issue pass added the section 307 weapon exchange helper. The twelfth issue pass completed the section-by-section automation-language scan. The thirteenth issue pass added an exhaustive checked-preset combat edge playtest. The fourteenth issue pass added a broader Book 1 route gauntlet. The fifteenth issue pass backfilled the reusable book pipeline, Book 1 automation ledger, achievement candidates, and player-facing Book 1 strategy guide. The sixteenth issue pass implemented the approved Book 1 achievement batch with automatic sync/backfill. The seventeenth issue pass scaffolded the Lone Wolf GitHub wiki and docs mirror using the Grey Star wiki structure. The eighteenth issue pass removed safe leftover scaffold references from runtime code and recorded the reference audit. The nineteenth issue pass brought project-wrapper parity closer to Grey Star by adding a Lone Wolf source map, expanding README/install/release docs, adding a Book 1 aggregate playtest wrapper, and adding audit/campaign/achievement rollup placeholders. The twentieth through twenty-fifth issue passes polished the browser play experience: receipts moved out of Choices, ordinary book routes stopped duplicating as choice buttons, the map image scales to the screen, death screens gained themed copy, Repeat Book 1 resets the run while keeping durable history, and Hunting Meal exemptions now clearly report unchanged Meals. Issue #26 published the first Book 1 release candidate. Issue #27 opened the Book 2 pipeline with a source/rules/handoff scan and rulings queue. Issue #28 implemented Book 2 setup/start-state support. Issue #29 added the Book 2 source-link section-flow baseline. Issue #30 completed the Book 2 playable helper pipeline: automation-language audit, simple effects, route checks, loot/shop buttons, combat presets, terminal death/completion handling, achievements, guide docs, and smoke tests. The following debt remains for later passes:
 
-Book 2 playtest follow-ups #31 through #39 fixed section 240 recovery, kept route-effect receipts out of Choices, made the Magic Spear usable before section 106 combat, surfaced Book 2 on landing/library pages, improved checked-route labels, removed the Magic Spear when given to Rhygar, repaired stale Mindblast immunity on section 30 Zombie Crew combat, preferred/remembered combat weapons with the Sommerswerd default, and enabled Repeat Book 2 from the completion screen. Issue #40 hardened `docs\LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` into the command contract for future `Onboard book N` work. Issue #42 started Book 3 onboarding, recorded the rulings, and added the first playable helper build. Issue #43 applied the same command workflow to Book 4 `04tcod`, recorded user rulings, and added the first playable helper build.
+Book 2 playtest follow-ups #31 through #39 fixed section 240 recovery, kept route-effect receipts out of Choices, made the Magic Spear usable before section 106 combat, surfaced Book 2 on landing/library pages, improved checked-route labels, removed the Magic Spear when given to Rhygar, repaired stale Mindblast immunity on section 30 Zombie Crew combat, preferred/remembered combat weapons with the Sommerswerd default, and enabled Repeat Book 2 from the completion screen. Issue #40 hardened `docs\LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` into the command contract for future `Onboard book N` work. Issue #42 started Book 3 onboarding, recorded the rulings, and added the first playable helper build. Issue #43 applied the same command workflow to Book 4 `04tcod`, recorded user rulings, and added the first playable helper build. Issue #44 applied the workflow to Book 5 `05sots`, including safekeeping as a durable campaign mechanic going forward.
 
 - Broader Book 2 human route playtesting and any polish it reveals.
-- Remaining Book 3 and Book 4 route polish, achievement coverage, and strategy-guide work.
-- Book 5 and later transition rules.
+- Remaining Book 3, Book 4, and Book 5 route polish, achievement coverage, and strategy-guide work.
+- Book 6 and later transition rules, including the next major rules-series handoff.
 - Legacy compatibility code for older scaffold-derived save fields.
 - Any remaining route aftermaths where the book asks the player to choose which item or weapon is lost or exchanged.
 - Any remaining staged random edge cases found during broader route playtesting.
@@ -299,6 +307,18 @@ Issue #43 added the Book 4 helper build:
 - Book 4 rulings are recorded in `testing\logs\LWBOOK4_RULINGS_QUEUE.md`.
 - `testing\lwbook4_setup_smoke.py` and `testing\lwbook4_playable_pipeline_smoke.py` cover the first Book 4 setup/lifecycle/helper slice.
 - `testing\playtest_book4.py` runs the Book 4 aggregate validation plus Book 2/3 regression smokes.
+
+Issue #44 added the Book 5 helper build:
+
+- `testing\lwbook5_section_flow_audit.py` crawls `books\lw\05sots\sect*.htm` and compares the local graph to the Project Aon SVGZ route graph.
+- `data\book5-section-flows.json` contains 400 Book 5 section entries, 683 source route links, route checks, random helpers, optional loot, loss-choice helpers, and combat presets.
+- `data\book5-simple-automations.json` contains confirmed Book 5 effects for safekeeping-aware setup, palace confiscation/restoration, Limbdeath poisoning, regional Meal handling, Endurance changes, terminal failures, Sommerswerd loss/recovery, and section 400 completion.
+- `create_book5_character_state` supports a fresh Book 5 start.
+- `continue_completed_book` supports Book 4 completion -> Book 5 setup with one new Kai Discipline, Book 5 Gold roll, hard 50-Crown cap, Map of Vassagonia, carry-over Backpack Items, up to four equipment choices, weapon exchanges, and selected Special Items moved into monastery safekeeping.
+- Safekeeping is now separate from temporary confiscated gear. Stored Special Items are unavailable during the book, protected from loss, and carried in `Automation.Stored.safekeepingSpecialItems` with place-aware `Automation.Stored.safekeepingRecords` for future books.
+- Book 5 rulings are recorded in `testing\logs\LWBOOK5_RULINGS_QUEUE.md`; the implementation summary is in `testing\logs\LWBOOK5_PLAYABLE_PIPELINE.md`.
+- `testing\lwbook5_setup_smoke.py` and `testing\lwbook5_playable_pipeline_smoke.py` cover the first Book 5 setup/lifecycle/helper slice.
+- `testing\playtest_book5.py` runs the Book 5 aggregate validation plus Book 2-4 regression smokes.
 
 ## GitHub Workflow
 

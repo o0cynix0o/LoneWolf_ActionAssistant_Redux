@@ -1082,6 +1082,7 @@
         <button class="book-button" type="button" data-book="2">Book 2</button>
         <button class="book-button" type="button" data-book="3">Book 3</button>
         <button class="book-button" type="button" data-book="4">Book 4</button>
+        <button class="book-button" type="button" data-book="5">Book 5</button>
         <button type="button" id="currentBtn">Current</button>
         <button type="button" id="titleBtn">Title</button>
         <span class="reader-title" id="readerTitle">Loading...</span>
@@ -1129,7 +1130,8 @@
       { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 },
       { number: 2, title: 'Fire on the Water', folder: '02fotw', sections: 350 },
       { number: 3, title: 'The Caverns of Kalte', folder: '03tcok', sections: 350 },
-      { number: 4, title: 'The Chasm of Doom', folder: '04tcod', sections: 350 }
+      { number: 4, title: 'The Chasm of Doom', folder: '04tcod', sections: 350 },
+      { number: 5, title: 'Shadow on the Sand', folder: '05sots', sections: 400 }
     ];
     const book2Armoury = [
       ['sword', 'Sword'],
@@ -1165,6 +1167,15 @@
       ['five-special-rations', 'Five Special Rations'],
       ['mace', 'Mace'],
       ['chainmail-waistcoat', 'Chainmail Waistcoat'],
+      ['shield', 'Shield']
+    ];
+    const book5Equipment = [
+      ['dagger', 'Dagger'],
+      ['potion-of-laumspur', 'Potion of Laumspur'],
+      ['sword', 'Sword'],
+      ['spear', 'Spear'],
+      ['two-special-rations', '2 Special Rations'],
+      ['mace', 'Mace'],
       ['shield', 'Shield']
     ];
     const kaiDisciplines = ['Camouflage', 'Hunting', 'Sixth Sense', 'Tracking', 'Healing', 'Weaponskill', 'Mindshield', 'Mindblast', 'Animal Kinship', 'Mind Over Matter'];
@@ -2562,7 +2573,7 @@
       const summary = completion.Summary || {};
       const nextBook = Number(completion.NextBookNumber || 0);
       const nextTitle = text(completion.NextBookTitle, '');
-      const continueControls = completion.CanContinue && [2, 3, 4].includes(nextBook) ? bookContinueForm(completion) : (
+      const continueControls = completion.CanContinue && [2, 3, 4, 5].includes(nextBook) ? bookContinueForm(completion) : (
         completion.CanContinue
           ? '<p class="muted">That next book is not enabled yet.</p>'
           : '<p class="muted">The supported campaign path is complete.</p>'
@@ -2613,16 +2624,24 @@
     }
 
     function equipmentOptionsForBook(bookNumber) {
+      if (Number(bookNumber) === 5) return book5Equipment;
       if (Number(bookNumber) === 4) return book4Equipment;
       if (Number(bookNumber) === 3) return book3Equipment;
       return book2Armoury;
     }
 
+    function equipmentChoiceRuleForBook(bookNumber) {
+      if (Number(bookNumber) === 5) return { min: 0, max: 4, exact: false };
+      if (Number(bookNumber) === 4) return { min: 6, max: 6, exact: true };
+      return { min: 2, max: 2, exact: true };
+    }
+
     function equipmentChoiceCountForBook(bookNumber) {
-      return Number(bookNumber) === 4 ? 6 : 2;
+      return equipmentChoiceRuleForBook(bookNumber).max;
     }
 
     function equipmentLabelForBook(bookNumber) {
+      if (Number(bookNumber) === 5) return 'Book 5 Field Issue - choose up to 4';
       if (Number(bookNumber) === 4) return `Book 4 Field Issue - choose ${equipmentChoiceCountForBook(bookNumber)}`;
       if (Number(bookNumber) === 3) return `Anskaven Equipment - choose ${equipmentChoiceCountForBook(bookNumber)}`;
       return `Royal Armoury - choose ${equipmentChoiceCountForBook(bookNumber)}`;
@@ -2649,10 +2668,27 @@
       `;
     }
 
+    function safekeepingChoiceGrid(items) {
+      const specialItems = arr(items).map((item) => text(item)).filter(Boolean);
+      if (!specialItems.length) return '';
+      return `
+        <div class="check-field">
+          <span>Monastery Safekeeping - optional Special Items</span>
+          <div class="check-grid">${specialItems.map((item) => `
+            <label class="check-option">
+              <input type="checkbox" name="safekeepingSpecialItems" value="${escapeHtml(item)}">
+              <span>${escapeHtml(item)}</span>
+            </label>
+          `).join('')}</div>
+        </div>
+      `;
+    }
+
     function bookContinueForm(completion) {
       const choices = arr(completion.KaiDisciplineChoices);
       const kaiOptions = choices.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
       const weapons = arr((completion.Summary || {}).Weapons);
+      const specialItems = arr((completion.Summary || {}).SpecialItems);
       const nextBook = Number(completion.NextBookNumber || 2);
       const equipmentLabel = equipmentLabelForBook(nextBook);
       return `
@@ -2664,6 +2700,7 @@
             <div class="check-grid">${equipmentChoiceGrid(nextBook)}</div>
           </div>
           ${weaponExchangeFields(weapons)}
+          ${nextBook === 5 ? safekeepingChoiceGrid(specialItems) : ''}
           <button type="submit">Continue to Book ${escapeHtml(nextBook)}</button>
         </form>
       `;
@@ -3869,7 +3906,7 @@
       if (help) help.textContent = 'Kai Disciplines - choose 5';
       const bookNumber = Number(form?.querySelector('[data-new-book]')?.value || 1);
       form?.querySelectorAll('[data-book-setup]').forEach((item) => {
-        item.hidden = ![2, 3, 4].includes(bookNumber);
+        item.hidden = ![2, 3, 4, 5].includes(bookNumber);
       });
       const equipmentHelp = form?.querySelector('[data-equipment-help]');
       if (equipmentHelp) equipmentHelp.textContent = equipmentLabelForBook(bookNumber);
@@ -4551,14 +4588,18 @@
         : {};
       return {
         Weapons: arr(equipment.Weapons),
-        BackpackItems: arr(equipment.BackpackItems).length ? arr(equipment.BackpackItems) : arr(stored.confiscatedBackpackItems)
+        BackpackItems: arr(equipment.BackpackItems).length ? arr(equipment.BackpackItems) : arr(stored.confiscatedBackpackItems),
+        SpecialItems: arr(equipment.SpecialItems),
+        GoldCrowns: Number(equipment.GoldCrowns || 0),
+        SafekeepingSpecialItems: arr(stored.safekeepingSpecialItems),
+        SafekeepingRecords: arr(stored.safekeepingRecords).filter((item) => item && typeof item === 'object')
       };
     }
     function storedGearPanel() {
       const flags = app.state.Automation?.Flags || {};
-      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false || flags.specialItemsAvailable === false;
       const stored = storedEquipment();
-      if (!gearUnavailable && !stored.Weapons.length && !stored.BackpackItems.length) return '';
+      if (!gearUnavailable && !stored.Weapons.length && !stored.BackpackItems.length && !stored.SpecialItems.length && !stored.GoldCrowns && !stored.SafekeepingSpecialItems.length) return '';
       return `
         <div class="panel">
           <h2>Stored Gear</h2>
@@ -4568,13 +4609,20 @@
     }
     function storedGearBody(showEmpty = true) {
       const flags = app.state.Automation?.Flags || {};
-      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false;
+      const gearUnavailable = flags.weaponsAvailable === false || flags.backpackAvailable === false || flags.backpackItemsAvailable === false || flags.specialItemsAvailable === false;
       const stored = storedEquipment();
       const weaponRows = stored.Weapons.map((item) => `<div class="item-row"><small>W</small><span>${escapeHtml(item)}</span></div>`);
       const backpackRows = stored.BackpackItems.map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span></div>`);
-      const rows = weaponRows.concat(backpackRows).join('');
+      const specialRows = stored.SpecialItems.map((item) => `<div class="item-row"><small>S</small><span>${escapeHtml(item)}</span></div>`);
+      const safekeepingRows = stored.SafekeepingSpecialItems.map((item) => {
+        const record = stored.SafekeepingRecords.find((entry) => text(entry.Item).toLowerCase() === text(item).toLowerCase());
+        const place = text(record?.Place, 'Safekeeping');
+        return `<div class="item-row"><small>${escapeHtml(place)}</small><span>${escapeHtml(item)}</span></div>`;
+      });
+      const goldRow = stored.GoldCrowns ? `<div class="item-row"><small>Gold</small><span>${escapeHtml(stored.GoldCrowns)} Crown(s)</span></div>` : '';
+      const rows = weaponRows.concat(backpackRows, specialRows, goldRow ? [goldRow] : [], safekeepingRows).join('');
       return `
-        <p class="muted">${gearUnavailable ? 'Unavailable until the book restores your gear.' : 'Recovered gear record.'}</p>
+        <p class="muted">${gearUnavailable ? 'Unavailable until the book restores your gear.' : 'Recovered gear and safekeeping record.'}</p>
         ${rows || (showEmpty ? '<div class="item-row"><span>No stored gear recorded.</span></div>' : '')}
       `;
     }
@@ -4925,11 +4973,21 @@
       if (form.id === 'continueBookForm') {
         const armourySelections = formData.getAll('armouryChoices');
         const nextBook = Number(form.dataset.nextBook || 0);
-        const requiredEquipment = equipmentChoiceCountForBook(nextBook);
-        if ([2, 3, 4].includes(nextBook) && armourySelections.length !== requiredEquipment) {
+        const equipmentRule = equipmentChoiceRuleForBook(nextBook);
+        if (
+          [2, 3, 4, 5].includes(nextBook)
+          && (
+            armourySelections.length < equipmentRule.min
+            || armourySelections.length > equipmentRule.max
+            || (equipmentRule.exact && armourySelections.length !== equipmentRule.max)
+          )
+        ) {
+          const expected = equipmentRule.exact
+            ? `exactly ${equipmentRule.max}`
+            : `up to ${equipmentRule.max}`;
           setReceipt({
-            summary: `Book ${nextBook} - Choose exactly ${requiredEquipment} equipment items.`,
-            details: [receiptDetail('Selected', `${armourySelections.length}/${requiredEquipment}`)]
+            summary: `Book ${nextBook} - Choose ${expected} equipment items.`,
+            details: [receiptDetail('Selected', `${armourySelections.length}/${equipmentRule.max}`)]
           });
           return;
         }
@@ -4938,8 +4996,9 @@
           kaiDiscipline: data.kaiDiscipline,
           goldRoll: data.goldRoll,
           armouryChoices: nextBook === 2 ? armourySelections : [],
-          equipmentChoices: [3, 4].includes(nextBook) ? armourySelections : [],
-          weaponExchanges: formData.getAll('weaponExchanges').filter(Boolean)
+          equipmentChoices: [3, 4, 5].includes(nextBook) ? armourySelections : [],
+          weaponExchanges: formData.getAll('weaponExchanges').filter(Boolean),
+          safekeepingSpecialItems: formData.getAll('safekeepingSpecialItems').filter(Boolean)
         });
       }
       if (form.id === 'combatForm') await action({
@@ -4966,11 +5025,21 @@
           return;
         }
         const armourySelections = formData.getAll('armouryChoices');
-        const requiredEquipment = equipmentChoiceCountForBook(bookNumber);
-        if ([2, 3, 4].includes(bookNumber) && armourySelections.length !== requiredEquipment) {
+        const equipmentRule = equipmentChoiceRuleForBook(bookNumber);
+        if (
+          [2, 3, 4, 5].includes(bookNumber)
+          && (
+            armourySelections.length < equipmentRule.min
+            || armourySelections.length > equipmentRule.max
+            || (equipmentRule.exact && armourySelections.length !== equipmentRule.max)
+          )
+        ) {
+          const expected = equipmentRule.exact
+            ? `exactly ${equipmentRule.max}`
+            : `up to ${equipmentRule.max}`;
           setReceipt({
-            summary: `Book ${bookNumber} - Choose exactly ${requiredEquipment} equipment items.`,
-            details: [receiptDetail('Selected', `${armourySelections.length}/${requiredEquipment}`)]
+            summary: `Book ${bookNumber} - Choose ${expected} equipment items.`,
+            details: [receiptDetail('Selected', `${armourySelections.length}/${equipmentRule.max}`)]
           });
           return;
         }
@@ -4981,7 +5050,7 @@
           kaiDisciplines: kaiSelections,
           goldRoll: data.goldRoll,
           armouryChoices: bookNumber === 2 ? armourySelections : [],
-          equipmentChoices: [3, 4].includes(bookNumber) ? armourySelections : []
+          equipmentChoices: [3, 4, 5].includes(bookNumber) ? armourySelections : []
         });
       }
       form.reset?.();

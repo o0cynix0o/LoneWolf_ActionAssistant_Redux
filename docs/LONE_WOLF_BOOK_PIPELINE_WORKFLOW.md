@@ -87,6 +87,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Healing, recovery, poison, fatigue, and history-based recovery
   - Meals and Hunting-style exemptions or suppressions
   - Backpack, Weapons, Special Items, item limits, and item containers
+  - Safekeeping, temporary confiscation, or any other unavailable-but-not-lost gear state
   - Gold gains, costs, caps, and carry-over
   - Combat rules, enemy immunities, weapon restrictions, timed effects, evasion, survival, fixed-CS fights, and per-round damage
   - Carry-over rules from the previous book and into the next book
@@ -103,6 +104,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Weapons and weapon exchanges
   - Backpack availability and Backpack Items
   - Special Items
+  - Safekeeping choices and protected stored items
   - Meals
   - Gold
   - Item limits and duplicate handling
@@ -139,6 +141,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Weapons
   - Backpack Items
   - Special Items
+  - Safekeeping or temporary storage language
   - Random numbers
   - Discipline checks
   - Item checks
@@ -400,6 +403,7 @@ Include:
 - Meal rules.
 - Item gain/loss/use.
 - Backpack, Weapons, and Special Items handling.
+- Safekeeping, confiscation, storage, and restoration paths.
 - Status flags.
 - Discipline or item gates.
 - Random roll helpers.

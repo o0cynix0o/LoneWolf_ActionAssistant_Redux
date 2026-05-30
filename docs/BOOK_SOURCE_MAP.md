@@ -70,10 +70,10 @@ Current implemented/audited folders:
   `The Caverns of Kalte`
 - `04tcod`
   `The Chasm of Doom`
-
-Installed local corpus:
 - `05sots`
   `Shadow on the Sand`
+
+Installed local corpus:
 - `06tkot`
   `The Kingdoms of Terror`
 - `07cd`
@@ -131,7 +131,8 @@ Current pipeline status:
 
 - Book 3, `03tcok`, has the first onboarding helper build in place and still needs broader route-helper/playtest work.
 - Book 4, `04tcod`, has the first onboarding helper build in place and needs real-route testing, achievements, and strategy-guide polish.
-- Book 5, `05sots`, is the next natural Kai-series pipeline target.
+- Book 5, `05sots`, has the first onboarding helper build in place and needs real-route testing, achievements, and strategy-guide polish.
+- Book 6, `06tkot`, is the next natural pipeline target and begins the next major series handoff.
 
 ## Recommended Audit Start Pattern
 
@@ -262,6 +263,42 @@ Primary validation:
 - `testing/lwbook4_automation_language_audit.py`
 - `testing/lwbook4_playable_pipeline_smoke.py`
 - `testing/playtest_book4.py`
+
+## Current Book 5 Baseline
+
+Book 5 folder:
+
+- `books/lw/05sots`
+
+Expected section range:
+
+- `sect1.htm` through `sect400.htm`
+
+Checked-in data artifacts:
+
+- `data/book5-section-flows.json`
+- `data/book5-simple-automations.json`
+
+Primary technical audit logs:
+
+- `testing/logs/LWBOOK5_SECTION_FLOW_BASELINE.md`
+- `testing/logs/LWBOOK5_ROUTE_GRAPH_CHECK.md`
+- `testing/logs/LWBOOK5_AUTOMATION_LANGUAGE_AUDIT.md`
+- `testing/logs/LWBOOK5_RULINGS_QUEUE.md`
+- `testing/logs/LWBOOK5_PLAYABLE_PIPELINE.md`
+
+Primary validation:
+
+- `testing/lwbook5_setup_smoke.py`
+- `testing/lwbook5_section_flow_audit.py`
+- `testing/lwbook5_automation_language_audit.py`
+- `testing/lwbook5_playable_pipeline_smoke.py`
+- `testing/playtest_book5.py`
+
+Book 5 notes:
+
+- Safekeeping is now part of the campaign model. Selected Special Items can be stored away from the active Action Chart during Book 5, remain protected from section losses, and are tracked separately from temporarily confiscated gear with a place label for future books.
+- Book 5 has 400 numbered sections, so any future audit scripts should avoid assuming the early Kai books all end at 350.
 
 ## Repo Hygiene
 

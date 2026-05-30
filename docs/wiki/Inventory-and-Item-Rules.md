@@ -44,6 +44,8 @@ Special Items often matter for route checks. Do not drop them casually unless th
 
 The Sommerswerd and Magic Spear are Special Items, but the combat helper also treats them as weapon-like choices when a fight calls for them.
 
+Book 5 adds **safekeeping**. If the story lets you leave Special Items somewhere safe before the adventure, the app moves those items out of the active Action Chart and into a safekeeping record. They are not available during the book, but they are protected from ordinary item loss and stay attached to the campaign for later.
+
 ## Gold Crowns
 
 Gold Crowns are not decoration. The supported books have paid travel options, passes, shops, and other routes where choosing the paid option deducts Gold automatically.
@@ -56,7 +58,7 @@ Keep enough Gold if you are taking roads through settlements, ferries, or carava
 
 Some sections take gear away. The app models these moments directly when the section effect is known.
 
-If the book takes your Backpack, Weapons, or carried items, let the app record it. If a later section gives you replacements or returns gear, use the buttons there.
+If the book takes your Backpack, Weapons, or carried items, let the app record it. If a later section gives you replacements or returns gear, use the buttons there. Temporary confiscation and safekeeping are separate: confiscated gear is expected back inside the book, while safekeeping is stored for the wider campaign.
 
 ## Rule Priority
 

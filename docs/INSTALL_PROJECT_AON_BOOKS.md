@@ -20,6 +20,7 @@ Current supported books:
 | 2. Fire on the Water | Playable helper build | https://www.projectaon.org/en/Main/FireOnTheWater | https://www.projectaon.org/en/xhtml/lw/02fotw/02fotw.zip |
 | 3. The Caverns of Kalte | Onboarding helper build | https://www.projectaon.org/en/Main/TheCavernsOfKalte | https://www.projectaon.org/en/xhtml/lw/03tcok/03tcok.zip |
 | 4. The Chasm of Doom | Onboarding helper build | https://www.projectaon.org/en/Main/TheChasmOfDoom | https://www.projectaon.org/en/xhtml/lw/04tcod/04tcod.zip |
+| 5. Shadow on the Sand | Onboarding helper build | https://www.projectaon.org/en/Main/ShadowOnTheSand | https://www.projectaon.org/en/xhtml/lw/05sots/05sots.zip |
 
 Future books must be installed locally before they can be audited through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
 
@@ -31,7 +32,7 @@ Common Project Aon Lone Wolf folder codes:
 | 2. Fire on the Water | `02fotw` | Supported; needs more real-route time |
 | 3. The Caverns of Kalte | `03tcok` | Onboarding helper build |
 | 4. The Chasm of Doom | `04tcod` | Onboarding helper build |
-| 5. Shadow on the Sand | `05sots` | Future pipeline target |
+| 5. Shadow on the Sand | `05sots` | Onboarding helper build |
 
 Project Aon also has an all-books download page:
 
@@ -64,6 +65,10 @@ LoneWolf_ActionAssistant_Redux/
         title.htm
         sect1.htm
         ...
+      05sots/
+        title.htm
+        sect1.htm
+        ...
 ```
 
 The app currently expects these folder names:
@@ -72,6 +77,7 @@ The app currently expects these folder names:
 - `02fotw`
 - `03tcok`
 - `04tcod`
+- `05sots`
 
 ## Manual Install
 
@@ -95,6 +101,8 @@ The app currently expects these folder names:
    books\lw\03tcok\sect1.htm
    books\lw\04tcod\title.htm
    books\lw\04tcod\sect1.htm
+   books\lw\05sots\title.htm
+   books\lw\05sots\sect1.htm
    ```
 
 If you see an extra nested folder after extraction, move the book folder so the path matches the examples above.
@@ -110,6 +118,7 @@ Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\
 Expand-Archive "$env:USERPROFILE\Downloads\02fotw.zip" -DestinationPath .\books\lw -Force
 Expand-Archive "$env:USERPROFILE\Downloads\03tcok.zip" -DestinationPath .\books\lw -Force
 Expand-Archive "$env:USERPROFILE\Downloads\04tcod.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\05sots.zip" -DestinationPath .\books\lw -Force
 
 Test-Path .\books\lw\01fftd\title.htm
 Test-Path .\books\lw\01fftd\sect1.htm
@@ -119,6 +128,8 @@ Test-Path .\books\lw\03tcok\title.htm
 Test-Path .\books\lw\03tcok\sect1.htm
 Test-Path .\books\lw\04tcod\title.htm
 Test-Path .\books\lw\04tcod\sect1.htm
+Test-Path .\books\lw\05sots\title.htm
+Test-Path .\books\lw\05sots\sect1.htm
 ```
 
 Each `Test-Path` command should return `True`.

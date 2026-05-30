@@ -8,7 +8,7 @@ This matrix describes assistant support, not whether the book text exists locall
 |2|Fire on the Water|User-installed Project Aon HTML|Setup, routes, automation, combat, rolls, loot, death recovery, completion, saves|Implemented|Playable helper build; needs more real-route time|
 |3|The Caverns of Kalte|User-installed Project Aon HTML|Setup, source routes, partial section helpers, partial combat, death/failure recovery, completion, saves|Not started|Onboarding helper build; needs more route work|
 |4|The Chasm of Doom|User-installed Project Aon HTML|Setup, source routes, first section helpers, combat presets, item-loss helpers, death recovery, completion, saves|Not started|Onboarding helper build; needs real-route testing|
-|5|Shadow on the Sand|Not wired yet|Not started|Not started|Future pipeline target|
+|5|Shadow on the Sand|User-installed Project Aon HTML|Setup, source routes, first section helpers, combat presets, item-loss helpers, safekeeping, death/failure recovery, completion, saves|Not started|Onboarding helper build; needs real-route testing|
 
 ## Book 1
 
@@ -82,7 +82,23 @@ Book 4 has the first onboarding helper build in place:
 
 This is ready for playtesting, not release packaging. The next useful step is a human route pass that turns clumsy labels, missing edge helpers, and achievement candidates into the next implementation slice.
 
-## Book 5 And Later
+## Book 5
+
+Book 5 has the first onboarding helper build in place:
+
+- 400 section files expected in `books\lw\05sots`
+- fresh Book 5 creation or completed Book 4 campaign handoff
+- extra Kai Discipline, starting Gold, Map of Vassagonia, carry-over Backpack Items, and up to four equipment choices
+- Special Item safekeeping for items left at the monastery before the adventure begins
+- source-link section routes checked against the Project Aon SVG route graph
+- first route checks, random helpers, optional loot buttons, and item-loss pickers
+- first combat presets for the scanned Book 5 fights, including timed rules, half-recovery fights, and Sommerswerd-specific exceptions
+- Book 5-specific Blood poisoning, Sommerswerd loss/recovery, and final Kai Master completion helpers
+- section 400 completion and Book of the Magnakai carry-forward
+
+This is ready for playtesting, not release packaging. The next useful step is a human route pass that turns clumsy labels, missing edge helpers, and achievement candidates into the next implementation slice.
+
+## Book 6 And Later
 
 Do not claim support for a later book until the book pipeline has been run.
 
