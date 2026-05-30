@@ -2,7 +2,7 @@
 
 Scope: achievement-run parity placeholder for Lone Wolf Action Assistant Redux.
 
-Current supported span: **Book 1 only**.
+Current achievement-supported span: **Books 1-2 implemented; Books 3-4 pending**.
 
 Book 1 achievement coverage currently lives in:
 
@@ -13,7 +13,7 @@ Book 1 achievement coverage currently lives in:
 
 ## Current Status
 
-The Book 1 achievement set has implementation and smoke-test coverage. A public 100 percent route should remain Book 1-only until later books are implemented and tested.
+The Book 1 and Book 2 achievement sets have implementation and smoke-test coverage. Books 3 and 4 are playable helper builds, but their achievement passes should wait until route automation and human playtesting stabilize.
 
 ## Future Expansion
 

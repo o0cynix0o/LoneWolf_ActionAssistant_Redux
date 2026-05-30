@@ -35,7 +35,11 @@ Book 1 completion records a completed-book summary. Achievements can use that su
 
 Book 1 can continue into the Book 2 starting setup. The assistant keeps the completed Book 1 character, adds the new Kai Discipline step, applies Book 2 starting Gold with the 50 Crown cap, preserves carry-over inventory, and handles Royal Armoury choices.
 
-Book 2 adventure helpers are now in place, including section effects, combat presets, death recovery, completion, and achievements. Book 3 and later will each need their own rules scan, carry-over scan, new-power step, new gear step, automation pass, and guide updates.
+Book 2 adventure helpers are now in place, including section effects, combat presets, death recovery, completion, and achievements.
+
+Books 3 and 4 can now be played as onboarding helper builds. The assistant supports the campaign handoff, one new Kai Discipline, book-start gear choices, source routes, first section helpers, combat presets, death/failure handling, completion, and repeat-book replay. We still expect real playtesting to find rough edges before those books graduate toward release-candidate status.
+
+Book 5 and later still need their own rules scan, carry-over scan, new-power step, new gear step, automation pass, and guide updates.
 
 ## Moving The App
 

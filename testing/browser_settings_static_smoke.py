@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSISTANT_HTML = ROOT / "assistant.html"
 INDEX_HTML = ROOT / "index.html"
 LIBRARY_HTML = ROOT / "library.html"
+INSTALL_HTML = ROOT / "install-books.html"
 SETTINGS_JS = ROOT / "assets" / "js" / "lw-settings.js"
 APP_SERVER = ROOT / "app_server.py"
 
@@ -23,6 +24,7 @@ def main() -> int:
     assistant = ASSISTANT_HTML.read_text(encoding="utf-8")
     index = INDEX_HTML.read_text(encoding="utf-8")
     library = LIBRARY_HTML.read_text(encoding="utf-8")
+    install = INSTALL_HTML.read_text(encoding="utf-8")
     settings = SETTINGS_JS.read_text(encoding="utf-8")
     server = APP_SERVER.read_text(encoding="utf-8")
 
@@ -30,6 +32,7 @@ def main() -> int:
         ("assistant.html", assistant),
         ("index.html", index),
         ("library.html", library),
+        ("install-books.html", install),
     ):
         assert_true(
             'assets/js/lw-settings.js' in source,
@@ -42,6 +45,7 @@ def main() -> int:
         "theme",
         "readerStyleEnabled",
         "readerTheme",
+        "appearanceStorageKeys",
     ):
         assert_true(key in settings, f"lw-settings.js should define {key}.")
 

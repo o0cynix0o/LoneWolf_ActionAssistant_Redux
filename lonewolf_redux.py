@@ -72,6 +72,7 @@ BOOKS = {
     1: {"Title": "Flight from the Dark", "Folder": "01fftd", "MaxSection": 350},
     2: {"Title": "Fire on the Water", "Folder": "02fotw", "MaxSection": 350},
     3: {"Title": "The Caverns of Kalte", "Folder": "03tcok", "MaxSection": 350},
+    4: {"Title": "The Chasm of Doom", "Folder": "04tcod", "MaxSection": 350},
 }
 
 KAI_DISCIPLINES = [
@@ -150,6 +151,40 @@ BOOK3_EQUIPMENT_OPTIONS = {
     "special-rations": {"Label": "Special Rations", "Items": [("backpack", "Meal")]},
     "broadsword": {"Label": "Broadsword", "Items": [("weapon", "Broadsword")]},
 }
+
+BOOK4_EQUIPMENT_OPTIONS = {
+    "warhammer": {"Label": "Warhammer", "Items": [("weapon", "Warhammer")]},
+    "dagger": {"Label": "Dagger", "Items": [("weapon", "Dagger")]},
+    "two-potions-of-laumspur": {
+        "Label": "2 Potions of Laumspur",
+        "Items": [
+            ("backpack", "Potion of Laumspur (+4 END)"),
+            ("backpack", "Potion of Laumspur (+4 END)"),
+        ],
+    },
+    "sword": {"Label": "Sword", "Items": [("weapon", "Sword")]},
+    "spear": {"Label": "Spear", "Items": [("weapon", "Spear")]},
+    "five-special-rations": {
+        "Label": "5 Special Rations",
+        "Items": [("backpack", "Meal")] * 5,
+    },
+    "mace": {"Label": "Mace", "Items": [("weapon", "Mace")]},
+    "chainmail-waistcoat": {
+        "Label": "Chainmail Waistcoat",
+        "Items": [("special", "Chainmail Waistcoat")],
+        "EnduranceBonus": 4,
+    },
+    "shield": {"Label": "Shield", "Items": [("special", "Shield")]},
+}
+
+KAI_RANKS = [
+    (10, "Kai Master"),
+    (9, "Savant"),
+    (8, "Warmarn"),
+    (7, "Guardian"),
+    (6, "Aspirant"),
+    (5, "Initiate"),
+]
 
 # Legacy constants are kept only so older save/transition code can normalize without
 # raising NameError. Book 1 character creation and UI use KAI_DISCIPLINES instead.
@@ -492,6 +527,9 @@ def default_state() -> dict[str, Any]:
             "RoundLimit": 0,
             "SurvivalRoute": None,
             "RoundExceededRoute": None,
+            "PlayerLossRoute": None,
+            "OneRoundComparisonRoutes": {},
+            "OxygenSafeRounds": 0,
             "WinWithinRounds": 0,
             "WinWithinRoute": None,
             "TooLateRoute": None,
@@ -792,6 +830,22 @@ def clean_book3_equipment_choices(values: Any) -> list[str]:
     return selected
 
 
+def clean_book4_equipment_choices(values: Any) -> list[str]:
+    selected: list[str] = []
+    label_map = {
+        normalized_choice_key(option.get("Label")): key
+        for key, option in BOOK4_EQUIPMENT_OPTIONS.items()
+    }
+    for raw in as_list(values):
+        key = normalized_choice_key(raw)
+        key = label_map.get(key, key)
+        if key in BOOK4_EQUIPMENT_OPTIONS and key not in selected:
+            selected.append(key)
+    if len(selected) != 6:
+        raise ValueError("Book 4 equipment setup requires exactly six different choices.")
+    return selected
+
+
 def book2_armoury_labels(choice_ids: Any) -> list[str]:
     labels: list[str] = []
     for choice_id in as_list(choice_ids):
@@ -810,11 +864,40 @@ def book3_equipment_labels(choice_ids: Any) -> list[str]:
     return labels
 
 
+def book4_equipment_labels(choice_ids: Any) -> list[str]:
+    labels: list[str] = []
+    for choice_id in as_list(choice_ids):
+        option = BOOK4_EQUIPMENT_OPTIONS.get(str(choice_id))
+        if option:
+            labels.append(str(option["Label"]))
+    return labels
+
+
 def add_unique_item(items: Any, item: str) -> list[Any]:
     current = as_list(items)
     if item not in current:
         current.append(item)
     return current
+
+
+def kai_rank_for_disciplines(disciplines: Any) -> tuple[int, str]:
+    count = len(clean_kai_disciplines(disciplines))
+    for threshold, name in KAI_RANKS:
+        if count >= threshold:
+            return count, name
+    return count, "Novice"
+
+
+def kai_rank_meets(disciplines: Any, rank_name: str) -> bool:
+    requested = str(rank_name or "").strip().lower()
+    thresholds = {name.lower(): threshold for threshold, name in KAI_RANKS}
+    required = thresholds.get(requested)
+    if required is None:
+        try:
+            required = int(requested)
+        except ValueError:
+            return False
+    return len(clean_kai_disciplines(disciplines)) >= required
 
 
 def apply_book2_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> tuple[int, int, int, int]:
@@ -828,6 +911,16 @@ def apply_book2_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> t
 
 
 def apply_book3_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> tuple[int, int, int, int]:
+    roll = coerce_random_digit(gold_roll)
+    before = int(inventory.get("GoldCrowns") or 0)
+    gain = 10 + roll
+    after = min(50, before + gain)
+    inventory["GoldCrowns"] = after
+    inventory["Nobles"] = after
+    return roll, before, gain, after
+
+
+def apply_book4_gold_roll(inventory: dict[str, Any], gold_roll: Any | None) -> tuple[int, int, int, int]:
     roll = coerce_random_digit(gold_roll)
     before = int(inventory.get("GoldCrowns") or 0)
     gain = 10 + roll
@@ -983,6 +1076,79 @@ def apply_book3_equipment_to_state(
     return messages
 
 
+def apply_book4_equipment_to_state(
+    state: dict[str, Any],
+    choices: Any,
+    weapon_exchanges: Any = None,
+) -> list[str]:
+    choice_ids = clean_book4_equipment_choices(choices)
+    exchanges = [str(item).strip() for item in as_list(weapon_exchanges) if str(item).strip()]
+    exchange_index = 0
+    messages: list[str] = []
+    inventory = state["Inventory"]
+    character = state["Character"]
+
+    for choice_id in choice_ids:
+        option = BOOK4_EQUIPMENT_OPTIONS[choice_id]
+        label = str(option["Label"])
+        option_added_special = False
+        messages.append(f"Equipment choice: {label}")
+
+        for container, item in as_list(option.get("Items")):
+            if container == "weapon":
+                weapons = as_list(inventory.get("Weapons"))
+                if len(weapons) >= 2:
+                    exchanged = ""
+                    while exchange_index < len(exchanges):
+                        candidate = exchanges[exchange_index]
+                        exchange_index += 1
+                        removed, weapons = remove_first_matching(weapons, candidate)
+                        if removed:
+                            exchanged = candidate
+                            break
+                    if not exchanged and len(weapons) >= 2:
+                        raise ValueError(
+                            f"Taking {item} needs a Weapon exchange because the Weapon limit is 2."
+                        )
+                    if exchanged:
+                        messages.append(f"Exchanged Weapon: {exchanged} -> {item}")
+                weapons.append(item)
+                inventory["Weapons"] = weapons
+                continue
+
+            if container == "backpack":
+                backpack_items = as_list(inventory.get("BackpackItems"))
+                if len(backpack_items) >= 8:
+                    raise ValueError(
+                        f"Taking {item} needs Backpack space because the Backpack limit is 8."
+                    )
+                backpack_items.append(item)
+                inventory["BackpackItems"] = backpack_items
+                inventory["HasBackpack"] = True
+                state["Automation"]["Flags"]["backpackAvailable"] = True
+                state["Automation"]["Flags"]["backpackItemsAvailable"] = True
+                continue
+
+            if container == "special":
+                before = as_list(inventory.get("SpecialItems"))
+                option_added_special = item not in before
+                inventory["SpecialItems"] = add_unique_item(before, item)
+
+        endurance_bonus = int(option.get("EnduranceBonus") or 0)
+        setup = character.setdefault("Book4Setup", {})
+        applied_key = f"{choice_id}Applied"
+        if endurance_bonus:
+            if option_added_special and not bool(setup.get(applied_key)):
+                character["EnduranceMax"] = int(character["EnduranceMax"]) + endurance_bonus
+                character["EnduranceCurrent"] = int(character["EnduranceCurrent"]) + endurance_bonus
+                setup[applied_key] = True
+                messages.append(f"{label}: END +{endurance_bonus}")
+            else:
+                messages.append(f"{label} already recorded; no extra END bonus.")
+
+    return messages
+
+
 def ensure_book2_mandatory_items(inventory: dict[str, Any]) -> None:
     inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Map of Sommerlund")
     inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Seal of Hammerdal")
@@ -999,6 +1165,16 @@ def ensure_book3_mandatory_state(state: dict[str, Any]) -> None:
     flags["furLinedCloak"] = True
     flags["mittens"] = True
     flags["kalteHuntingSuppressed"] = True
+
+
+def ensure_book4_mandatory_state(state: dict[str, Any]) -> None:
+    inventory = state["Inventory"]
+    automation = state["Automation"]
+    inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Map of the Southlands")
+    inventory["SpecialItems"] = add_unique_item(inventory.get("SpecialItems"), "Badge of Rank")
+    flags = automation.setdefault("Flags", {})
+    flags["book4BadgeOfRank"] = True
+    flags.setdefault("book4WildlandsHuntingSuppressed", False)
 
 
 def create_book1_character_state(
@@ -1269,6 +1445,94 @@ def create_book3_character_state(
         "StartingGoldCrowns": int(inventory["GoldCrowns"]),
         "Book3GoldRoll": gold_digit,
         "Book3EquipmentChoices": book3_equipment_labels(choice_ids),
+    }
+    return normalize_state(state)
+
+
+def create_book4_character_state(
+    *,
+    name: str = "Lone Wolf",
+    kai_disciplines: Any = None,
+    section: int = 1,
+    combat_skill_roll: Any | None = None,
+    endurance_roll: Any | None = None,
+    gold_roll: Any | None = None,
+    weaponskill_roll: Any | None = None,
+    equipment_choices: Any = None,
+    weapon_exchanges: Any = None,
+) -> dict[str, Any]:
+    disciplines = clean_kai_disciplines(kai_disciplines)
+    if len(disciplines) != 5:
+        raise ValueError("Standalone Book 4 requires exactly five Kai Disciplines.")
+
+    choice_ids = clean_book4_equipment_choices(equipment_choices)
+    cs_roll = coerce_random_digit(combat_skill_roll)
+    end_roll = coerce_random_digit(endurance_roll)
+
+    state = normalize_state(default_state())
+    state["RuleSet"] = "Lone Wolf Kai"
+    state["CurrentSection"] = max(1, min(BOOKS[4]["MaxSection"], int(section or 1)))
+
+    character = state["Character"]
+    character["Name"] = str(name or "Lone Wolf").strip() or "Lone Wolf"
+    character["BookNumber"] = 4
+    character["CombatSkillBase"] = 10 + cs_roll
+    character["CombatSkillCurrent"] = 10 + cs_roll
+    character["EnduranceBase"] = 20 + end_roll
+    character["EnduranceMax"] = 20 + end_roll
+    character["EnduranceCurrent"] = 20 + end_roll
+    character["KaiDisciplines"] = disciplines
+    character["WeaponskillWeapon"] = ""
+    character["LesserMagicks"] = []
+    character["HigherMagicks"] = []
+    character["Book4Setup"] = {"Mode": "standalone", "EquipmentChoices": choice_ids}
+    character.pop("WillpowerBase", None)
+    character.pop("WillpowerCurrent", None)
+
+    if "Weaponskill" in disciplines:
+        ws_roll = coerce_random_digit(weaponskill_roll)
+        character["WeaponskillWeapon"] = weaponskill_weapon_for_roll(ws_roll)
+    else:
+        ws_roll = None
+
+    inventory = state["Inventory"]
+    inventory["Weapons"] = []
+    inventory["BackpackItems"] = []
+    inventory["SpecialItems"] = []
+    inventory["GoldCrowns"] = 0
+    inventory["Nobles"] = 0
+    inventory["HasBackpack"] = True
+    inventory["HasHerbPouch"] = False
+    inventory["HerbPouchItems"] = []
+    ensure_book4_mandatory_state(state)
+
+    gold_digit, before_gold, gold_gain, after_gold = apply_book4_gold_roll(inventory, gold_roll)
+    setup_messages = apply_book4_equipment_to_state(state, choice_ids, weapon_exchanges)
+
+    character["CreationRolls"] = {
+        "CombatSkill": cs_roll,
+        "Endurance": end_roll,
+        "Weaponskill": ws_roll,
+        "Book4Gold": gold_digit,
+        "Book4GoldGain": gold_gain,
+        "Book4GoldBefore": before_gold,
+        "Book4GoldAfter": after_gold,
+        "Book4Equipment": choice_ids,
+    }
+    character["Book4Setup"]["Messages"] = setup_messages
+
+    state["SectionHistory"] = []
+    state["CurrentBookStats"] = {
+        "BookNumber": 4,
+        "BookTitle": BOOKS[4]["Title"],
+        "StartSection": int(state["CurrentSection"]),
+        "LastSection": int(state["CurrentSection"]),
+        "SectionsVisited": 0,
+        "VisitedSections": [],
+        "StartingEnduranceMax": int(character["EnduranceMax"]),
+        "StartingGoldCrowns": int(inventory["GoldCrowns"]),
+        "Book4GoldRoll": gold_digit,
+        "Book4EquipmentChoices": book4_equipment_labels(choice_ids),
     }
     return normalize_state(state)
 
@@ -2632,6 +2896,10 @@ class LoneWolfReduxAssistant:
             return self.has_power(str(condition.get("name") or ""))
         if kind == "no_power":
             return not self.has_power(str(condition.get("name") or ""))
+        if kind in {"kai_rank_gte", "rank_gte"}:
+            return kai_rank_meets(self.character.get("KaiDisciplines"), str(condition.get("name") or condition.get("rank") or condition.get("value") or ""))
+        if kind in {"discipline_count_gte", "kai_disciplines_gte"}:
+            return len(clean_kai_disciplines(self.character.get("KaiDisciplines"))) >= int(condition.get("value") or 0)
         if kind == "item":
             return self.has_item(
                 str(condition.get("name") or ""),
@@ -3922,7 +4190,15 @@ class LoneWolfReduxAssistant:
         return "unknown stat action"
 
     def apply_automation_meal(self, action: dict[str, Any]) -> str:
-        if bool(action.get("huntingExempt")) and self.has_power("Hunting"):
+        suppressed_flags = [
+            str(flag)
+            for flag in as_list(action.get("huntingSuppressedFlags"))
+            if str(flag).strip()
+        ]
+        hunting_suppressed = bool(action.get("huntingSuppressed")) or any(
+            bool(self.automation_flags.get(flag)) for flag in suppressed_flags
+        )
+        if bool(action.get("huntingExempt")) and self.has_power("Hunting") and not hunting_suppressed:
             available = self.count_items("Meal", ["backpack"])
             return f"Hunting: no Meal needed; Meals unchanged at {available}"
         count = max(0, int(action.get("count") or 1))
@@ -4959,6 +5235,8 @@ class LoneWolfReduxAssistant:
 
         panel_header("Kai Disciplines", accent=SCREEN_ACCENTS["disciplines"])
         panel_row("Known", format_list(self.character["KaiDisciplines"]))
+        rank_count, rank_name = kai_rank_for_disciplines(self.character.get("KaiDisciplines"))
+        panel_row("Kai Rank", f"{rank_name} ({rank_count} disciplines)")
         if self.character.get("WeaponskillWeapon"):
             panel_row("Weaponskill", self.character["WeaponskillWeapon"])
         panel_footer()
@@ -5025,8 +5303,10 @@ class LoneWolfReduxAssistant:
 
     def show_disciplines_screen(self) -> None:
         known = as_list(self.character.get("KaiDisciplines"))
+        rank_count, rank_name = kai_rank_for_disciplines(known)
         panel_header("Kai Disciplines", accent=SCREEN_ACCENTS["disciplines"])
         panel_row("Known", f"{len(known)}/5")
+        panel_row("Kai Rank", f"{rank_name} ({rank_count} disciplines)")
         panel_row("Weaponskill", self.character.get("WeaponskillWeapon") or "None")
         panel_footer()
 
@@ -5663,6 +5943,24 @@ class LoneWolfReduxAssistant:
             fixed_cs = int(fixed_cs)
 
         modifier, modifier_labels = self.evaluated_combat_preset_modifier(preset)
+        oxygen_safe_rounds = 0
+        if bool(preset.get("oxygenSafeRoundsFromRoll")):
+            last_roll = self.automation.get("LastRoll")
+            raw_roll = None
+            if (
+                isinstance(last_roll, dict)
+                and int(last_roll.get("BookNumber") or 0) == int(self.character["BookNumber"])
+                and int(last_roll.get("Section") or 0) == int(self.state["CurrentSection"])
+            ):
+                raw_roll = int(last_roll.get("Raw") or 0)
+            else:
+                raw_roll = random_digit()
+                messages.append(f"Oxygen roll {raw_roll} used for underwater endurance.")
+            oxygen_safe_rounds = 10 if raw_roll == 0 else raw_roll
+            if self.has_power("Mind Over Matter"):
+                oxygen_safe_rounds += int(preset.get("oxygenMindOverMatterBonus") or 2)
+                messages.append("Mind Over Matter: +2 underwater rounds")
+            messages.append(f"Underwater endurance: {oxygen_safe_rounds} combat round(s)")
         self.combat.update(
             {
                 "Modifier": modifier,
@@ -5683,6 +5981,11 @@ class LoneWolfReduxAssistant:
                 "RoundLimit": max(0, int(preset.get("roundLimit") or 0)),
                 "SurvivalRoute": preset.get("survivalRoute"),
                 "RoundExceededRoute": preset.get("roundExceededRoute"),
+                "PlayerLossRoute": preset.get("playerLossRoute"),
+                "OneRoundComparisonRoutes": preset.get("oneRoundComparisonRoutes")
+                if isinstance(preset.get("oneRoundComparisonRoutes"), dict)
+                else {},
+                "OxygenSafeRounds": oxygen_safe_rounds,
                 "WinWithinRounds": max(0, int(preset.get("winWithinRounds") or 0)),
                 "WinWithinRoute": preset.get("winWithinRoute"),
                 "TooLateRoute": preset.get("tooLateRoute"),
@@ -5747,6 +6050,9 @@ class LoneWolfReduxAssistant:
                 message = self.apply_automation_action(action)
                 if message:
                     messages.append(message)
+        oxygen_safe_rounds = int(self.combat.get("OxygenSafeRounds") or 0)
+        if oxygen_safe_rounds and self.combat_round_count() > oxygen_safe_rounds:
+            messages.append(f"Oxygen loss after round {oxygen_safe_rounds}: {self.change_endurance(-2)}")
         return messages
 
     def combat_player_loss_total(self) -> int:
@@ -5796,6 +6102,7 @@ class LoneWolfReduxAssistant:
                 ("IgnorePlayerLossRounds", "ignorePlayerLossRounds"),
                 ("RoundLimit", "roundLimit"),
                 ("WinWithinRounds", "winWithinRounds"),
+                ("OxygenSafeRounds", "oxygenSafeRounds"),
             )
             for key, source_key in numeric_fields:
                 value = max(0, int(preset.get(source_key) or 0))
@@ -5809,6 +6116,7 @@ class LoneWolfReduxAssistant:
                 ("EvadeRoute", "evadeRoute"),
                 ("SurvivalRoute", "survivalRoute"),
                 ("RoundExceededRoute", "roundExceededRoute"),
+                ("PlayerLossRoute", "playerLossRoute"),
                 ("WinWithinRoute", "winWithinRoute"),
                 ("TooLateRoute", "tooLateRoute"),
                 ("RequiredWeapon", "requiredWeapon"),
@@ -5823,6 +6131,11 @@ class LoneWolfReduxAssistant:
                 changed = True
             if preset.get("timedModifiers") and not as_list(self.combat.get("TimedModifiers")):
                 self.combat["TimedModifiers"] = as_list(preset.get("timedModifiers"))
+                changed = True
+            if isinstance(preset.get("oneRoundComparisonRoutes"), dict) and self.combat.get(
+                "OneRoundComparisonRoutes"
+            ) != preset.get("oneRoundComparisonRoutes"):
+                self.combat["OneRoundComparisonRoutes"] = preset.get("oneRoundComparisonRoutes")
                 changed = True
             if preset.get("id") and not str(self.combat.get("SectionCombatId") or ""):
                 self.combat["SectionCombatId"] = str(preset.get("id") or "")
@@ -5876,6 +6189,39 @@ class LoneWolfReduxAssistant:
             self.register_death("combat", f"Defeated by {enemy_name}.")
             self.autosave()
             self.show_death_screen()
+            return True
+
+        player_loss_route = self.combat.get("PlayerLossRoute")
+        if player_loss_route and self.combat_player_loss_total() > 0:
+            self.archive_current_combat("Wounded")
+            restore_player_endurance_after_combat()
+            self.combat["Active"] = False
+            print(f"Wounded route: section {player_loss_route}.")
+            self.set_section(int(player_loss_route))
+            return True
+
+        comparison_routes = self.combat.get("OneRoundComparisonRoutes")
+        if isinstance(comparison_routes, dict) and comparison_routes and round_count >= 1:
+            last_round = as_list(self.combat.get("Log"))[-1]
+            player_loss = int(last_round.get("PlayerLoss") or last_round.get("LoneWolfReduxLoss") or 0)
+            enemy_loss = int(last_round.get("EnemyLoss") or 0)
+            if player_loss > enemy_loss:
+                route = comparison_routes.get("playerLossGreater")
+                label = "Player loss greater"
+            elif enemy_loss > player_loss:
+                route = comparison_routes.get("enemyLossGreater")
+                label = "Enemy loss greater"
+            else:
+                route = comparison_routes.get("equal")
+                label = "Equal losses"
+            self.archive_current_combat("Completed")
+            restore_player_endurance_after_combat()
+            self.combat["Active"] = False
+            if route:
+                print(f"{label} route: section {route}.")
+                self.set_section(int(route))
+                return True
+            self.autosave()
             return True
 
         limit = int(self.combat.get("RoundLimit") or 0)
@@ -6245,6 +6591,9 @@ class LoneWolfReduxAssistant:
         book3_gold_roll: int | None = None,
         book3_equipment_choices: Any = None,
         book3_weapon_exchanges: Any = None,
+        book4_gold_roll: int | None = None,
+        book4_equipment_choices: Any = None,
+        book4_weapon_exchanges: Any = None,
         lesser_magick: str = "",
         higher_magicks: Any = None,
         willpower_roll: int | None = None,
@@ -6257,7 +6606,7 @@ class LoneWolfReduxAssistant:
         summary = completion.get("Summary") if isinstance(completion.get("Summary"), dict) else {}
         current = int(summary.get("BookNumber") or self.character["BookNumber"])
         next_book = current + 1
-        if next_book not in {2, 3}:
+        if next_book not in {2, 3, 4}:
             print(f"Book {next_book} setup is not enabled yet.")
             return
 
@@ -6270,8 +6619,10 @@ class LoneWolfReduxAssistant:
 
         if next_book == 2:
             choice_ids = clean_book2_armoury_choices(book2_armoury_choices)
-        else:
+        elif next_book == 3:
             choice_ids = clean_book3_equipment_choices(book3_equipment_choices)
+        else:
+            choice_ids = clean_book4_equipment_choices(book4_equipment_choices)
         messages: list[str] = []
 
         self.character["BookNumber"] = next_book
@@ -6305,7 +6656,7 @@ class LoneWolfReduxAssistant:
             setup_label_key = "ArmouryLabels"
             roll_prefix = "Book2"
             choice_labels = book2_armoury_labels(choice_ids)
-        else:
+        elif next_book == 3:
             ensure_book3_mandatory_state(self.state)
             gold_digit, before_gold, gold_gain, after_gold = apply_book3_gold_roll(
                 self.inventory, book3_gold_roll
@@ -6318,6 +6669,19 @@ class LoneWolfReduxAssistant:
             setup_label_key = "EquipmentLabels"
             roll_prefix = "Book3"
             choice_labels = book3_equipment_labels(choice_ids)
+        else:
+            ensure_book4_mandatory_state(self.state)
+            gold_digit, before_gold, gold_gain, after_gold = apply_book4_gold_roll(
+                self.inventory, book4_gold_roll
+            )
+            setup_messages = apply_book4_equipment_to_state(
+                self.state, choice_ids, book4_weapon_exchanges
+            )
+            setup_key = "Book4Setup"
+            setup_choice_key = "EquipmentChoices"
+            setup_label_key = "EquipmentLabels"
+            roll_prefix = "Book4"
+            choice_labels = book4_equipment_labels(choice_ids)
 
         messages.append(f"Book {next_book} Gold roll {gold_digit}: +{gold_gain} Crowns")
         if after_gold < before_gold + gold_gain:
@@ -6355,8 +6719,10 @@ class LoneWolfReduxAssistant:
         )
         if next_book == 2:
             rolls["Book2Armoury"] = choice_ids
-        else:
+        elif next_book == 3:
             rolls["Book3Equipment"] = choice_ids
+        else:
+            rolls["Book4Equipment"] = choice_ids
         self.character["CreationRolls"] = rolls
 
         self.state["CurrentBookStats"] = {
@@ -6373,8 +6739,10 @@ class LoneWolfReduxAssistant:
         }
         if next_book == 2:
             self.state["CurrentBookStats"]["Book2ArmouryChoices"] = choice_labels
-        else:
+        elif next_book == 3:
             self.state["CurrentBookStats"]["Book3EquipmentChoices"] = choice_labels
+        else:
+            self.state["CurrentBookStats"]["Book4EquipmentChoices"] = choice_labels
         self.automation["Ending"] = None
         self.record_section_visit()
         self.save_section_checkpoint("ready")

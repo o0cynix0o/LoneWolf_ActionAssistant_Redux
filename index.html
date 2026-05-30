@@ -19,9 +19,9 @@
       display: grid;
       align-content: end;
       background:
-        radial-gradient(circle at 84% 28%, rgba(98, 78, 142, 0.34), transparent 34%),
-        linear-gradient(90deg, rgba(18,21,15,0.98) 0%, rgba(18,21,15,0.76) 58%, rgba(18,21,15,0.42) 100%),
-        #12150f;
+        radial-gradient(circle at 84% 28%, var(--lw-hero-glow, rgba(98, 78, 142, 0.34)), transparent 34%),
+        linear-gradient(90deg, var(--lw-bg, rgba(18,21,15,0.98)) 0%, rgba(18,21,15,0.76) 58%, rgba(18,21,15,0.42) 100%),
+        var(--lw-bg, #12150f);
       border-bottom: 1px solid var(--lw-border-strong, #7b6a3b);
     }
     .hero-inner {
@@ -253,6 +253,14 @@
         sections: 350,
         status: 'Onboarding helper build',
         cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago.jpg'
+      },
+      {
+        number: 4,
+        title: 'The Chasm of Doom',
+        folder: '04tcod',
+        sections: 350,
+        status: 'Onboarding helper build',
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW04_Mongoose_Alberto_Del_Lago.jpg'
       }
     ];
 
@@ -441,6 +449,17 @@
       if (button.dataset.slotClear && window.confirm(`Clear save slot ${button.dataset.slotClear}?`)) {
         await slotAction('clear_slot', button.dataset.slotClear);
       }
+    });
+
+    function refreshHomeAppearance() {
+      homeSettings = settingsApi.apply(settingsApi.readLocal());
+      if (!settingsModal.hidden) renderSettingsContent();
+    }
+
+    window.addEventListener('pageshow', refreshHomeAppearance);
+    window.addEventListener('focus', refreshHomeAppearance);
+    window.addEventListener('storage', (event) => {
+      if (settingsApi.appearanceStorageKeys().includes(event.key)) refreshHomeAppearance();
     });
   </script>
 </body>

@@ -4,7 +4,7 @@ Lone Wolf Action Assistant Redux is a local browser-based play aid for the *Lone
 
 This repository is the clean AA2 rebuild of the earlier Lone Wolf assistant. It uses the proven Grey Star Action Assistant workflow as a project template, but the rules, book data, automation, tests, and player docs are rebuilt around Lone Wolf.
 
-Current status: **Book 1 playable release candidate; Book 2 playable helper build**
+Current status: **Book 1 playable release candidate; Books 2-4 playable helper/onboarding builds**
 
 ## Book Files Are Not Included
 
@@ -19,6 +19,8 @@ The currently supported local book folders are:
 ```text
 books\lw\01fftd
 books\lw\02fotw
+books\lw\03tcok
+books\lw\04tcod
 ```
 
 Full walkthrough:
@@ -33,11 +35,17 @@ Project Aon links:
 - Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip
 - Fire on the Water: https://www.projectaon.org/en/Main/FireOnTheWater
 - Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/02fotw/02fotw.zip
+- The Caverns of Kalte: https://www.projectaon.org/en/Main/TheCavernsOfKalte
+- Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/03tcok/03tcok.zip
+- The Chasm of Doom: https://www.projectaon.org/en/Main/TheChasmOfDoom
+- Standard HTML ZIP: https://www.projectaon.org/en/xhtml/lw/04tcod/04tcod.zip
 
 ## What It Includes
 
 - Book 1 support for *Flight from the Dark*.
 - Book 2 support for *Fire on the Water*, including setup, routes, section helpers, combat presets, deaths, completion, and achievements.
+- Book 3 support for *The Caverns of Kalte*, including setup, routes, first helper coverage, combat presets, death/failure handling, completion, and repeat-book replay.
+- Book 4 support for *The Chasm of Doom*, including setup, routes, first helper coverage, combat presets, death handling, completion, and repeat-book replay.
 - Split view with the book reader on the left and the assistant on the right, once the Project Aon book files are installed locally.
 - Book 1 character creation from the rules:
   - Combat Skill = random digit + 10
@@ -46,20 +54,20 @@ Project Aon links:
   - Weaponskill random weapon mapping
   - Axe, Backpack with one Meal, Map of Sommerlund, Gold Crown roll, and monastery-find roll
 - Lone Wolf Action Chart fields for Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns.
-- Book 1 and Book 2 source-link route data from the local `sect*.htm` files.
+- Book 1 through Book 4 source-link route data from the local `sect*.htm` files.
 - Audited section helpers for Meals, Endurance changes, Gold changes, item gain/loss, route checks, random helpers, combat presets, death recovery, book completion, and achievements.
 - Expandable notification receipts that explain recent automation, item use, combat, recovery, and achievement changes.
 - Save export, save import, and full save backup.
 - Persistent card layout and size preferences.
 - Three play modes: Auto, Manual, and CLI.
-- Player-facing wiki scaffold and Book 1 strategy material.
+- Player-facing wiki scaffold plus Book 1 and Book 2 strategy material.
 - Agent handoff docs for continuing the rebuild in a fresh chat.
 
 ## Current Limitations
 
 - Book 1 has had the most table time and remains the first public prerelease target.
 - Book 2 has the playable helper set in place, but still needs more real-route time before we package it as a public release.
-- Book 3 and later are not supported yet.
+- Books 3 and 4 are onboarding helper builds. They are ready for playtesting, but still need wider route time, achievement passes, and strategy-guide polish before release packaging.
 - Later books must be onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md` before they are treated as playable.
 
 ## Quick Start
@@ -160,11 +168,12 @@ Run the release checks from the project folder:
 ```powershell
 python -m py_compile app_server.py lonewolf_redux.py launch_lonewolf_redux.py ws_server.py
 python .\testing\playtest_book1.py
-python .\testing\lwbook2_setup_smoke.py
-python .\testing\lwbook2_playable_pipeline_smoke.py
+python .\testing\playtest_book2.py
+python .\testing\playtest_book3.py
+python .\testing\playtest_book4.py
 ```
 
-The granular Book 1 and Book 2 scripts live under `testing/`, and supporting audit reports live under `testing/logs/`.
+The granular per-book scripts live under `testing/`, and supporting audit reports live under `testing/logs/`.
 
 ## Release Package
 
@@ -191,8 +200,12 @@ Before publishing a package, run the public release checklist and smoke-test the
 - `books/`: local book install folder. Project Aon book files go under `books/lw/` but are ignored by git and not included in release ZIPs.
 - `data/book1-section-flows.json`: Book 1 route, helper, combat, and roll data.
 - `data/book2-section-flows.json`: Book 2 route, helper, combat, and roll data.
+- `data/book3-section-flows.json`: Book 3 route, helper, combat, and roll data.
+- `data/book4-section-flows.json`: Book 4 route, helper, combat, and roll data.
 - `data/book1-simple-automations.json`: Book 1 simple section automation data.
 - `data/book2-simple-automations.json`: Book 2 simple section automation data.
+- `data/book3-simple-automations.json`: Book 3 simple section automation data.
+- `data/book4-simple-automations.json`: Book 4 simple section automation data.
 - `data/book-route-checks.json`: route-check helper data.
 - `data/crt.json`: Combat Results Table.
 - `testing/`: route, automation, combat, achievement, and book validation checks.

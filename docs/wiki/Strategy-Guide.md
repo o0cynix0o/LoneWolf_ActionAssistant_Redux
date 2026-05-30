@@ -22,4 +22,4 @@ Each guide should give you:
 - combat and inventory tips
 - achievement and replay advice
 
-Book 2 now has a first strategy guide because its automation, combat, and achievement passes are in place. Later-book guides should wait until those books go through the same pipeline.
+Book 2 has a first strategy guide because its automation, combat, and achievement passes are in place. Books 3 and 4 are playable helper builds now, but their full strategy pages should wait until playtesting gives us enough route feel to write advice instead of just repeating audit notes.

@@ -7,11 +7,11 @@ This repo is the clean rebuild target for **Lone Wolf Action Assistant Redux**.
 - Root: `C:\Scripts\LoneWolf_ActionAssistant_Redux`
 - GitHub: `https://github.com/o0cynix0o/LoneWolf_ActionAssistant_Redux`
 - Installed local book sources: `books\lw\01fftd` through `books\lw\29tsoc`, plus `books\lw\dotd`
-- Status: Book 1 playable release candidate published as `v0.1.0-rc1`; Book 2 setup/start-state and source-link section-flow support are implemented
+- Status: Book 1 playable release candidate published as `v0.1.0-rc1`; Books 2-4 have playable helper/onboarding support and need more real-route time before release packaging
 
 The folder was bootstrapped from the Grey Star Action Assistant workflow so the next agent can reuse the modern web GUI cards, receipt drawer, launcher shape, docs structure, packaging workflow, and audit/test conventions.
 
-Book 1 rules, character creation, route helpers, automation, combat support, achievements, and wiki pages are now in place. Do not treat later books as supported until each one goes through the Lone Wolf book pipeline.
+Book 1 rules, character creation, route helpers, automation, combat support, achievements, and wiki pages are now in place. Books 2-4 have gone through the onboarding pipeline as helper builds. Do not treat later books as supported until each one goes through the Lone Wolf book pipeline.
 
 ## Hard Rules
 
@@ -26,8 +26,8 @@ Book 1 rules, character creation, route helpers, automation, combat support, ach
 
 ## Current Priorities
 
-1. Continue Book 2 through the pipeline after source routes: automation-language audit, section effects, combat/random helpers, achievements, docs, and tests.
-2. Keep the Book 2 setup and source-route paths stable while automation support is added.
+1. Playtest Books 3 and 4 through real routes, then turn any rough edges into helper, achievement, or guide updates.
+2. Prepare Book 5 onboarding with the same command workflow once the user says `Onboard book 5`.
 3. Keep public docs in a friendly team voice; keep technical audit logs direct and factual.
 
 ## Useful Source Projects

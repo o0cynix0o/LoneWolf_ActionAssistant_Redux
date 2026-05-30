@@ -18,6 +18,8 @@ Current supported books:
 | --- | --- | --- | --- |
 | 1. Flight from the Dark | Playable release candidate | https://www.projectaon.org/en/Main/FlightFromTheDark | https://www.projectaon.org/en/xhtml/lw/01fftd/01fftd.zip |
 | 2. Fire on the Water | Playable helper build | https://www.projectaon.org/en/Main/FireOnTheWater | https://www.projectaon.org/en/xhtml/lw/02fotw/02fotw.zip |
+| 3. The Caverns of Kalte | Onboarding helper build | https://www.projectaon.org/en/Main/TheCavernsOfKalte | https://www.projectaon.org/en/xhtml/lw/03tcok/03tcok.zip |
+| 4. The Chasm of Doom | Onboarding helper build | https://www.projectaon.org/en/Main/TheChasmOfDoom | https://www.projectaon.org/en/xhtml/lw/04tcod/04tcod.zip |
 
 Future books must be installed locally before they can be audited through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
 
@@ -27,8 +29,8 @@ Common Project Aon Lone Wolf folder codes:
 | --- | --- | --- |
 | 1. Flight from the Dark | `01fftd` | Supported |
 | 2. Fire on the Water | `02fotw` | Supported; needs more real-route time |
-| 3. The Caverns of Kalte | `03tcok` | Future pipeline target |
-| 4. The Chasm of Doom | `04tcod` | Future pipeline target |
+| 3. The Caverns of Kalte | `03tcok` | Onboarding helper build |
+| 4. The Chasm of Doom | `04tcod` | Onboarding helper build |
 | 5. Shadow on the Sand | `05sots` | Future pipeline target |
 
 Project Aon also has an all-books download page:
@@ -54,16 +56,26 @@ LoneWolf_ActionAssistant_Redux/
         title.htm
         sect1.htm
         ...
+      03tcok/
+        title.htm
+        sect1.htm
+        ...
+      04tcod/
+        title.htm
+        sect1.htm
+        ...
 ```
 
 The app currently expects these folder names:
 
 - `01fftd`
 - `02fotw`
+- `03tcok`
+- `04tcod`
 
 ## Manual Install
 
-1. Download the Book 1 and Book 2 standard ZIPs from Project Aon.
+1. Download the standard ZIPs for the books you want to play from Project Aon.
 2. Open your Lone Wolf Action Assistant Redux folder.
 3. Create this folder if it does not exist:
 
@@ -79,6 +91,10 @@ The app currently expects these folder names:
    books\lw\01fftd\sect1.htm
    books\lw\02fotw\title.htm
    books\lw\02fotw\sect1.htm
+   books\lw\03tcok\title.htm
+   books\lw\03tcok\sect1.htm
+   books\lw\04tcod\title.htm
+   books\lw\04tcod\sect1.htm
    ```
 
 If you see an extra nested folder after extraction, move the book folder so the path matches the examples above.
@@ -92,11 +108,17 @@ New-Item -ItemType Directory -Force .\books\lw
 
 Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\lw -Force
 Expand-Archive "$env:USERPROFILE\Downloads\02fotw.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\03tcok.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\04tcod.zip" -DestinationPath .\books\lw -Force
 
 Test-Path .\books\lw\01fftd\title.htm
 Test-Path .\books\lw\01fftd\sect1.htm
 Test-Path .\books\lw\02fotw\title.htm
 Test-Path .\books\lw\02fotw\sect1.htm
+Test-Path .\books\lw\03tcok\title.htm
+Test-Path .\books\lw\03tcok\sect1.htm
+Test-Path .\books\lw\04tcod\title.htm
+Test-Path .\books\lw\04tcod\sect1.htm
 ```
 
 Each `Test-Path` command should return `True`.

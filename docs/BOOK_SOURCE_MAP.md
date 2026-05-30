@@ -68,11 +68,10 @@ Current implemented/audited folders:
   `Fire on the Water`
 - `03tcok`
   `The Caverns of Kalte`
-
-Installed local corpus:
-
 - `04tcod`
   `The Chasm of Doom`
+
+Installed local corpus:
 - `05sots`
   `Shadow on the Sand`
 - `06tkot`
@@ -128,10 +127,11 @@ Installed local corpus:
 
 Do not treat a future folder as supported just because it exists locally. Each book must pass the full workflow in `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
 
-Current pipeline target:
+Current pipeline status:
 
 - Book 3, `03tcok`, has the first onboarding helper build in place and still needs broader route-helper/playtest work.
-- Book 4, `04tcod`, is the next natural pipeline target after Book 3 playtesting.
+- Book 4, `04tcod`, has the first onboarding helper build in place and needs real-route testing, achievements, and strategy-guide polish.
+- Book 5, `05sots`, is the next natural Kai-series pipeline target.
 
 ## Recommended Audit Start Pattern
 
@@ -202,6 +202,66 @@ Primary validation:
 - `testing/lwbook2_section_flow_audit.py`
 - `testing/lwbook2_automation_language_audit.py`
 - `testing/lwbook2_playable_pipeline_smoke.py`
+
+## Current Book 3 Baseline
+
+Book 3 folder:
+
+- `books/lw/03tcok`
+
+Expected section range:
+
+- `sect1.htm` through `sect350.htm`
+
+Checked-in data artifacts:
+
+- `data/book3-section-flows.json`
+- `data/book3-simple-automations.json`
+
+Primary technical audit logs:
+
+- `testing/logs/LWBOOK3_PASS1_RULES_BASELINE.md`
+- `testing/logs/LWBOOK3_SECTION_FLOW_BASELINE.md`
+- `testing/logs/LWBOOK3_AUTOMATION_LANGUAGE_AUDIT.md`
+- `testing/logs/LWBOOK3_PLAYABLE_PIPELINE.md`
+
+Primary validation:
+
+- `testing/lwbook3_setup_smoke.py`
+- `testing/lwbook3_section_flow_audit.py`
+- `testing/lwbook3_automation_language_audit.py`
+- `testing/lwbook3_playable_pipeline_smoke.py`
+
+## Current Book 4 Baseline
+
+Book 4 folder:
+
+- `books/lw/04tcod`
+
+Expected section range:
+
+- `sect1.htm` through `sect350.htm`
+
+Checked-in data artifacts:
+
+- `data/book4-section-flows.json`
+- `data/book4-simple-automations.json`
+
+Primary technical audit logs:
+
+- `testing/logs/LWBOOK4_SECTION_FLOW_BASELINE.md`
+- `testing/logs/LWBOOK4_ROUTE_GRAPH_CHECK.md`
+- `testing/logs/LWBOOK4_AUTOMATION_LANGUAGE_AUDIT.md`
+- `testing/logs/LWBOOK4_RULINGS_QUEUE.md`
+- `testing/logs/LWBOOK4_PLAYABLE_PIPELINE.md`
+
+Primary validation:
+
+- `testing/lwbook4_setup_smoke.py`
+- `testing/lwbook4_section_flow_audit.py`
+- `testing/lwbook4_automation_language_audit.py`
+- `testing/lwbook4_playable_pipeline_smoke.py`
+- `testing/playtest_book4.py`
 
 ## Repo Hygiene
 

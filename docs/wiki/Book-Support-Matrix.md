@@ -7,7 +7,7 @@ This matrix describes assistant support, not whether the book text exists locall
 |1|Flight from the Dark|User-installed Project Aon HTML|Character creation, routes, automation, combat, rolls, loot, death recovery, saves|Implemented|Playable release candidate|
 |2|Fire on the Water|User-installed Project Aon HTML|Setup, routes, automation, combat, rolls, loot, death recovery, completion, saves|Implemented|Playable helper build; needs more real-route time|
 |3|The Caverns of Kalte|User-installed Project Aon HTML|Setup, source routes, partial section helpers, partial combat, death/failure recovery, completion, saves|Not started|Onboarding helper build; needs more route work|
-|4|The Chasm of Doom|Not wired yet|Not started|Not started|Future pipeline target|
+|4|The Chasm of Doom|User-installed Project Aon HTML|Setup, source routes, first section helpers, combat presets, item-loss helpers, death recovery, completion, saves|Not started|Onboarding helper build; needs real-route testing|
 |5|Shadow on the Sand|Not wired yet|Not started|Not started|Future pipeline target|
 
 ## Book 1
@@ -66,7 +66,23 @@ Book 3 has the first onboarding helper build in place:
 
 This is an onboarding helper build, not a release candidate. The next useful step is more route work: random helpers, wider route checks, remaining section automations, achievements, and real playtesting.
 
-## Book 4 And Later
+## Book 4
+
+Book 4 has the first onboarding helper build in place:
+
+- 350 section files expected in `books\lw\04tcod`
+- fresh Book 4 creation or completed Book 3 campaign handoff
+- extra Kai Discipline, starting Gold, Map of the Southlands, Badge of Rank, carry-over Backpack Items, and six equipment choices
+- Padded Leather Waistcoat and Chainmail Waistcoat can stack; duplicate chainmail does not stack
+- source-link section routes checked against the Project Aon SVG route graph
+- first route checks, random helpers, optional loot buttons, and section 22 item-loss picker
+- first combat presets for the scanned Book 4 fights, including underwater oxygen timing and one-round comparison routing
+- regional Meal handling where Hunting helps normally, but not in the Wildlands or Maaken Mines
+- section 350 completion and Dagger of Vashna carry-forward
+
+This is ready for playtesting, not release packaging. The next useful step is a human route pass that turns clumsy labels, missing edge helpers, and achievement candidates into the next implementation slice.
+
+## Book 5 And Later
 
 Do not claim support for a later book until the book pipeline has been run.
 

@@ -125,13 +125,26 @@
         <span class="cover-fallback">Book 3</span>
         <div><strong>3. The Caverns of Kalte</strong><span>350 sections - onboarding helper build</span></div>
       </a>
+      <a class="book" href="assistant.html?book=4">
+        <img src="https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW04_Mongoose_Alberto_Del_Lago_thumbnail.jpg" alt="Cover art for The Chasm of Doom" onerror="this.closest('.book').classList.add('cover-missing')">
+        <span class="cover-fallback">Book 4</span>
+        <div><strong>4. The Chasm of Doom</strong><span>350 sections - onboarding helper build</span></div>
+      </a>
     </section>
   </main>
   <script src="assets/js/lw-settings.js"></script>
   <script>
     const settingsApi = window.LoneWolfReduxSettings;
-    settingsApi.apply(settingsApi.readLocal());
+    function refreshAppearance() {
+      settingsApi.apply(settingsApi.readLocal());
+    }
+    refreshAppearance();
     settingsApi.syncFromRemote();
+    window.addEventListener('pageshow', refreshAppearance);
+    window.addEventListener('focus', refreshAppearance);
+    window.addEventListener('storage', (event) => {
+      if (settingsApi.appearanceStorageKeys().includes(event.key)) refreshAppearance();
+    });
   </script>
 </body>
 </html>

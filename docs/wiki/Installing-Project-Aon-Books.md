@@ -36,6 +36,17 @@ sect2.htm
 sect350.htm
 ```
 
+## Books 3 And 4
+
+The current onboarding helper builds use the same standard Project Aon layout:
+
+```text
+books\lw\03tcok
+books\lw\04tcod
+```
+
+Each folder should contain `title.htm`, `sect1.htm`, and the remaining section files through `sect350.htm`.
+
 ## Local Install Page
 
 When the app is running, open:
@@ -52,11 +63,11 @@ The `books` folder is for your local personal copies only.
 
 Do not commit it. Do not package it. Do not upload it to a release.
 
-Book 2 helper support is in place now. We still recommend treating it as a ready-to-try build until it has had more real-route time.
+Book 2 helper support is in place now. Books 3 and 4 are ready for playtesting as onboarding helper builds. We still recommend treating all helper builds as ready-to-try, not final release candidates, until they have had more real-route time.
 
 ## Future Books
 
-Book 3 and later will use the same shape:
+Book 5 and later will use the same shape:
 
 ```text
 books\lw\<bookcode>

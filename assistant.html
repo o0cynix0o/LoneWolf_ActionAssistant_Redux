@@ -1081,6 +1081,7 @@
         <button class="book-button" type="button" data-book="1">Book 1</button>
         <button class="book-button" type="button" data-book="2">Book 2</button>
         <button class="book-button" type="button" data-book="3">Book 3</button>
+        <button class="book-button" type="button" data-book="4">Book 4</button>
         <button type="button" id="currentBtn">Current</button>
         <button type="button" id="titleBtn">Title</button>
         <span class="reader-title" id="readerTitle">Loading...</span>
@@ -1127,7 +1128,8 @@
     const books = [
       { number: 1, title: 'Flight from the Dark', folder: '01fftd', sections: 350 },
       { number: 2, title: 'Fire on the Water', folder: '02fotw', sections: 350 },
-      { number: 3, title: 'The Caverns of Kalte', folder: '03tcok', sections: 350 }
+      { number: 3, title: 'The Caverns of Kalte', folder: '03tcok', sections: 350 },
+      { number: 4, title: 'The Chasm of Doom', folder: '04tcod', sections: 350 }
     ];
     const book2Armoury = [
       ['sword', 'Sword'],
@@ -1153,6 +1155,17 @@
       ['quarterstaff', 'Quarterstaff'],
       ['special-rations', 'Special Rations'],
       ['broadsword', 'Broadsword']
+    ];
+    const book4Equipment = [
+      ['warhammer', 'Warhammer'],
+      ['dagger', 'Dagger'],
+      ['two-potions-of-laumspur', 'Two Potions of Laumspur'],
+      ['sword', 'Sword'],
+      ['spear', 'Spear'],
+      ['five-special-rations', 'Five Special Rations'],
+      ['mace', 'Mace'],
+      ['chainmail-waistcoat', 'Chainmail Waistcoat'],
+      ['shield', 'Shield']
     ];
     const kaiDisciplines = ['Camouflage', 'Hunting', 'Sixth Sense', 'Tracking', 'Healing', 'Weaponskill', 'Mindshield', 'Mindblast', 'Animal Kinship', 'Mind Over Matter'];
     const views = [
@@ -2383,6 +2396,27 @@
       if (status) status.textContent = textValue;
     }
 
+    function cssVar(name, fallback) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+    }
+
+    function cliTheme() {
+      return {
+        background: cssVar('--lw-bg', '#050704'),
+        foreground: cssVar('--lw-text', '#efe8d0'),
+        cursor: cssVar('--lw-accent', '#f2d27a'),
+        selectionBackground: cssVar('--lw-border-strong', '#594a2a'),
+        black: cssVar('--lw-bg', '#050704'),
+        red: cssVar('--lw-danger', '#ff8f80'),
+        green: '#a9d18e',
+        yellow: cssVar('--lw-accent', '#f2d27a'),
+        blue: '#93b7ff',
+        magenta: '#d8a8ff',
+        cyan: '#8bd3dd',
+        white: cssVar('--lw-text', '#efe8d0')
+      };
+    }
+
     function startCliTerminal() {
       const container = document.getElementById('cliTerminalContainer');
       if (!container || !isCliMode()) return;
@@ -2398,20 +2432,7 @@
         convertEol: true,
         fontFamily: 'Consolas, "Cascadia Mono", "Courier New", monospace',
         fontSize: 14,
-        theme: {
-          background: '#050704',
-          foreground: '#efe8d0',
-          cursor: '#f2d27a',
-          selectionBackground: '#594a2a',
-          black: '#050704',
-          red: '#ff8f80',
-          green: '#a9d18e',
-          yellow: '#f2d27a',
-          blue: '#93b7ff',
-          magenta: '#d8a8ff',
-          cyan: '#8bd3dd',
-          white: '#efe8d0'
-        }
+        theme: cliTheme()
       });
       if (window.FitAddon?.FitAddon) {
         cliFitAddon = new FitAddon.FitAddon();
@@ -2541,7 +2562,7 @@
       const summary = completion.Summary || {};
       const nextBook = Number(completion.NextBookNumber || 0);
       const nextTitle = text(completion.NextBookTitle, '');
-      const continueControls = completion.CanContinue && [2, 3].includes(nextBook) ? bookContinueForm(completion) : (
+      const continueControls = completion.CanContinue && [2, 3, 4].includes(nextBook) ? bookContinueForm(completion) : (
         completion.CanContinue
           ? '<p class="muted">That next book is not enabled yet.</p>'
           : '<p class="muted">The supported campaign path is complete.</p>'
@@ -2592,7 +2613,19 @@
     }
 
     function equipmentOptionsForBook(bookNumber) {
-      return Number(bookNumber) === 3 ? book3Equipment : book2Armoury;
+      if (Number(bookNumber) === 4) return book4Equipment;
+      if (Number(bookNumber) === 3) return book3Equipment;
+      return book2Armoury;
+    }
+
+    function equipmentChoiceCountForBook(bookNumber) {
+      return Number(bookNumber) === 4 ? 6 : 2;
+    }
+
+    function equipmentLabelForBook(bookNumber) {
+      if (Number(bookNumber) === 4) return `Book 4 Field Issue - choose ${equipmentChoiceCountForBook(bookNumber)}`;
+      if (Number(bookNumber) === 3) return `Anskaven Equipment - choose ${equipmentChoiceCountForBook(bookNumber)}`;
+      return `Royal Armoury - choose ${equipmentChoiceCountForBook(bookNumber)}`;
     }
 
     function equipmentChoiceGrid(bookNumber = 2) {
@@ -2621,7 +2654,7 @@
       const kaiOptions = choices.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
       const weapons = arr((completion.Summary || {}).Weapons);
       const nextBook = Number(completion.NextBookNumber || 2);
-      const equipmentLabel = nextBook === 3 ? 'Anskaven Equipment - choose 2' : 'Royal Armoury - choose 2';
+      const equipmentLabel = equipmentLabelForBook(nextBook);
       return `
         <form id="continueBookForm" class="grid" data-next-book="${escapeHtml(nextBook)}">
           <label class="field">New Kai Discipline<select name="kaiDiscipline">${kaiOptions}</select></label>
@@ -2857,6 +2890,7 @@
         const value = localStorage.getItem(key);
         if (value !== null) values[key] = value;
       });
+      Object.assign(values, settingsApi.settingsToValues(settingsApi.readLocal()));
       return { version: 1, values };
     }
 
@@ -2870,17 +2904,26 @@
 
     function applyUiPreferences(preferences) {
       const values = preferences?.values && typeof preferences.values === 'object' ? preferences.values : {};
+      const preservedAppearance = {};
+      Object.entries(settingsApi.settingsToValues(settingsApi.readLocal())).forEach(([key, value]) => {
+        if (!(key in values)) preservedAppearance[key] = value;
+      });
       uiPreferenceSaveSuspended = true;
       uiPreferenceStorageKeys().forEach((key) => {
+        if (appearancePreferenceKeys.includes(key) && !(key in values)) return;
         if (!(key in values)) localStorage.removeItem(key);
       });
       Object.entries(values).forEach(([key, value]) => {
         if (isUiPreferenceStorageKey(key)) localStorage.setItem(key, String(value));
       });
+      Object.entries(preservedAppearance).forEach(([key, value]) => {
+        localStorage.setItem(key, String(value));
+      });
       uiPreferenceSaveSuspended = false;
       uiPreferencesReady = true;
       assistantSettings = settingsApi.apply(settingsApi.readLocal());
       settingsApi.injectReaderTheme(bookFrame, assistantSettings);
+      if (Object.keys(preservedAppearance).length) persistUiPreferences(true);
     }
 
     function syncUiPreferences(preferences) {
@@ -3826,10 +3869,10 @@
       if (help) help.textContent = 'Kai Disciplines - choose 5';
       const bookNumber = Number(form?.querySelector('[data-new-book]')?.value || 1);
       form?.querySelectorAll('[data-book-setup]').forEach((item) => {
-        item.hidden = ![2, 3].includes(bookNumber);
+        item.hidden = ![2, 3, 4].includes(bookNumber);
       });
       const equipmentHelp = form?.querySelector('[data-equipment-help]');
-      if (equipmentHelp) equipmentHelp.textContent = bookNumber === 3 ? 'Anskaven Equipment - choose 2' : 'Royal Armoury - choose 2';
+      if (equipmentHelp) equipmentHelp.textContent = equipmentLabelForBook(bookNumber);
       const equipmentGrid = form?.querySelector('[data-equipment-grid]');
       if (equipmentGrid) equipmentGrid.innerHTML = equipmentChoiceGrid(bookNumber);
       const boxes = Array.from(form?.querySelectorAll('input[name="kaiDisciplines"]') || []);
@@ -4882,10 +4925,11 @@
       if (form.id === 'continueBookForm') {
         const armourySelections = formData.getAll('armouryChoices');
         const nextBook = Number(form.dataset.nextBook || 0);
-        if ([2, 3].includes(nextBook) && armourySelections.length !== 2) {
+        const requiredEquipment = equipmentChoiceCountForBook(nextBook);
+        if ([2, 3, 4].includes(nextBook) && armourySelections.length !== requiredEquipment) {
           setReceipt({
-            summary: `Book ${nextBook} - Choose exactly 2 equipment items.`,
-            details: [receiptDetail('Selected', `${armourySelections.length}/2`)]
+            summary: `Book ${nextBook} - Choose exactly ${requiredEquipment} equipment items.`,
+            details: [receiptDetail('Selected', `${armourySelections.length}/${requiredEquipment}`)]
           });
           return;
         }
@@ -4894,7 +4938,7 @@
           kaiDiscipline: data.kaiDiscipline,
           goldRoll: data.goldRoll,
           armouryChoices: nextBook === 2 ? armourySelections : [],
-          equipmentChoices: nextBook === 3 ? armourySelections : [],
+          equipmentChoices: [3, 4].includes(nextBook) ? armourySelections : [],
           weaponExchanges: formData.getAll('weaponExchanges').filter(Boolean)
         });
       }
@@ -4922,10 +4966,11 @@
           return;
         }
         const armourySelections = formData.getAll('armouryChoices');
-        if ([2, 3].includes(bookNumber) && armourySelections.length !== 2) {
+        const requiredEquipment = equipmentChoiceCountForBook(bookNumber);
+        if ([2, 3, 4].includes(bookNumber) && armourySelections.length !== requiredEquipment) {
           setReceipt({
-            summary: `Book ${bookNumber} - Choose exactly 2 equipment items.`,
-            details: [receiptDetail('Selected', `${armourySelections.length}/2`)]
+            summary: `Book ${bookNumber} - Choose exactly ${requiredEquipment} equipment items.`,
+            details: [receiptDetail('Selected', `${armourySelections.length}/${requiredEquipment}`)]
           });
           return;
         }
@@ -4936,7 +4981,7 @@
           kaiDisciplines: kaiSelections,
           goldRoll: data.goldRoll,
           armouryChoices: bookNumber === 2 ? armourySelections : [],
-          equipmentChoices: bookNumber === 3 ? armourySelections : []
+          equipmentChoices: [3, 4].includes(bookNumber) ? armourySelections : []
         });
       }
       form.reset?.();
@@ -4948,9 +4993,24 @@
     document.getElementById('currentBtn').addEventListener('click', () => syncBookToState());
     document.getElementById('titleBtn').addEventListener('click', () => loadBook(activeBook, null));
 
-    window.addEventListener('lonewolf-settings-changed', (event) => {
-      assistantSettings = settingsApi.apply(event.detail || settingsApi.readLocal());
+    function refreshAssistantAppearance(settings = settingsApi.readLocal()) {
+      assistantSettings = settingsApi.apply(settings);
       settingsApi.injectReaderTheme(bookFrame, assistantSettings);
+      if (cliTerminal) cliTerminal.options.theme = cliTheme();
+      if (activeView === 'settings') render();
+    }
+
+    window.addEventListener('lonewolf-settings-changed', (event) => {
+      refreshAssistantAppearance(event.detail || settingsApi.readLocal());
+    });
+    window.addEventListener('pageshow', () => {
+      refreshAssistantAppearance(settingsApi.readLocal());
+    });
+    window.addEventListener('focus', () => {
+      refreshAssistantAppearance(settingsApi.readLocal());
+    });
+    window.addEventListener('storage', (event) => {
+      if (settingsApi.appearanceStorageKeys().includes(event.key)) refreshAssistantAppearance(settingsApi.readLocal());
     });
 
     bookFrame.addEventListener('load', () => {

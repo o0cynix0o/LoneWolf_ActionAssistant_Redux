@@ -2,11 +2,11 @@
 
 Scope: campaign-level parity placeholder for Lone Wolf Action Assistant Redux.
 
-Current supported campaign span: **Book 1 only**.
+Current supported campaign span: **Books 1-4 as helper builds**.
 
-Grey Star has a full multi-book campaign run because Books 1-4 are implemented there. Lone Wolf Redux should not claim campaign parity until each Lone Wolf book is onboarded through `docs/LONE_WOLF_BOOK_PIPELINE_WORKFLOW.md`.
+Grey Star has a full multi-book campaign run because Books 1-4 are mature there. Lone Wolf Redux now has Book 1 release-candidate support plus Books 2-4 helper builds, but should not claim campaign parity until those helper builds have had enough real-route playtesting.
 
-## Current Book 1 Route Coverage
+## Current Route Coverage
 
 Book 1 route and completion coverage currently lives in:
 
@@ -16,15 +16,21 @@ Book 1 route and completion coverage currently lives in:
 - `testing/logs/LWBOOK1_PLAYTEST_REPORT.md`
 - `testing/logs/LWBOOK1_ROUTE_GAUNTLET_PLAYTEST.md`
 
+Book 2 through Book 4 helper coverage currently lives in:
+
+- `testing/playtest_book2.py`
+- `testing/playtest_book3.py`
+- `testing/playtest_book4.py`
+
 ## Future Expansion
 
-When Book 2 is implemented, this log should record:
+As Books 2-4 mature, this log should record:
 
-- Book 1 completion state carried into Book 2
-- new Book 2 Discipline/power selection
-- Book 2 start gear and carry-over handling
+- multi-book route playthroughs
+- new Discipline/power selection
+- start gear and carry-over handling
 - campaign save compatibility
 - book transition receipts
-- successful Book 1 to Book 2 story route
+- successful story routes across supported books
 
 Do not package campaign claims until the corresponding books are actually playable.

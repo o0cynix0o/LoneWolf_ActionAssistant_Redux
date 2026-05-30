@@ -267,6 +267,10 @@
     };
   }
 
+  function appearanceStorageKeys() {
+    return Object.values(STORAGE_KEYS);
+  }
+
   function valuesToSettings(values) {
     values = values && typeof values === 'object' ? values : {};
     return {
@@ -484,8 +488,16 @@
     doc.head.appendChild(style);
   }
 
+  function selectedTheme(settings = readLocal()) {
+    return byId(themes, normalize(settings).theme, defaults.theme);
+  }
+
+  function themeVars(settings = readLocal()) {
+    return selectedTheme(settings).vars;
+  }
+
   function applyTheme(settings) {
-    const theme = byId(themes, normalize(settings).theme, defaults.theme);
+    const theme = selectedTheme(settings);
     Object.entries(theme.vars).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value);
     });
@@ -522,7 +534,7 @@
     const remote = await fetchRemotePreferences();
     const values = remote?.values && typeof remote.values === 'object' ? remote.values : {};
     Object.entries(STORAGE_KEYS).forEach(([, key]) => {
-      if (localStorage.getItem(key) === null && values[key] !== undefined) {
+      if (values[key] !== undefined) {
         localStorage.setItem(key, String(values[key]));
       }
     });
@@ -550,7 +562,18 @@
   function readerCss(settings = readLocal()) {
     const clean = normalize(settings);
     if (clean.readerStyleEnabled !== 'on') return '';
-    return byId(readerThemes, clean.readerTheme, defaults.readerTheme).css || '';
+    const readerTheme = byId(readerThemes, clean.readerTheme, defaults.readerTheme);
+    if (readerTheme.id === 'redux-dark') {
+      const vars = themeVars(clean);
+      return `
+        html, body { background: ${vars['--lw-bg']} !important; color: ${vars['--lw-text']} !important; }
+        body, p, td, li, blockquote { color: ${vars['--lw-text']} !important; }
+        a, a:visited { color: ${vars['--lw-accent']} !important; }
+        hr { border-color: ${vars['--lw-border']} !important; }
+        img { filter: sepia(0.08) brightness(0.92) contrast(1.08); }
+      `;
+    }
+    return readerTheme.css || '';
   }
 
   function injectReaderTheme(frame, settings = readLocal()) {
@@ -577,6 +600,9 @@
     readLocal,
     writeLocal,
     normalize,
+    appearanceStorageKeys,
+    selectedTheme,
+    themeVars,
     apply,
     syncFromRemote,
     savePatch,

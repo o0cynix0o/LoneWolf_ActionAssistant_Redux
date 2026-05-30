@@ -9,8 +9,8 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: #12150f;
-      color: #f0ead8;
+      background: var(--lw-bg, #12150f);
+      color: var(--lw-text, #f0ead8);
       font-family: Arial, sans-serif;
       line-height: 1.5;
     }
@@ -21,7 +21,7 @@
     }
     h1, h2 {
       font-family: Georgia, "Times New Roman", serif;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
     }
     h1 {
       margin: 0 0 10px;
@@ -29,13 +29,13 @@
       line-height: 1;
     }
     h2 { margin-top: 26px; }
-    a { color: #f2d27a; }
+    a { color: var(--lw-accent, #f2d27a); }
     .panel {
       margin-top: 18px;
       padding: 18px;
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 6px;
-      background: #171a12;
+      background: var(--lw-panel, #171a12);
     }
     .grid {
       display: grid;
@@ -46,22 +46,22 @@
       display: block;
       min-height: 122px;
       padding: 14px;
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 6px;
-      background: #1a1d14;
+      background: var(--lw-panel, #1a1d14);
       color: inherit;
       text-decoration: none;
     }
-    .book-link:hover { border-color: #d1b865; }
+    .book-link:hover { border-color: var(--lw-accent-2, #d1b865); }
     .book-link strong {
       display: block;
-      color: #f2d27a;
+      color: var(--lw-accent, #f2d27a);
       margin-bottom: 8px;
     }
     code, pre {
-      background: #0d100b;
-      color: #efe8d0;
-      border: 1px solid #4e4528;
+      background: var(--lw-bg-soft, #0d100b);
+      color: var(--lw-text, #efe8d0);
+      border: 1px solid var(--lw-border, #4e4528);
       border-radius: 4px;
     }
     code { padding: 0.05rem 0.25rem; }
@@ -69,7 +69,7 @@
       overflow: auto;
       padding: 12px;
     }
-    .muted { color: #c6bea5; }
+    .muted { color: var(--lw-muted-2, #c6bea5); }
     .actions {
       display: flex;
       gap: 10px;
@@ -78,10 +78,10 @@
     }
     .actions a {
       padding: 9px 12px;
-      border: 1px solid #5d5130;
+      border: 1px solid var(--lw-border, #5d5130);
       border-radius: 4px;
-      background: #202417;
-      color: #f0ead8;
+      background: var(--lw-panel-2, #202417);
+      color: var(--lw-text, #f0ead8);
       text-decoration: none;
     }
   </style>
@@ -101,22 +101,45 @@
       <h2>Download Links</h2>
       <div class="grid">
         <a class="book-link" href="https://www.projectaon.org/en/Main/FlightFromTheDark" target="_blank" rel="noopener"><strong>1. Flight from the Dark</strong>Open the Project Aon page and choose the standard ZIP.</a>
+        <a class="book-link" href="https://www.projectaon.org/en/Main/FireOnTheWater" target="_blank" rel="noopener"><strong>2. Fire on the Water</strong>Open the Project Aon page and choose the standard ZIP.</a>
+        <a class="book-link" href="https://www.projectaon.org/en/Main/TheCavernsOfKalte" target="_blank" rel="noopener"><strong>3. The Caverns of Kalte</strong>Open the Project Aon page and choose the standard ZIP.</a>
+        <a class="book-link" href="https://www.projectaon.org/en/Main/TheChasmOfDoom" target="_blank" rel="noopener"><strong>4. The Chasm of Doom</strong>Open the Project Aon page and choose the standard ZIP.</a>
       </div>
     </section>
 
     <section class="panel">
       <h2>Folder Layout</h2>
-      <p>Extract the Book 1 ZIP so this file exists:</p>
+      <p>Extract each book ZIP so these folders contain their Project Aon HTML files:</p>
       <pre>books\lw\01fftd\title.htm</pre>
+      <pre>books\lw\02fotw\title.htm</pre>
+      <pre>books\lw\03tcok\title.htm</pre>
+      <pre>books\lw\04tcod\title.htm</pre>
     </section>
 
     <section class="panel">
       <h2>PowerShell Example</h2>
       <pre>New-Item -ItemType Directory -Force .\books\lw
 
-Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\lw -Force</pre>
+Expand-Archive "$env:USERPROFILE\Downloads\01fftd.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\02fotw.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\03tcok.zip" -DestinationPath .\books\lw -Force
+Expand-Archive "$env:USERPROFILE\Downloads\04tcod.zip" -DestinationPath .\books\lw -Force</pre>
       <p class="muted">See <code>docs\INSTALL_PROJECT_AON_BOOKS.md</code> for the full walkthrough.</p>
     </section>
   </main>
+  <script src="assets/js/lw-settings.js"></script>
+  <script>
+    const settingsApi = window.LoneWolfReduxSettings;
+    function refreshAppearance() {
+      settingsApi.apply(settingsApi.readLocal());
+    }
+    refreshAppearance();
+    settingsApi.syncFromRemote();
+    window.addEventListener('pageshow', refreshAppearance);
+    window.addEventListener('focus', refreshAppearance);
+    window.addEventListener('storage', (event) => {
+      if (settingsApi.appearanceStorageKeys().includes(event.key)) refreshAppearance();
+    });
+  </script>
 </body>
 </html>
