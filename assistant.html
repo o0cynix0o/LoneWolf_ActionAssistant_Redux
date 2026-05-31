@@ -3785,39 +3785,9 @@
       return `${test ? `${test}: ` : ''}${label}${route}`;
     }
 
-    function sourceRouteForSection(section) {
-      const target = Number(section);
-      return arr(currentFlow().SourceRoutes).find((route) => Number(route.Section) === target) || null;
-    }
-
-    function routeCheckChoiceLabel(check, matched) {
-      const route = sourceRouteForSection(matched.Route);
-      return text(
-        matched.ChoiceLabel || route?.EffectLabel || route?.Label || matched.Label || check.Label,
-        'Available route'
-      );
-    }
-
-    function sectionRouteCheckChoiceRows() {
-      return arr(currentFlow().RouteChecks).map((check) => {
-        if (!check.Ready) return '';
-        const matched = check.MatchedOutcome || {};
-        const currentRoute = matched.Route ? Number(matched.Route) : null;
-        if (!currentRoute) return '';
-        return `
-          <div class="item-row">
-            <small>${escapeHtml(currentRoute)}</small>
-            <span class="wrap">${escapeHtml(routeCheckChoiceLabel(check, matched))}</span>
-            <button type="button" data-route="${escapeHtml(currentRoute)}">Go</button>
-          </div>
-        `;
-      }).join('');
-    }
-
     function choicesPanelBody() {
       const entry = currentFlow().Entry || {};
       const groups = [
-        choiceGroup('Available Checked Routes', sectionRouteCheckChoiceRows()),
         choiceGroup('Cartwheel', sectionCartwheelRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),

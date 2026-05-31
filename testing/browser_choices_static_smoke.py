@@ -27,20 +27,20 @@ def main() -> int:
         "Route-effect rows should not be wired into the Choices card.",
     )
     assert_true(
-        "choiceGroup('Available Checked Routes'" in source,
-        "Choices card should still show actual checked-route choices.",
+        "choiceGroup('Available Checked Routes'" not in source,
+        "Choices card must not render checked-route helpers.",
     )
     assert_true(
         "choiceGroup('Loot And Section Items'" in source,
         "Choices card should still show optional loot and section item helpers.",
     )
     assert_true(
-        "routeCheckChoiceLabel(check, matched)" in source,
-        "Checked-route choices should use the player-facing label helper.",
+        "sectionRouteCheckChoiceRows" not in source,
+        "Checked-route rows should not be wired into the Choices card.",
     )
     assert_true(
-        "matched.ChoiceLabel || route?.EffectLabel || route?.Label" in source,
-        "Checked-route labels should prefer explicit choice text before source route action text.",
+        "arr(flow.RouteChecks).forEach" in source,
+        "Route checks should remain available in the section status receipt.",
     )
     assert_true(
         "choiceGroup('Cartwheel'" in source,
