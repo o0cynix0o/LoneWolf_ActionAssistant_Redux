@@ -69,20 +69,15 @@ def main() -> int:
     assert_true("data-slot-load" in assistant, "assistant should support loading from a slot.")
     assert_true("data-slot-clear" in assistant, "assistant should support clearing a slot.")
     assert_true(
-        ".top-dashboard .dashboard-card,\n    .quick-panel .dashboard-card" in assistant
-        and "padding-top: 2.05rem" in assistant,
-        "quick/top cards should start content below the round card controls.",
+        ".quick-panel .dashboard-card > .card-collapse-button" in assistant
+        and ".tabs.dashboard-card > .card-collapse-button" in assistant
+        and "place-items: center" in assistant,
+        "quick/top/tab card controls should use the shared centered round icon button style.",
     )
     assert_true(
-        ".top-dashboard .dashboard-card::before" in assistant
-        and "border-radius: 999px" in assistant,
-        "quick/top cards should draw a small floating control chip for the icon buttons.",
-    )
-    assert_true(
-        ".quick-panel .card-collapse-button" in assistant
-        and ".top-dashboard .card-collapse-button" in assistant
-        and "top: 0.46rem" in assistant,
-        "quick/top card collapse/menu buttons should sit in the floating control chip.",
+        ".top-dashboard .dashboard-card::before" not in assistant
+        and "padding-top: 2.05rem" not in assistant,
+        "quick/top cards should not use the old floating control chip layout.",
     )
     assert_true("/api/save-slots" in index, "home settings should read save slots from the API.")
     assert_true("SAVE_SLOT_COUNT = 6" in server, "server should define six save slots.")
