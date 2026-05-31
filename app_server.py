@@ -472,11 +472,7 @@ def handle_action(payload: dict) -> str:
         tokens = ["meal", "missed"] if payload.get("missed") else ["meal"]
         return capture_output(lambda: ASSISTANT.meal_command(tokens))
     if action == "power":
-        return capture_output(
-            lambda: ASSISTANT.power_command(
-                ["power", str(payload.get("mode") or "add"), str(payload.get("name") or "")]
-            )
-        )
+        return "Kai Disciplines can only be changed during character creation or a book transition."
     if action == "note":
         return capture_output(lambda: ASSISTANT.note_command(["note", str(payload.get("text") or "")]))
     if action == "save":

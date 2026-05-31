@@ -4599,7 +4599,7 @@
     function powerPanel(title, all, known) {
       return `<div class="panel"><h2>${title}</h2>${all.map((name) => {
         const has = arr(known).includes(name);
-        return `<div class="item-row"><span>${name}</span><small>${has ? 'Known' : 'Available'}</small><button data-power="${has ? 'remove' : 'add'}:${encodeURIComponent(name)}">${has ? 'Remove' : 'Add'}</button></div>`;
+        return `<div class="item-row"><span>${name}</span><small>${has ? 'Known' : 'Available'}</small></div>`;
       }).join('')}</div>`;
     }
 
@@ -4863,10 +4863,6 @@
       if (button.dataset.karmoSideEffect !== undefined) await action({ action: 'karmo_side_effect' });
       if (button.dataset.karmoFinish !== undefined) await action({ action: 'karmo_finish' });
       if (button.dataset.meal) await action({ action: 'meal', missed: button.dataset.meal === 'missed' });
-      if (button.dataset.power) {
-        const [mode, name] = button.dataset.power.split(':');
-        await action({ action: 'power', mode, name: decodeURIComponent(name) });
-      }
       if (button.dataset.sectionJump) {
         const [book, section] = button.dataset.sectionJump.split(':');
         await action({ action: 'set_position', book: Number(book), section: Number(section) });

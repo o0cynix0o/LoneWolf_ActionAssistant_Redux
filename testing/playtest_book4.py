@@ -26,6 +26,7 @@ COMMANDS = [
         "testing/lwbook4_automation_language_audit.py",
         "testing/lwbook4_playable_pipeline_smoke.py",
         "testing/browser_choices_static_smoke.py",
+        "testing/discipline_lock_smoke.py",
         "testing/browser_landing_static_smoke.py",
         "testing/browser_settings_static_smoke.py",
     ],
@@ -38,6 +39,7 @@ COMMANDS = [
     [PYTHON, "testing/lwbook2_setup_smoke.py"],
     [PYTHON, "testing/lwbook2_playable_pipeline_smoke.py"],
     [PYTHON, "testing/browser_choices_static_smoke.py"],
+    [PYTHON, "testing/discipline_lock_smoke.py"],
     [PYTHON, "testing/browser_landing_static_smoke.py"],
     [PYTHON, "testing/browser_settings_static_smoke.py"],
 ]

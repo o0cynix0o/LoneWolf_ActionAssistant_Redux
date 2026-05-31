@@ -5365,8 +5365,8 @@ class LoneWolfReduxAssistant:
                 ("meal", "consume one Meal"),
             ],
             "disciplines": [
-                ("discipline add <name>", "add a Kai Discipline"),
-                ("discipline remove <name>", "remove a Kai Discipline"),
+                ("new", "choose Disciplines at character creation"),
+                ("complete", "use the book completion flow for the next Discipline"),
                 ("combat", "combat status"),
                 ("sheet", "return to action chart"),
             ],
@@ -6161,41 +6161,8 @@ class LoneWolfReduxAssistant:
         print(f"Dropped: {removed_item}")
 
     def power_command(self, tokens: list[str]) -> None:
-        if len(tokens) < 3:
-            self.show_powers()
-            print("Use: discipline add <name> or discipline remove <name>")
-            return
-        action = tokens[1].lower()
-        name_text = rest_of_line(tokens, 2)
-        power = self.resolve_power_name(name_text)
-        if not power:
-            print(f"Unknown Kai Discipline: {name_text}")
-            return
-        target_key = "KaiDisciplines"
-        if action == "add":
-            if len(as_list(self.character[target_key])) >= 5 and power not in as_list(self.character[target_key]):
-                print("Book 1 characters may choose five Kai Disciplines.")
-                return
-            if power not in as_list(self.character[target_key]):
-                self.character[target_key] = as_list(self.character[target_key]) + [power]
-            if power == "Weaponskill" and not str(self.character.get("WeaponskillWeapon") or ""):
-                roll = random_digit()
-                self.character["WeaponskillWeapon"] = weaponskill_weapon_for_roll(roll)
-                self.character.setdefault("CreationRolls", {})["Weaponskill"] = roll
-            self.autosave()
-            print(f"Added Kai Discipline: {power}")
-        elif action == "remove":
-            removed, items = remove_first_matching(self.character[target_key], power)
-            if not removed:
-                print(f"Kai Discipline not found on sheet: {power}")
-                return
-            self.character[target_key] = items
-            if power == "Weaponskill":
-                self.character["WeaponskillWeapon"] = ""
-            self.autosave()
-            print(f"Removed Kai Discipline: {power}")
-        else:
-            print("Use: discipline add <name> or discipline remove <name>")
+        self.show_powers()
+        print("Kai Disciplines can only be changed during character creation or a book transition.")
 
     def combat_round_count(self) -> int:
         return len(as_list(self.combat.get("Log")))
