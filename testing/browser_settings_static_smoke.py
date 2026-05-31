@@ -68,6 +68,14 @@ def main() -> int:
     assert_true("data-slot-save" in assistant, "assistant should support saving to a slot.")
     assert_true("data-slot-load" in assistant, "assistant should support loading from a slot.")
     assert_true("data-slot-clear" in assistant, "assistant should support clearing a slot.")
+    assert_true(
+        ".dashboard-card > .quick-title" in assistant and "padding-right: 3.35rem" in assistant,
+        "quick card titles should reserve space for the round card controls.",
+    )
+    assert_true(
+        ".quick-panel .card-collapse-button" in assistant and "top: 0.42rem" in assistant,
+        "quick card collapse/menu buttons should sit inside the card control lane.",
+    )
     assert_true("/api/save-slots" in index, "home settings should read save slots from the API.")
     assert_true("SAVE_SLOT_COUNT = 6" in server, "server should define six save slots.")
     assert_true('if action == "save_slot"' in server, "server should support save_slot actions.")
