@@ -473,6 +473,8 @@ def handle_action(payload: dict) -> str:
         return capture_output(lambda: ASSISTANT.meal_command(tokens))
     if action == "power":
         return "Kai Disciplines can only be changed during character creation or a book transition."
+    if action == "assign_weaponskill":
+        return capture_output(lambda: ASSISTANT.assign_missing_weaponskill_weapon(payload.get("roll")))
     if action == "note":
         return capture_output(lambda: ASSISTANT.note_command(["note", str(payload.get("text") or "")]))
     if action == "save":
@@ -499,6 +501,7 @@ def handle_action(payload: dict) -> str:
         return capture_output(
             lambda: ASSISTANT.continue_completed_book(
                 kai_discipline=str(payload.get("kaiDiscipline") or ""),
+                weaponskill_roll=payload.get("weaponskillRoll"),
                 book2_gold_roll=payload.get("goldRoll"),
                 book2_armoury_choices=payload.get("armouryChoices"),
                 book2_weapon_exchanges=payload.get("weaponExchanges"),

@@ -83,6 +83,7 @@ def test_book3_to_book4_campaign_setup() -> None:
     quiet(
         assistant.continue_completed_book,
         kai_discipline="Weaponskill",
+        weaponskill_roll=6,
         book4_gold_roll=9,
         book4_equipment_choices=BOOK4_CHOICES,
         book4_weapon_exchanges=["Axe"],
@@ -92,6 +93,7 @@ def test_book3_to_book4_campaign_setup() -> None:
     assert_equal(assistant.state["CurrentSection"], 1, "current section")
     assert_true(3 in assistant.character["CompletedBooks"], "Book 3 completed")
     assert_true("Weaponskill" in assistant.character["KaiDisciplines"], "new Kai Discipline")
+    assert_equal(assistant.character["WeaponskillWeapon"], "Axe", "transition Weaponskill weapon")
     assert_equal(len(assistant.character["KaiDisciplines"]), 6, "six Kai Disciplines")
     assert_equal(assistant.inventory["GoldCrowns"], 50, "gold cap")
     assert_true("Crystal Star Pendant" in assistant.inventory["BackpackItems"], "Backpack item carried")

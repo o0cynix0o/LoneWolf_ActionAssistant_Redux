@@ -6164,6 +6164,22 @@ class LoneWolfReduxAssistant:
         self.show_powers()
         print("Kai Disciplines can only be changed during character creation or a book transition.")
 
+    def assign_missing_weaponskill_weapon(self, roll: Any | None = None, *, save: bool = True) -> bool:
+        if "Weaponskill" not in as_list(self.character.get("KaiDisciplines")):
+            print("Weaponskill is not one of your Kai Disciplines.")
+            return False
+        if str(self.character.get("WeaponskillWeapon") or "").strip():
+            print(f"Weaponskill weapon already set: {self.character['WeaponskillWeapon']}")
+            return False
+        digit = coerce_random_digit(roll)
+        weapon = weaponskill_weapon_for_roll(digit)
+        self.character["WeaponskillWeapon"] = weapon
+        self.character.setdefault("CreationRolls", {})["Weaponskill"] = digit
+        if save:
+            self.autosave()
+        print(f"Weaponskill roll {digit}: {weapon}")
+        return True
+
     def combat_round_count(self) -> int:
         return len(as_list(self.combat.get("Log")))
 
@@ -7031,6 +7047,7 @@ class LoneWolfReduxAssistant:
         self,
         *,
         kai_discipline: str = "",
+        weaponskill_roll: int | None = None,
         book2_gold_roll: int | None = None,
         book2_armoury_choices: Any = None,
         book2_weapon_exchanges: Any = None,
@@ -7106,6 +7123,13 @@ class LoneWolfReduxAssistant:
             self.automation["Stored"]["safekeepingRecords"] = safekeeping_records
 
         messages.append(f"Added Kai Discipline: {selected_discipline}")
+        weaponskill_digit: int | None = None
+        weaponskill_weapon = ""
+        if selected_discipline == "Weaponskill":
+            weaponskill_digit = coerce_random_digit(weaponskill_roll)
+            weaponskill_weapon = weaponskill_weapon_for_roll(weaponskill_digit)
+            self.character["WeaponskillWeapon"] = weaponskill_weapon
+            messages.append(f"Weaponskill roll {weaponskill_digit}: {weaponskill_weapon}")
         if next_book == 2:
             ensure_book2_mandatory_items(self.inventory)
             gold_digit, before_gold, gold_gain, after_gold = apply_book2_gold_roll(
@@ -7183,6 +7207,9 @@ class LoneWolfReduxAssistant:
             setup_choice_key: choice_ids,
             setup_label_key: choice_labels,
         }
+        if weaponskill_digit is not None:
+            setup["WeaponskillRoll"] = weaponskill_digit
+            setup["WeaponskillWeapon"] = weaponskill_weapon
         if next_book == 5:
             setup["SafekeepingSpecialItems"] = as_list(
                 self.automation.get("Stored", {}).get("safekeepingSpecialItems")
@@ -7208,6 +7235,10 @@ class LoneWolfReduxAssistant:
                 f"{roll_prefix}KaiDiscipline": selected_discipline,
             }
         )
+        if weaponskill_digit is not None:
+            rolls["Weaponskill"] = weaponskill_digit
+            rolls[f"{roll_prefix}WeaponskillRoll"] = weaponskill_digit
+            rolls[f"{roll_prefix}WeaponskillWeapon"] = weaponskill_weapon
         if next_book == 2:
             rolls["Book2Armoury"] = choice_ids
         elif next_book == 3:
@@ -7230,6 +7261,9 @@ class LoneWolfReduxAssistant:
             f"Book{next_book}GoldRoll": gold_digit,
             "NewKaiDiscipline": selected_discipline,
         }
+        if weaponskill_digit is not None:
+            self.state["CurrentBookStats"]["WeaponskillRoll"] = weaponskill_digit
+            self.state["CurrentBookStats"]["WeaponskillWeapon"] = weaponskill_weapon
         if next_book == 2:
             self.state["CurrentBookStats"]["Book2ArmouryChoices"] = choice_labels
         elif next_book == 3:

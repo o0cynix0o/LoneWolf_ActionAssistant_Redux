@@ -2740,6 +2740,7 @@
         <form id="continueBookForm" class="grid" data-next-book="${escapeHtml(nextBook)}">
           <label class="field">New Kai Discipline<select name="kaiDiscipline">${kaiOptions}</select></label>
           <label class="field">Gold Roll<input name="goldRoll" type="number" min="0" max="9" placeholder="0-9"></label>
+          <label class="field">Weaponskill Roll<input name="weaponskillRoll" type="number" min="0" max="9" placeholder="Only if picking Weaponskill"></label>
           <div class="check-field">
             <span>${escapeHtml(equipmentLabel)}</span>
             <div class="check-grid">${equipmentChoiceGrid(nextBook)}</div>
@@ -4016,8 +4017,19 @@
 
     function renderDisciplines() {
       const c = currentCharacter();
+      const needsWeaponskill = arr(c.KaiDisciplines).includes('Weaponskill') && !text(c.WeaponskillWeapon);
       view.innerHTML = `
         ${powerPanel('Kai Disciplines', kaiDisciplines, c.KaiDisciplines)}
+        ${needsWeaponskill ? `
+          <div class="panel">
+            <h2>Weaponskill Setup</h2>
+            <p class="muted">Weaponskill needs one random-number roll to choose the weapon that gets the +2 CS bonus.</p>
+            <div class="controls">
+              <input data-weaponskill-roll type="number" min="0" max="9" placeholder="0-9 or blank">
+              <button type="button" data-weaponskill-assign>Roll Weaponskill</button>
+            </div>
+          </div>
+        ` : ''}
         <div class="panel"><h2>Weaponskill</h2><div class="grid">${field('Weapon', c.WeaponskillWeapon || 'None')}</div></div>
       `;
     }
@@ -4908,6 +4920,10 @@
       if (button.dataset.karmoSideEffect !== undefined) await action({ action: 'karmo_side_effect' });
       if (button.dataset.karmoFinish !== undefined) await action({ action: 'karmo_finish' });
       if (button.dataset.meal) await action({ action: 'meal', missed: button.dataset.meal === 'missed' });
+      if (button.dataset.weaponskillAssign !== undefined) {
+        const input = button.closest('.panel')?.querySelector('[data-weaponskill-roll]');
+        await action({ action: 'assign_weaponskill', roll: input?.value || '' });
+      }
       if (button.dataset.sectionJump) {
         const [book, section] = button.dataset.sectionJump.split(':');
         await action({ action: 'set_position', book: Number(book), section: Number(section) });
@@ -5005,6 +5021,7 @@
         await action({
           action: 'continue_book',
           kaiDiscipline: data.kaiDiscipline,
+          weaponskillRoll: data.weaponskillRoll,
           goldRoll: data.goldRoll,
           armouryChoices: nextBook === 2 ? armourySelections : [],
           equipmentChoices: [3, 4, 5].includes(nextBook) ? armourySelections : [],
