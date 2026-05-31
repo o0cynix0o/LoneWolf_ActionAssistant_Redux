@@ -19,6 +19,8 @@ import lonewolf_redux  # noqa: E402
 
 SAVE_DIR = ROOT / "testing" / "tmp" / "weaponskill-saves"
 ASSISTANT_HTML = ROOT / "assistant.html"
+LAST_SAVE_FILE = ROOT / "data" / "last-save.txt"
+CURRENT_POSITION_FILE = ROOT / "current-position.json"
 
 
 def reset_saves() -> None:
@@ -40,6 +42,23 @@ def assert_equal(actual, expected, label: str) -> None:
 def assert_true(value, label: str) -> None:
     if not value:
         raise AssertionError(f"{label}: expected truthy value, got {value!r}")
+
+
+class FileSnapshot:
+    def __init__(self, *paths: Path) -> None:
+        self.snapshots = {
+            path: path.read_bytes() if path.exists() else None
+            for path in paths
+        }
+
+    def restore(self) -> None:
+        for path, content in self.snapshots.items():
+            if content is None:
+                if path.exists():
+                    path.unlink()
+                continue
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
 
 
 def test_transition_assigns_weaponskill_weapon_and_bonus() -> None:
@@ -117,9 +136,13 @@ def test_api_and_browser_weaponskill_helpers() -> None:
 
 
 def main() -> int:
-    test_transition_assigns_weaponskill_weapon_and_bonus()
-    test_missing_weaponskill_repair_helper()
-    test_api_and_browser_weaponskill_helpers()
+    snapshot = FileSnapshot(LAST_SAVE_FILE, CURRENT_POSITION_FILE)
+    try:
+        test_transition_assigns_weaponskill_weapon_and_bonus()
+        test_missing_weaponskill_repair_helper()
+        test_api_and_browser_weaponskill_helpers()
+    finally:
+        snapshot.restore()
     print("Weaponskill smoke passed.")
     return 0
 
