@@ -61,6 +61,16 @@ def main() -> int:
         assert_true(theme in settings, f"lw-settings.js should define the {theme} theme.")
 
     assert_true("injectReaderTheme" in settings, "shared settings should support reader iframe styling.")
+    assert_true("readerBookCss" in settings, "shared settings should use a full reader-page theme helper.")
+    for reader_selector in (
+        "article,",
+        ".maintext,",
+        ".frontmatter,",
+        ".numbered,",
+        ".maintext .combat-results-table th",
+        "#license p",
+    ):
+        assert_true(reader_selector in settings, f"reader themes should style {reader_selector}.")
     assert_true("data-lw-title-banner" in index, "home page should expose the swappable title banner.")
     assert_true("settingsModal" in index, "home page should include the settings modal.")
     assert_true("renderAppearanceSettings" in assistant, "assistant settings should include appearance controls.")

@@ -191,47 +191,230 @@
     }
   ];
 
+  function readerBookCss({
+    shell,
+    page,
+    panel,
+    panelAlt,
+    text,
+    muted,
+    accent,
+    accentHover,
+    border,
+    header = '#050806',
+    subtitle = '#8f1510',
+    imageFilter = ''
+  }) {
+    return `
+      html, body {
+        background: ${shell} !important;
+        color: ${text} !important;
+      }
+      body {
+        text-rendering: optimizeLegibility;
+      }
+      .container {
+        background: ${page} !important;
+      }
+      article,
+      .maintext,
+      .frontmatter,
+      .numbered,
+      .glossary {
+        background: ${page} !important;
+        color: ${text} !important;
+      }
+      article,
+      article p,
+      article li,
+      article dd,
+      article dt,
+      article td,
+      article th,
+      article blockquote,
+      article cite,
+      article span,
+      article div {
+        color: ${text} !important;
+      }
+      article h2,
+      article h3,
+      article h4,
+      article h5,
+      article h6,
+      .smallcaps {
+        color: ${text} !important;
+      }
+      article figcaption,
+      #license,
+      #license p,
+      caption {
+        color: ${muted} !important;
+      }
+      a,
+      a:visited,
+      article a,
+      article a:visited,
+      #license a,
+      #license a:visited {
+        background-color: transparent !important;
+        color: ${accent} !important;
+        text-decoration-color: ${accent} !important;
+      }
+      a:hover,
+      a:visited:hover,
+      article a:hover,
+      article a:visited:hover {
+        background-color: ${accentHover} !important;
+        color: ${accent} !important;
+      }
+      table,
+      .table,
+      .table-responsive,
+      .maintext table,
+      .maintext td,
+      .maintext th {
+        background: ${page} !important;
+        color: ${text} !important;
+        border-color: ${border} !important;
+      }
+      .maintext .random-number-table td,
+      .maintext .combat-results-table th,
+      .maintext .combat-results-table td,
+      .maintext .action-chart th,
+      .maintext .action-chart td {
+        border-color: ${border} !important;
+      }
+      .maintext .random-number-table tr:nth-child(2n) td:nth-child(2n),
+      .maintext .random-number-table tr:nth-child(2n+1) td:nth-child(2n+1),
+      .maintext .combat-results-table tr:nth-child(2n) td,
+      .maintext .action-chart tr:nth-child(2n) {
+        background-color: ${panelAlt} !important;
+      }
+      .choice,
+      .puzzle,
+      .deadend,
+      .combat,
+      #footnotes {
+        background: ${panel} !important;
+        border-color: ${border} !important;
+      }
+      #main-header h1 {
+        background: ${header} !important;
+        color: ${text} !important;
+      }
+      #main-header h2 {
+        background: ${subtitle} !important;
+        color: ${text} !important;
+        border-color: ${border} !important;
+      }
+      .navbar-dever,
+      .navbar-dever li > a,
+      .navbar-dever li > :link,
+      .navbar-dever li > :visited {
+        background: ${header} !important;
+        color: ${text} !important;
+      }
+      .navbar-dever li > a:hover,
+      .navbar-dever li > :link:hover,
+      .navbar-dever li > :visited:hover {
+        background: ${panelAlt} !important;
+        color: ${accent} !important;
+      }
+      hr {
+        border-color: ${border} !important;
+      }
+      img {
+        ${imageFilter ? `filter: ${imageFilter};` : ''}
+      }
+    `;
+  }
+
   const readerThemes = [
     { id: 'original', name: 'Original Project Aon', css: '' },
     {
       id: 'redux-dark',
       name: 'Redux Dark',
-      css: `
-        html, body { background: #11150f !important; color: #efe8d0 !important; }
-        body, p, td, li, blockquote { color: #efe8d0 !important; }
-        a, a:visited { color: #f2d27a !important; }
-        hr { border-color: #5d5130 !important; }
-        img { filter: sepia(0.08) brightness(0.92) contrast(1.08); }
-      `
+      css: readerBookCss({
+        shell: '#080b08',
+        page: '#141911',
+        panel: '#1b2117',
+        panelAlt: '#252d20',
+        text: '#f3ecd6',
+        muted: '#c5bea3',
+        accent: '#f4d477',
+        accentHover: '#2e2612',
+        border: '#5f5633',
+        header: '#050705',
+        subtitle: '#8f1711',
+        imageFilter: 'sepia(0.08) brightness(0.9) contrast(1.08)'
+      })
     },
     {
       id: 'parchment',
       name: 'Warm Parchment',
-      css: `
-        html, body { background: #f7edcf !important; color: #2b2116 !important; }
-        body, p, td, li, blockquote { color: #2b2116 !important; }
-        a, a:visited { color: #a31d16 !important; }
-      `
+      css: readerBookCss({
+        shell: '#e3d6ad',
+        page: '#fff4d5',
+        panel: '#f4e5bd',
+        panelAlt: '#ead8aa',
+        text: '#2b2116',
+        muted: '#6d5841',
+        accent: '#a31d16',
+        accentHover: '#f6d5c9',
+        border: '#b89f6b',
+        header: '#17110a',
+        subtitle: '#bf2519'
+      })
     },
     {
       id: 'wide-reading',
       name: 'Wide Reading',
       css: `
-        html, body { background: #fff8dd !important; color: #221a12 !important; }
-        body { max-width: 980px !important; margin-left: auto !important; margin-right: auto !important; }
-        body, p, td, li, blockquote { color: #221a12 !important; line-height: 1.55 !important; }
-        a, a:visited { color: #b11d17 !important; }
+        ${readerBookCss({
+          shell: '#ebe0bd',
+          page: '#fff8dd',
+          panel: '#f5e9c5',
+          panelAlt: '#e8d8a7',
+          text: '#221a12',
+          muted: '#66513a',
+          accent: '#b11d17',
+          accentHover: '#f5d6cc',
+          border: '#b8a779',
+          header: '#12100d',
+          subtitle: '#bd2419'
+        })}
+        body {
+          max-width: 980px !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+        body,
+        article p,
+        article li,
+        article td,
+        article blockquote {
+          line-height: 1.55 !important;
+        }
       `
     },
     {
       id: 'high-contrast',
       name: 'High Contrast',
-      css: `
-        html, body { background: #000 !important; color: #fff !important; }
-        body, p, td, li, blockquote { color: #fff !important; }
-        a, a:visited { color: #ffe66d !important; }
-        img { filter: contrast(1.18); }
-      `
+      css: readerBookCss({
+        shell: '#000',
+        page: '#000',
+        panel: '#101010',
+        panelAlt: '#202020',
+        text: '#fff',
+        muted: '#e5e5e5',
+        accent: '#ffe66d',
+        accentHover: '#302800',
+        border: '#fff',
+        header: '#000',
+        subtitle: '#5c0000',
+        imageFilter: 'contrast(1.18)'
+      })
     }
   ];
 
@@ -565,13 +748,20 @@
     const readerTheme = byId(readerThemes, clean.readerTheme, defaults.readerTheme);
     if (readerTheme.id === 'redux-dark') {
       const vars = themeVars(clean);
-      return `
-        html, body { background: ${vars['--lw-bg']} !important; color: ${vars['--lw-text']} !important; }
-        body, p, td, li, blockquote { color: ${vars['--lw-text']} !important; }
-        a, a:visited { color: ${vars['--lw-accent']} !important; }
-        hr { border-color: ${vars['--lw-border']} !important; }
-        img { filter: sepia(0.08) brightness(0.92) contrast(1.08); }
-      `;
+      return readerBookCss({
+        shell: vars['--lw-bg-soft'],
+        page: vars['--lw-bg'],
+        panel: vars['--lw-panel'],
+        panelAlt: vars['--lw-panel-2'],
+        text: vars['--lw-text'],
+        muted: vars['--lw-muted-2'],
+        accent: vars['--lw-accent'],
+        accentHover: vars['--lw-panel-3'],
+        border: vars['--lw-border-strong'],
+        header: '#050705',
+        subtitle: '#8f1711',
+        imageFilter: 'sepia(0.08) brightness(0.9) contrast(1.08)'
+      });
     }
     return readerTheme.css || '';
   }
