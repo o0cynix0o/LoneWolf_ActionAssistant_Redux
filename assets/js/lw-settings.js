@@ -498,7 +498,7 @@
         background-color: var(--lw-panel) !important;
         border-color: var(--lw-border-strong) !important;
       }
-      header, .toolbar, .tabs, .panel, .book, .stat-card, .quick-card, .item-row,
+      header, .toolbar, .tabs, .panel, .book, .stat-card, .quick-card, .quick-tabs-divider, .item-row,
       .status-grid, .quick-panel, .top-dashboard, .layout-bar, .menu-popover,
       .death-option, .combat-meter-card, .cartwheel-game, .message, .file-mode-lock {
         background-color: var(--lw-panel) !important;

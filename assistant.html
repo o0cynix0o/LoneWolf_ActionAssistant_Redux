@@ -273,6 +273,12 @@
       background: #12160f;
       flex-shrink: 0;
     }
+    .quick-tabs-divider {
+      height: 0;
+      margin: 0 0.65rem;
+      border-top: 1px solid #4e4528;
+      flex-shrink: 0;
+    }
     .top-dashboard {
       padding: 0.55rem 0.65rem;
       display: grid;
@@ -1118,6 +1124,7 @@
       <div class="menu-popover app-menu-popover" id="appMenu" hidden></div>
       <div class="status-grid" id="statusGrid"></div>
       <section class="quick-panel" id="quickPanel" aria-label="Quick actions"></section>
+      <div class="quick-tabs-divider" id="quickTabsDivider" aria-hidden="true"></div>
       <nav class="tabs" id="tabs"></nav>
       <section id="view"></section>
       <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
@@ -1218,6 +1225,7 @@
     const serverStatus = document.getElementById('serverStatus');
     const statusGrid = document.getElementById('statusGrid');
     const quickPanel = document.getElementById('quickPanel');
+    const quickTabsDivider = document.getElementById('quickTabsDivider');
     const tabs = document.getElementById('tabs');
     const view = document.getElementById('view');
     const toastStack = document.getElementById('toastStack');
@@ -3245,6 +3253,7 @@
       tabs.dataset.cardTitleOverride = 'Tabs';
       decorateCards('quick', Array.from(quickPanel.querySelectorAll(':scope > .quick-card')), { defaultSize: 'medium' });
       decorateCards('tabs', [tabs], { defaultSize: 'large', movable: false });
+      if (quickTabsDivider) quickTabsDivider.hidden = tabs.hidden;
       decorateCards(viewScope, Array.from(view.querySelectorAll(':scope > .panel')), { defaultSize: 'large' });
     }
 
