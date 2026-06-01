@@ -5661,13 +5661,18 @@ class LoneWolfReduxAssistant:
         with path.open("r", encoding="utf-8") as handle:
             self.state = normalize_state(json.load(handle))
         self.settings["SavePath"] = str(path)
+        repair_messages = self.repair_loaded_combat_routes()
         self.last_save_file.write_text(str(path), encoding="utf-8")
         self.record_section_visit()
         self.ensure_current_section_checkpoint()
         self.sync_achievements(save=False)
         self.write_current_position()
+        if repair_messages:
+            self.save_game(quiet=True)
         if not quiet:
             print(f"Loaded: {path}")
+            for message in repair_messages:
+                print(f"Save repair: {message}")
             self.show_sheet()
         return True
 
@@ -6691,6 +6696,163 @@ class LoneWolfReduxAssistant:
             if isinstance(round_entry, dict):
                 total += int(round_entry.get("PlayerLoss") or round_entry.get("LoneWolfReduxLoss") or 0)
         return total
+
+    def combat_rounds_from_entry(self, entry: dict[str, Any]) -> list[dict[str, Any]]:
+        return [
+            round_entry
+            for round_entry in as_list(entry.get("Rounds") or entry.get("Log"))
+            if isinstance(round_entry, dict)
+        ]
+
+    def combat_player_loss_total_from_entry(self, entry: dict[str, Any]) -> int:
+        return sum(
+            int(round_entry.get("PlayerLoss") or round_entry.get("LoneWolfReduxLoss") or 0)
+            for round_entry in self.combat_rounds_from_entry(entry)
+        )
+
+    def combat_round_count_from_entry(self, entry: dict[str, Any]) -> int:
+        return int(entry.get("RoundCount") or len(self.combat_rounds_from_entry(entry)))
+
+    def combat_entry_matches_preset(self, entry: dict[str, Any], preset: dict[str, Any]) -> bool:
+        preset_id = str(preset.get("id") or "")
+        entry_id = str(entry.get("SectionCombatId") or "")
+        if preset_id and entry_id and preset_id == entry_id:
+            return True
+        enemies = [
+            enemy for enemy in as_list(preset.get("enemies") or preset.get("enemy"))
+            if isinstance(enemy, dict)
+        ]
+        if len(enemies) != 1:
+            return False
+        enemy = enemies[0]
+        return (
+            str(enemy.get("name") or preset.get("label") or "").strip().lower()
+            == str(entry.get("EnemyName") or "").strip().lower()
+            and int(enemy.get("cs") or 0) == int(entry.get("EnemyCombatSkill") or 0)
+            and int(enemy.get("endurance") or enemy.get("end") or 0)
+            == int(entry.get("EnemyEnduranceMax") or 0)
+        )
+
+    def combat_preset_for_entry(self, book_number: int, entry: dict[str, Any]) -> dict[str, Any] | None:
+        section = int(entry.get("StartedSection") or entry.get("Section") or 0)
+        if not section:
+            return None
+        flow = self.section_flow_entry(book_number, section) or {}
+        for preset in self.flow_combat_entries_for_entry(flow):
+            if self.combat_entry_matches_preset(entry, preset):
+                return preset
+        return None
+
+    def expected_combat_route_from_preset(self, preset: dict[str, Any], entry: dict[str, Any]) -> int | None:
+        outcome = str(entry.get("Outcome") or "").strip().lower()
+        rounds = self.combat_rounds_from_entry(entry)
+        round_count = self.combat_round_count_from_entry(entry)
+        if outcome == "victory":
+            route = preset.get("victoryRoute")
+            player_loss_total = self.combat_player_loss_total_from_entry(entry)
+            if player_loss_total > 0 and preset.get("woundedVictoryRoute"):
+                route = preset.get("woundedVictoryRoute")
+            elif player_loss_total <= 0 and preset.get("flawlessVictoryRoute"):
+                route = preset.get("flawlessVictoryRoute")
+            win_within = int(preset.get("winWithinRounds") or 0)
+            if win_within:
+                route = preset.get("winWithinRoute") if round_count <= win_within else preset.get("tooLateRoute")
+            return int(route) if route else None
+        if outcome == "evaded":
+            route = preset.get("evadeRoute")
+            return int(route) if route else None
+        if outcome == "defeat":
+            route = preset.get("defeatRoute")
+            return int(route) if route else None
+        if outcome == "survived":
+            route = preset.get("survivalRoute")
+            return int(route) if route else None
+        if outcome == "timed out":
+            route = preset.get("roundExceededRoute")
+            return int(route) if route else None
+        if outcome == "completed" and isinstance(preset.get("oneRoundComparisonRoutes"), dict) and rounds:
+            last_round = rounds[-1]
+            player_loss = int(last_round.get("PlayerLoss") or last_round.get("LoneWolfReduxLoss") or 0)
+            enemy_loss = int(last_round.get("EnemyLoss") or 0)
+            routes = preset.get("oneRoundComparisonRoutes")
+            if player_loss > enemy_loss:
+                route = routes.get("playerLossGreater")
+            elif enemy_loss > player_loss:
+                route = routes.get("enemyLossGreater")
+            else:
+                route = routes.get("equal")
+            return int(route) if route else None
+        if outcome == "special route" and isinstance(preset.get("combatRollRoutes"), dict) and rounds:
+            roll = str(rounds[-1].get("Roll"))
+            route = preset.get("combatRollRoutes", {}).get(roll)
+            return int(route) if route else None
+        return None
+
+    def repair_combat_entry_routes_from_preset(self, entry: dict[str, Any], preset: dict[str, Any]) -> bool:
+        changed = False
+        field_pairs = (
+            ("VictoryRoute", "victoryRoute"),
+            ("DefeatRoute", "defeatRoute"),
+            ("EvadeRoute", "evadeRoute"),
+            ("FlawlessVictoryRoute", "flawlessVictoryRoute"),
+            ("WoundedVictoryRoute", "woundedVictoryRoute"),
+            ("PlayerLossRoute", "playerLossRoute"),
+            ("WinWithinRoute", "winWithinRoute"),
+            ("TooLateRoute", "tooLateRoute"),
+            ("SurvivalRoute", "survivalRoute"),
+            ("RoundExceededRoute", "roundExceededRoute"),
+        )
+        for state_key, preset_key in field_pairs:
+            if preset_key not in preset:
+                if entry.get(state_key) not in (None, "", {}):
+                    entry[state_key] = None
+                    changed = True
+                continue
+            value = preset.get(preset_key)
+            if value is not None and entry.get(state_key) != value:
+                entry[state_key] = value
+                changed = True
+        if preset.get("id") and not str(entry.get("SectionCombatId") or ""):
+            entry["SectionCombatId"] = str(preset.get("id") or "")
+            changed = True
+        return changed
+
+    def repair_loaded_combat_routes(self) -> list[str]:
+        messages: list[str] = []
+        book_number = int(self.character.get("BookNumber") or 1)
+
+        current_combat = self.combat
+        if isinstance(current_combat, dict):
+            preset = self.combat_preset_for_entry(book_number, current_combat)
+            if preset:
+                old_final_route = current_combat.get("VictoryRoute")
+                expected_route = self.expected_combat_route_from_preset(preset, current_combat)
+                if self.repair_combat_entry_routes_from_preset(current_combat, preset):
+                    messages.append(
+                        f"current combat route repaired for section "
+                        f"{current_combat.get('StartedSection') or current_combat.get('Section')}"
+                    )
+                if (
+                    expected_route
+                    and old_final_route
+                    and int(old_final_route) != int(expected_route)
+                    and int(self.state.get("CurrentSection") or 0) == int(old_final_route)
+                    and not bool(current_combat.get("Active"))
+                ):
+                    before = int(self.state.get("CurrentSection") or 0)
+                    self.state["CurrentSection"] = int(expected_route)
+                    messages.append(f"current section repaired {before}->{expected_route}")
+
+        repaired_history = 0
+        for entry in as_list(self.state.get("CombatHistory")):
+            if not isinstance(entry, dict):
+                continue
+            preset = self.combat_preset_for_entry(int(entry.get("BookNumber") or book_number), entry)
+            if preset and self.repair_combat_entry_routes_from_preset(entry, preset):
+                repaired_history += 1
+        if repaired_history:
+            messages.append(f"combat history route repairs: {repaired_history}")
+        return messages
 
     def restore_player_endurance_after_combat_effects(self) -> None:
         stored = self.combat.get("StoredPlayerEnduranceBeforeCombat")

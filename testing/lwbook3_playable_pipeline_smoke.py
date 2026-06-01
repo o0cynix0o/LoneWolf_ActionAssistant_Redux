@@ -528,6 +528,66 @@ def test_book3_combat_helpers() -> None:
     assert_equal(assistant.state["CurrentSection"], 173, "section 296 survival after three rounds routes to 173")
 
 
+def test_book3_stale_combat_route_repair() -> None:
+    assistant = fresh_assistant()
+    assistant.state["CurrentSection"] = 325
+    bad_rounds = [
+        {"Round": 1, "Roll": 0, "Ratio": 5, "EnemyLoss": 18, "PlayerLoss": 0},
+        {"Round": 2, "Roll": 6, "Ratio": 5, "EnemyLoss": 11, "PlayerLoss": 1},
+        {"Round": 3, "Roll": 9, "Ratio": 5, "EnemyLoss": 1, "PlayerLoss": 0},
+    ]
+    assistant.combat.update(
+        {
+            "Active": False,
+            "EnemyName": "Baknar",
+            "EnemyCombatSkill": 19,
+            "EnemyEnduranceMax": 30,
+            "EnemyEnduranceCurrent": 0,
+            "VictoryRoute": 325,
+            "StartedSection": 103,
+            "SectionCombatId": "103-baknar",
+            "Outcome": "Victory",
+            "Log": bad_rounds,
+        }
+    )
+    assistant.state["CombatHistory"] = [
+        {
+            "BookNumber": 3,
+            "Section": 78,
+            "Outcome": "Victory",
+            "EnemyName": "Baknar",
+            "EnemyCombatSkill": 19,
+            "EnemyEnduranceMax": 30,
+            "RoundCount": 2,
+            "VictoryRoute": 325,
+            "Rounds": bad_rounds[:2],
+        },
+        {
+            "BookNumber": 3,
+            "Section": 103,
+            "Outcome": "Victory",
+            "EnemyName": "Baknar",
+            "EnemyCombatSkill": 19,
+            "EnemyEnduranceMax": 30,
+            "RoundCount": 3,
+            "VictoryRoute": 325,
+            "Rounds": bad_rounds,
+        },
+    ]
+    path = SAVE_DIR / "stale-combat-route.json"
+    path.write_text(json.dumps(assistant.state), encoding="utf-8")
+
+    loader = lonewolf_redux.LoneWolfReduxAssistant(save_dir=SAVE_DIR, data_dir=ROOT / "data")
+    loader.last_save_file = LAST_SAVE
+    quiet(loader.load_game, str(path))
+
+    assert_equal(loader.state["CurrentSection"], 305, "stale section 103 Baknar route repairs current section")
+    assert_equal(loader.combat["VictoryRoute"], 305, "current combat route repaired to audited section 103 route")
+    history = {int(entry["Section"]): entry for entry in loader.state["CombatHistory"]}
+    assert_equal(history[78]["VictoryRoute"], 245, "section 78 Baknar archive route repaired")
+    assert_equal(history[103]["VictoryRoute"], 305, "section 103 Baknar archive route repaired")
+
+
 def main() -> int:
     test_book3_meals_failure_and_completion()
     test_book3_loot_and_route_checks()
@@ -538,6 +598,7 @@ def main() -> int:
     test_book3_combat_route_targets_match_source()
     test_book3_combat_route_semantics()
     test_book3_combat_helpers()
+    test_book3_stale_combat_route_repair()
     print("Book 3 playable pipeline smoke passed.")
     return 0
 
