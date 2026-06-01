@@ -55,6 +55,10 @@ def loot_option(option_id: str, label: str, actions: list[dict[str, Any]]) -> di
     return {"id": option_id, "label": label, "actions": actions}
 
 
+def add_items(container: str, name: str, count: int) -> list[dict[str, Any]]:
+    return [{"type": "add_item", "container": container, "name": name} for _ in range(count)]
+
+
 def roll_range(
     minimum: int,
     maximum: int,
@@ -131,6 +135,10 @@ def cond_flag(key: str, value: Any = True) -> dict[str, Any]:
     return {"type": "flag", "key": key, "value": value}
 
 
+def cond_no_flag(key: str, value: Any = True) -> dict[str, Any]:
+    return {"type": "no_flag", "key": key, "value": value}
+
+
 def cond_active_weaponskill() -> dict[str, Any]:
     return {"type": "active_weaponskill_weapon"}
 
@@ -153,6 +161,45 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "8": {
         "loot": [
             loot_option("baknar-oil", "Take Baknar Oil", [{"type": "add_item", "container": "backpack", "name": "Baknar Oil"}])
+        ]
+    },
+    "12": {
+        "loot": [
+            loot_option("food", "Take remaining Food for 2 Meals", add_items("backpack", "Meal", 2)),
+            loot_option("sleeping-furs", "Take Sleeping Furs", [{"type": "add_item", "container": "backpack", "name": "Sleeping Furs (2 spaces)"}]),
+            loot_option("rope", "Take Rope", [{"type": "add_item", "container": "backpack", "name": "Rope"}]),
+        ]
+    },
+    "16": {
+        "lossChoices": [
+            {
+                "id": "crushed-pack-item-1",
+                "label": "Discard crushed Backpack Item 1",
+                "summary": "Choose the first Backpack Item crushed by the stone door.",
+                "containers": ["backpack"],
+            },
+            {
+                "id": "crushed-pack-item-2",
+                "label": "Discard crushed Backpack Item 2",
+                "summary": "Choose the second Backpack Item crushed by the stone door.",
+                "containers": ["backpack"],
+            },
+        ]
+    },
+    "18": {
+        "lossChoices": [
+            {
+                "id": "cyclone-weapon-loss",
+                "label": "Lose weapon to the cyclone",
+                "summary": "Choose the weapon or weapon-like Special Item lost to the ice cyclone.",
+                "containers": ["weapon"],
+                "fallbackContainers": ["special"],
+            }
+        ]
+    },
+    "25": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
         ]
     },
     "26": {
@@ -183,6 +230,11 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ],
     ),
+    "59": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
+        ]
+    },
     "73": section_roll(
         "Frozen bridge crack check.",
         [
@@ -244,6 +296,23 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ],
         [{"label": "Baknar Oil applied", "value": 2, "condition": cond_flag("baknarOilApplied")}],
     ),
+    "102": {
+        "loot": [
+            loot_option("effigy", "Take Effigy", [{"type": "add_item", "container": "special", "name": "Effigy"}])
+        ]
+    },
+    "119": {
+        "loot": [
+            loot_option("food-1", "Take Food for 1 Meal", add_items("backpack", "Meal", 1)),
+            loot_option("food-2", "Take Food for 2 Meals", add_items("backpack", "Meal", 2)),
+            loot_option("food-3", "Take Food for 3 Meals", add_items("backpack", "Meal", 3)),
+            loot_option("food-4", "Take Food for 4 Meals", add_items("backpack", "Meal", 4)),
+            loot_option("food-5", "Take Food for 5 Meals", add_items("backpack", "Meal", 5)),
+            loot_option("sleeping-furs", "Take Sleeping Furs", [{"type": "add_item", "container": "backpack", "name": "Sleeping Furs (2 spaces)"}]),
+            loot_option("tent", "Take Tent", [{"type": "add_item", "container": "backpack", "name": "Tent (3 spaces)"}]),
+            loot_option("rope", "Take Rope", [{"type": "add_item", "container": "backpack", "name": "Rope (2 spaces)"}]),
+        ]
+    },
     "134": section_roll(
         "Syem Island night-weather roll.",
         [
@@ -304,11 +373,16 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ],
     ),
-    "152": section_roll(
-        "Gold Crown distraction roll; 0 counts as 10. Compare the total against the Gold Crowns thrown.",
-        [],
-        zero_as_ten=True,
-    ),
+    "152": {
+        "goldDistraction": {
+            "id": "book3-section152-gold-distraction",
+            "label": "Distract the guard with Gold Crowns",
+            "summary": "Choose how many Gold Crowns to throw, then roll 0-9. A 0 counts as 10; if the roll total is equal to or less than the thrown Gold Crowns, the guard is distracted.",
+            "successRoute": 319,
+            "failureRoute": 181,
+            "zeroAsTen": True,
+        }
+    },
     "155": section_roll(
         "Ice staircase descent.",
         [
@@ -320,6 +394,11 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             {"label": "END above 20", "value": 1, "condition": cond_end_gte(21)},
         ],
     ),
+    "156": {
+        "loot": [
+            loot_option("gallowbrush", "Take Potion of Gallowbrush", [{"type": "add_item", "container": "backpack", "name": "Potion of Gallowbrush"}])
+        ]
+    },
     "167": section_roll(
         "Natural ice bowl night roll.",
         [
@@ -350,6 +429,11 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ],
         [{"label": "Sixth Sense", "value": 2, "condition": cond_power("Sixth Sense")}],
     ),
+    "177": {
+        "loot": [
+            loot_option("black-graveweed", "Take Potion of Black Graveweed", [{"type": "add_item", "container": "backpack", "name": "Potion of Black Graveweed"}])
+        ]
+    },
     "194": {
         "loot": [
             loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
@@ -363,6 +447,29 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ],
         [{"label": "END below 10", "value": -3, "condition": cond_end_lt(10)}],
     ),
+    "210": {
+        "loot": [
+            loot_option("bone-sword", "Take Bone Sword", [{"type": "add_item", "container": "special", "name": "Bone Sword"}]),
+            loot_option("gold-bracelet", "Take Gold Bracelet", [{"type": "add_item", "container": "special", "name": "Gold Bracelet"}]),
+        ]
+    },
+    "218": {
+        "loot": [
+            loot_option("diamond", "Take Diamond", [{"type": "add_item", "container": "special", "name": "Diamond"}])
+        ]
+    },
+    "223": {
+        "loot": [
+            loot_option("food-1", "Take Food for 1 Meal", add_items("backpack", "Meal", 1)),
+            loot_option("food-2", "Take Food for 2 Meals", add_items("backpack", "Meal", 2)),
+            loot_option("food-3", "Take Food for 3 Meals", add_items("backpack", "Meal", 3)),
+            loot_option("food-4", "Take Food for 4 Meals", add_items("backpack", "Meal", 4)),
+            loot_option("food-5", "Take Food for 5 Meals", add_items("backpack", "Meal", 5)),
+            loot_option("tent", "Take Tent", [{"type": "add_item", "container": "backpack", "name": "Tent (3 spaces)"}]),
+            loot_option("sleeping-furs", "Take Sleeping Furs", [{"type": "add_item", "container": "backpack", "name": "Sleeping Furs (2 spaces)"}]),
+            loot_option("long-rope", "Take Long Rope", [{"type": "add_item", "container": "backpack", "name": "Long Rope (2 spaces)"}]),
+        ]
+    },
     "232": section_roll(
         "Glacier-wall camp night roll.",
         [
@@ -370,6 +477,16 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(7, 9, 300, "Alternative night route"),
         ],
     ),
+    "231": {
+        "loot": [
+            loot_option("gold-bracelet", "Take Gold Bracelet", [{"type": "add_item", "container": "special", "name": "Gold Bracelet"}])
+        ]
+    },
+    "233": {
+        "loot": [
+            loot_option("distilled-laumspur", "Take Distilled Laumspur", [{"type": "add_item", "container": "backpack", "name": "Potion of Laumspur (+5 END)"}])
+        ]
+    },
     "258": section_roll(
         "Break Mindshield and discard the Gold Bracelet. 0 counts as 10; lose END equal to the final total before turning to 63.",
         [roll_range(-2, 10, 63, "Bracelet discarded", [end_loss_from_roll_total()])],
@@ -396,6 +513,17 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(4, 9, 58, "Dodge the blast"),
         ],
     ),
+    "280": {
+        "loot": [
+            loot_option("ornate-silver-key", "Take Ornate Silver Key", [{"type": "add_item", "container": "special", "name": "Ornate Silver Key"}])
+        ]
+    },
+    "282": {
+        "loot": [
+            loot_option("spear", "Take Spear", [{"type": "add_item", "container": "weapon", "name": "Spear"}]),
+            loot_option("blue-stone-disc", "Take Blue Stone Disc", [{"type": "add_item", "container": "special", "name": "Blue Stone Disc"}]),
+        ]
+    },
     "283": section_roll(
         "Escape through the closing door.",
         [
@@ -423,6 +551,16 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 220, "Crevasse route"),
         ],
     ),
+    "295": {
+        "loot": [
+            loot_option("firesphere", "Take Firesphere", [{"type": "add_item", "container": "special", "name": "Firesphere"}])
+        ]
+    },
+    "298": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
+        ]
+    },
     "302": section_roll(
         "Crevasse-floor stumble check.",
         [
@@ -434,7 +572,7 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     ),
     "303": {
         "sourceRoutes": [
-            {"Section": 127, "actions": [{"type": "remove_item", "containers": ["special"], "name": "Ornate Silver Key"}], "effectLabel": "Use Ornate Silver Key"},
+            {"Section": 127},
             {"Section": 308},
             {"Section": 323},
         ]
@@ -442,6 +580,22 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "308": {
         "loot": [
             loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
+        ]
+    },
+    "309": {
+        "loot": [
+            loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}]),
+            loot_option("firesphere", "Take Firesphere", [{"type": "add_item", "container": "special", "name": "Firesphere"}]),
+        ]
+    },
+    "311": {
+        "loot": [
+            loot_option("distilled-alether", "Take Distilled Alether", [{"type": "add_item", "container": "backpack", "name": "Potion of Alether (+4 CS)"}])
+        ]
+    },
+    "316": {
+        "loot": [
+            loot_option("gold-bracelet", "Take Gold Bracelet", [{"type": "add_item", "container": "special", "name": "Gold Bracelet"}])
         ]
     },
     "321": {
@@ -484,6 +638,11 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 288, "Better route"),
         ],
     ),
+    "334": {
+        "loot": [
+            loot_option("glowing-crystal", "Take Glowing Crystal", [{"type": "add_item", "container": "special", "name": "Glowing Crystal"}])
+        ]
+    },
     "346": section_roll(
         "Crevasse jump.",
         [
@@ -571,7 +730,7 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
             )
         ]
     },
-    "147": {"combat": [combat_preset(147, "Kalkoth", combat_enemy("Kalkoth", 10, 28), victoryRoute=235)]},
+    "147": {"combat": [combat_preset(147, "Kalkoth", combat_enemy("Kalkoth", 10, 28), victoryRoute=84, playerLossRoute=66)]},
     "158": {"combat": [combat_preset(158, "Ice Barbarian Scout", combat_enemy("Ice Barbarian Scout", 20, 28), victoryRoute=35)]},
     "161": {"combat": [combat_preset(161, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=133)]},
     "164": {

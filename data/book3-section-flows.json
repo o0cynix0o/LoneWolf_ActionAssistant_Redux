@@ -257,7 +257,47 @@
           "Section": 259
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "food",
+          "label": "Take remaining Food for 2 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "sleeping-furs",
+          "label": "Take Sleeping Furs",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Sleeping Furs (2 spaces)"
+            }
+          ]
+        },
+        {
+          "id": "rope",
+          "label": "Take Rope",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Rope"
+            }
+          ]
+        }
+      ]
     },
     "13": {
       "auditStatus": "source-link-baseline",
@@ -335,7 +375,25 @@
           "Section": 63
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "lossChoices": [
+        {
+          "id": "crushed-pack-item-1",
+          "label": "Discard crushed Backpack Item 1",
+          "summary": "Choose the first Backpack Item crushed by the stone door.",
+          "containers": [
+            "backpack"
+          ]
+        },
+        {
+          "id": "crushed-pack-item-2",
+          "label": "Discard crushed Backpack Item 2",
+          "summary": "Choose the second Backpack Item crushed by the stone door.",
+          "containers": [
+            "backpack"
+          ]
+        }
+      ]
     },
     "17": {
       "auditStatus": "source-link-baseline",
@@ -369,7 +427,20 @@
           "Section": 95
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "lossChoices": [
+        {
+          "id": "cyclone-weapon-loss",
+          "label": "Lose weapon to the cyclone",
+          "summary": "Choose the weapon or weapon-like Special Item lost to the ice cyclone.",
+          "containers": [
+            "weapon"
+          ],
+          "fallbackContainers": [
+            "special"
+          ]
+        }
+      ]
     },
     "19": {
       "auditStatus": "source-link-baseline",
@@ -467,7 +538,20 @@
           "Section": 284
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        }
+      ]
     },
     "26": {
       "auditStatus": "source-link-baseline",
@@ -1131,7 +1215,20 @@
           "Section": 235
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        }
+      ]
     },
     "60": {
       "auditStatus": "source-link-baseline",
@@ -2092,7 +2189,20 @@
           "Section": 306
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "effigy",
+          "label": "Take Effigy",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Effigy"
+            }
+          ]
+        }
+      ]
     },
     "103": {
       "auditStatus": "source-link-baseline",
@@ -2408,7 +2518,147 @@
           "Section": 257
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "food-1",
+          "label": "Take Food for 1 Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-2",
+          "label": "Take Food for 2 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-3",
+          "label": "Take Food for 3 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-4",
+          "label": "Take Food for 4 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-5",
+          "label": "Take Food for 5 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "sleeping-furs",
+          "label": "Take Sleeping Furs",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Sleeping Furs (2 spaces)"
+            }
+          ]
+        },
+        {
+          "id": "tent",
+          "label": "Take Tent",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Tent (3 spaces)"
+            }
+          ]
+        },
+        {
+          "id": "rope",
+          "label": "Take Rope",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Rope (2 spaces)"
+            }
+          ]
+        }
+      ]
     },
     "120": {
       "auditStatus": "source-link-baseline",
@@ -3037,7 +3287,8 @@
             "cs": 10,
             "endurance": 28
           },
-          "victoryRoute": 235
+          "victoryRoute": 84,
+          "playerLossRoute": 66
         }
       ]
     },
@@ -3169,9 +3420,12 @@
         }
       ],
       "incomingRouteCount": 2,
-      "roll": {
-        "summary": "Gold Crown distraction roll; 0 counts as 10. Compare the total against the Gold Crowns thrown.",
-        "outcomes": [],
+      "goldDistraction": {
+        "id": "book3-section152-gold-distraction",
+        "label": "Distract the guard with Gold Crowns",
+        "summary": "Choose how many Gold Crowns to throw, then roll 0-9. A 0 counts as 10; if the roll total is equal to or less than the thrown Gold Crowns, the guard is distracted.",
+        "successRoute": 319,
+        "failureRoute": 181,
         "zeroAsTen": true
       }
     },
@@ -3269,7 +3523,20 @@
           "Section": 10
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gallowbrush",
+          "label": "Take Potion of Gallowbrush",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Gallowbrush"
+            }
+          ]
+        }
+      ]
     },
     "157": {
       "auditStatus": "source-link-baseline",
@@ -3663,7 +3930,20 @@
           "Section": 10
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "black-graveweed",
+          "label": "Take Potion of Black Graveweed",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Black Graveweed"
+            }
+          ]
+        }
+      ]
     },
     "178": {
       "auditStatus": "source-link-baseline",
@@ -4337,7 +4617,31 @@
           "Section": 215
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "bone-sword",
+          "label": "Take Bone Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Bone Sword"
+            }
+          ]
+        },
+        {
+          "id": "gold-bracelet",
+          "label": "Take Gold Bracelet",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Gold Bracelet"
+            }
+          ]
+        }
+      ]
     },
     "211": {
       "auditStatus": "source-link-baseline",
@@ -4491,7 +4795,20 @@
           "Section": 52
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "diamond",
+          "label": "Take Diamond",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Diamond"
+            }
+          ]
+        }
+      ]
     },
     "219": {
       "auditStatus": "source-link-baseline",
@@ -4570,7 +4887,147 @@
           "Section": 307
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "food-1",
+          "label": "Take Food for 1 Meal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-2",
+          "label": "Take Food for 2 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-3",
+          "label": "Take Food for 3 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-4",
+          "label": "Take Food for 4 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "food-5",
+          "label": "Take Food for 5 Meals",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            },
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Meal"
+            }
+          ]
+        },
+        {
+          "id": "tent",
+          "label": "Take Tent",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Tent (3 spaces)"
+            }
+          ]
+        },
+        {
+          "id": "sleeping-furs",
+          "label": "Take Sleeping Furs",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Sleeping Furs (2 spaces)"
+            }
+          ]
+        },
+        {
+          "id": "long-rope",
+          "label": "Take Long Rope",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Long Rope (2 spaces)"
+            }
+          ]
+        }
+      ]
     },
     "224": {
       "auditStatus": "source-link-baseline",
@@ -4697,7 +5154,20 @@
           "Section": 63
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold-bracelet",
+          "label": "Take Gold Bracelet",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Gold Bracelet"
+            }
+          ]
+        }
+      ]
     },
     "232": {
       "auditStatus": "source-link-baseline",
@@ -4749,7 +5219,20 @@
           "Section": 10
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "distilled-laumspur",
+          "label": "Take Distilled Laumspur",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Laumspur (+5 END)"
+            }
+          ]
+        }
+      ]
     },
     "234": {
       "auditStatus": "source-link-baseline",
@@ -5656,7 +6139,20 @@
           "Section": 344
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "ornate-silver-key",
+          "label": "Take Ornate Silver Key",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Ornate Silver Key"
+            }
+          ]
+        }
+      ]
     },
     "281": {
       "auditStatus": "source-link-baseline",
@@ -5687,7 +6183,31 @@
           "Section": 330
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "spear",
+          "label": "Take Spear",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Spear"
+            }
+          ]
+        },
+        {
+          "id": "blue-stone-disc",
+          "label": "Take Blue Stone Disc",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Disc"
+            }
+          ]
+        }
+      ]
     },
     "283": {
       "auditStatus": "source-link-baseline",
@@ -5995,7 +6515,20 @@
           "Section": 132
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "firesphere",
+          "label": "Take Firesphere",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Firesphere"
+            }
+          ]
+        }
+      ]
     },
     "296": {
       "auditStatus": "source-link-baseline",
@@ -6054,7 +6587,20 @@
           "Section": 125
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        }
+      ]
     },
     "299": {
       "auditStatus": "source-link-baseline",
@@ -6181,17 +6727,7 @@
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
-          "Section": 127,
-          "actions": [
-            {
-              "type": "remove_item",
-              "containers": [
-                "special"
-              ],
-              "name": "Ornate Silver Key"
-            }
-          ],
-          "effectLabel": "Use Ornate Silver Key"
+          "Section": 127
         },
         {
           "Section": 308
@@ -6334,7 +6870,31 @@
           "Section": 132
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "blue-stone-triangle",
+          "label": "Take Blue Stone Triangle",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Blue Stone Triangle"
+            }
+          ]
+        },
+        {
+          "id": "firesphere",
+          "label": "Take Firesphere",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Firesphere"
+            }
+          ]
+        }
+      ]
     },
     "310": {
       "auditStatus": "source-link-baseline",
@@ -6366,7 +6926,20 @@
           "Section": 10
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "distilled-alether",
+          "label": "Take Distilled Alether",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Potion of Alether (+4 CS)"
+            }
+          ]
+        }
+      ]
     },
     "312": {
       "auditStatus": "source-link-baseline",
@@ -6434,7 +7007,20 @@
           "Section": 215
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "gold-bracelet",
+          "label": "Take Gold Bracelet",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Gold Bracelet"
+            }
+          ]
+        }
+      ]
     },
     "317": {
       "auditStatus": "source-link-baseline",
@@ -6854,7 +7440,20 @@
           "Section": 306
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "loot": [
+        {
+          "id": "glowing-crystal",
+          "label": "Take Glowing Crystal",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Glowing Crystal"
+            }
+          ]
+        }
+      ]
     },
     "335": {
       "auditStatus": "source-link-baseline",

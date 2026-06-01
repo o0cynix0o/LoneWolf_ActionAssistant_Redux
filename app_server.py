@@ -425,6 +425,10 @@ def handle_action(payload: dict) -> str:
                 payload.get("useToken", True),
             )
         )
+    if action == "gold_distraction":
+        raw = payload.get("raw")
+        raw_roll = int(raw) if str(raw or "").strip() else None
+        return capture_output(lambda: ASSISTANT.play_gold_distraction(payload.get("amount"), raw_roll))
     if action == "healing":
         return capture_output(lambda: ASSISTANT.apply_healing())
     if action == "section_loss":

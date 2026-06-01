@@ -148,10 +148,6 @@ def test_book3_roll_helpers() -> None:
     assert_true(assistant.death_active(), "section 94 fatal roll opens death state")
 
     assistant = fresh_assistant()
-    quiet(assistant.set_section, 152)
-    assert_equal(quiet(assistant.roll_current_section, 0)["Total"], 10, "section 152 treats 0 as 10")
-
-    assistant = fresh_assistant()
     assistant.character["EnduranceCurrent"] = 20
     quiet(assistant.set_section, 258)
     result = quiet(assistant.roll_current_section, 0)
@@ -165,6 +161,113 @@ def test_book3_roll_helpers() -> None:
     assert_equal(roll.get("summary"), "Random next-day hazard at The Rock.", "section 291 roll summary")
     assert_equal(quiet(assistant.roll_current_section, 4)["Route"], 103, "section 291 low roll route")
     assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 220, "section 291 high roll route")
+
+
+def test_book3_gold_distraction_helper() -> None:
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 10
+    quiet(assistant.set_section, 152)
+    payload = assistant.current_section_flow_payload()["GoldDistraction"]
+    assert_true(payload["Available"], "section 152 exposes Gold distraction helper")
+    result = quiet(assistant.play_gold_distraction, 3, 2)
+    assert_equal(result["Total"], 2, "section 152 distraction uses rolled total")
+    assert_equal(assistant.inventory["GoldCrowns"], 7, "section 152 spends thrown Gold on success")
+    assert_equal(assistant.state["CurrentSection"], 319, "section 152 success routes to 319")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 10
+    quiet(assistant.set_section, 152)
+    result = quiet(assistant.play_gold_distraction, 3, 4)
+    assert_equal(result["Success"], False, "section 152 failed distraction result")
+    assert_equal(assistant.inventory["GoldCrowns"], 7, "section 152 spends thrown Gold on failure")
+    assert_equal(assistant.state["CurrentSection"], 181, "section 152 failure routes to 181")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 10
+    quiet(assistant.set_section, 152)
+    result = quiet(assistant.play_gold_distraction, 10, 0)
+    assert_equal(result["Total"], 10, "section 152 treats 0 as 10")
+    assert_equal(assistant.state["CurrentSection"], 319, "section 152 ten Gold succeeds on roll 0")
+
+
+def test_book3_direct_section_helpers() -> None:
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 18)
+    assert_equal(assistant.character["EnduranceCurrent"], 17, "section 18 loses 3 END")
+    assistant.inventory["Weapons"] = ["Sword"]
+    quiet(assistant.apply_section_loss, "cyclone-weapon-loss", "weapon", "Sword")
+    assert_equal(assistant.inventory["Weapons"], [], "section 18 weapon loss removes chosen weapon")
+
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = ["Meal", "Rope", "Potion of Laumspur (+4 END)"]
+    quiet(assistant.set_section, 16)
+    quiet(assistant.apply_section_loss, "crushed-pack-item-1", "backpack", "Rope")
+    quiet(assistant.apply_section_loss, "crushed-pack-item-2", "backpack", "Meal")
+    assert_true("Rope" not in assistant.inventory["BackpackItems"], "section 16 removes first crushed item")
+    assert_true("Meal" not in assistant.inventory["BackpackItems"], "section 16 removes second crushed item")
+
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = []
+    quiet(assistant.set_section, 12)
+    quiet(assistant.apply_flow_loot, "food")
+    quiet(assistant.apply_flow_loot, "sleeping-furs")
+    quiet(assistant.apply_flow_loot, "rope")
+    assert_equal(assistant.inventory["BackpackItems"].count("Meal"), 2, "section 12 food adds two net Meals")
+    assert_true("Sleeping Furs (2 spaces)" in assistant.inventory["BackpackItems"], "section 12 adds sleeping furs")
+    assert_true("Rope" in assistant.inventory["BackpackItems"], "section 12 adds rope")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 27)
+    assert_equal(assistant.character["EnduranceCurrent"], 18, "section 27 cold loss without Baknar Oil")
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    assistant.automation_flags["baknarOilApplied"] = True
+    quiet(assistant.set_section, 27)
+    assert_equal(assistant.character["EnduranceCurrent"], 20, "section 27 Baknar Oil prevents cold loss")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 55)
+    assert_equal(assistant.character["EnduranceCurrent"], 15, "section 55 loses 5 END")
+    assert_equal(assistant.character["CombatSkillBase"], 12, "section 55 permanently lowers base CS")
+    assert_equal(assistant.character["CombatSkillCurrent"], 12, "section 55 lowers current CS")
+
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = ["Meal", "Rope"]
+    quiet(assistant.set_section, 49)
+    assert_equal(assistant.inventory["BackpackItems"], [], "section 49 stores Backpack gear")
+    quiet(assistant.set_section, 212)
+    assert_equal(assistant.inventory["BackpackItems"], ["Meal", "Rope"], "section 212 restores Backpack gear")
+
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = ["Meal"]
+    quiet(assistant.set_section, 237)
+    assert_equal(assistant.inventory["BackpackItems"], [], "section 237 consumes a Backpack Meal")
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = []
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 237)
+    assert_equal(assistant.character["EnduranceCurrent"], 17, "section 237 loses END without Meal")
+
+    assistant = fresh_assistant()
+    assistant.inventory["BackpackItems"] = ["Meal"]
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 294)
+    assert_equal(assistant.inventory["BackpackItems"], ["Meal"], "section 294 keeps one Meal when two are required")
+    assert_equal(assistant.character["EnduranceCurrent"], 14, "section 294 loses END without two Meals")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 311)
+    quiet(assistant.apply_flow_loot, "distilled-alether")
+    quiet(assistant.use_item, "backpack", "Potion of Alether")
+    assert_equal(assistant.character["CombatSkillCurrent"], 18, "section 311 Alether use adds 4 CS")
+
+    assistant = fresh_assistant()
+    assistant.inventory["SpecialItems"] = ["Ornate Silver Key"]
+    quiet(assistant.set_section, 303)
+    assert_true("Ornate Silver Key" not in assistant.inventory["SpecialItems"], "section 303 consumes Ornate Silver Key")
 
 
 def test_book3_combat_helpers() -> None:
@@ -198,11 +301,28 @@ def test_book3_combat_helpers() -> None:
     assert_equal(assistant.combat["WinWithinRoute"], 272, "section 164 fast victory route")
     assert_equal(assistant.combat["TooLateRoute"], 324, "section 164 slow victory route")
 
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 147)
+    quiet(assistant.start_section_combat, "147-kalkoth")
+    assistant.combat["Log"] = [{"PlayerLoss": 1, "EnemyLoss": 0}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 66, "section 147 wounds route immediately to 66")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 147)
+    quiet(assistant.start_section_combat, "147-kalkoth")
+    assistant.combat["EnemyEnduranceCurrent"] = 0
+    assistant.combat["Log"] = [{"PlayerLoss": 0, "EnemyLoss": 28}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 84, "section 147 flawless victory routes to 84")
+
 
 def main() -> int:
     test_book3_meals_failure_and_completion()
     test_book3_loot_and_route_checks()
     test_book3_roll_helpers()
+    test_book3_gold_distraction_helper()
+    test_book3_direct_section_helpers()
     test_book3_combat_helpers()
     print("Book 3 playable pipeline smoke passed.")
     return 0

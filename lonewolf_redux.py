@@ -3243,6 +3243,8 @@ class LoneWolfReduxAssistant:
             )
         if kind == "flag":
             return self.automation_flags.get(str(condition.get("key") or "")) == condition.get("value", True)
+        if kind == "no_flag":
+            return self.automation_flags.get(str(condition.get("key") or "")) != condition.get("value", True)
         if kind in {"active_weaponskill_weapon", "weaponskill_active_weapon"}:
             return self.active_weapon_matches_weaponskill()
         if kind == "wp_gt":
@@ -3775,6 +3777,104 @@ class LoneWolfReduxAssistant:
             "LastResult": json_clone(last_result) if last_result else None,
         }
 
+    def gold_distraction_session_key(self) -> str:
+        return f"goldDistraction:{self.current_visit_key()}"
+
+    def current_gold_distraction_payload(self, entry: dict[str, Any]) -> dict[str, Any] | None:
+        game = entry.get("goldDistraction") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            return None
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.gold_distraction_session_key()
+        last_result = stored.get(f"{session_key}:last")
+        if not isinstance(last_result, dict) or last_result.get("VisitKey") != self.current_visit_key():
+            last_result = None
+        return {
+            "Available": True,
+            "Id": str(game.get("id") or "gold-distraction"),
+            "Label": str(game.get("label") or "Throw Gold Crowns"),
+            "Summary": str(game.get("summary") or ""),
+            "MaxThrow": int(self.inventory.get("GoldCrowns") or 0),
+            "SuccessRoute": int(game.get("successRoute") or 0),
+            "FailureRoute": int(game.get("failureRoute") or 0),
+            "ZeroAsTen": bool(game.get("zeroAsTen", False)),
+            "LastResult": json_clone(last_result) if last_result else None,
+        }
+
+    def play_gold_distraction(self, amount: Any, raw_roll: Any | None = None) -> dict[str, Any] | None:
+        entry = self.current_section_flow_entry() or {}
+        game = entry.get("goldDistraction") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            print("Gold distraction is not available in this section.")
+            return None
+
+        try:
+            thrown = int(amount)
+        except (TypeError, ValueError):
+            print("Gold distraction needs the number of Gold Crowns to throw.")
+            return None
+        if thrown < 1:
+            print("Throw at least 1 Gold Crown.")
+            return None
+
+        gold_before = int(self.inventory.get("GoldCrowns") or 0)
+        if thrown > gold_before:
+            print(f"You only have {gold_before} Gold Crowns to throw.")
+            return None
+
+        raw = coerce_random_digit(raw_roll)
+        total = 10 if raw == 0 and bool(game.get("zeroAsTen", False)) else raw
+        success = total <= thrown
+        route = int(game.get("successRoute") if success else game.get("failureRoute") or 0)
+        outcome = "Guard distracted" if success else "Guard not fooled"
+
+        self.inventory["GoldCrowns"] = max(0, gold_before - thrown)
+        self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.gold_distraction_session_key()
+        result = {
+            "Game": "Gold Distraction",
+            "VisitKey": self.current_visit_key(),
+            "Thrown": thrown,
+            "Raw": raw,
+            "Total": total,
+            "Outcome": outcome,
+            "Route": route,
+            "Success": success,
+            "GoldBefore": gold_before,
+            "GoldAfter": int(self.inventory.get("GoldCrowns") or 0),
+        }
+        stored[f"{session_key}:last"] = result
+        journal = as_list(self.automation.get("Journal"))
+        journal.append(
+            {
+                "Kind": "gold_distraction",
+                "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                "BookNumber": int(self.character["BookNumber"]),
+                "Section": int(self.state["CurrentSection"]),
+                "VisitKey": self.current_visit_key(),
+                "Summary": outcome,
+                "Result": json_clone(result),
+            }
+        )
+        self.automation["Journal"] = journal[-100:]
+
+        print(f"Gold distraction: threw {thrown}, roll {raw} total {total} - {outcome}.")
+        print(f"Gold Crowns {gold_before}->{self.inventory['GoldCrowns']}")
+        if route:
+            print(f"Route: section {route}.")
+            self.set_section(route)
+        else:
+            self.autosave()
+        return result
+
     def play_cartwheel(
         self,
         bet_number: Any,
@@ -4176,6 +4276,7 @@ class LoneWolfReduxAssistant:
             "RouteChecks": self.evaluate_route_checks(entry, automation),
             "StagedRoll": self.current_staged_roll_payload(entry),
             "Cartwheel": self.current_cartwheel_payload(entry),
+            "GoldDistraction": self.current_gold_distraction_payload(entry),
             "Healing": self.current_healing_payload(),
             "LossChoices": self.current_loss_choices_payload(entry),
             "Automation": automation,
@@ -5044,8 +5145,9 @@ class LoneWolfReduxAssistant:
                 "label": "Potion of Invulnerability",
                 "addEmptyVial": True,
             }
-        if "potion of alether" in text:
-            return {"stat": "cs", "delta": 2, "label": "Potion of Alether"}
+        if "potion of alether" in text or "alether" in text:
+            delta = 4 if "+4" in text or "distilled" in text else 2
+            return {"stat": "cs", "delta": delta, "label": "Potion of Alether"}
         if "baknar oil" in text:
             return {
                 "stat": "flag",

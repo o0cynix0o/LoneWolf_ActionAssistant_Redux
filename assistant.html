@@ -3802,6 +3802,38 @@
       `;
     }
 
+    function sectionGoldDistractionRows() {
+      const game = currentFlow().GoldDistraction || {};
+      if (!game.Available) return '';
+      const maxThrow = Math.max(0, Number(game.MaxThrow || 0));
+      const defaultThrow = maxThrow > 0 ? 1 : 0;
+      const last = game.LastResult || null;
+      return `
+        <div class="cartwheel-game" data-gold-distraction-game>
+          <p class="muted">${escapeHtml(text(game.Summary, 'Throw Gold Crowns, then roll 0-9.'))}</p>
+          <div class="cartwheel-fields">
+            <label>Gold
+              <input data-gold-distraction-amount type="number" min="1" max="${escapeHtml(maxThrow || 1)}" value="${escapeHtml(defaultThrow)}">
+            </label>
+            <label>Roll
+              <input data-gold-distraction-roll type="number" min="0" max="9" placeholder="auto">
+            </label>
+          </div>
+          <div class="controls">
+            ${maxThrow > 0 ? modeActionButton('data-gold-distraction-play', 'Throw Gold', 'gold distraction') : '<button type="button" disabled>No Gold Crowns</button>'}
+            <span class="muted">0 counts as 10</span>
+          </div>
+          ${last ? `
+            <div class="item-row">
+              <small>${escapeHtml(last.Raw)}</small>
+              <span class="wrap">Total ${escapeHtml(last.Total)} | ${escapeHtml(text(last.Outcome, 'Result'))} | ${escapeHtml(last.Thrown)} Gold</span>
+              ${last.Route ? `<button type="button" data-route="${escapeHtml(last.Route)}">Go ${escapeHtml(last.Route)}</button>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function routeCheckOutcomeText(outcome) {
       const label = text(outcome.Label, 'Result');
       const test = text(outcome.Test);
@@ -3813,6 +3845,7 @@
       const entry = currentFlow().Entry || {};
       const groups = [
         choiceGroup('Cartwheel', sectionCartwheelRows()),
+        choiceGroup('Gold Distraction', sectionGoldDistractionRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),
         choiceGroup('Section Roll', sectionRollRows(entry))
@@ -4829,6 +4862,10 @@
         manualSectionAdvice('cartwheel');
         return;
       }
+      if (isManualMode() && button.dataset.goldDistractionPlay !== undefined) {
+        manualSectionAdvice('gold distraction');
+        return;
+      }
       if (isManualMode() && button.dataset.healing !== undefined) {
         manualSectionAdvice('healing');
         return;
@@ -4870,6 +4907,14 @@
           stake: Number(game?.querySelector('[data-cartwheel-stake]')?.value || 0),
           raw: game?.querySelector('[data-cartwheel-roll]')?.value || '',
           useToken: Boolean(game?.querySelector('[data-cartwheel-token]')?.checked)
+        });
+      }
+      if (button.dataset.goldDistractionPlay !== undefined) {
+        const game = button.closest('[data-gold-distraction-game]');
+        await action({
+          action: 'gold_distraction',
+          amount: Number(game?.querySelector('[data-gold-distraction-amount]')?.value || 0),
+          raw: game?.querySelector('[data-gold-distraction-roll]')?.value || ''
         });
       }
       if (button.dataset.healing !== undefined) await action({ action: 'healing' });
