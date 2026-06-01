@@ -23,6 +23,7 @@ The command means:
 - Verify the local book source.
 - Run the rules, handoff, annotation, section-flow, route, combat, random, automation-language, achievement-candidate, and UI-readiness scans.
 - Build every clear mechanic, helper, data artifact, test, and browser-facing affordance that can be implemented safely.
+- Prove combat, random, and route helpers against the source text with semantic app tests before handing the book to the user for playtesting.
 - Stop only for true rulings, approvals, edition differences, or risky player-choice behavior.
 - Record every stop in a rulings queue so one approval session can unblock the next build session.
 - Do not package, release, or commit source book files.
@@ -48,6 +49,7 @@ Do not stop to ask whether to run tests, update docs, restart the local server, 
 Each book pass should produce or update:
 
 - `testing/logs/LWBOOKN_PASS1_RULES_BASELINE.md`
+- `testing/logs/LWBOOKN_RULESET_CHANGE_AUDIT.md`
 - `testing/logs/LWBOOKN_RULINGS_QUEUE.md`
 - `testing/logs/LWBOOKN_SECTION_FLOW_BASELINE.md`
 - `testing/logs/LWBOOKN_SECTION_AUDIT.md`
@@ -56,6 +58,7 @@ Each book pass should produce or update:
 - `testing/logs/LWBOOKN_COMBAT_AND_RANDOM_AUDIT.md`
 - `testing/logs/LWBOOKN_ROUTE_AUDIT.md`
 - `testing/logs/LWBOOKN_ROUTE_GRAPH_CHECK.md` when a Project Aon SVG route graph is available
+- `testing/logs/LWBOOKN_COMBAT_SEMANTIC_PLAYTEST.md`
 - `testing/logs/LWBOOKN_PLAYABLE_PIPELINE.md`
 - `testing/logs/LWBOOKN_SEMANTIC_APP_PLAYTEST.md`
 - `testing/logs/LWBOOKN_ROUTE_GAUNTLET_PLAYTEST.md`
@@ -82,6 +85,13 @@ Reports must record mechanics, section numbers, file references, decisions, and 
 
 - Read action chart, rules, combat, equipment, random-number, levels/ranks, errata, footnotes, and annotations.
 - Compare against the previous implemented book.
+- Identify the ruleset family before reading sections:
+  - Kai books
+  - Magnakai books
+  - Grand Master books
+  - any later-series rule family the source introduces
+- If the book crosses a ruleset boundary, create `LWBOOKN_RULESET_CHANGE_AUDIT.md` before implementation. Record what changes in character creation, action chart fields, rank/power structure, combat rules, inventory containers, carry-forward, healing, meals, currency, and book completion.
+- Treat ruleset changes as engine-work candidates, not just data changes. If a new rule family needs new state fields, UI panels, validation, or save migration, implement that support before section automation.
 - Detect new or changed rules:
   - Combat Skill and Endurance
   - Disciplines, new powers, rank changes, or power upgrades
@@ -95,6 +105,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Special Items that behave as weapons, passes, keys, flags, currencies, or removable story objects
   - Durable item history checks where current inventory is not enough
 - Record all rule deltas and implementation needs in the rules baseline.
+- Do not start final implementation from section text until rules, annotations, and handoff pages have been scanned. Section automation built on an outdated rules model must be considered incomplete.
 
 ## 3. Book Handoff / Start-State Scan
 
@@ -128,6 +139,12 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - combat route
   - no-route terminal
 - Generate or update `data/bookN-section-flows.json`.
+- Run a route-target certification pass:
+  - Every generated combat route target must appear in that section's source links unless the route is explicitly a terminal state implemented outside the source page.
+  - Every generated random-roll route target must appear in that section's source links unless it is a documented death/failure helper.
+  - Every generated route-check target must appear in that section's source links.
+  - Every route action that spends, removes, grants, or flags something must be tied to a source route or a documented manual helper.
+- Any generated route target that is not present in the source text is a blocker until corrected or documented with a clear reason.
 - Write the section-flow baseline log.
 - Write `LWBOOKN_ROUTE_GRAPH_CHECK.md` if an online route graph was available.
 
@@ -152,6 +169,19 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Route effects
   - History-based effects
   - Special combat routing such as one-round fights, compare-loss fights, fixed-round survival, forced victory/failure checks, or routes based on combat result details rather than simple victory
+- Flag combat wording that changes ordinary fight behavior:
+  - ignore Lone Wolf END loss
+  - ignore enemy END loss
+  - only apply losses after a certain round
+  - fight only one round
+  - fight for X rounds or fewer
+  - stop if the fight reaches a later round
+  - route based on who lost more ENDURANCE
+  - route based on equal ENDURANCE loss
+  - route based on a combat-round random number
+  - route based on weapon used
+  - route based on enemy immunity or susceptibility
+  - route based on previous enemy or section history
 - Write findings by signal/category without copying long prose.
 - Every signal must become one of:
   - implemented automation
@@ -241,8 +271,17 @@ Also implement app support when data alone is not enough:
 - Active-combat preset sync for stale saves.
 - Preferred combat weapon defaults.
 - Item history flags for durable route checks.
+- Enemy/combat history flags for "if you fought this before" rules.
 - Story flags for passes, papers, disguises, and similar objects.
 - Book-specific recovery math based on combat history or route history.
+- Combat route support for:
+  - ignored player loss rounds
+  - ignored enemy loss rounds
+  - round-limit exits before victory
+  - victory-within or too-late exits
+  - combat-roll route exits
+  - victory choice lists where the book offers a post-combat player choice
+  - required weapon or special weapon restrictions
 - UI label shaping for player-facing buttons.
 - Choices-panel filtering so only real choices appear there.
 - Status/receipt output for automation effects.
@@ -294,9 +333,33 @@ For every combat preset, verify:
 - Combat history archive.
 - Active-combat stale-save repair.
 
+Before this pass can be marked complete, run an automated combat route-target check for the book. It must fail if any preset references a section that is not one of the source links for that section, including:
+
+- `victoryRoute`
+- `defeatRoute`
+- `evadeRoute`
+- `flawlessVictoryRoute`
+- `woundedVictoryRoute`
+- `playerLossRoute`
+- `oneRoundComparisonRoutes`
+- `winWithinRoute`
+- `tooLateRoute`
+- `survivalRoute`
+- `roundExceededRoute`
+- `victoryChoices`
+- `combatRollRoutes`
+
 Special combat wording is not allowed to pass on structural checks alone. For every book, any section that says or implies `one round`, `fight for X rounds`, `compare ENDURANCE loss`, `if you lose more`, `if the enemy loses more`, `if losses are equal`, `survive`, `after X rounds`, `cannot harm`, `only harmed by`, `immune to`, or similar special handling must get a semantic app test that starts the fight through the app and asserts the exact resulting section or state.
 
 A generated combat preset is only complete when the test proves the player-facing behavior matches the section text. "The fight starts" is not enough.
+
+Write `testing/logs/LWBOOKN_COMBAT_SEMANTIC_PLAYTEST.md` with:
+
+- Combat preset count.
+- Route-target mismatch count.
+- Every corrected or intentionally manual special-combat section.
+- Tests that prove app behavior, not just data shape.
+- Remaining combat risk, if any.
 
 ## 11. UI Meaning And Choices Pass
 
@@ -351,6 +414,7 @@ Generate or update:
 - Route/random smoke test.
 - Combat smoke test.
 - Combat hardening edge test.
+- Combat route-target certification test for every onboarded book.
 - Automation-language smoke test.
 - UI label/static browser smoke test.
 - Choices-panel filter smoke test.
@@ -373,11 +437,21 @@ Semantic app tests must drive the same app behavior a player would use. Dependin
 
 Do not count a data-generation check as a playtest. Data checks prove the helper exists; semantic app tests prove it behaves correctly.
 
+For ruleset changes, tests must also prove:
+
+- Existing saves migrate or normalize correctly.
+- New action chart fields appear in the web app.
+- New powers/ranks are selectable only at valid book-start or transition points.
+- Old-book behavior still passes its regression tests.
+- Carry-forward into and out of the new ruleset preserves allowed inventory and history.
+
 ## 14. Run Validation
 
 - Python compile.
 - Regenerate/check data artifacts.
 - Run all smoke tests and playtests.
+- Run all route-target certification tests.
+- Run all semantic app playtests for special combat, random, and route-check sections.
 - Run `git diff --check`.
 - Confirm `books/` is not staged/tracked.
 - Start or refresh local server.
@@ -408,6 +482,7 @@ For every book, "test play" means app-level behavior tests plus representative r
 - Confirm every ambiguity is resolved, marked manual, or listed as waiting for a user ruling.
 - Confirm every combat and random-number section appears in the combat/random audit.
 - Confirm every annotation and errata note was reviewed.
+- Confirm every ruleset change is recorded in `LWBOOKN_RULESET_CHANGE_AUDIT.md` and has either engine support, a manual helper, or a queued ruling.
 
 ### Level 3: Automation Coverage
 
@@ -453,6 +528,8 @@ Include:
   - Special combat routing based on one-round results, fixed-round results, compared ENDURANCE losses, required weapons, immunities, or any route that is not plain victory/defeat.
   - Every book completion, carry-forward transition, and repeat-book reset.
   - Every approved achievement trigger category.
+
+Route-target certification is required before Level 5 can pass. A section with a route mismatch is not human-playtest ready, even if ordinary app smoke tests pass.
 
 For special combat sections, each named outcome in the source text needs its own assertion. Example pattern:
 
