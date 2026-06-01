@@ -54,6 +54,14 @@ def main() -> int:
         "action: 'cartwheel'" in source,
         "Cartwheel mini-game should call the cartwheel action endpoint.",
     )
+    assert_true(
+        "activeView = 'combat';\n        await action({ action: 'section_combat_start'" in source,
+        "Section combat Start should switch directly to the Combat tab after starting the preset.",
+    )
+    assert_true(
+        "activeView = 'combat';\n        manualSectionAdvice('combat presets'" in source,
+        "Manual Mode section combat advice should also switch to the Combat tab.",
+    )
 
     print("Browser Choices static smoke passed.")
     return 0

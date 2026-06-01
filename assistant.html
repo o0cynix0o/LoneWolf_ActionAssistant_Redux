@@ -4816,7 +4816,9 @@
         return;
       }
       if (isManualMode() && button.dataset.sectionCombatStart !== undefined) {
+        activeView = 'combat';
         manualSectionAdvice('combat presets', { id: button.dataset.sectionCombatStart });
+        render();
         return;
       }
       if (isManualMode() && button.dataset.flowLoot) {
@@ -4854,7 +4856,11 @@
         await action({ action: 'roll', raw: input?.value || '' });
       }
       if (button.dataset.route) await action({ action: 'route', section: Number(button.dataset.route) });
-      if (button.dataset.sectionCombatStart !== undefined) await action({ action: 'section_combat_start', id: button.dataset.sectionCombatStart });
+      if (button.dataset.sectionCombatStart !== undefined) {
+        activeView = 'combat';
+        await action({ action: 'section_combat_start', id: button.dataset.sectionCombatStart });
+        return;
+      }
       if (button.dataset.flowLoot) await action({ action: 'flow_loot', id: button.dataset.flowLoot });
       if (button.dataset.cartwheelPlay !== undefined) {
         const game = button.closest('[data-cartwheel-game]');
