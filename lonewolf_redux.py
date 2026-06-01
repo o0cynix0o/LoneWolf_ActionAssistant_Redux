@@ -3243,6 +3243,8 @@ class LoneWolfReduxAssistant:
             )
         if kind == "flag":
             return self.automation_flags.get(str(condition.get("key") or "")) == condition.get("value", True)
+        if kind in {"active_weaponskill_weapon", "weaponskill_active_weapon"}:
+            return self.active_weapon_matches_weaponskill()
         if kind == "wp_gt":
             return int(self.character["WillpowerCurrent"]) > int(condition.get("value") or 0)
         if kind == "wp_gte":
@@ -3254,6 +3256,24 @@ class LoneWolfReduxAssistant:
         if kind == "staff_available":
             return self.has_available_staff()
         return False
+
+    def active_weapon_matches_weaponskill(self) -> bool:
+        if not self.has_power("Weaponskill"):
+            return False
+        skill = str(self.character.get("WeaponskillWeapon") or "").strip().lower()
+        if not skill:
+            return False
+        active = str(self.combat.get("ActiveWeapon") or "").strip()
+        if not active:
+            active = str(self.settings.get("PreferredCombatWeapon") or "").strip()
+        if not active:
+            active = self.default_combat_weapon()
+        active_key = active.lower()
+        if active_key == "magic spear":
+            active_key = "spear"
+        elif active_key in {"sommerswerd", "bone sword"}:
+            active_key = "sword"
+        return active_key == skill
 
     def route_check_stat_value(self, stat: str) -> int:
         key = str(stat or "").replace("_", "").replace(" ", "").lower()
@@ -3393,7 +3413,7 @@ class LoneWolfReduxAssistant:
         raw = random_digit() if raw_roll is None else int(raw_roll)
         raw = max(0, min(9, raw))
         modifiers: list[dict[str, Any]] = []
-        total = raw
+        total = 10 if raw == 0 and bool(roll.get("zeroAsTen")) else raw
         for modifier in as_list(roll.get("modifiers")):
             if not isinstance(modifier, dict):
                 continue
@@ -3440,6 +3460,15 @@ class LoneWolfReduxAssistant:
                 matched_actions = [
                     action for action in as_list(outcome.get("actions")) if isinstance(action, dict)
                 ]
+                ending = str(outcome.get("ending") or "")
+                if ending:
+                    matched_actions.append(
+                        {
+                            "type": "ending",
+                            "ending": ending,
+                            "cause": str(outcome.get("cause") or f"Section {self.state['CurrentSection']} ended the run."),
+                        }
+                    )
                 break
         return {
             "Section": int(self.state["CurrentSection"]),
@@ -3631,7 +3660,23 @@ class LoneWolfReduxAssistant:
 
         messages: list[str] = []
         for action in actions:
-            message = self.apply_automation_action(action)
+            resolved_action = dict(action)
+            delta_from = str(resolved_action.get("deltaFrom") or "").lower()
+            if delta_from in {"roll_total", "total"}:
+                delta = int(result.get("Total") or 0) * int(resolved_action.get("multiplier") or 1)
+                if resolved_action.get("minDelta") is not None:
+                    delta = max(delta, int(resolved_action.get("minDelta") or 0))
+                if resolved_action.get("maxDelta") is not None:
+                    delta = min(delta, int(resolved_action.get("maxDelta") or 0))
+                resolved_action["delta"] = delta
+            elif delta_from in {"roll_raw", "raw"}:
+                delta = int(result.get("Raw") or 0) * int(resolved_action.get("multiplier") or 1)
+                if resolved_action.get("minDelta") is not None:
+                    delta = max(delta, int(resolved_action.get("minDelta") or 0))
+                if resolved_action.get("maxDelta") is not None:
+                    delta = min(delta, int(resolved_action.get("maxDelta") or 0))
+                resolved_action["delta"] = delta
+            message = self.apply_automation_action(resolved_action)
             if message:
                 messages.append(message)
 

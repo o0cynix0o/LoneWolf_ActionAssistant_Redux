@@ -124,6 +124,41 @@ def test_book3_loot_and_route_checks() -> None:
 
 def test_book3_roll_helpers() -> None:
     assistant = fresh_assistant()
+    quiet(assistant.set_section, 29)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Route"], 312, "section 29 roll 0 route")
+    assert_equal(quiet(assistant.roll_current_section, 1)["Route"], 226, "section 29 roll 1 route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 266, "section 29 roll 5 route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 54)
+    result = quiet(assistant.roll_current_section, 2)
+    assert_equal(result["Total"], 5, "section 54 Mindblast modifier total")
+    assert_equal(result["Route"], 268, "section 54 modified route")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 94)
+    result = quiet(assistant.roll_current_section, 0)
+    assert_equal(result["Route"], 176, "section 94 survival route")
+    assert_equal(assistant.character["EnduranceCurrent"], 17, "section 94 survival loses END")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 94)
+    quiet(assistant.roll_current_section, 7)
+    assert_true(assistant.death_active(), "section 94 fatal roll opens death state")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 152)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Total"], 10, "section 152 treats 0 as 10")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 258)
+    result = quiet(assistant.roll_current_section, 0)
+    assert_equal(result["Total"], 8, "section 258 Hunting/Sixth Sense modifier total")
+    assert_equal(result["Route"], 63, "section 258 bracelet route")
+    assert_equal(assistant.character["EnduranceCurrent"], 12, "section 258 loses END equal to total")
+
     quiet(assistant.set_section, 291)
     flow = assistant.current_section_flow_payload()
     roll = flow["Entry"].get("roll", {})

@@ -55,6 +55,94 @@ def loot_option(option_id: str, label: str, actions: list[dict[str, Any]]) -> di
     return {"id": option_id, "label": label, "actions": actions}
 
 
+def roll_range(
+    minimum: int,
+    maximum: int,
+    route: int | None,
+    label: str,
+    actions: list[dict[str, Any]] | None = None,
+    ending: str = "",
+    cause: str = "",
+) -> dict[str, Any]:
+    outcome: dict[str, Any] = {"test": "range", "min": minimum, "max": maximum, "label": label}
+    if route is not None:
+        outcome["route"] = route
+    if actions:
+        outcome["actions"] = actions
+    if ending:
+        outcome["ending"] = ending
+    if cause:
+        outcome["cause"] = cause
+    return outcome
+
+
+def roll_values(
+    values: list[int],
+    route: int | None,
+    label: str,
+    actions: list[dict[str, Any]] | None = None,
+    ending: str = "",
+    cause: str = "",
+) -> dict[str, Any]:
+    outcome: dict[str, Any] = {"test": "values", "values": values, "label": label}
+    if route is not None:
+        outcome["route"] = route
+    if actions:
+        outcome["actions"] = actions
+    if ending:
+        outcome["ending"] = ending
+    if cause:
+        outcome["cause"] = cause
+    return outcome
+
+
+def section_roll(
+    summary: str,
+    outcomes: list[dict[str, Any]],
+    modifiers: list[dict[str, Any]] | None = None,
+    *,
+    zero_as_ten: bool = False,
+) -> dict[str, Any]:
+    roll: dict[str, Any] = {"summary": summary, "outcomes": outcomes}
+    if modifiers:
+        roll["modifiers"] = modifiers
+    if zero_as_ten:
+        roll["zeroAsTen"] = True
+    return {"roll": roll}
+
+
+def cond_power(power: str) -> dict[str, Any]:
+    return {"type": "power", "name": power}
+
+
+def cond_any(*conditions: dict[str, Any]) -> dict[str, Any]:
+    return {"type": "any", "conditions": list(conditions)}
+
+
+def cond_end_lt(value: int) -> dict[str, Any]:
+    return {"type": "end_lt", "value": value}
+
+
+def cond_end_gte(value: int) -> dict[str, Any]:
+    return {"type": "end_gte", "value": value}
+
+
+def cond_flag(key: str, value: Any = True) -> dict[str, Any]:
+    return {"type": "flag", "key": key, "value": value}
+
+
+def cond_active_weaponskill() -> dict[str, Any]:
+    return {"type": "active_weaponskill_weapon"}
+
+
+def end_delta(delta: int) -> dict[str, Any]:
+    return {"type": "stat", "stat": "end", "delta": delta}
+
+
+def end_loss_from_roll_total() -> dict[str, Any]:
+    return {"type": "stat", "stat": "end", "deltaFrom": "roll_total", "multiplier": -1, "maxDelta": 0}
+
+
 MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "4": {
         "loot": [
@@ -73,16 +161,97 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("mace", "Take Mace", [{"type": "add_item", "container": "weapon", "name": "Mace"}]),
         ]
     },
+    "29": section_roll(
+        "Sledge-rope escape roll.",
+        [
+            roll_values([0], 312, "Dragged into the crevasse"),
+            roll_range(1, 4, 226, "Free your foot"),
+            roll_range(5, 9, 266, "Leap clear"),
+        ],
+    ),
+    "54": section_roll(
+        "Glass stem handling check.",
+        [
+            roll_range(0, 4, 250, "Glass stem breaks"),
+            roll_range(5, 12, 268, "Glass stem intact"),
+        ],
+        [
+            {
+                "label": "Mind Over Matter or Mindblast",
+                "value": 3,
+                "condition": cond_any(cond_power("Mind Over Matter"), cond_power("Mindblast")),
+            }
+        ],
+    ),
+    "73": section_roll(
+        "Frozen bridge crack check.",
+        [
+            roll_range(0, 7, 119, "Bridge gives way"),
+            roll_range(8, 9, 136, "Reach the far side"),
+        ],
+    ),
+    "74": section_roll(
+        "Hide from the Ice Barbarian.",
+        [
+            roll_range(0, 4, 48, "Discovered"),
+            roll_range(5, 9, 287, "Remain hidden"),
+        ],
+    ),
+    "80": section_roll(
+        "Dodge the charging Kalkoth.",
+        [
+            roll_range(0, 1, 123, "Dive fails"),
+            roll_range(2, 9, 59, "Dive clear"),
+        ],
+    ),
     "84": {
         "loot": [
             loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
         ]
     },
+    "86": section_roll(
+        "Pick the lock with a weapon.",
+        [
+            roll_range(0, 7, 47, "Lock resists"),
+            roll_range(8, 12, 194, "Lock opens"),
+        ],
+        [{"label": "Weaponskill with active weapon", "value": 3, "condition": cond_active_weaponskill()}],
+    ),
+    "88": section_roll(
+        "Javek venom check after END loss.",
+        [
+            roll_range(0, 8, None, "Bite stopped by padded arm"),
+            roll_values([9], None, "Javek venom kills Lone Wolf", ending="death", cause="Section 88 Javek venom death."),
+        ],
+    ),
     "91": {
         "loot": [
             loot_option("baknar-oil", "Take Baknar Oil", [{"type": "add_item", "container": "backpack", "name": "Baknar Oil"}])
         ]
     },
+    "94": section_roll(
+        "Escape the icy water.",
+        [
+            roll_range(0, 6, 176, "Drag yourself free", [end_delta(-3)]),
+            roll_range(7, 9, None, "Drown in the icy water", ending="death", cause="Section 94 icy-water drowning."),
+        ],
+    ),
+    "96": section_roll(
+        "Avoid Kalkoth detection.",
+        [
+            roll_range(0, 8, 59, "Kalkoth pass by"),
+            roll_range(9, 11, 214, "Kalkoth detect you"),
+        ],
+        [{"label": "Baknar Oil applied", "value": 2, "condition": cond_flag("baknarOilApplied")}],
+    ),
+    "134": section_roll(
+        "Syem Island night-weather roll.",
+        [
+            roll_range(0, 3, 57, "First hazard route"),
+            roll_range(4, 6, 188, "Middle route"),
+            roll_range(7, 9, 331, "Frostbite route"),
+        ],
+    ),
     "139": {
         "routeChecks": [
             {
@@ -106,20 +275,163 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             }
         ]
     },
+    "142": section_roll(
+        "Collapse the mineral rock.",
+        [
+            roll_range(0, 5, 284, "Rock seals the cave"),
+            roll_range(6, 9, 32, "Kalkoth fight"),
+        ],
+    ),
+    "146": section_roll(
+        "Rear-sledge rope escape roll.",
+        [
+            roll_values([0], 312, "Dragged into the crevasse"),
+            roll_range(1, 4, 226, "Free your foot"),
+            roll_range(5, 9, 266, "Leap clear"),
+        ],
+    ),
+    "149": section_roll(
+        "Avoid the Ice Barbarian scout's blow.",
+        [
+            roll_range(0, 4, 286, "Scout's blow lands"),
+            roll_range(5, 11, 333, "Avoid the blow"),
+        ],
+        [
+            {
+                "label": "Tracking, Hunting, or Sixth Sense",
+                "value": 2,
+                "condition": cond_any(cond_power("Tracking"), cond_power("Hunting"), cond_power("Sixth Sense")),
+            }
+        ],
+    ),
+    "152": section_roll(
+        "Gold Crown distraction roll; 0 counts as 10. Compare the total against the Gold Crowns thrown.",
+        [],
+        zero_as_ten=True,
+    ),
+    "155": section_roll(
+        "Ice staircase descent.",
+        [
+            roll_range(-2, 2, 248, "Fall on the ice staircase"),
+            roll_range(3, 10, 191, "Descend safely"),
+        ],
+        [
+            {"label": "END below 10", "value": -2, "condition": cond_end_lt(10)},
+            {"label": "END above 20", "value": 1, "condition": cond_end_gte(21)},
+        ],
+    ),
+    "167": section_roll(
+        "Natural ice bowl night roll.",
+        [
+            roll_range(0, 6, 85, "Cold night route"),
+            roll_range(7, 9, 300, "Alternative night route"),
+        ],
+    ),
+    "179": section_roll(
+        "Herb smoke infiltration roll.",
+        [
+            roll_range(0, 4, 39, "Smoke plan falters"),
+            roll_range(5, 9, 296, "Smoke plan works"),
+        ],
+    ),
+    "183": section_roll(
+        "Sprint with twisted ankle.",
+        [
+            roll_range(0, 3, 89, "Too slow"),
+            roll_range(4, 11, 215, "Reach the corridor"),
+        ],
+        [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}],
+    ),
+    "185": section_roll(
+        "Visualize the lock mechanism.",
+        [
+            roll_range(0, 4, 22, "Lock resists"),
+            roll_range(5, 11, 326, "Lock opens"),
+        ],
+        [{"label": "Sixth Sense", "value": 2, "condition": cond_power("Sixth Sense")}],
+    ),
     "194": {
         "loot": [
             loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
         ]
     },
-    "291": {
-        "roll": {
-            "summary": "Random next-day hazard at The Rock.",
-            "outcomes": [
-                {"test": "range", "min": 0, "max": 4, "route": 103, "label": "Baknar shelter route"},
-                {"test": "range", "min": 5, "max": 9, "route": 220, "label": "Crevasse route"},
-            ],
-        }
-    },
+    "211": section_roll(
+        "Cyclone escape roll.",
+        [
+            roll_range(-3, 3, 95, "Cyclone catches you"),
+            roll_range(4, 9, 196, "Escape the vortex"),
+        ],
+        [{"label": "END below 10", "value": -3, "condition": cond_end_lt(10)}],
+    ),
+    "232": section_roll(
+        "Glacier-wall camp night roll.",
+        [
+            roll_range(0, 6, 85, "Cold night route"),
+            roll_range(7, 9, 300, "Alternative night route"),
+        ],
+    ),
+    "258": section_roll(
+        "Break Mindshield and discard the Gold Bracelet. 0 counts as 10; lose END equal to the final total before turning to 63.",
+        [roll_range(-2, 10, 63, "Bracelet discarded", [end_loss_from_roll_total()])],
+        [
+            {
+                "label": "Hunting or Sixth Sense",
+                "value": -2,
+                "condition": cond_any(cond_power("Hunting"), cond_power("Sixth Sense")),
+            }
+        ],
+        zero_as_ten=True,
+    ),
+    "262": section_roll(
+        "Hold onto the child.",
+        [
+            roll_range(0, 6, 320, "Keep hold"),
+            roll_range(7, 9, 140, "Lose hold"),
+        ],
+    ),
+    "272": section_roll(
+        "Dodge Vonotar's frost blast without the Sommerswerd.",
+        [
+            roll_range(0, 3, 143, "Frost blast hits"),
+            roll_range(4, 9, 58, "Dodge the blast"),
+        ],
+    ),
+    "283": section_roll(
+        "Escape through the closing door.",
+        [
+            roll_range(0, 4, 53, "Door catches you"),
+            roll_range(5, 7, 16, "Squeeze through"),
+            roll_range(8, 12, 113, "Clean escape"),
+        ],
+        [{"label": "Hunting", "value": 3, "condition": cond_power("Hunting")}],
+    ),
+    "284": section_roll(
+        "Cross the ice-floes.",
+        [
+            roll_range(-2, 3, 94, "Fall into icy water"),
+            roll_range(4, 11, 176, "Cross safely"),
+        ],
+        [
+            {"label": "Hunting", "value": 2, "condition": cond_power("Hunting")},
+            {"label": "END below 8", "value": -2, "condition": cond_end_lt(8)},
+        ],
+    ),
+    "291": section_roll(
+        "Random next-day hazard at The Rock.",
+        [
+            roll_range(0, 4, 103, "Baknar shelter route"),
+            roll_range(5, 9, 220, "Crevasse route"),
+        ],
+    ),
+    "302": section_roll(
+        "Crevasse-floor stumble check.",
+        [
+            roll_range(0, 1, 37, "Bad fall"),
+            roll_range(2, 7, 193, "Slow progress"),
+            roll_range(8, 11, 243, "Find the way"),
+        ],
+        [{"label": "Sixth Sense", "value": 2, "condition": cond_power("Sixth Sense")}],
+    ),
     "303": {
         "sourceRoutes": [
             {"Section": 127, "actions": [{"type": "remove_item", "containers": ["special"], "name": "Ornate Silver Key"}], "effectLabel": "Use Ornate Silver Key"},
@@ -137,6 +449,49 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("blue-stone-triangle", "Take Blue Stone Triangle", [{"type": "add_item", "container": "special", "name": "Blue Stone Triangle"}])
         ]
     },
+    "322": section_roll(
+        "Run across the lake ice.",
+        [
+            roll_range(0, 2, 153, "Ice gives way"),
+            roll_range(3, 9, 59, "Reach safety"),
+        ],
+    ),
+    "323": section_roll(
+        "Stone-step landing check.",
+        [
+            roll_range(0, 4, 76, "Lose footing"),
+            roll_range(5, 12, 2, "Keep climbing"),
+        ],
+        [
+            {
+                "label": "Sixth Sense, Tracking, or Hunting",
+                "value": 3,
+                "condition": cond_any(cond_power("Sixth Sense"), cond_power("Tracking"), cond_power("Hunting")),
+            }
+        ],
+    ),
+    "327": section_roll(
+        "Hidden crevasse fall.",
+        [
+            roll_range(0, 8, 105, "Survive the fall"),
+            roll_values([9], 144, "Fatal fall"),
+        ],
+    ),
+    "331": section_roll(
+        "Frostbite camp roll.",
+        [
+            roll_range(0, 4, 62, "Worse route"),
+            roll_range(5, 9, 288, "Better route"),
+        ],
+    ),
+    "346": section_roll(
+        "Crevasse jump.",
+        [
+            roll_range(0, 3, 195, "Jump fails"),
+            roll_range(4, 11, 232, "Jump succeeds"),
+        ],
+        [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}],
+    ),
 }
 
 

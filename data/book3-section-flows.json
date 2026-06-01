@@ -572,7 +572,34 @@
           "Section": 312
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Sledge-rope escape roll.",
+        "outcomes": [
+          {
+            "test": "values",
+            "values": [
+              0
+            ],
+            "label": "Dragged into the crevasse",
+            "route": 312
+          },
+          {
+            "test": "range",
+            "min": 1,
+            "max": 4,
+            "label": "Free your foot",
+            "route": 226
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "label": "Leap clear",
+            "route": 266
+          }
+        ]
+      }
     },
     "30": {
       "auditStatus": "source-link-baseline",
@@ -993,7 +1020,45 @@
           "Section": 268
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Glass stem handling check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Glass stem breaks",
+            "route": 250
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 12,
+            "label": "Glass stem intact",
+            "route": 268
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Mind Over Matter or Mindblast",
+            "value": 3,
+            "condition": {
+              "type": "any",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Mind Over Matter"
+                },
+                {
+                  "type": "power",
+                  "name": "Mindblast"
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "55": {
       "auditStatus": "source-link-baseline",
@@ -1286,7 +1351,26 @@
           "Section": 136
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Frozen bridge crack check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 7,
+            "label": "Bridge gives way",
+            "route": 119
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 9,
+            "label": "Reach the far side",
+            "route": 136
+          }
+        ]
+      }
     },
     "74": {
       "auditStatus": "source-link-baseline",
@@ -1303,7 +1387,26 @@
           "Section": 287
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Hide from the Ice Barbarian.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Discovered",
+            "route": 48
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "label": "Remain hidden",
+            "route": 287
+          }
+        ]
+      }
     },
     "75": {
       "auditStatus": "source-link-baseline",
@@ -1414,7 +1517,26 @@
           "Section": 59
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Dodge the charging Kalkoth.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 1,
+            "label": "Dive fails",
+            "route": 123
+          },
+          {
+            "test": "range",
+            "min": 2,
+            "max": 9,
+            "label": "Dive clear",
+            "route": 59
+          }
+        ]
+      }
     },
     "81": {
       "auditStatus": "source-link-baseline",
@@ -1545,7 +1667,35 @@
           "Section": 194
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Pick the lock with a weapon.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 7,
+            "label": "Lock resists",
+            "route": 47
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 12,
+            "label": "Lock opens",
+            "route": 194
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Weaponskill with active weapon",
+            "value": 3,
+            "condition": {
+              "type": "active_weaponskill_weapon"
+            }
+          }
+        ]
+      }
     },
     "87": {
       "auditStatus": "source-link-baseline",
@@ -1579,6 +1729,26 @@
         }
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Javek venom check after END loss.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 8,
+            "label": "Bite stopped by padded arm"
+          },
+          {
+            "test": "values",
+            "values": [
+              9
+            ],
+            "label": "Javek venom kills Lone Wolf",
+            "ending": "death",
+            "cause": "Section 88 Javek venom death."
+          }
+        ]
+      },
       "combat": [
         {
           "id": "88-javek",
@@ -1715,7 +1885,34 @@
           "Section": 176
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Escape the icy water.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "label": "Drag yourself free",
+            "route": 176,
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "end",
+                "delta": -3
+              }
+            ]
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "label": "Drown in the icy water",
+            "ending": "death",
+            "cause": "Section 94 icy-water drowning."
+          }
+        ]
+      }
     },
     "95": {
       "auditStatus": "source-link-baseline",
@@ -1741,7 +1938,37 @@
           "Section": 214
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Avoid Kalkoth detection.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 8,
+            "label": "Kalkoth pass by",
+            "route": 59
+          },
+          {
+            "test": "range",
+            "min": 9,
+            "max": 11,
+            "label": "Kalkoth detect you",
+            "route": 214
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Baknar Oil applied",
+            "value": 2,
+            "condition": {
+              "type": "flag",
+              "key": "baknarOilApplied",
+              "value": true
+            }
+          }
+        ]
+      }
     },
     "97": {
       "auditStatus": "source-link-baseline",
@@ -2444,7 +2671,33 @@
           "Section": 331
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "roll": {
+        "summary": "Syem Island night-weather roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "label": "First hazard route",
+            "route": 57
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 6,
+            "label": "Middle route",
+            "route": 188
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "label": "Frostbite route",
+            "route": 331
+          }
+        ]
+      }
     },
     "135": {
       "auditStatus": "source-link-baseline",
@@ -2649,7 +2902,26 @@
           "Section": 32
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Collapse the mineral rock.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 5,
+            "label": "Rock seals the cave",
+            "route": 284
+          },
+          {
+            "test": "range",
+            "min": 6,
+            "max": 9,
+            "label": "Kalkoth fight",
+            "route": 32
+          }
+        ]
+      }
     },
     "143": {
       "auditStatus": "source-link-baseline",
@@ -2710,7 +2982,34 @@
           "Section": 312
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Rear-sledge rope escape roll.",
+        "outcomes": [
+          {
+            "test": "values",
+            "values": [
+              0
+            ],
+            "label": "Dragged into the crevasse",
+            "route": 312
+          },
+          {
+            "test": "range",
+            "min": 1,
+            "max": 4,
+            "label": "Free your foot",
+            "route": 226
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "label": "Leap clear",
+            "route": 266
+          }
+        ]
+      }
     },
     "147": {
       "auditStatus": "source-link-baseline",
@@ -2768,7 +3067,49 @@
           "Section": 333
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Avoid the Ice Barbarian scout's blow.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Scout's blow lands",
+            "route": 286
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 11,
+            "label": "Avoid the blow",
+            "route": 333
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Tracking, Hunting, or Sixth Sense",
+            "value": 2,
+            "condition": {
+              "type": "any",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                },
+                {
+                  "type": "power",
+                  "name": "Hunting"
+                },
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "150": {
       "auditStatus": "source-link-baseline",
@@ -2827,7 +3168,12 @@
           "Section": 181
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Gold Crown distraction roll; 0 counts as 10. Compare the total against the Gold Crowns thrown.",
+        "outcomes": [],
+        "zeroAsTen": true
+      }
     },
     "153": {
       "auditStatus": "source-link-baseline",
@@ -2872,7 +3218,44 @@
           "Section": 191
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Ice staircase descent.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": -2,
+            "max": 2,
+            "label": "Fall on the ice staircase",
+            "route": 248
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 10,
+            "label": "Descend safely",
+            "route": 191
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "END below 10",
+            "value": -2,
+            "condition": {
+              "type": "end_lt",
+              "value": 10
+            }
+          },
+          {
+            "label": "END above 20",
+            "value": 1,
+            "condition": {
+              "type": "end_gte",
+              "value": 21
+            }
+          }
+        ]
+      }
     },
     "156": {
       "auditStatus": "source-link-baseline",
@@ -3110,7 +3493,26 @@
           "Section": 300
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Natural ice bowl night roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "label": "Cold night route",
+            "route": 85
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "label": "Alternative night route",
+            "route": 300
+          }
+        ]
+      }
     },
     "168": {
       "auditStatus": "source-link-baseline",
@@ -3291,7 +3693,26 @@
           "Section": 296
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Herb smoke infiltration roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Smoke plan falters",
+            "route": 39
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "label": "Smoke plan works",
+            "route": 296
+          }
+        ]
+      }
     },
     "180": {
       "auditStatus": "source-link-baseline",
@@ -3383,7 +3804,36 @@
           "Section": 215
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Sprint with twisted ankle.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "label": "Too slow",
+            "route": 89
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 11,
+            "label": "Reach the corridor",
+            "route": 215
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Hunting",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Hunting"
+            }
+          }
+        ]
+      }
     },
     "184": {
       "auditStatus": "source-link-baseline",
@@ -3420,7 +3870,36 @@
           "Section": 326
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Visualize the lock mechanism.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Lock resists",
+            "route": 22
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 11,
+            "label": "Lock opens",
+            "route": 326
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Sixth Sense",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Sixth Sense"
+            }
+          }
+        ]
+      }
     },
     "186": {
       "auditStatus": "source-link-baseline",
@@ -3876,7 +4355,36 @@
           "Section": 196
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Cyclone escape roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": -3,
+            "max": 3,
+            "label": "Cyclone catches you",
+            "route": 95
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 9,
+            "label": "Escape the vortex",
+            "route": 196
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "END below 10",
+            "value": -3,
+            "condition": {
+              "type": "end_lt",
+              "value": 10
+            }
+          }
+        ]
+      }
     },
     "212": {
       "auditStatus": "source-link-baseline",
@@ -4207,7 +4715,26 @@
           "Section": 300
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Glacier-wall camp night roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "label": "Cold night route",
+            "route": 85
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "label": "Alternative night route",
+            "route": 300
+          }
+        ]
+      }
     },
     "233": {
       "auditStatus": "source-link-baseline",
@@ -4606,7 +5133,48 @@
           "Section": 63
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Break Mindshield and discard the Gold Bracelet. 0 counts as 10; lose END equal to the final total before turning to 63.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": -2,
+            "max": 10,
+            "label": "Bracelet discarded",
+            "route": 63,
+            "actions": [
+              {
+                "type": "stat",
+                "stat": "end",
+                "deltaFrom": "roll_total",
+                "multiplier": -1,
+                "maxDelta": 0
+              }
+            ]
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Hunting or Sixth Sense",
+            "value": -2,
+            "condition": {
+              "type": "any",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Hunting"
+                },
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                }
+              ]
+            }
+          }
+        ],
+        "zeroAsTen": true
+      }
     },
     "259": {
       "auditStatus": "source-link-baseline",
@@ -4698,7 +5266,26 @@
           "Section": 140
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Hold onto the child.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 6,
+            "label": "Keep hold",
+            "route": 320
+          },
+          {
+            "test": "range",
+            "min": 7,
+            "max": 9,
+            "label": "Lose hold",
+            "route": 140
+          }
+        ]
+      }
     },
     "263": {
       "auditStatus": "source-link-baseline",
@@ -4914,7 +5501,26 @@
           "Section": 58
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Dodge Vonotar's frost blast without the Sommerswerd.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "label": "Frost blast hits",
+            "route": 143
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 9,
+            "label": "Dodge the blast",
+            "route": 58
+          }
+        ]
+      }
     },
     "273": {
       "auditStatus": "source-link-baseline",
@@ -5103,7 +5709,43 @@
           "Section": 113
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Escape through the closing door.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Door catches you",
+            "route": 53
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 7,
+            "label": "Squeeze through",
+            "route": 16
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 12,
+            "label": "Clean escape",
+            "route": 113
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Hunting",
+            "value": 3,
+            "condition": {
+              "type": "power",
+              "name": "Hunting"
+            }
+          }
+        ]
+      }
     },
     "284": {
       "auditStatus": "source-link-baseline",
@@ -5124,7 +5766,44 @@
           "Section": 176
         }
       ],
-      "incomingRouteCount": 8
+      "incomingRouteCount": 8,
+      "roll": {
+        "summary": "Cross the ice-floes.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": -2,
+            "max": 3,
+            "label": "Fall into icy water",
+            "route": 94
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 11,
+            "label": "Cross safely",
+            "route": 176
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Hunting",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Hunting"
+            }
+          },
+          {
+            "label": "END below 8",
+            "value": -2,
+            "condition": {
+              "type": "end_lt",
+              "value": 8
+            }
+          }
+        ]
+      }
     },
     "285": {
       "auditStatus": "source-link-baseline",
@@ -5241,15 +5920,15 @@
             "test": "range",
             "min": 0,
             "max": 4,
-            "route": 103,
-            "label": "Baknar shelter route"
+            "label": "Baknar shelter route",
+            "route": 103
           },
           {
             "test": "range",
             "min": 5,
             "max": 9,
-            "route": 220,
-            "label": "Crevasse route"
+            "label": "Crevasse route",
+            "route": 220
           }
         ]
       }
@@ -5454,7 +6133,43 @@
           "Section": 243
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Crevasse-floor stumble check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 1,
+            "label": "Bad fall",
+            "route": 37
+          },
+          {
+            "test": "range",
+            "min": 2,
+            "max": 7,
+            "label": "Slow progress",
+            "route": 193
+          },
+          {
+            "test": "range",
+            "min": 8,
+            "max": 11,
+            "label": "Find the way",
+            "route": 243
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Sixth Sense",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Sixth Sense"
+            }
+          }
+        ]
+      }
     },
     "303": {
       "auditStatus": "source-link-baseline",
@@ -5826,7 +6541,26 @@
           "Section": 59
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "roll": {
+        "summary": "Run across the lake ice.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 2,
+            "label": "Ice gives way",
+            "route": 153
+          },
+          {
+            "test": "range",
+            "min": 3,
+            "max": 9,
+            "label": "Reach safety",
+            "route": 59
+          }
+        ]
+      }
     },
     "323": {
       "auditStatus": "source-link-baseline",
@@ -5845,7 +6579,49 @@
           "Section": 2
         }
       ],
-      "incomingRouteCount": 12
+      "incomingRouteCount": 12,
+      "roll": {
+        "summary": "Stone-step landing check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Lose footing",
+            "route": 76
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 12,
+            "label": "Keep climbing",
+            "route": 2
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Sixth Sense, Tracking, or Hunting",
+            "value": 3,
+            "condition": {
+              "type": "any",
+              "conditions": [
+                {
+                  "type": "power",
+                  "name": "Sixth Sense"
+                },
+                {
+                  "type": "power",
+                  "name": "Tracking"
+                },
+                {
+                  "type": "power",
+                  "name": "Hunting"
+                }
+              ]
+            }
+          }
+        ]
+      }
     },
     "324": {
       "auditStatus": "source-link-baseline",
@@ -5911,7 +6687,27 @@
           "Section": 144
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "roll": {
+        "summary": "Hidden crevasse fall.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 8,
+            "label": "Survive the fall",
+            "route": 105
+          },
+          {
+            "test": "values",
+            "values": [
+              9
+            ],
+            "label": "Fatal fall",
+            "route": 144
+          }
+        ]
+      }
     },
     "328": {
       "auditStatus": "source-link-baseline",
@@ -5988,7 +6784,26 @@
           "Section": 288
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Frostbite camp roll.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "label": "Worse route",
+            "route": 62
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "label": "Better route",
+            "route": 288
+          }
+        ]
+      }
     },
     "332": {
       "auditStatus": "source-link-baseline",
@@ -6244,7 +7059,36 @@
           "Section": 232
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Crevasse jump.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 3,
+            "label": "Jump fails",
+            "route": 195
+          },
+          {
+            "test": "range",
+            "min": 4,
+            "max": 11,
+            "label": "Jump succeeds",
+            "route": 232
+          }
+        ],
+        "modifiers": [
+          {
+            "label": "Hunting",
+            "value": 2,
+            "condition": {
+              "type": "power",
+              "name": "Hunting"
+            }
+          }
+        ]
+      }
     },
     "347": {
       "auditStatus": "source-link-baseline",
