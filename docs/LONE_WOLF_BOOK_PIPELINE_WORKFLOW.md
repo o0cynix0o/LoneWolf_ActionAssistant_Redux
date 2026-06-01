@@ -57,6 +57,7 @@ Each book pass should produce or update:
 - `testing/logs/LWBOOKN_ROUTE_AUDIT.md`
 - `testing/logs/LWBOOKN_ROUTE_GRAPH_CHECK.md` when a Project Aon SVG route graph is available
 - `testing/logs/LWBOOKN_PLAYABLE_PIPELINE.md`
+- `testing/logs/LWBOOKN_SEMANTIC_APP_PLAYTEST.md`
 - `testing/logs/LWBOOKN_ROUTE_GAUNTLET_PLAYTEST.md`
 - `testing/logs/LWBOOKN_PLAYTEST_REPORT.md`
 - `testing/logs/LWBOOKN_ACHIEVEMENT_CANDIDATES.md`
@@ -150,6 +151,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - Book transition
   - Route effects
   - History-based effects
+  - Special combat routing such as one-round fights, compare-loss fights, fixed-round survival, forced victory/failure checks, or routes based on combat result details rather than simple victory
 - Write findings by signal/category without copying long prose.
 - Every signal must become one of:
   - implemented automation
@@ -292,6 +294,10 @@ For every combat preset, verify:
 - Combat history archive.
 - Active-combat stale-save repair.
 
+Special combat wording is not allowed to pass on structural checks alone. For every book, any section that says or implies `one round`, `fight for X rounds`, `compare ENDURANCE loss`, `if you lose more`, `if the enemy loses more`, `if losses are equal`, `survive`, `after X rounds`, `cannot harm`, `only harmed by`, `immune to`, or similar special handling must get a semantic app test that starts the fight through the app and asserts the exact resulting section or state.
+
+A generated combat preset is only complete when the test proves the player-facing behavior matches the section text. "The fight starts" is not enough.
+
 ## 11. UI Meaning And Choices Pass
 
 Every visible control must read like something a player understands.
@@ -352,8 +358,20 @@ Generate or update:
 - End-to-end playtest.
 - Branch playtest.
 - Route gauntlet playtest.
+- Semantic app playtest for every non-trivial mechanic recorded in the ledger.
 
 Tests should use copied or in-memory saves unless the user explicitly asks to modify the live campaign save.
+
+Semantic app tests must drive the same app behavior a player would use. Depending on the feature, use the browser UI, web API, or assistant method through the same state paths used by the UI. They must assert concrete outcomes:
+
+- Current book and section.
+- END, CS, Gold, Meals, and inventory changes.
+- Story flags and item history.
+- Combat round logs and combat archive.
+- Completion, death, repeat, and transition state.
+- Player-facing status/receipt text when it matters.
+
+Do not count a data-generation check as a playtest. Data checks prove the helper exists; semantic app tests prove it behaves correctly.
 
 ## 14. Run Validation
 
@@ -368,7 +386,9 @@ Tests should use copied or in-memory saves unless the user explicitly asks to mo
 
 ## 15. Run The Playtesting Ladder
 
-The playtesting ladder turns the audit into repeatable confidence. It should run against copied or in-memory saves and must not change the live campaign save unless explicitly requested.
+The playtesting ladder turns the audit into repeatable confidence. It applies to every onboarded book, not just the current trouble spot, and should run against copied or in-memory saves. It must not change the live campaign save unless explicitly requested.
+
+For every book, "test play" means app-level behavior tests plus representative route playthroughs. A structural smoke test is useful, but it does not qualify a book as human playtest ready by itself.
 
 ### Level 1: Basic Validation
 
@@ -430,8 +450,17 @@ Include:
   - Every gear loss and gear restore path.
   - Every combat preset start.
   - Combat victory, defeat, evade, survival, timeout, round-limit, timed-modifier, fixed-CS, and per-round-effect cases where applicable.
+  - Special combat routing based on one-round results, fixed-round results, compared ENDURANCE losses, required weapons, immunities, or any route that is not plain victory/defeat.
   - Every book completion, carry-forward transition, and repeat-book reset.
   - Every approved achievement trigger category.
+
+For special combat sections, each named outcome in the source text needs its own assertion. Example pattern:
+
+- Player loses more ENDURANCE -> expected target section.
+- Enemy loses more ENDURANCE -> expected target section.
+- Equal loss -> expected target section.
+
+If a section has three possible outcomes, one passing outcome does not cover the section.
 
 ### Level 6: Full-Path Smoke Tests
 
