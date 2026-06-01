@@ -338,7 +338,7 @@
             "cs": 15,
             "endurance": 14
           },
-          "victoryRoute": 254
+          "victoryRoute": 309
         }
       ]
     },
@@ -755,8 +755,8 @@
               "endurance": 30
             }
           ],
-          "flawlessVictoryRoute": 25,
-          "woundedVictoryRoute": 66
+          "victoryRoute": 25,
+          "playerLossRoute": 66
         }
       ]
     },
@@ -1367,7 +1367,7 @@
             "cs": 18,
             "endurance": 28
           },
-          "victoryRoute": 9
+          "victoryRoute": 186
         }
       ]
     },
@@ -1580,7 +1580,7 @@
             "cs": 19,
             "endurance": 30
           },
-          "victoryRoute": 325
+          "victoryRoute": 245
         }
       ]
     },
@@ -1696,7 +1696,8 @@
             "cs": 18,
             "endurance": 24
           },
-          "victoryRoute": 43
+          "enemyImmune": true,
+          "victoryRoute": 313
         }
       ]
     },
@@ -1855,7 +1856,16 @@
             "cs": 15,
             "endurance": 15
           },
-          "victoryRoute": 310
+          "enemyImmune": true,
+          "playerLossRandomCheck": {
+            "summary": "Javek venom check after a bite.",
+            "deathValues": [
+              9
+            ],
+            "safeLabel": "Bite stopped by padded arm",
+            "deathCause": "Section 88 Javek venom death."
+          },
+          "victoryRoute": 269
         }
       ]
     },
@@ -1894,7 +1904,7 @@
               "endurance": 20
             }
           ],
-          "victoryRoute": 28
+          "victoryRoute": 161
         }
       ]
     },
@@ -2226,7 +2236,7 @@
             "cs": 19,
             "endurance": 30
           },
-          "victoryRoute": 325
+          "victoryRoute": 305
         }
       ]
     },
@@ -2291,7 +2301,10 @@
             "cs": 19,
             "endurance": 36
           },
-          "victoryRoute": 13
+          "enemyImmune": true,
+          "canEvade": true,
+          "evadeRoute": 145,
+          "victoryRoute": 338
         }
       ]
     },
@@ -2342,7 +2355,9 @@
             "cs": 16,
             "endurance": 24
           },
-          "victoryRoute": 21
+          "canEvade": true,
+          "evadeAfterRounds": 1,
+          "victoryRoute": 282
         }
       ]
     },
@@ -2732,8 +2747,8 @@
             "cs": 11,
             "endurance": 30
           },
-          "victoryRoute": 25,
-          "woundedVictoryRoute": 66
+          "victoryRoute": 174,
+          "playerLossRoute": 66
         }
       ]
     },
@@ -3046,8 +3061,8 @@
           ],
           "canEvade": true,
           "evadeRoute": 277,
-          "flawlessVictoryRoute": 25,
-          "woundedVictoryRoute": 66
+          "victoryRoute": 25,
+          "playerLossRoute": 66
         }
       ]
     },
@@ -3651,7 +3666,8 @@
             "cs": 17,
             "endurance": 29
           },
-          "victoryRoute": 133
+          "enemyImmune": true,
+          "victoryRoute": 210
         }
       ]
     },
@@ -4025,9 +4041,15 @@
             "cs": 11,
             "endurance": 35
           },
-          "victoryRoute": 56,
-          "canEvade": true,
-          "evadeRoute": 322
+          "victoryRoute": 70,
+          "playerLossRoute": 129,
+          "perRoundActions": [
+            {
+              "type": "combat_enemy_damage",
+              "delta": -3,
+              "label": "Fenor's attack"
+            }
+          ]
         }
       ]
     },
@@ -4583,7 +4605,9 @@
             "cs": 17,
             "endurance": 30
           },
-          "victoryRoute": 227
+          "winWithinRounds": 4,
+          "winWithinRoute": 4,
+          "tooLateRoute": 81
         }
       ]
     },
@@ -5364,7 +5388,8 @@
             "cs": 18,
             "endurance": 28
           },
-          "victoryRoute": 93
+          "ignorePlayerLossRounds": 2,
+          "victoryRoute": 186
         }
       ]
     },
@@ -5690,7 +5715,8 @@
             "cs": 11,
             "endurance": 35
           },
-          "victoryRoute": 321
+          "victoryRoute": 151,
+          "playerLossRoute": 129
         }
       ]
     },
@@ -5717,7 +5743,9 @@
             "cs": 17,
             "endurance": 29
           },
-          "victoryRoute": 118
+          "enemyImmune": true,
+          "ignorePlayerLossRounds": 2,
+          "victoryRoute": 210
         }
       ]
     },
@@ -5817,8 +5845,8 @@
           ],
           "canEvade": true,
           "evadeRoute": 277,
-          "flawlessVictoryRoute": 25,
-          "woundedVictoryRoute": 66
+          "victoryRoute": 25,
+          "playerLossRoute": 66
         }
       ]
     },
@@ -5949,7 +5977,7 @@
             "cs": 14,
             "endurance": 25
           },
-          "victoryRoute": 134
+          "victoryRoute": 340
         }
       ]
     },
@@ -6556,7 +6584,9 @@
             "cs": 17,
             "endurance": 30
           },
-          "victoryRoute": 170
+          "roundLimit": 3,
+          "survivalRoute": 173,
+          "victoryRoute": 173
         }
       ]
     },

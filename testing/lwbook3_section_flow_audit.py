@@ -655,7 +655,7 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
 
 
 MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
-    "14": {"combat": [combat_preset(14, "Ice Barbarian", combat_enemy("Ice Barbarian", 15, 14), victoryRoute=254)]},
+    "14": {"combat": [combat_preset(14, "Ice Barbarian", combat_enemy("Ice Barbarian", 15, 14), victoryRoute=309)]},
     "32": {
         "combat": [
             combat_preset(
@@ -666,15 +666,41 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
                     combat_enemy("Kalkoth 2", 10, 32),
                     combat_enemy("Kalkoth 3", 8, 30),
                 ],
-                flawlessVictoryRoute=25,
-                woundedVictoryRoute=66,
+                victoryRoute=25,
+                playerLossRoute=66,
             )
         ]
     },
-    "68": {"combat": [combat_preset(68, "Ice Barbarian", combat_enemy("Ice Barbarian", 18, 28), victoryRoute=9)]},
-    "78": {"combat": [combat_preset(78, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=325)]},
-    "83": {"combat": [combat_preset(83, "Ice Barbarian Mutants", combat_enemy("Ice Barbarian Mutants", 18, 24), victoryRoute=43)]},
-    "88": {"combat": [combat_preset(88, "Javek", combat_enemy("Javek", 15, 15), victoryRoute=310)]},
+    "68": {"combat": [combat_preset(68, "Ice Barbarian", combat_enemy("Ice Barbarian", 18, 28), victoryRoute=186)]},
+    "78": {"combat": [combat_preset(78, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=245)]},
+    "83": {
+        "combat": [
+            combat_preset(
+                83,
+                "Ice Barbarian Mutants",
+                combat_enemy("Ice Barbarian Mutants", 18, 24),
+                enemyImmune=True,
+                victoryRoute=313,
+            )
+        ]
+    },
+    "88": {
+        "combat": [
+            combat_preset(
+                88,
+                "Javek",
+                combat_enemy("Javek", 15, 15),
+                enemyImmune=True,
+                playerLossRandomCheck={
+                    "summary": "Javek venom check after a bite.",
+                    "deathValues": [9],
+                    "safeLabel": "Bite stopped by padded arm",
+                    "deathCause": "Section 88 Javek venom death.",
+                },
+                victoryRoute=269,
+            )
+        ]
+    },
     "89": {
         "combat": [
             combat_preset(
@@ -685,7 +711,7 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
                     combat_enemy("Doomwolf 2", 14, 23),
                     combat_enemy("Doomwolf 3", 14, 20),
                 ],
-                victoryRoute=28,
+                victoryRoute=161,
             )
         ]
     },
@@ -702,10 +728,33 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
             )
         ]
     },
-    "103": {"combat": [combat_preset(103, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=325)]},
-    "106": {"combat": [combat_preset(106, "Ice Barbarians", combat_enemy("Ice Barbarians", 19, 36), victoryRoute=13)]},
-    "108": {"combat": [combat_preset(108, "Ice Barbarian", combat_enemy("Ice Barbarian", 16, 24), victoryRoute=21)]},
-    "123": {"combat": [combat_preset(123, "Kalkoth", combat_enemy("Kalkoth", 11, 30), victoryRoute=25, woundedVictoryRoute=66)]},
+    "103": {"combat": [combat_preset(103, "Baknar", combat_enemy("Baknar", 19, 30), victoryRoute=305)]},
+    "106": {
+        "combat": [
+            combat_preset(
+                106,
+                "Ice Barbarians",
+                combat_enemy("Ice Barbarians", 19, 36),
+                enemyImmune=True,
+                canEvade=True,
+                evadeRoute=145,
+                victoryRoute=338,
+            )
+        ]
+    },
+    "108": {
+        "combat": [
+            combat_preset(
+                108,
+                "Ice Barbarian",
+                combat_enemy("Ice Barbarian", 16, 24),
+                canEvade=True,
+                evadeAfterRounds=1,
+                victoryRoute=282,
+            )
+        ]
+    },
+    "123": {"combat": [combat_preset(123, "Kalkoth", combat_enemy("Kalkoth", 11, 30), victoryRoute=174, playerLossRoute=66)]},
     "137": {
         "combat": [
             combat_preset(
@@ -725,8 +774,8 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
                 [combat_enemy("Kalkoth 1", 11, 35), combat_enemy("Kalkoth 2", 10, 32)],
                 canEvade=True,
                 evadeRoute=277,
-                flawlessVictoryRoute=25,
-                woundedVictoryRoute=66,
+                victoryRoute=25,
+                playerLossRoute=66,
             )
         ]
     },
@@ -741,7 +790,17 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
             )
         ]
     },
-    "161": {"combat": [combat_preset(161, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=133)]},
+    "161": {
+        "combat": [
+            combat_preset(
+                161,
+                "Ice Barbarian",
+                combat_enemy("Ice Barbarian", 17, 29),
+                enemyImmune=True,
+                victoryRoute=210,
+            )
+        ]
+    },
     "164": {
         "combat": [
             combat_preset(
@@ -755,7 +814,18 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
             )
         ]
     },
-    "180": {"combat": [combat_preset(180, "Kalkoth", combat_enemy("Kalkoth", 11, 35), victoryRoute=56, canEvade=True, evadeRoute=322)]},
+    "180": {
+        "combat": [
+            combat_preset(
+                180,
+                "Kalkoth",
+                combat_enemy("Kalkoth", 11, 35),
+                victoryRoute=70,
+                playerLossRoute=129,
+                perRoundActions=[{"type": "combat_enemy_damage", "delta": -3, "label": "Fenor's attack"}],
+            )
+        ]
+    },
     "200": {
         "combat": [
             combat_preset(
@@ -769,10 +839,42 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
             )
         ]
     },
-    "208": {"combat": [combat_preset(208, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 30), victoryRoute=227)]},
-    "241": {"combat": [combat_preset(241, "Ice Barbarian", combat_enemy("Ice Barbarian", 18, 28), victoryRoute=93)]},
-    "259": {"combat": [combat_preset(259, "Kalkoth", combat_enemy("Kalkoth", 11, 35), victoryRoute=321)]},
-    "260": {"combat": [combat_preset(260, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=118)]},
+    "208": {
+        "combat": [
+            combat_preset(
+                208,
+                "Ice Barbarian",
+                combat_enemy("Ice Barbarian", 17, 30),
+                winWithinRounds=4,
+                winWithinRoute=4,
+                tooLateRoute=81,
+            )
+        ]
+    },
+    "241": {
+        "combat": [
+            combat_preset(
+                241,
+                "Ice Barbarian",
+                combat_enemy("Ice Barbarian", 18, 28),
+                ignorePlayerLossRounds=2,
+                victoryRoute=186,
+            )
+        ]
+    },
+    "259": {"combat": [combat_preset(259, "Kalkoth", combat_enemy("Kalkoth", 11, 35), victoryRoute=151, playerLossRoute=129)]},
+    "260": {
+        "combat": [
+            combat_preset(
+                260,
+                "Ice Barbarian",
+                combat_enemy("Ice Barbarian", 17, 29),
+                enemyImmune=True,
+                ignorePlayerLossRounds=2,
+                victoryRoute=210,
+            )
+        ]
+    },
     "263": {
         "combat": [
             combat_preset(
@@ -785,14 +887,25 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
                 ],
                 canEvade=True,
                 evadeRoute=277,
-                flawlessVictoryRoute=25,
-                woundedVictoryRoute=66,
+                victoryRoute=25,
+                playerLossRoute=66,
             )
         ]
     },
     "265": {"combat": [combat_preset(265, "Crystal Frostwyrm", combat_enemy("Crystal Frostwyrm", 15, 30), enemyImmune=True, victoryRoute=3)]},
-    "270": {"combat": [combat_preset(270, "Ice Barbarian", combat_enemy("Ice Barbarian", 14, 25), victoryRoute=134)]},
-    "296": {"combat": [combat_preset(296, "Ice Barbarians", combat_enemy("Ice Barbarians", 17, 30), victoryRoute=170)]},
+    "270": {"combat": [combat_preset(270, "Ice Barbarian", combat_enemy("Ice Barbarian", 14, 25), victoryRoute=340)]},
+    "296": {
+        "combat": [
+            combat_preset(
+                296,
+                "Ice Barbarians",
+                combat_enemy("Ice Barbarians", 17, 30),
+                roundLimit=3,
+                survivalRoute=173,
+                victoryRoute=173,
+            )
+        ]
+    },
     "304": {
         "combat": [
             combat_preset(

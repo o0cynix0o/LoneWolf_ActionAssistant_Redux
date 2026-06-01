@@ -21,7 +21,7 @@ The first combat pass covers the clear stat-block fights found during the scan:
 
 ## Random Status
 
-Random helpers are not broadly implemented yet for Book 3. The source scan found 33 random-signal sections. These should be the next helper slice after setup/combat smoke is stable.
+Random helpers are implemented for the 33 random-signal sections recorded in the Book 3 flow data. The semantic repair pass now checks every raw digit 0-9 for every Book 3 roll helper and fails if the app produces a route that is not present in the source section links.
 
 ## Tests
 
@@ -30,4 +30,18 @@ Random helpers are not broadly implemented yet for Book 3. The source scan found
 ## Remaining Risk
 
 - Some combat sections may need route-specific tuning once they are reached in normal play.
-- Random sections still need helper implementation.
+- Random helper routes are app-safety tested, but the report can still improve by listing every roll band in a human-readable table.
+
+## 2026-06-01 Semantic Repair Pass
+
+Live playtesting found that several Book 3 combat helpers were structurally present but semantically wrong. The repair pass corrected route targets and special combat behavior for the affected sections, then added app-level semantic assertions so these helpers are tested by outcome, not just by existence.
+
+Updated coverage includes:
+
+- Corrected victory routes for sections 14, 68, 78, 83, 88, 89, 103, 106, 108, 123, 161, 180, 208, 241, 259, 260, 270, and 296.
+- Immediate END-loss routing for Kalkoth/Javek-style special fights where the section changes route as soon as Lone Wolf loses END.
+- Section 88 Javek venom handling: ignored END loss, venom roll, safe continuation, or death.
+- Section 180 Fenor aid: additional enemy END loss each round.
+- Timed and fixed-round combat routing for sections 164, 200, 208, and 296.
+
+Detailed app-level results are recorded in `testing/logs/LWBOOK3_SEMANTIC_APP_PLAYTEST.md`.

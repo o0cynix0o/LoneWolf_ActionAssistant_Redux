@@ -278,7 +278,7 @@ This report records signal labels and section numbers only. It intentionally doe
 - Section 80: random=covered; coverage=roll
 - Section 81: no automation-language signal
 - Section 82: route_check=reviewed-no-automation; coverage=none
-- Section 83: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 83: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat, simple
 - Section 84: inventory_gain=covered; coverage=loot
 - Section 85: route_check=reviewed-no-automation; coverage=none
 - Section 86: random=covered, route_check=reviewed-no-automation; coverage=roll

@@ -547,6 +547,7 @@ def default_state() -> dict[str, Any]:
             "RoundExceededRoute": None,
             "PlayerLossRoute": None,
             "OneRoundComparisonRoutes": {},
+            "PlayerLossRandomCheck": {},
             "OxygenSafeRounds": 0,
             "WinWithinRounds": 0,
             "WinWithinRoute": None,
@@ -6363,6 +6364,10 @@ class LoneWolfReduxAssistant:
                 notes.append(f"Round limit {int(self.combat['RoundLimit'])}")
             if bool(self.combat.get("IgnorePlayerLossIfEnemyLossGreater")):
                 notes.append("Ignore Lone Wolf END loss when enemy loss is higher.")
+            if isinstance(self.combat.get("PlayerLossRandomCheck"), dict) and self.combat.get(
+                "PlayerLossRandomCheck"
+            ):
+                notes.append(str(self.combat["PlayerLossRandomCheck"].get("summary") or "Special check after END loss."))
             if str(self.combat.get("RequiredWeapon") or "").strip():
                 notes.append(f"Only {self.combat['RequiredWeapon']} can wound this enemy.")
             notes.extend(
@@ -6572,6 +6577,9 @@ class LoneWolfReduxAssistant:
                 "OneRoundComparisonRoutes": preset.get("oneRoundComparisonRoutes")
                 if isinstance(preset.get("oneRoundComparisonRoutes"), dict)
                 else {},
+                "PlayerLossRandomCheck": preset.get("playerLossRandomCheck")
+                if isinstance(preset.get("playerLossRandomCheck"), dict)
+                else {},
                 "OxygenSafeRounds": oxygen_safe_rounds,
                 "WinWithinRounds": max(0, int(preset.get("winWithinRounds") or 0)),
                 "WinWithinRoute": preset.get("winWithinRoute"),
@@ -6638,6 +6646,15 @@ class LoneWolfReduxAssistant:
         messages: list[str] = []
         for action in as_list(self.combat.get("PerRoundActions")):
             if isinstance(action, dict):
+                action_type = str(action.get("type") or "").lower()
+                if action_type in {"combat_enemy_damage", "enemy_damage"}:
+                    before = int(self.combat.get("EnemyEnduranceCurrent") or 0)
+                    delta = int(action.get("delta") or 0)
+                    after = max(0, before + delta)
+                    self.combat["EnemyEnduranceCurrent"] = after
+                    label = str(action.get("label") or "section effect")
+                    messages.append(f"{label}: enemy END {before}->{after}")
+                    continue
                 message = self.apply_automation_action(action)
                 if message:
                     messages.append(message)
@@ -6753,6 +6770,11 @@ class LoneWolfReduxAssistant:
                 "OneRoundComparisonRoutes"
             ) != preset.get("oneRoundComparisonRoutes"):
                 self.combat["OneRoundComparisonRoutes"] = preset.get("oneRoundComparisonRoutes")
+                changed = True
+            if isinstance(preset.get("playerLossRandomCheck"), dict) and self.combat.get(
+                "PlayerLossRandomCheck"
+            ) != preset.get("playerLossRandomCheck"):
+                self.combat["PlayerLossRandomCheck"] = preset.get("playerLossRandomCheck")
                 changed = True
             if preset.get("id") and not str(self.combat.get("SectionCombatId") or ""):
                 self.combat["SectionCombatId"] = str(preset.get("id") or "")
@@ -6927,6 +6949,9 @@ class LoneWolfReduxAssistant:
                 "RoundLimit": 0,
                 "SurvivalRoute": None,
                 "RoundExceededRoute": None,
+                "PlayerLossRoute": None,
+                "OneRoundComparisonRoutes": {},
+                "PlayerLossRandomCheck": {},
                 "WinWithinRounds": 0,
                 "WinWithinRoute": None,
                 "TooLateRoute": None,
@@ -7043,24 +7068,57 @@ class LoneWolfReduxAssistant:
             ignored_player_loss = player_loss
             player_loss = 0
 
+        player_loss_random_check = self.combat.get("PlayerLossRandomCheck")
+        special_roll: int | None = None
+        special_death_cause = ""
+        special_check_label = ""
+        if (
+            not evade
+            and player_loss > 0
+            and isinstance(player_loss_random_check, dict)
+            and player_loss_random_check
+        ):
+            ignored_player_loss = player_loss
+            player_loss = 0
+            stored_roll = self.automation["Stored"].pop("combatSpecialRoll", None)
+            try:
+                special_roll = int(stored_roll)
+            except (TypeError, ValueError):
+                special_roll = random_digit()
+            special_roll = max(0, min(9, special_roll))
+            death_values = {
+                int(value)
+                for value in as_list(player_loss_random_check.get("deathValues"))
+                if str(value).strip().lstrip("-").isdigit()
+            }
+            if special_roll in death_values:
+                special_death_cause = str(
+                    player_loss_random_check.get("deathCause") or "A special combat check ends the mission."
+                )
+                special_check_label = "death"
+            else:
+                special_check_label = str(player_loss_random_check.get("safeLabel") or "safe")
+
         self.combat["EnemyEnduranceCurrent"] = max(0, int(self.combat["EnemyEnduranceCurrent"]) - enemy_loss)
         self.character["EnduranceCurrent"] = max(0, int(self.character["EnduranceCurrent"]) - player_loss)
-        self.combat["Log"] = as_list(self.combat["Log"]) + [
-            {
-                "Round": round_number,
-                "Roll": roll,
-                "Ratio": ratio,
-                "CRTColumn": column,
-                "ActiveWeapon": self.combat_active_weapon() or "Unarmed",
-                "EnemyLoss": enemy_loss,
-                "IgnoredPlayerLoss": ignored_player_loss,
-                "LoneWolfReduxLoss": player_loss,
-                "PlayerLoss": player_loss,
-                "PlayerEnd": int(self.character["EnduranceCurrent"]),
-                "EnemyEnd": int(self.combat["EnemyEnduranceCurrent"]),
-                "Evade": evade,
-            }
-        ]
+        round_entry = {
+            "Round": round_number,
+            "Roll": roll,
+            "Ratio": ratio,
+            "CRTColumn": column,
+            "ActiveWeapon": self.combat_active_weapon() or "Unarmed",
+            "EnemyLoss": enemy_loss,
+            "IgnoredPlayerLoss": ignored_player_loss,
+            "LoneWolfReduxLoss": player_loss,
+            "PlayerLoss": player_loss,
+            "PlayerEnd": int(self.character["EnduranceCurrent"]),
+            "EnemyEnd": int(self.combat["EnemyEnduranceCurrent"]),
+            "Evade": evade,
+        }
+        if special_roll is not None:
+            round_entry["SpecialRoll"] = special_roll
+            round_entry["SpecialRollResult"] = special_check_label
+        self.combat["Log"] = as_list(self.combat["Log"]) + [round_entry]
 
         print("")
         print(f"Roll {roll}, ratio {ratio} (CRT {column})")
@@ -7072,6 +7130,8 @@ class LoneWolfReduxAssistant:
             print("Evading: enemy loss ignored.")
         if ignored_player_loss:
             print(f"Lone Wolf loss ignored by section rule: {ignored_player_loss}")
+        if special_roll is not None:
+            print(f"Special combat roll: {special_roll} ({special_check_label})")
         print(f"Lone Wolf loss: {player_loss}")
         print(f"Enemy END: {self.combat['EnemyEnduranceCurrent']}/{self.combat['EnemyEnduranceMax']}")
         print(
@@ -7086,6 +7146,13 @@ class LoneWolfReduxAssistant:
 
         for message in special_messages:
             print(message)
+        if special_death_cause:
+            self.archive_current_combat("Special Death")
+            self.combat["Active"] = False
+            self.register_death("combat", special_death_cause)
+            self.autosave()
+            self.show_death_screen()
+            return
         if self.route_after_combat_round():
             return
         self.autosave()

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -163,6 +164,27 @@ def test_book3_roll_helpers() -> None:
     assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 220, "section 291 high roll route")
 
 
+def test_book3_all_roll_helpers_are_app_safe() -> None:
+    data = json.loads((ROOT / "data" / "book3-section-flows.json").read_text(encoding="utf-8"))["3"]
+    for section, entry in data.items():
+        if not str(section).isdigit() or not isinstance(entry.get("roll"), dict):
+            continue
+        source_routes = {int(route["Section"]) for route in entry.get("sourceRoutes", []) if "Section" in route}
+        for outcome in entry["roll"].get("outcomes", []):
+            route = outcome.get("route")
+            if route is not None and int(route) not in source_routes:
+                raise AssertionError(f"section {section} roll route {route} is not present in source routes")
+        for raw in range(10):
+            assistant = fresh_assistant()
+            quiet(assistant.set_section, int(section))
+            result = quiet(assistant.roll_current_section, raw)
+            route = result.get("Route")
+            if route is not None and int(route) not in source_routes:
+                raise AssertionError(f"section {section} raw {raw} produced non-source route {route}")
+            if result.get("Ending") in {"death", "failure"}:
+                assert_true(assistant.death_active(), f"section {section} raw {raw} records terminal roll")
+
+
 def test_book3_gold_distraction_helper() -> None:
     assistant = fresh_assistant()
     assistant.inventory["GoldCrowns"] = 10
@@ -270,6 +292,99 @@ def test_book3_direct_section_helpers() -> None:
     assert_true("Ornate Silver Key" not in assistant.inventory["SpecialItems"], "section 303 consumes Ornate Silver Key")
 
 
+def combat_route_values(value) -> list[int]:
+    if isinstance(value, int):
+        return [value]
+    if isinstance(value, list):
+        routes: list[int] = []
+        for item in value:
+            routes.extend(combat_route_values(item))
+        return routes
+    if isinstance(value, dict):
+        routes: list[int] = []
+        for item in value.values():
+            routes.extend(combat_route_values(item))
+        return routes
+    return []
+
+
+def test_book3_combat_route_targets_match_source() -> None:
+    data = json.loads((ROOT / "data" / "book3-section-flows.json").read_text(encoding="utf-8"))["3"]
+    route_keys = {
+        "victoryRoute",
+        "defeatRoute",
+        "evadeRoute",
+        "flawlessVictoryRoute",
+        "woundedVictoryRoute",
+        "playerLossRoute",
+        "oneRoundComparisonRoutes",
+        "winWithinRoute",
+        "tooLateRoute",
+        "survivalRoute",
+        "roundExceededRoute",
+        "victoryChoices",
+    }
+    for section, entry in data.items():
+        if not str(section).isdigit():
+            continue
+        source_routes = {int(route["Section"]) for route in entry.get("sourceRoutes", []) if "Section" in route}
+        for preset in entry.get("combat", []):
+            preset_routes: list[int] = []
+            for key in route_keys:
+                preset_routes.extend(combat_route_values(preset.get(key)))
+            unexpected = sorted(set(preset_routes) - source_routes)
+            if unexpected:
+                raise AssertionError(
+                    f"section {section} combat routes not present in source links: {unexpected}; source={sorted(source_routes)}"
+                )
+
+
+def test_book3_combat_route_semantics() -> None:
+    data = json.loads((ROOT / "data" / "book3-section-flows.json").read_text(encoding="utf-8"))["3"]
+    expected: dict[str, dict[str, object]] = {
+        "14": {"victoryRoute": 309},
+        "32": {"victoryRoute": 25, "playerLossRoute": 66},
+        "68": {"victoryRoute": 186},
+        "78": {"victoryRoute": 245},
+        "83": {"victoryRoute": 313, "enemyImmune": True},
+        "88": {"victoryRoute": 269, "enemyImmune": True, "playerLossRandomCheck": True},
+        "89": {"victoryRoute": 161},
+        "99": {"victoryRoute": 230, "enemyImmune": True},
+        "103": {"victoryRoute": 305},
+        "106": {"victoryRoute": 338, "evadeRoute": 145, "enemyImmune": True},
+        "108": {"victoryRoute": 282, "canEvade": True, "evadeAfterRounds": 1},
+        "123": {"victoryRoute": 174, "playerLossRoute": 66},
+        "137": {"victoryRoute": 28},
+        "138": {"victoryRoute": 25, "playerLossRoute": 66, "evadeRoute": 277},
+        "147": {"victoryRoute": 84, "playerLossRoute": 66},
+        "158": {"oneRoundComparisonRoutes": {"playerLossGreater": 165, "enemyLossGreater": 271, "equal": 337}},
+        "161": {"victoryRoute": 210, "enemyImmune": True},
+        "164": {"winWithinRounds": 5, "winWithinRoute": 272, "tooLateRoute": 324},
+        "180": {"victoryRoute": 70, "playerLossRoute": 129},
+        "200": {"winWithinRounds": 7, "winWithinRoute": 272, "tooLateRoute": 324},
+        "208": {"winWithinRounds": 4, "winWithinRoute": 4, "tooLateRoute": 81},
+        "241": {"victoryRoute": 186, "ignorePlayerLossRounds": 2},
+        "259": {"victoryRoute": 151, "playerLossRoute": 129},
+        "260": {"victoryRoute": 210, "enemyImmune": True, "ignorePlayerLossRounds": 2},
+        "263": {"victoryRoute": 25, "playerLossRoute": 66, "evadeRoute": 277},
+        "265": {"victoryRoute": 3, "enemyImmune": True},
+        "270": {"victoryRoute": 340},
+        "296": {"roundLimit": 3, "survivalRoute": 173, "victoryRoute": 173},
+        "304": {"victoryRoute": 20, "enemyImmune": True},
+        "343": {"victoryRoute": 28},
+    }
+    for section, fields in expected.items():
+        presets = data[section].get("combat", [])
+        if not presets:
+            raise AssertionError(f"section {section} expected combat preset")
+        preset = presets[0]
+        for key, expected_value in fields.items():
+            if expected_value is True:
+                assert_true(preset.get(key), f"section {section} {key}")
+            else:
+                assert_equal(preset.get(key), expected_value, f"section {section} {key}")
+
+
 def test_book3_combat_helpers() -> None:
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
     assistant.inventory["SpecialItems"] = ["Sommerswerd"]
@@ -283,6 +398,18 @@ def test_book3_combat_helpers() -> None:
         int(assistant.character["EnduranceCurrent"]) <= base_end - 2,
         "section 99 applies no-Mindshield round loss",
     )
+
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 83)
+    assert_equal(assistant.character["EnduranceCurrent"], 18, "section 83 applies Mindforce loss without Mindshield")
+    quiet(assistant.start_section_combat, "83-ice-barbarian-mutants")
+    assert_true(assistant.combat["EnemyImmune"], "section 83 Ice Barbarian Mutants immune to Mindblast")
+
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindshield"])
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 83)
+    assert_equal(assistant.character["EnduranceCurrent"], 20, "section 83 Mindshield prevents Mindforce loss")
 
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
     assistant.inventory["Weapons"] = ["Sword"]
@@ -337,13 +464,79 @@ def test_book3_combat_helpers() -> None:
     quiet(assistant.route_after_combat_round)
     assert_equal(assistant.state["CurrentSection"], 337, "section 158 equal loss routes to 337")
 
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 88)
+    quiet(assistant.start_section_combat, "88-javek")
+    assistant.automation["Stored"]["combatSpecialRoll"] = 8
+    quiet(assistant.combat_round, ["combat", "round", "1"])
+    assert_true(assistant.combat["Active"], "section 88 safe venom check continues combat")
+    assert_equal(assistant.character["EnduranceCurrent"], 20, "section 88 bite loss is ignored on safe venom check")
+    assert_equal(assistant.combat["Log"][-1]["SpecialRoll"], 8, "section 88 records safe venom roll")
+
+    assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 88)
+    quiet(assistant.start_section_combat, "88-javek")
+    assistant.automation["Stored"]["combatSpecialRoll"] = 9
+    quiet(assistant.combat_round, ["combat", "round", "1"])
+    assert_true(assistant.death_active(), "section 88 fatal venom roll opens death state")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 180)
+    quiet(assistant.start_section_combat, "180-kalkoth")
+    assistant.character["EnduranceCurrent"] = 20
+    assistant.combat["EnemyEnduranceCurrent"] = 4
+    quiet(assistant.combat_round, ["combat", "round", "9"])
+    assert_true(int(assistant.combat["EnemyEnduranceCurrent"]) <= 1, "section 180 Fenor adds enemy damage")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 180)
+    quiet(assistant.start_section_combat, "180-kalkoth")
+    assistant.combat["Log"] = [{"PlayerLoss": 1, "EnemyLoss": 0}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 129, "section 180 player loss routes immediately to 129")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 208)
+    quiet(assistant.start_section_combat, "208-ice-barbarian")
+    assistant.combat["EnemyEnduranceCurrent"] = 0
+    assistant.combat["Log"] = [{"PlayerLoss": 0, "EnemyLoss": 30} for _ in range(4)]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 4, "section 208 victory within four rounds routes to 4")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 208)
+    quiet(assistant.start_section_combat, "208-ice-barbarian")
+    assistant.combat["EnemyEnduranceCurrent"] = 0
+    assistant.combat["Log"] = [{"PlayerLoss": 0, "EnemyLoss": 6} for _ in range(5)]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 81, "section 208 slow victory routes to 81")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 241)
+    quiet(assistant.start_section_combat, "241-ice-barbarian")
+    quiet(assistant.combat_round, ["combat", "round", "1"])
+    assert_equal(assistant.character["EnduranceCurrent"], 20, "section 241 ignores first two rounds of END loss")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 296)
+    quiet(assistant.start_section_combat, "296-ice-barbarians")
+    assistant.combat["Log"] = [{"PlayerLoss": 0, "EnemyLoss": 0} for _ in range(3)]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 173, "section 296 survival after three rounds routes to 173")
+
 
 def main() -> int:
     test_book3_meals_failure_and_completion()
     test_book3_loot_and_route_checks()
     test_book3_roll_helpers()
+    test_book3_all_roll_helpers_are_app_safe()
     test_book3_gold_distraction_helper()
     test_book3_direct_section_helpers()
+    test_book3_combat_route_targets_match_source()
+    test_book3_combat_route_semantics()
     test_book3_combat_helpers()
     print("Book 3 playable pipeline smoke passed.")
     return 0

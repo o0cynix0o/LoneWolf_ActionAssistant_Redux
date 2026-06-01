@@ -50,6 +50,10 @@
         {"type": "stat", "stat": "end", "delta": 6}
       ]
     },
+    "83": {
+      "summary": "Lose 2 END from Mindforce unless Mindshield protects you.",
+      "actions": [{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_power", "name": "Mindshield"}}]
+    },
     "121": {
       "summary": "Lose 1 END from the poor evening meal.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
