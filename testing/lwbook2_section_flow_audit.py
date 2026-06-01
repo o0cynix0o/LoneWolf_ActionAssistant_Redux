@@ -721,7 +721,27 @@ def classify_section(block: str, routes: list[int], section: int) -> list[str]:
         add_class(classes, "endurance_gain")
     if "combat skill" in text and any(term in text for term in ("add", "deduct", "reduce", "increase")):
         add_class(classes, "combat_skill_modifier")
-    if any(term in text for term in ("you are dead", "your adventure ends", "mission has failed")):
+    if any(
+        term in text
+        for term in (
+            "you are dead",
+            "you die instantly",
+            "death was swift",
+            "death was mercifully swift",
+            "your adventure ends",
+            "your mission and your life end",
+            "your life and your mission end",
+            "your life and your quest end",
+            "your quest and your life end",
+            "your life and your quest have come",
+            "your life and your quest come",
+            "your mission and your life come",
+            "your life and your mission come",
+            "mission has failed",
+            "stab and hack you to death",
+            "strangled to death",
+        )
+    ):
         add_class(classes, "terminal_death")
     if section == MAX_SECTION or "the caverns of kalte" in text:
         add_class(classes, "terminal_success")

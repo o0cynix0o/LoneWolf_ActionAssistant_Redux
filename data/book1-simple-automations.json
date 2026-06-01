@@ -122,7 +122,7 @@
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
     },
     "286": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 286 ends the mission."}]},
-    "292": {"summary": "Terminal failure.", "actions": [{"type": "ending", "ending": "failure", "cause": "Section 292 ends the adventure."}]},
+    "292": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 292 ends the adventure."}]},
     "294": {
       "summary": "Lose Backpack and Weapons in the river.",
       "actions": [{"type": "discard_gear"}]

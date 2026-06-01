@@ -39,9 +39,9 @@ This report records section numbers, graph counts, and audit classifications onl
 - random: 33
 - route_choice: 209
 - single_route: 120
-- terminal_death: 1
+- terminal_death: 19
+- terminal_failure: 1
 - terminal_success: 1
-- terminal_unclassified: 19
 
 ## Data Artifact
 

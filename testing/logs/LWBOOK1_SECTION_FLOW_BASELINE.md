@@ -35,9 +35,8 @@ This report records section numbers, graph counts, and audit classifications onl
 - random: 21
 - route_choice: 176
 - single_route: 157
-- terminal_death: 1
+- terminal_death: 17
 - terminal_success: 1
-- terminal_unclassified: 15
 
 ## Data Artifact
 
@@ -53,6 +52,6 @@ This report records section numbers, graph counts, and audit classifications onl
 
 ## Remaining Work
 
-- Expand route checks only when later playtests find new context-specific helper opportunities.
+- Continue route-check audit for optional discipline choices and route-specific side effects.
 - Expand simple automations only after each additional section effect is confirmed by the audit.
 - Continue combat/random audit for remaining staged random and player-choice aftermath effects.

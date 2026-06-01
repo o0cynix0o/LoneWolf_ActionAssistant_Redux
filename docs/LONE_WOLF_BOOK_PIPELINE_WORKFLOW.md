@@ -138,12 +138,22 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - random route
   - combat route
   - no-route terminal
+- Classify terminal shape separately:
+  - death
+  - mission failure without death
+  - successful completion
+  - unclassified no-route ending
 - Generate or update `data/bookN-section-flows.json`.
 - Run a route-target certification pass:
   - Every generated combat route target must appear in that section's source links unless the route is explicitly a terminal state implemented outside the source page.
   - Every generated random-roll route target must appear in that section's source links unless it is a documented death/failure helper.
   - Every generated route-check target must appear in that section's source links.
   - Every route action that spends, removes, grants, or flags something must be tied to a source route or a documented manual helper.
+- Run a terminal-ending certification pass:
+  - Every no-route death section must have death/recovery automation.
+  - Every no-route mission-failure section must have failure/recovery automation and must not be recorded as a Lone Wolf death unless the text says he dies.
+  - Every completion section must have completion automation.
+  - No `terminal_unclassified` section may remain unless it is explicitly documented as source-only text with no app action.
 - Any generated route target that is not present in the source text is a blocker until corrected or documented with a clear reason.
 - Write the section-flow baseline log.
 - Write `LWBOOKN_ROUTE_GRAPH_CHECK.md` if an online route graph was available.
@@ -415,6 +425,7 @@ Generate or update:
 - Combat smoke test.
 - Combat hardening edge test.
 - Combat route-target certification test for every onboarded book.
+- Terminal-ending recovery test for every death/failure/completion section.
 - Automation-language smoke test.
 - UI label/static browser smoke test.
 - Choices-panel filter smoke test.
@@ -451,6 +462,7 @@ For ruleset changes, tests must also prove:
 - Regenerate/check data artifacts.
 - Run all smoke tests and playtests.
 - Run all route-target certification tests.
+- Run all terminal-ending certification and recovery tests.
 - Run all semantic app playtests for special combat, random, and route-check sections.
 - Run `git diff --check`.
 - Confirm `books/` is not staged/tracked.

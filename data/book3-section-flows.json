@@ -190,7 +190,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -831,7 +831,7 @@
     "37": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1082,7 +1082,7 @@
     "53": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1253,7 +1253,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "meal",
-        "terminal_unclassified"
+        "terminal_failure"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1322,7 +1322,7 @@
     "66": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1972,7 +1972,7 @@
     "93": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -2024,7 +2024,7 @@
     "95": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -2980,7 +2980,7 @@
     "136": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -3191,7 +3191,7 @@
     "143": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -3310,7 +3310,7 @@
     "148": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -3447,7 +3447,7 @@
     "153": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -3916,7 +3916,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -4418,7 +4418,7 @@
     "198": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -4537,7 +4537,7 @@
     "205": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -5346,7 +5346,7 @@
     "239": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -5491,7 +5491,7 @@
     "248": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -5557,7 +5557,7 @@
     "253": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -6978,7 +6978,7 @@
     "312": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -7553,7 +7553,7 @@
     "339": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],

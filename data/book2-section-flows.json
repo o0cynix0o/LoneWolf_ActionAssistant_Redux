@@ -202,7 +202,7 @@
     "8": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -271,7 +271,7 @@
     "11": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1461,7 +1461,7 @@
     "44": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -1666,7 +1666,7 @@
     "54": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -2724,7 +2724,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -4025,7 +4025,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -4872,7 +4872,7 @@
     "159": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -5846,7 +5846,7 @@
     "190": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -6317,7 +6317,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -6326,7 +6326,7 @@
     "213": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -6335,7 +6335,7 @@
     "214": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -6786,7 +6786,7 @@
     "234": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -7244,7 +7244,7 @@
     "247": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -7253,7 +7253,7 @@
     "248": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -8540,7 +8540,7 @@
     "292": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -9043,7 +9043,7 @@
     "304": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],
@@ -9328,7 +9328,7 @@
     "317": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "sourceRouteCount": 0,
       "sourceRoutes": [],

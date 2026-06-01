@@ -1,5 +1,9 @@
 {
   "3": {
+    "9": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 9 ends the mission."}]
+    },
     "18": {
       "summary": "Lose 3 END when the ice cyclone freezes your weapon arm.",
       "actions": [{"type": "stat", "stat": "end", "delta": -3}]
@@ -16,6 +20,10 @@
       "summary": "Lose 1 END from the arrow graze.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
     },
+    "37": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 37 ends the mission."}]
+    },
     "43": {
       "summary": "Lose 1 END from the reduced evening meal.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
@@ -23,6 +31,10 @@
     "49": {
       "summary": "Your Backpack is left behind in the tent.",
       "actions": [{"type": "backpack_stash", "available": false}]
+    },
+    "53": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 53 ends the mission."}]
     },
     "55": {
       "summary": "Lose 5 END and permanently lose 2 base CS to frostbite.",
@@ -39,6 +51,10 @@
       "summary": "Lose 3 END during the blizzard.",
       "actions": [{"type": "stat", "stat": "end", "delta": -3}]
     },
+    "66": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 66 ends the mission."}]
+    },
     "77": {
       "summary": "Lose 1 END from graveweed vapour.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
@@ -54,6 +70,14 @@
       "summary": "Lose 2 END from Mindforce unless Mindshield protects you.",
       "actions": [{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_power", "name": "Mindshield"}}]
     },
+    "93": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 93 ends the mission."}]
+    },
+    "95": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 95 ends the mission."}]
+    },
     "121": {
       "summary": "Lose 1 END from the poor evening meal.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
@@ -66,17 +90,33 @@
       "summary": "Use a Backpack Meal or lose 3 END from hunger.",
       "actions": [{"type": "meal", "count": 1, "mode": "all_or_loss", "enduranceLoss": 3, "huntingExempt": false}]
     },
+    "136": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 136 ends the mission."}]
+    },
     "140": {
       "summary": "Lose 2 END from the hidden knife slash.",
       "actions": [{"type": "stat", "stat": "end", "delta": -2}]
+    },
+    "143": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 143 ends the mission."}]
     },
     "144": {
       "summary": "Terminal death.",
       "actions": [{"type": "ending", "ending": "death", "cause": "Section 144 ends the mission."}]
     },
+    "148": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 148 ends the mission."}]
+    },
     "150": {
       "summary": "Lose 2 END from the sudden cold unless Baknar Oil has been applied.",
       "actions": [{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_flag", "key": "baknarOilApplied", "value": true}}]
+    },
+    "153": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 153 ends the mission."}]
     },
     "157": {
       "summary": "Use Gallowbrush and restore 6 END from the herbs.",
@@ -89,6 +129,10 @@
       "summary": "Lose 6 END from the Helghast's surprise attack.",
       "actions": [{"type": "stat", "stat": "end", "delta": -6}]
     },
+    "175": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 175 ends the mission."}]
+    },
     "193": {
       "summary": "Lose 2 END from cuts and bruises.",
       "actions": [{"type": "stat", "stat": "end", "delta": -2}]
@@ -99,6 +143,14 @@
         {"type": "discard_weapons"},
         {"type": "stat", "stat": "end", "delta": -2}
       ]
+    },
+    "198": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 198 ends the mission."}]
+    },
+    "205": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 205 ends the mission."}]
     },
     "206": {
       "summary": "Lose 1 END from the twisted ankle.",
@@ -128,9 +180,21 @@
       "summary": "Eat a Backpack Meal or lose 3 END.",
       "actions": [{"type": "meal", "count": 1, "mode": "all_or_loss", "enduranceLoss": 3, "huntingExempt": false}]
     },
+    "239": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 239 ends the mission."}]
+    },
+    "248": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 248 ends the mission."}]
+    },
     "251": {
       "summary": "Lose 2 END from snow-blindness.",
       "actions": [{"type": "stat", "stat": "end", "delta": -2}]
+    },
+    "253": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 253 ends the mission."}]
     },
     "280": {
       "summary": "Lose 1 END from the corrosive acid on the key.",
@@ -148,6 +212,10 @@
       "summary": "Use the Ornate Silver Key to open the chest.",
       "actions": [{"type": "remove_item", "containers": ["special"], "name": "Ornate Silver Key"}]
     },
+    "312": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 312 ends the mission."}]
+    },
     "326": {
       "summary": "Lose 1 END from the effort of visualizing the lock.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
@@ -155,6 +223,10 @@
     "328": {
       "summary": "Lose 6 END from the Helghast's surprise attack.",
       "actions": [{"type": "stat", "stat": "end", "delta": -6}]
+    },
+    "339": {
+      "summary": "Terminal death.",
+      "actions": [{"type": "ending", "ending": "death", "cause": "Section 339 ends the mission."}]
     },
     "340": {
       "summary": "Restore 6 END from Loi-Kymar's herbs.",

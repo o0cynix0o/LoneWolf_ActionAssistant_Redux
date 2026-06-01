@@ -1911,7 +1911,7 @@
     "18": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "incomingRouteCount": 3,
       "sourceRouteCount": 0,
@@ -3016,7 +3016,7 @@
     "232": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "incomingRouteCount": 1,
       "sourceRouteCount": 0,
@@ -6420,7 +6420,7 @@
       "auditStatus": "source-link-baseline",
       "classification": [
         "inventory",
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "incomingRouteCount": 2,
       "sourceRouteCount": 0,
@@ -7415,7 +7415,7 @@
     "77": {
       "auditStatus": "source-link-baseline",
       "classification": [
-        "terminal_unclassified"
+        "terminal_death"
       ],
       "incomingRouteCount": 1,
       "sourceRouteCount": 0,

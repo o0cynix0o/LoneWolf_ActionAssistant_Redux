@@ -41,9 +41,9 @@ This report records section numbers, graph counts, and helper classifications on
 - random: 34
 - route_choice: 230
 - single_route: 156
-- terminal_death: 8
+- terminal_death: 12
 - terminal_success: 1
-- terminal_unclassified: 5
+- terminal_unclassified: 1
 
 ## Data Artifact
 

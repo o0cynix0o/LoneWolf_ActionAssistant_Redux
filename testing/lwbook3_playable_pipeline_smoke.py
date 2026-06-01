@@ -308,6 +308,59 @@ def combat_route_values(value) -> list[int]:
     return []
 
 
+def simple_automation_entries() -> dict[str, dict]:
+    return json.loads((ROOT / "data" / "book3-simple-automations.json").read_text(encoding="utf-8"))["3"]
+
+
+def automation_has_ending(entry: dict, ending: str) -> bool:
+    for action in entry.get("actions", []):
+        if isinstance(action, dict) and action.get("type") == "ending" and action.get("ending") == ending:
+            return True
+    return False
+
+
+def test_book3_terminal_sections_have_recovery_automation() -> None:
+    data = json.loads((ROOT / "data" / "book3-section-flows.json").read_text(encoding="utf-8"))["3"]
+    automations = simple_automation_entries()
+    missing: list[str] = []
+    terminal_unclassified: list[str] = []
+    expectations = {
+        "terminal_death": "death",
+        "terminal_failure": "failure",
+    }
+    for section, entry in data.items():
+        if not str(section).isdigit():
+            continue
+        classes = set(entry.get("classification") or [])
+        if "terminal_unclassified" in classes and int(entry.get("sourceRouteCount") or 0) == 0:
+            terminal_unclassified.append(section)
+        for classification, ending in expectations.items():
+            if classification in classes and not automation_has_ending(automations.get(section, {}), ending):
+                missing.append(f"{section}:{ending}")
+    assert_equal(terminal_unclassified, [], "Book 3 has no unclassified no-route terminal sections")
+    assert_equal(missing, [], "Book 3 terminal sections have recovery automation")
+
+
+def test_book3_terminal_automation_opens_recovery() -> None:
+    terminal_sections: list[tuple[int, str]] = []
+    for section, entry in simple_automation_entries().items():
+        for ending in ("death", "failure"):
+            if automation_has_ending(entry, ending):
+                terminal_sections.append((int(section), ending))
+
+    assert_true(terminal_sections, "Book 3 terminal automation list")
+    for section, ending in sorted(terminal_sections):
+        assistant = fresh_assistant()
+        quiet(assistant.set_section, section)
+        assert_true(assistant.death_active(), f"section {section} opens death/failure recovery")
+        assert_equal(assistant.automation["DeathState"]["Type"], ending.title(), f"section {section} records ending type")
+        recovery = assistant.death_recovery_payload()
+        assert_true(
+            recovery["CanRepeat"] or recovery["CanRewind"],
+            f"section {section} exposes repeat or rewind recovery",
+        )
+
+
 def test_book3_combat_route_targets_match_source() -> None:
     data = json.loads((ROOT / "data" / "book3-section-flows.json").read_text(encoding="utf-8"))["3"]
     route_keys = {
@@ -595,6 +648,8 @@ def main() -> int:
     test_book3_all_roll_helpers_are_app_safe()
     test_book3_gold_distraction_helper()
     test_book3_direct_section_helpers()
+    test_book3_terminal_sections_have_recovery_automation()
+    test_book3_terminal_automation_opens_recovery()
     test_book3_combat_route_targets_match_source()
     test_book3_combat_route_semantics()
     test_book3_combat_helpers()

@@ -314,7 +314,21 @@ def classify_section(block: str, routes: list[int], section: int) -> list[str]:
         add("endurance_gain")
     if "combat skill" in text and any(term in text for term in ("add", "deduct", "reduce")):
         add("combat_skill_modifier")
-    if any(term in text for term in ("your life end", "your adventure ends", "you are dead", "your life and the hopes")):
+    if any(
+        term in text
+        for term in (
+            "your life end",
+            "your adventure ends",
+            "you are dead",
+            "your life and the hopes",
+            "your life and all hopes",
+            "your life and the last hope",
+            "your life comes to",
+            "boiled to death",
+            "oblivion engulfs you",
+            "consumed by searing",
+        )
+    ):
         add("terminal_death")
     if section == MAX_SECTION:
         add("terminal_success")
