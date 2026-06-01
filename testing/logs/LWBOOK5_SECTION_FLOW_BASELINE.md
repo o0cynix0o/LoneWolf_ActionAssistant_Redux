@@ -15,8 +15,8 @@ This report records section numbers, graph counts, and helper classifications on
 - Invalid section links: 0
 - Project Aon SVG route graph available: yes
 - Confirmed optional loot/helper sections: 7
-- Confirmed combat preset sections: 18
-- Confirmed route-check sections: 7
+- Confirmed combat preset sections: 34
+- Confirmed route-check sections: 8
 - Confirmed random-roll helper sections: 6
 - Confirmed loss-choice sections: 3
 

@@ -557,6 +557,8 @@ def default_state() -> dict[str, Any]:
             "TimedModifiers": [],
             "AppliedConditionalModifierLabels": [],
             "IgnorePlayerLossRounds": 0,
+            "IgnoreEnemyLossRounds": 0,
+            "CombatRollRoutes": {},
             "FixedPlayerCombatSkill": None,
             "RequiredWeapon": "",
             "EnemyQueue": [],
@@ -3241,6 +3243,13 @@ class LoneWolfReduxAssistant:
                 str(condition.get("name") or ""),
                 condition.get("containers"),
                 str(condition.get("match") or "exact"),
+            )
+        if kind in {"fought_enemy", "enemy_history"}:
+            target = str(condition.get("name") or "").strip().lower()
+            return bool(target) and any(
+                target in str(entry.get("EnemyName") or "").strip().lower()
+                for entry in as_list(self.state.get("CombatHistory"))
+                if isinstance(entry, dict)
             )
         if kind == "flag":
             return self.automation_flags.get(str(condition.get("key") or "")) == condition.get("value", True)
@@ -6364,6 +6373,15 @@ class LoneWolfReduxAssistant:
                 notes.append(f"Round limit {int(self.combat['RoundLimit'])}")
             if bool(self.combat.get("IgnorePlayerLossIfEnemyLossGreater")):
                 notes.append("Ignore Lone Wolf END loss when enemy loss is higher.")
+            if int(self.combat.get("IgnorePlayerLossRounds") or 0):
+                notes.append(f"Ignore Lone Wolf END loss for {int(self.combat['IgnorePlayerLossRounds'])} round(s)")
+            if int(self.combat.get("IgnoreEnemyLossRounds") or 0):
+                notes.append(f"Ignore enemy END loss for {int(self.combat['IgnoreEnemyLossRounds'])} round(s)")
+            if isinstance(self.combat.get("CombatRollRoutes"), dict) and self.combat.get("CombatRollRoutes"):
+                route_text = ", ".join(
+                    f"{roll}->{route}" for roll, route in sorted(self.combat["CombatRollRoutes"].items())
+                )
+                notes.append(f"Combat roll route: {route_text}")
             if isinstance(self.combat.get("PlayerLossRandomCheck"), dict) and self.combat.get(
                 "PlayerLossRandomCheck"
             ):
@@ -6589,6 +6607,10 @@ class LoneWolfReduxAssistant:
                 "TimedModifiers": as_list(preset.get("timedModifiers")),
                 "AppliedConditionalModifierLabels": modifier_labels,
                 "IgnorePlayerLossRounds": max(0, int(preset.get("ignorePlayerLossRounds") or 0)),
+                "IgnoreEnemyLossRounds": max(0, int(preset.get("ignoreEnemyLossRounds") or 0)),
+                "CombatRollRoutes": preset.get("combatRollRoutes")
+                if isinstance(preset.get("combatRollRoutes"), dict)
+                else {},
                 "DoubleEnemyLoss": bool(preset.get("doubleEnemyLoss", False)),
                 "DoubleEnemyLossWithSommerswerd": bool(preset.get("doubleEnemyLossWithSommerswerd", False)),
                 "RestorePlayerEnduranceAfterCombat": bool(preset.get("restorePlayerEnduranceAfterCombat", False)),
@@ -6734,6 +6756,7 @@ class LoneWolfReduxAssistant:
             numeric_fields = (
                 ("EvadeAfterRounds", "evadeAfterRounds"),
                 ("IgnorePlayerLossRounds", "ignorePlayerLossRounds"),
+                ("IgnoreEnemyLossRounds", "ignoreEnemyLossRounds"),
                 ("RoundLimit", "roundLimit"),
                 ("WinWithinRounds", "winWithinRounds"),
                 ("OxygenSafeRounds", "oxygenSafeRounds"),
@@ -6775,6 +6798,11 @@ class LoneWolfReduxAssistant:
                 "PlayerLossRandomCheck"
             ) != preset.get("playerLossRandomCheck"):
                 self.combat["PlayerLossRandomCheck"] = preset.get("playerLossRandomCheck")
+                changed = True
+            if isinstance(preset.get("combatRollRoutes"), dict) and self.combat.get(
+                "CombatRollRoutes"
+            ) != preset.get("combatRollRoutes"):
+                self.combat["CombatRollRoutes"] = preset.get("combatRollRoutes")
                 changed = True
             if preset.get("id") and not str(self.combat.get("SectionCombatId") or ""):
                 self.combat["SectionCombatId"] = str(preset.get("id") or "")
@@ -6960,6 +6988,8 @@ class LoneWolfReduxAssistant:
                 "TimedModifiers": [],
                 "AppliedConditionalModifierLabels": [],
                 "IgnorePlayerLossRounds": 0,
+                "IgnoreEnemyLossRounds": 0,
+                "CombatRollRoutes": {},
                 "DoubleEnemyLoss": False,
                 "DoubleEnemyLossWithSommerswerd": False,
                 "RestorePlayerEnduranceAfterCombat": False,
@@ -7048,6 +7078,7 @@ class LoneWolfReduxAssistant:
             ignored_player_loss = player_loss
             player_loss = 0
         enemy_loss = 0
+        ignored_enemy_loss = 0
         required_weapon = str(self.combat.get("RequiredWeapon") or "").strip()
         active_weapon = self.combat_active_weapon()
         weapon_can_wound = not required_weapon or active_weapon.lower() == required_weapon.lower()
@@ -7059,6 +7090,10 @@ class LoneWolfReduxAssistant:
             if bool(self.combat.get("DoubleEnemyLossWithSommerswerd")) and self.combat_active_weapon() == "Sommerswerd":
                 multiplier *= 2
             enemy_loss = min(int(self.combat["EnemyEnduranceCurrent"]), base_enemy_loss * multiplier)
+
+        if round_number <= int(self.combat.get("IgnoreEnemyLossRounds") or 0):
+            ignored_enemy_loss = enemy_loss
+            enemy_loss = 0
 
         if (
             not evade
@@ -7108,6 +7143,7 @@ class LoneWolfReduxAssistant:
             "CRTColumn": column,
             "ActiveWeapon": self.combat_active_weapon() or "Unarmed",
             "EnemyLoss": enemy_loss,
+            "IgnoredEnemyLoss": ignored_enemy_loss,
             "IgnoredPlayerLoss": ignored_player_loss,
             "LoneWolfReduxLoss": player_loss,
             "PlayerLoss": player_loss,
@@ -7128,6 +7164,8 @@ class LoneWolfReduxAssistant:
                 print(f"Only {required_weapon} can wound this enemy.")
         else:
             print("Evading: enemy loss ignored.")
+        if ignored_enemy_loss:
+            print(f"Enemy loss ignored by section rule: {ignored_enemy_loss}")
         if ignored_player_loss:
             print(f"Lone Wolf loss ignored by section rule: {ignored_player_loss}")
         if special_roll is not None:
@@ -7153,6 +7191,16 @@ class LoneWolfReduxAssistant:
             self.autosave()
             self.show_death_screen()
             return
+        combat_roll_routes = self.combat.get("CombatRollRoutes")
+        if not evade and isinstance(combat_roll_routes, dict) and combat_roll_routes:
+            route = combat_roll_routes.get(str(roll), combat_roll_routes.get(roll))
+            if route:
+                self.archive_current_combat("Special Route")
+                self.restore_player_endurance_after_combat_effects()
+                self.combat["Active"] = False
+                print(f"Combat roll route: section {route}.")
+                self.set_section(int(route))
+                return
         if self.route_after_combat_round():
             return
         self.autosave()

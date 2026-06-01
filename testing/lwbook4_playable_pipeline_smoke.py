@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -159,11 +160,60 @@ def test_book4_completion() -> None:
     assert_equal(assistant.automation["Ending"]["Type"], "success", "Book 4 success ending")
 
 
+def combat_route_values(value) -> list[int]:
+    if isinstance(value, int):
+        return [value]
+    if isinstance(value, list):
+        routes: list[int] = []
+        for item in value:
+            routes.extend(combat_route_values(item))
+        return routes
+    if isinstance(value, dict):
+        routes: list[int] = []
+        for item in value.values():
+            routes.extend(combat_route_values(item))
+        return routes
+    return []
+
+
+def test_book4_combat_route_targets_match_source() -> None:
+    data = json.loads((ROOT / "data" / "book4-section-flows.json").read_text(encoding="utf-8"))["4"]
+    route_keys = {
+        "victoryRoute",
+        "defeatRoute",
+        "evadeRoute",
+        "flawlessVictoryRoute",
+        "woundedVictoryRoute",
+        "playerLossRoute",
+        "oneRoundComparisonRoutes",
+        "winWithinRoute",
+        "tooLateRoute",
+        "survivalRoute",
+        "roundExceededRoute",
+        "victoryChoices",
+        "combatRollRoutes",
+    }
+    for section, entry in data.items():
+        if not str(section).isdigit():
+            continue
+        source_routes = {int(route["Section"]) for route in entry.get("sourceRoutes", []) if "Section" in route}
+        for preset in entry.get("combat", []):
+            preset_routes: list[int] = []
+            for key in route_keys:
+                preset_routes.extend(combat_route_values(preset.get(key)))
+            unexpected = sorted(set(preset_routes) - source_routes)
+            if unexpected:
+                raise AssertionError(
+                    f"section {section} combat routes not present in source links: {unexpected}; source={sorted(source_routes)}"
+                )
+
+
 def main() -> int:
     test_book4_meals_hunting_and_mines()
     test_book4_loss_and_backpack_replacement()
     test_book4_underwater_and_special_combat()
     test_book4_completion()
+    test_book4_combat_route_targets_match_source()
     print("Book 4 playable pipeline smoke passed.")
     return 0
 

@@ -243,6 +243,16 @@
       ],
       "combat": [
         {
+          "conditionalModifiers": [
+            {
+              "condition": {
+                "name": "Mindblast",
+                "type": "power"
+              },
+              "label": "Kwaraz susceptibility",
+              "modifier": 2
+            }
+          ],
           "enemy": {
             "cs": 19,
             "endurance": 30,
@@ -476,7 +486,7 @@
           "id": "119-palace-gate-guardians",
           "ignorePlayerLossRounds": 3,
           "label": "Palace Gate Guardians",
-          "victoryRoute": 188
+          "victoryRoute": 137
         }
       ],
       "incomingRouteCount": 2,
@@ -505,6 +515,7 @@
           "enemyImmune": true,
           "id": "12-bloodlug",
           "label": "Bloodlug",
+          "modifier": -2,
           "victoryRoute": 95
         }
       ],
@@ -570,11 +581,13 @@
       ],
       "combat": [
         {
+          "canEvade": true,
           "enemy": {
             "cs": 18,
             "endurance": 28,
             "name": "Sharnazim Underlord"
           },
+          "evadeRoute": 51,
           "id": "123-sharnazim-underlord",
           "label": "Sharnazim Underlord",
           "victoryRoute": 198
@@ -1477,7 +1490,7 @@
               "startRound": 1
             }
           ],
-          "victoryRoute": 111
+          "victoryRoute": 52
         }
       ],
       "incomingRouteCount": 1,
@@ -1666,7 +1679,11 @@
           },
           "id": "168-vestibule-guard",
           "label": "Vestibule Guard",
-          "victoryRoute": 101
+          "roundExceededRoute": 46,
+          "roundLimit": 3,
+          "tooLateRoute": 46,
+          "winWithinRounds": 3,
+          "winWithinRoute": 101
         }
       ],
       "incomingRouteCount": 2,
@@ -1858,7 +1875,10 @@
           },
           "id": "178-armoury-guard",
           "label": "Armoury Guard",
-          "victoryRoute": 52
+          "victoryChoices": [
+            52,
+            140
+          ]
         }
       ],
       "incomingRouteCount": 1,
@@ -2110,6 +2130,7 @@
           },
           "id": "190-hammerfist-the-armourer",
           "label": "Hammerfist the Armourer",
+          "modifier": -2,
           "victoryRoute": 111
         }
       ],
@@ -2330,6 +2351,8 @@
           "id": "20-horseman",
           "label": "Horseman",
           "restoreHalfPlayerEnduranceLossAfterCombat": true,
+          "roundExceededRoute": 82,
+          "roundLimit": 3,
           "tooLateRoute": 82,
           "winWithinRounds": 3,
           "winWithinRoute": 125
@@ -3671,31 +3694,46 @@
         "inventory",
         "endurance_loss"
       ],
-      "combat": [
+      "incomingRouteCount": 1,
+      "routeChecks": [
         {
-          "enemy": {
-            "cs": 17,
-            "endurance": 26,
-            "name": "Vordak"
-          },
-          "enemyImmune": true,
-          "id": "264-vordak",
-          "label": "Vordak",
-          "preActions": [
+          "id": "264-sommerswerd",
+          "label": "Sommerswerd route",
+          "outcomes": [
             {
-              "condition": {
-                "name": "Mindshield",
-                "type": "no_power"
-              },
-              "delta": -2,
-              "stat": "end",
-              "type": "stat"
+              "conditions": [
+                {
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact",
+                  "name": "Sommerswerd",
+                  "type": "item"
+                }
+              ],
+              "label": "Sommerswerd available",
+              "route": 315,
+              "testLabel": "Has Sommerswerd"
+            },
+            {
+              "conditions": [
+                {
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact",
+                  "name": "Sommerswerd",
+                  "type": "no_item"
+                }
+              ],
+              "label": "No Sommerswerd",
+              "route": 299,
+              "testLabel": "No Sommerswerd"
             }
           ],
-          "victoryRoute": 319
+          "summary": "Checks whether Lone Wolf has Sommerswerd."
         }
       ],
-      "incomingRouteCount": 1,
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -3878,11 +3916,13 @@
       ],
       "combat": [
         {
+          "canEvade": true,
           "enemy": {
             "cs": 18,
             "endurance": 35,
             "name": "Drakkarim"
           },
+          "evadeRoute": 238,
           "id": "273-drakkarim",
           "label": "Drakkarim",
           "victoryRoute": 345
@@ -4031,7 +4071,7 @@
           "id": "280-drakkar",
           "ignorePlayerLossRounds": 1,
           "label": "Drakkar",
-          "victoryRoute": 288
+          "victoryRoute": 213
         }
       ],
       "incomingRouteCount": 2,
@@ -4845,6 +4885,13 @@
           },
           "id": "316-drakkar",
           "label": "Drakkar",
+          "timedModifiers": [
+            {
+              "endRound": 3,
+              "modifier": -2,
+              "startRound": 1
+            }
+          ],
           "victoryRoute": 333
         }
       ],
@@ -5114,7 +5161,11 @@
           },
           "id": "330-drakkar",
           "label": "Drakkar",
-          "victoryRoute": 243
+          "roundExceededRoute": 394,
+          "roundLimit": 2,
+          "tooLateRoute": 394,
+          "winWithinRounds": 2,
+          "winWithinRoute": 243
         }
       ],
       "incomingRouteCount": 1,
@@ -5201,11 +5252,13 @@
       ],
       "combat": [
         {
+          "canEvade": true,
           "enemy": {
             "cs": 17,
             "endurance": 32,
             "name": "Tower Guards"
           },
+          "evadeRoute": 209,
           "id": "334-tower-guards",
           "label": "Tower Guards",
           "victoryRoute": 310
@@ -5623,6 +5676,16 @@
       ],
       "combat": [
         {
+          "conditionalModifiers": [
+            {
+              "condition": {
+                "name": "Mindshield",
+                "type": "no_power"
+              },
+              "label": "Mindforce attack",
+              "modifier": -2
+            }
+          ],
           "enemy": {
             "cs": 17,
             "endurance": 26,
@@ -5631,7 +5694,11 @@
           "enemyImmune": true,
           "id": "355-vordak",
           "label": "Vordak",
-          "victoryRoute": 249
+          "roundExceededRoute": 304,
+          "roundLimit": 4,
+          "tooLateRoute": 304,
+          "winWithinRounds": 4,
+          "winWithinRoute": 249
         }
       ],
       "incomingRouteCount": 1,
@@ -5669,6 +5736,9 @@
       ],
       "combat": [
         {
+          "combatRollRoutes": {
+            "1": 293
+          },
           "enemy": {
             "cs": 15,
             "endurance": 23,
@@ -5676,7 +5746,11 @@
           },
           "id": "357-platform-sentry",
           "label": "Platform Sentry",
-          "victoryRoute": 323
+          "modifier": -2,
+          "victoryChoices": [
+            207,
+            224
+          ]
         }
       ],
       "incomingRouteCount": 1,
@@ -5777,7 +5851,11 @@
           },
           "id": "361-drakkar",
           "label": "Drakkar",
-          "victoryRoute": 288
+          "roundExceededRoute": 382,
+          "roundLimit": 3,
+          "tooLateRoute": 382,
+          "winWithinRounds": 3,
+          "winWithinRoute": 288
         }
       ],
       "incomingRouteCount": 3,
@@ -6249,11 +6327,13 @@
       ],
       "combat": [
         {
+          "canEvade": true,
           "enemy": {
             "cs": 17,
             "endurance": 35,
             "name": "Drakkarim"
           },
+          "evadeRoute": 205,
           "id": "387-drakkarim",
           "label": "Drakkarim",
           "victoryRoute": 341
@@ -6303,7 +6383,10 @@
           },
           "id": "389-sentry",
           "label": "Sentry",
-          "victoryRoute": 207
+          "victoryChoices": [
+            207,
+            224
+          ]
         }
       ],
       "incomingRouteCount": 1,
@@ -6388,11 +6471,14 @@
       ],
       "combat": [
         {
+          "canEvade": true,
           "enemy": {
             "cs": 16,
             "endurance": 25,
             "name": "Drakkar"
           },
+          "evadeAfterRounds": 3,
+          "evadeRoute": 228,
           "id": "393-drakkar",
           "label": "Drakkar",
           "preActions": [
@@ -6413,7 +6499,7 @@
               "startRound": 1
             }
           ],
-          "victoryRoute": 288
+          "victoryRoute": 255
         }
       ],
       "incomingRouteCount": 1,
@@ -6540,8 +6626,13 @@
             "name": "Palace Gaoler"
           },
           "id": "4-palace-gaoler",
+          "ignoreEnemyLossRounds": 1,
           "label": "Palace Gaoler",
-          "victoryRoute": 165
+          "roundExceededRoute": 180,
+          "roundLimit": 4,
+          "tooLateRoute": 180,
+          "winWithinRounds": 4,
+          "winWithinRoute": 165
         }
       ],
       "incomingRouteCount": 3,
@@ -6908,7 +6999,16 @@
       ],
       "combat": [
         {
-          "canEvade": false,
+          "conditionalModifiers": [
+            {
+              "condition": {
+                "name": "Elix",
+                "type": "fought_enemy"
+              },
+              "label": "Previous Elix experience",
+              "modifier": 2
+            }
+          ],
           "enemy": {
             "cs": 17,
             "endurance": 32,
@@ -7065,6 +7165,16 @@
       ],
       "combat": [
         {
+          "conditionalModifiers": [
+            {
+              "condition": {
+                "name": "Mindblast",
+                "type": "power"
+              },
+              "label": "Kwaraz susceptibility",
+              "modifier": 2
+            }
+          ],
           "enemy": {
             "cs": 20,
             "endurance": 30,
@@ -7572,7 +7682,12 @@
           },
           "id": "91-palace-gaoler",
           "label": "Palace Gaoler",
-          "victoryRoute": 65
+          "modifier": -4,
+          "roundExceededRoute": 180,
+          "roundLimit": 4,
+          "tooLateRoute": 180,
+          "winWithinRounds": 4,
+          "winWithinRoute": 65
         }
       ],
       "incomingRouteCount": 3,

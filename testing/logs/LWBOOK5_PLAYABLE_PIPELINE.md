@@ -12,6 +12,8 @@ Scope: first onboarding helper build for Book 5, *Shadow on the Sand*.
 - Project Aon SVGZ route graph comparison.
 - First simple section automation data.
 - First route checks, roll helpers, loot helpers, loss-choice helpers, and combat presets.
+- Combat semantic guards that compare preset route targets to the Project Aon source links.
+- Timed combat exits, combat-roll exits, first-round enemy-loss suppression, and previous-enemy history modifiers.
 - Palace confiscation/restoration that handles Weapons, Backpack Items, Special Items, and Gold Crowns without disturbing safekeeping.
 - Limbdeath poisoning as a continuing section-entry effect until cured.
 - Sommerswerd loss/recovery and Book 5 finale helper.
@@ -32,6 +34,7 @@ Current result:
 - Book 5 automation-language audit check passed.
 - Book 5 playable pipeline smoke passed.
 - Book 4 aggregate playtest passed, including Book 2 and Book 3 regression smokes.
+- Book 4 and Book 5 combat route-target semantic checks passed.
 
 ## Remaining Risk
 

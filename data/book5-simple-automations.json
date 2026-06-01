@@ -58,6 +58,10 @@
     "257": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 257 ends the mission."}]},
     "259": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 259 ends the mission."}]},
     "261": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 261 ends the mission."}]},
+    "264": {
+      "summary": "Mindblast attack; Mindshield prevents the END loss before the Sommerswerd route check.",
+      "actions": [{"type": "stat", "stat": "end", "delta": -2, "condition": {"type": "no_power", "name": "Mindshield"}}]
+    },
     "273": {"summary": "Lose 1 END from the Akataz slash.", "actions": [{"type": "stat", "stat": "end", "delta": -1}]},
     "278": {"summary": "Lose 3 END retrieving the Sommerswerd.", "actions": [{"type": "stat", "stat": "end", "delta": -3}]},
     "284": {"summary": "Lose 3 END.", "actions": [{"type": "stat", "stat": "end", "delta": -3}]},
