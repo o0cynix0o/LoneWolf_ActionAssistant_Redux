@@ -731,7 +731,16 @@ MANUAL_COMBAT_AUDIT: dict[str, dict[str, Any]] = {
         ]
     },
     "147": {"combat": [combat_preset(147, "Kalkoth", combat_enemy("Kalkoth", 10, 28), victoryRoute=84, playerLossRoute=66)]},
-    "158": {"combat": [combat_preset(158, "Ice Barbarian Scout", combat_enemy("Ice Barbarian Scout", 20, 28), victoryRoute=35)]},
+    "158": {
+        "combat": [
+            combat_preset(
+                158,
+                "Ice Barbarian Scout",
+                combat_enemy("Ice Barbarian Scout", 20, 28),
+                oneRoundComparisonRoutes={"playerLossGreater": 165, "enemyLossGreater": 271, "equal": 337},
+            )
+        ]
+    },
     "161": {"combat": [combat_preset(161, "Ice Barbarian", combat_enemy("Ice Barbarian", 17, 29), victoryRoute=133)]},
     "164": {
         "combat": [

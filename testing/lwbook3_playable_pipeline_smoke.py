@@ -316,6 +316,27 @@ def test_book3_combat_helpers() -> None:
     quiet(assistant.route_after_combat_round)
     assert_equal(assistant.state["CurrentSection"], 84, "section 147 flawless victory routes to 84")
 
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 158)
+    quiet(assistant.start_section_combat, "158-ice-barbarian-scout")
+    assistant.combat["Log"] = [{"PlayerLoss": 5, "EnemyLoss": 2}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 165, "section 158 higher player loss routes to 165")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 158)
+    quiet(assistant.start_section_combat, "158-ice-barbarian-scout")
+    assistant.combat["Log"] = [{"PlayerLoss": 2, "EnemyLoss": 5}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 271, "section 158 higher enemy loss routes to 271")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 158)
+    quiet(assistant.start_section_combat, "158-ice-barbarian-scout")
+    assistant.combat["Log"] = [{"PlayerLoss": 3, "EnemyLoss": 3}]
+    quiet(assistant.route_after_combat_round)
+    assert_equal(assistant.state["CurrentSection"], 337, "section 158 equal loss routes to 337")
+
 
 def main() -> int:
     test_book3_meals_failure_and_completion()
