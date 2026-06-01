@@ -15,6 +15,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 BOOK_DIR = ROOT / "books" / "lw" / "03tcok"
 FLOW_DATA = ROOT / "data" / "book3-section-flows.json"
+SIMPLE_DATA = ROOT / "data" / "book3-simple-automations.json"
 REPORT_PATH = ROOT / "testing" / "logs" / "LWBOOK3_AUTOMATION_LANGUAGE_AUDIT.md"
 MAX_SECTION = 350
 
@@ -88,6 +89,90 @@ SIGNALS: dict[str, list[tuple[str, str]]] = {
 }
 
 
+DIRECT_COVERAGE = {
+    "endurance_loss": {"simple", "roll", "routeAction"},
+    "endurance_gain": {"simple", "loot", "roll", "routeAction"},
+    "combat_skill_modifier": {"simple", "combat", "routeAction"},
+    "meal": {"simple", "loot", "routeAction"},
+    "gold": {"simple", "loot", "routeCheck", "routeAction"},
+    "gold_cost": {"routeAction"},
+    "inventory_gain": {"simple", "loot", "lossChoice", "routeAction"},
+    "inventory_loss": {"simple", "lossChoice", "roll", "routeAction"},
+    "random": {"roll", "stagedRoll"},
+    "route_check": {"routeCheck"},
+    "combat": {"combat"},
+    "terminal": {"simple", "stagedRoll", "routeAction"},
+    "book_transition": {"simple", "routeAction"},
+}
+
+
+REVIEWED_NO_AUTOMATION: dict[str, set[str]] = {
+    "1": {"meal"},
+    "5": {"meal"},
+    "8": {"meal"},
+    "23": {"meal"},
+    "41": {"inventory_loss"},
+    "52": {"combat"},
+    "61": {"meal"},
+    "101": {"meal"},
+    "112": {"meal"},
+    "117": {"meal"},
+    "122": {"route_check"},
+    "124": {"route_check"},
+    "149": {"meal"},
+    "167": {"meal"},
+    "181": {"gold"},
+    "202": {"combat"},
+    "207": {"combat"},
+    "212": {"meal"},
+    "305": {"meal"},
+    "318": {"meal"},
+    "347": {"meal"},
+    "348": {"route_check"},
+    "350": {"combat"},
+}
+
+
+REVIEWED_COVERED: dict[str, set[str]] = {
+    "29": {"route_check"},
+    "32": {"endurance_loss", "route_check"},
+    "54": {"route_check"},
+    "83": {"endurance_loss", "route_check"},
+    "88": {"endurance_loss"},
+    "94": {"endurance_loss"},
+    "99": {"endurance_loss", "route_check"},
+    "123": {"endurance_loss"},
+    "132": {"route_check"},
+    "137": {"combat_skill_modifier", "route_check"},
+    "138": {"endurance_loss"},
+    "142": {"combat"},
+    "146": {"route_check"},
+    "149": {"route_check"},
+    "155": {"endurance_loss", "meal"},
+    "158": {"endurance_loss"},
+    "180": {"endurance_loss"},
+    "183": {"meal", "route_check"},
+    "185": {"route_check"},
+    "211": {"endurance_loss"},
+    "232": {"meal"},
+    "241": {"endurance_loss"},
+    "258": {"endurance_loss", "meal", "route_check", "combat"},
+    "259": {"endurance_loss"},
+    "260": {"endurance_loss"},
+    "263": {"endurance_loss"},
+    "262": {"route_check"},
+    "272": {"route_check"},
+    "283": {"meal", "route_check"},
+    "284": {"endurance_loss", "meal", "route_check"},
+    "302": {"route_check"},
+    "304": {"endurance_loss", "route_check"},
+    "323": {"meal", "route_check"},
+    "327": {"terminal"},
+    "331": {"endurance_loss", "meal", "route_check"},
+    "346": {"meal", "route_check"},
+}
+
+
 def load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
@@ -113,21 +198,41 @@ def signal_labels(text: str) -> dict[str, list[str]]:
 
 def build_audit() -> dict[str, Any]:
     flow_data = load_json(FLOW_DATA).get("3", {})
+    simple_data = load_json(SIMPLE_DATA).get("3", {})
     sections: dict[str, Any] = {}
     signals_by_category: dict[str, list[int]] = defaultdict(list)
+    gaps: dict[str, list[int]] = defaultdict(list)
+    covered: dict[str, list[int]] = defaultdict(list)
+    no_signal_sections: list[int] = []
 
     for section in range(1, MAX_SECTION + 1):
         signals = signal_labels(section_text(section))
         if not signals:
+            no_signal_sections.append(section)
             continue
         entry = flow_data.get(str(section), {})
+        simple_entry = simple_data.get(str(section))
+        coverage = flow_coverage(entry, simple_entry)
+        status: dict[str, str] = {}
         for category in signals:
             signals_by_category[category].append(section)
+            if category in REVIEWED_NO_AUTOMATION.get(str(section), set()):
+                status[category] = "reviewed-no-automation"
+            elif category in REVIEWED_COVERED.get(str(section), set()):
+                status[category] = "reviewed-covered"
+                covered[category].append(section)
+            elif category_covered(category, coverage):
+                status[category] = "covered"
+                covered[category].append(section)
+            else:
+                status[category] = "needs-review"
+                gaps[category].append(section)
         sections[str(section)] = {
             "signals": signals,
             "classification": entry.get("classification", []),
             "sourceRouteCount": entry.get("sourceRouteCount", 0),
-            "status": {category: "needs-ledger-review" for category in signals},
+            "coverage": sorted(coverage),
+            "status": status,
         }
 
     return {
@@ -135,7 +240,36 @@ def build_audit() -> dict[str, Any]:
         "sectionsWithSignals": len(sections),
         "sections": sections,
         "signalsByCategory": dict(sorted(signals_by_category.items())),
+        "gaps": {key: values for key, values in sorted(gaps.items())},
+        "covered": {key: values for key, values in sorted(covered.items())},
+        "noSignalSections": no_signal_sections,
     }
+
+
+def flow_coverage(entry: dict[str, Any], simple_entry: dict[str, Any] | None) -> set[str]:
+    coverage: set[str] = set()
+    if simple_entry:
+        coverage.add("simple")
+    if entry.get("loot"):
+        coverage.add("loot")
+    if entry.get("lossChoices"):
+        coverage.add("lossChoice")
+    if entry.get("roll"):
+        coverage.add("roll")
+    if entry.get("stagedRoll"):
+        coverage.add("stagedRoll")
+    if entry.get("routeChecks"):
+        coverage.add("routeCheck")
+    if entry.get("combat"):
+        coverage.add("combat")
+    for route in entry.get("sourceRoutes", []):
+        if isinstance(route, dict) and (route.get("actions") or route.get("Actions")):
+            coverage.add("routeAction")
+    return coverage
+
+
+def category_covered(category: str, coverage: set[str]) -> bool:
+    return bool(DIRECT_COVERAGE.get(category, set()) & coverage)
 
 
 def list_line(values: list[int]) -> str:
@@ -143,6 +277,7 @@ def list_line(values: list[int]) -> str:
 
 
 def render_report(audit: dict[str, Any]) -> str:
+    gaps = audit["gaps"]
     lines = [
         "# LW Book 3 Automation Language Audit",
         "",
@@ -154,6 +289,7 @@ def render_report(audit: dict[str, Any]) -> str:
         "",
         f"- Sections scanned: {audit['sectionsScanned']}",
         f"- Sections with at least one automation signal: {audit['sectionsWithSignals']}",
+        f"- Signal categories with uncovered candidates: {len(gaps)}",
         "",
         "## Signal Categories",
         "",
@@ -166,15 +302,70 @@ def render_report(audit: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
+            "## Needs Review By Category",
+            "",
+        ]
+    )
+    for category in sorted(SIGNALS):
+        lines.append(f"- {category}: {list_line(gaps.get(category, []))}")
+    lines.extend(
+        [
+            "",
+            "## Reviewed No Automation",
+            "",
+        ]
+    )
+    if REVIEWED_NO_AUTOMATION:
+        for section in sorted(REVIEWED_NO_AUTOMATION, key=lambda value: int(value)):
+            categories = ", ".join(sorted(REVIEWED_NO_AUTOMATION[section]))
+            lines.append(f"- Section {section}: {categories}")
+    else:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "## Reviewed Covered",
+            "",
+        ]
+    )
+    if REVIEWED_COVERED:
+        for section in sorted(REVIEWED_COVERED, key=lambda value: int(value)):
+            categories = ", ".join(sorted(REVIEWED_COVERED[section]))
+            lines.append(f"- Section {section}: {categories}")
+    else:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "## Section-By-Section Checklist",
+            "",
+        ]
+    )
+    for section in range(1, MAX_SECTION + 1):
+        entry = audit["sections"].get(str(section))
+        if not entry:
+            lines.append(f"- Section {section}: no automation-language signal")
+            continue
+        statuses = ", ".join(
+            f"{category}={status}" for category, status in sorted(entry["status"].items())
+        )
+        coverage = ", ".join(entry.get("coverage", [])) or "none"
+        lines.append(f"- Section {section}: {statuses}; coverage={coverage}")
+    lines.extend(
+        [
+            "",
             "## Review Status",
             "",
-            "- All Book 3 signals are marked `needs-ledger-review` until rulings are answered and implementation begins.",
-            "- The next pass should convert each signal into implemented automation, manual helper, reviewed no automation, or queued ambiguity.",
+            "- `covered` means the section already has a helper matching the signal category.",
+            "- `reviewed-covered` means a nearby helper or route outcome already handles the signal.",
+            "- `reviewed-no-automation` means the signal is story prose or a route already visible in the book text.",
+            "- `needs-review` means the section needs manual audit and likely needs a helper, action, or explicit no-automation ruling.",
             "",
             "## Data Artifact",
             "",
             "- Source route shape is in `data/book3-section-flows.json`.",
-            "- This audit is a planning report only; it does not define playable section behavior.",
+            "- Entry effects live in `data/book3-simple-automations.json`.",
+            "- This audit is a coverage report only; playable behavior is defined by the data artifacts above.",
         ]
     )
     return "\n".join(lines) + "\n"

@@ -8,6 +8,7 @@ This report records signal labels and section numbers only. It intentionally doe
 
 - Sections scanned: 350
 - Sections with at least one automation signal: 202
+- Signal categories with uncovered candidates: 8
 
 ## Signal Categories
 
@@ -37,12 +38,449 @@ This report records signal labels and section numbers only. It intentionally doe
 - route_check: 15, 26, 29, 32, 33, 36, 40, 44, 45, 49, 50, 54, 57, 67, 69, 70, 75, 76, 82, 83, 85, 86, 90, 92, 97, 99, 104, 105, 107, 114, 122, 124, 125, 128, 129, 132, 137, 139, 146, 149, 150, 151, 160, 169, 170, 171, 173, 182, 183, 185, 187, 190, 192, 194, 206, 210, 227, 229, 236, 242, 244, 247, 250, 255, 258, 262, 268, 272, 273, 274, 275, 276, 277, 283, 284, 289, 290, 299, 301, 302, 303, 304, 318, 323, 326, 328, 329, 330, 331, 332, 342, 344, 346, 348, 349
 - terminal: 144
 
+## Needs Review By Category
+
+- book_transition: none
+- combat: 214
+- combat_skill_modifier: none
+- endurance_gain: 79, 157, 233, 340
+- endurance_loss: 18, 21, 27, 33, 43, 55, 62, 77, 121, 129, 140, 147, 150, 170, 193, 196, 206, 209, 214, 217, 226, 237, 251, 280, 294, 299, 326, 328
+- gold: 49, 97, 152, 218, 319
+- gold_cost: none
+- inventory_gain: 12, 18, 25, 45, 50, 59, 102, 119, 156, 177, 210, 218, 223, 231, 233, 280, 282, 295, 298, 309, 311, 316, 334, 349
+- inventory_loss: 16, 18, 79, 157, 188, 196
+- meal: 12, 21, 43, 76, 114, 119, 121, 157, 160, 223, 226, 237, 273, 275, 276, 281, 301, 309, 332
+- random: none
+- route_check: 15, 26, 33, 36, 40, 44, 45, 49, 50, 57, 67, 69, 70, 75, 76, 82, 85, 86, 90, 92, 97, 104, 105, 107, 114, 125, 128, 129, 150, 151, 160, 169, 170, 171, 173, 182, 187, 190, 192, 194, 206, 210, 227, 229, 236, 242, 244, 247, 250, 255, 268, 273, 274, 275, 276, 277, 289, 290, 299, 301, 303, 318, 326, 328, 329, 330, 332, 342, 344, 349
+- terminal: none
+
+## Reviewed No Automation
+
+- Section 1: meal
+- Section 5: meal
+- Section 8: meal
+- Section 23: meal
+- Section 41: inventory_loss
+- Section 52: combat
+- Section 61: meal
+- Section 101: meal
+- Section 112: meal
+- Section 117: meal
+- Section 122: route_check
+- Section 124: route_check
+- Section 149: meal
+- Section 167: meal
+- Section 181: gold
+- Section 202: combat
+- Section 207: combat
+- Section 212: meal
+- Section 305: meal
+- Section 318: meal
+- Section 347: meal
+- Section 348: route_check
+- Section 350: combat
+
+## Reviewed Covered
+
+- Section 29: route_check
+- Section 32: endurance_loss, route_check
+- Section 54: route_check
+- Section 83: endurance_loss, route_check
+- Section 88: endurance_loss
+- Section 94: endurance_loss
+- Section 99: endurance_loss, route_check
+- Section 123: endurance_loss
+- Section 132: route_check
+- Section 137: combat_skill_modifier, route_check
+- Section 138: endurance_loss
+- Section 142: combat
+- Section 146: route_check
+- Section 149: route_check
+- Section 155: endurance_loss, meal
+- Section 158: endurance_loss
+- Section 180: endurance_loss
+- Section 183: meal, route_check
+- Section 185: route_check
+- Section 211: endurance_loss
+- Section 232: meal
+- Section 241: endurance_loss
+- Section 258: combat, endurance_loss, meal, route_check
+- Section 259: endurance_loss
+- Section 260: endurance_loss
+- Section 262: route_check
+- Section 263: endurance_loss
+- Section 272: route_check
+- Section 283: meal, route_check
+- Section 284: endurance_loss, meal, route_check
+- Section 302: route_check
+- Section 304: endurance_loss, route_check
+- Section 323: meal, route_check
+- Section 327: terminal
+- Section 331: endurance_loss, meal, route_check
+- Section 346: meal, route_check
+
+## Section-By-Section Checklist
+
+- Section 1: meal=reviewed-no-automation; coverage=none
+- Section 2: no automation-language signal
+- Section 3: no automation-language signal
+- Section 4: inventory_gain=covered; coverage=loot
+- Section 5: meal=reviewed-no-automation; coverage=none
+- Section 6: no automation-language signal
+- Section 7: no automation-language signal
+- Section 8: meal=reviewed-no-automation; coverage=loot
+- Section 9: no automation-language signal
+- Section 10: no automation-language signal
+- Section 11: no automation-language signal
+- Section 12: inventory_gain=needs-review, meal=needs-review; coverage=none
+- Section 13: no automation-language signal
+- Section 14: combat=covered; coverage=combat
+- Section 15: route_check=needs-review; coverage=none
+- Section 16: inventory_loss=needs-review; coverage=none
+- Section 17: no automation-language signal
+- Section 18: endurance_loss=needs-review, inventory_gain=needs-review, inventory_loss=needs-review; coverage=none
+- Section 19: no automation-language signal
+- Section 20: no automation-language signal
+- Section 21: endurance_loss=needs-review, meal=needs-review; coverage=none
+- Section 22: no automation-language signal
+- Section 23: meal=reviewed-no-automation; coverage=none
+- Section 24: no automation-language signal
+- Section 25: inventory_gain=needs-review; coverage=none
+- Section 26: inventory_gain=covered, route_check=needs-review; coverage=loot
+- Section 27: endurance_loss=needs-review; coverage=none
+- Section 28: no automation-language signal
+- Section 29: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 30: no automation-language signal
+- Section 31: no automation-language signal
+- Section 32: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 33: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 34: no automation-language signal
+- Section 35: no automation-language signal
+- Section 36: route_check=needs-review; coverage=none
+- Section 37: no automation-language signal
+- Section 38: no automation-language signal
+- Section 39: no automation-language signal
+- Section 40: route_check=needs-review; coverage=none
+- Section 41: inventory_loss=reviewed-no-automation; coverage=none
+- Section 42: no automation-language signal
+- Section 43: endurance_loss=needs-review, meal=needs-review; coverage=none
+- Section 44: route_check=needs-review; coverage=none
+- Section 45: inventory_gain=needs-review, route_check=needs-review; coverage=none
+- Section 46: no automation-language signal
+- Section 47: no automation-language signal
+- Section 48: no automation-language signal
+- Section 49: gold=needs-review, route_check=needs-review; coverage=none
+- Section 50: inventory_gain=needs-review, route_check=needs-review; coverage=none
+- Section 51: no automation-language signal
+- Section 52: combat=reviewed-no-automation; coverage=none
+- Section 53: no automation-language signal
+- Section 54: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 55: endurance_loss=needs-review; coverage=none
+- Section 56: no automation-language signal
+- Section 57: route_check=needs-review; coverage=none
+- Section 58: no automation-language signal
+- Section 59: inventory_gain=needs-review; coverage=none
+- Section 60: no automation-language signal
+- Section 61: meal=reviewed-no-automation; coverage=simple
+- Section 62: endurance_loss=needs-review; coverage=none
+- Section 63: no automation-language signal
+- Section 64: no automation-language signal
+- Section 65: no automation-language signal
+- Section 66: no automation-language signal
+- Section 67: route_check=needs-review; coverage=none
+- Section 68: combat=covered; coverage=combat
+- Section 69: route_check=needs-review; coverage=none
+- Section 70: route_check=needs-review; coverage=none
+- Section 71: no automation-language signal
+- Section 72: no automation-language signal
+- Section 73: random=covered; coverage=roll
+- Section 74: random=covered; coverage=roll
+- Section 75: route_check=needs-review; coverage=none
+- Section 76: meal=needs-review, route_check=needs-review; coverage=none
+- Section 77: endurance_loss=needs-review; coverage=none
+- Section 78: combat=covered; coverage=combat
+- Section 79: endurance_gain=needs-review, inventory_loss=needs-review; coverage=none
+- Section 80: random=covered; coverage=roll
+- Section 81: no automation-language signal
+- Section 82: route_check=needs-review; coverage=none
+- Section 83: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 84: inventory_gain=covered; coverage=loot
+- Section 85: route_check=needs-review; coverage=none
+- Section 86: random=covered, route_check=needs-review; coverage=roll
+- Section 87: no automation-language signal
+- Section 88: combat=covered, endurance_loss=reviewed-covered, random=covered; coverage=combat, roll
+- Section 89: combat=covered; coverage=combat
+- Section 90: route_check=needs-review; coverage=none
+- Section 91: no automation-language signal
+- Section 92: route_check=needs-review; coverage=none
+- Section 93: no automation-language signal
+- Section 94: endurance_loss=reviewed-covered, random=covered; coverage=roll
+- Section 95: no automation-language signal
+- Section 96: random=covered; coverage=roll
+- Section 97: gold=needs-review, route_check=needs-review; coverage=none
+- Section 98: no automation-language signal
+- Section 99: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 100: no automation-language signal
+- Section 101: meal=reviewed-no-automation; coverage=none
+- Section 102: inventory_gain=needs-review; coverage=none
+- Section 103: combat=covered; coverage=combat
+- Section 104: route_check=needs-review; coverage=none
+- Section 105: route_check=needs-review; coverage=none
+- Section 106: combat=covered; coverage=combat
+- Section 107: route_check=needs-review; coverage=none
+- Section 108: combat=covered; coverage=combat
+- Section 109: no automation-language signal
+- Section 110: no automation-language signal
+- Section 111: no automation-language signal
+- Section 112: meal=reviewed-no-automation; coverage=none
+- Section 113: no automation-language signal
+- Section 114: meal=needs-review, route_check=needs-review; coverage=none
+- Section 115: no automation-language signal
+- Section 116: no automation-language signal
+- Section 117: meal=reviewed-no-automation; coverage=none
+- Section 118: no automation-language signal
+- Section 119: inventory_gain=needs-review, meal=needs-review; coverage=none
+- Section 120: no automation-language signal
+- Section 121: endurance_loss=needs-review, meal=needs-review; coverage=none
+- Section 122: route_check=reviewed-no-automation; coverage=none
+- Section 123: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 124: route_check=reviewed-no-automation; coverage=none
+- Section 125: route_check=needs-review; coverage=none
+- Section 126: no automation-language signal
+- Section 127: no automation-language signal
+- Section 128: route_check=needs-review; coverage=none
+- Section 129: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 130: no automation-language signal
+- Section 131: no automation-language signal
+- Section 132: endurance_loss=covered, route_check=reviewed-covered; coverage=simple
+- Section 133: no automation-language signal
+- Section 134: random=covered; coverage=roll
+- Section 135: no automation-language signal
+- Section 136: no automation-language signal
+- Section 137: combat=covered, combat_skill_modifier=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 138: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 139: route_check=covered; coverage=routeCheck
+- Section 140: endurance_loss=needs-review; coverage=none
+- Section 141: no automation-language signal
+- Section 142: combat=reviewed-covered, random=covered; coverage=roll
+- Section 143: no automation-language signal
+- Section 144: terminal=covered; coverage=simple
+- Section 145: no automation-language signal
+- Section 146: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 147: combat=covered, endurance_loss=needs-review; coverage=combat
+- Section 148: no automation-language signal
+- Section 149: meal=reviewed-no-automation, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 150: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 151: route_check=needs-review; coverage=none
+- Section 152: gold=needs-review, random=covered; coverage=roll
+- Section 153: no automation-language signal
+- Section 154: no automation-language signal
+- Section 155: endurance_loss=reviewed-covered, meal=reviewed-covered, random=covered; coverage=roll
+- Section 156: inventory_gain=needs-review; coverage=none
+- Section 157: endurance_gain=needs-review, inventory_loss=needs-review, meal=needs-review; coverage=none
+- Section 158: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 159: no automation-language signal
+- Section 160: meal=needs-review, route_check=needs-review; coverage=none
+- Section 161: combat=covered; coverage=combat
+- Section 162: no automation-language signal
+- Section 163: no automation-language signal
+- Section 164: combat=covered; coverage=combat
+- Section 165: no automation-language signal
+- Section 166: no automation-language signal
+- Section 167: meal=reviewed-no-automation, random=covered; coverage=roll
+- Section 168: no automation-language signal
+- Section 169: route_check=needs-review; coverage=none
+- Section 170: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 171: route_check=needs-review; coverage=none
+- Section 172: no automation-language signal
+- Section 173: route_check=needs-review; coverage=none
+- Section 174: no automation-language signal
+- Section 175: no automation-language signal
+- Section 176: no automation-language signal
+- Section 177: inventory_gain=needs-review; coverage=none
+- Section 178: no automation-language signal
+- Section 179: random=covered; coverage=roll
+- Section 180: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 181: gold=reviewed-no-automation; coverage=none
+- Section 182: route_check=needs-review; coverage=none
+- Section 183: meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 184: no automation-language signal
+- Section 185: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 186: no automation-language signal
+- Section 187: route_check=needs-review; coverage=none
+- Section 188: inventory_loss=needs-review; coverage=none
+- Section 189: no automation-language signal
+- Section 190: route_check=needs-review; coverage=none
+- Section 191: no automation-language signal
+- Section 192: route_check=needs-review; coverage=none
+- Section 193: endurance_loss=needs-review; coverage=none
+- Section 194: inventory_gain=covered, route_check=needs-review; coverage=loot
+- Section 195: no automation-language signal
+- Section 196: endurance_loss=needs-review, inventory_loss=needs-review; coverage=none
+- Section 197: no automation-language signal
+- Section 198: no automation-language signal
+- Section 199: no automation-language signal
+- Section 200: combat=covered; coverage=combat
+- Section 201: no automation-language signal
+- Section 202: combat=reviewed-no-automation; coverage=none
+- Section 203: no automation-language signal
+- Section 204: no automation-language signal
+- Section 205: no automation-language signal
+- Section 206: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 207: combat=reviewed-no-automation; coverage=none
+- Section 208: combat=covered; coverage=combat
+- Section 209: endurance_loss=needs-review; coverage=none
+- Section 210: inventory_gain=needs-review, route_check=needs-review; coverage=none
+- Section 211: endurance_loss=reviewed-covered, random=covered; coverage=roll
+- Section 212: meal=reviewed-no-automation; coverage=none
+- Section 213: no automation-language signal
+- Section 214: combat=needs-review, endurance_loss=needs-review; coverage=none
+- Section 215: no automation-language signal
+- Section 216: no automation-language signal
+- Section 217: endurance_loss=needs-review; coverage=none
+- Section 218: gold=needs-review, inventory_gain=needs-review; coverage=none
+- Section 219: no automation-language signal
+- Section 220: no automation-language signal
+- Section 221: no automation-language signal
+- Section 222: no automation-language signal
+- Section 223: inventory_gain=needs-review, meal=needs-review; coverage=none
+- Section 224: no automation-language signal
+- Section 225: no automation-language signal
+- Section 226: endurance_loss=needs-review, meal=needs-review; coverage=none
+- Section 227: route_check=needs-review; coverage=none
+- Section 228: no automation-language signal
+- Section 229: route_check=needs-review; coverage=none
+- Section 230: no automation-language signal
+- Section 231: inventory_gain=needs-review; coverage=none
+- Section 232: meal=reviewed-covered, random=covered; coverage=roll
+- Section 233: endurance_gain=needs-review, inventory_gain=needs-review; coverage=none
+- Section 234: no automation-language signal
+- Section 235: no automation-language signal
+- Section 236: route_check=needs-review; coverage=none
+- Section 237: endurance_loss=needs-review, meal=needs-review; coverage=none
+- Section 238: no automation-language signal
+- Section 239: no automation-language signal
+- Section 240: no automation-language signal
+- Section 241: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 242: route_check=needs-review; coverage=none
+- Section 243: no automation-language signal
+- Section 244: route_check=needs-review; coverage=none
+- Section 245: no automation-language signal
+- Section 246: no automation-language signal
+- Section 247: route_check=needs-review; coverage=none
+- Section 248: no automation-language signal
+- Section 249: no automation-language signal
+- Section 250: route_check=needs-review; coverage=none
+- Section 251: endurance_loss=needs-review; coverage=none
+- Section 252: no automation-language signal
+- Section 253: no automation-language signal
+- Section 254: no automation-language signal
+- Section 255: route_check=needs-review; coverage=none
+- Section 256: no automation-language signal
+- Section 257: no automation-language signal
+- Section 258: combat=reviewed-covered, endurance_loss=reviewed-covered, meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 259: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 260: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 261: no automation-language signal
+- Section 262: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 263: combat=covered, endurance_loss=reviewed-covered; coverage=combat
+- Section 264: no automation-language signal
+- Section 265: combat=covered; coverage=combat
+- Section 266: no automation-language signal
+- Section 267: no automation-language signal
+- Section 268: route_check=needs-review; coverage=none
+- Section 269: no automation-language signal
+- Section 270: combat=covered; coverage=combat
+- Section 271: no automation-language signal
+- Section 272: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 273: meal=needs-review, route_check=needs-review; coverage=none
+- Section 274: route_check=needs-review; coverage=none
+- Section 275: meal=needs-review, route_check=needs-review; coverage=none
+- Section 276: meal=needs-review, route_check=needs-review; coverage=none
+- Section 277: route_check=needs-review; coverage=none
+- Section 278: no automation-language signal
+- Section 279: no automation-language signal
+- Section 280: endurance_loss=needs-review, inventory_gain=needs-review; coverage=none
+- Section 281: meal=needs-review; coverage=none
+- Section 282: inventory_gain=needs-review; coverage=none
+- Section 283: meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 284: endurance_loss=reviewed-covered, meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 285: no automation-language signal
+- Section 286: no automation-language signal
+- Section 287: no automation-language signal
+- Section 288: no automation-language signal
+- Section 289: route_check=needs-review; coverage=none
+- Section 290: route_check=needs-review; coverage=none
+- Section 291: random=covered; coverage=roll
+- Section 292: no automation-language signal
+- Section 293: no automation-language signal
+- Section 294: endurance_loss=needs-review; coverage=none
+- Section 295: inventory_gain=needs-review; coverage=none
+- Section 296: combat=covered; coverage=combat
+- Section 297: no automation-language signal
+- Section 298: inventory_gain=needs-review; coverage=none
+- Section 299: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 300: no automation-language signal
+- Section 301: meal=needs-review, route_check=needs-review; coverage=none
+- Section 302: random=covered, route_check=reviewed-covered; coverage=roll
+- Section 303: inventory_loss=covered, route_check=needs-review; coverage=routeAction
+- Section 304: combat=covered, endurance_loss=reviewed-covered, route_check=reviewed-covered; coverage=combat
+- Section 305: meal=reviewed-no-automation; coverage=none
+- Section 306: no automation-language signal
+- Section 307: no automation-language signal
+- Section 308: inventory_gain=covered; coverage=loot
+- Section 309: inventory_gain=needs-review, meal=needs-review; coverage=none
+- Section 310: no automation-language signal
+- Section 311: inventory_gain=needs-review; coverage=none
+- Section 312: no automation-language signal
+- Section 313: no automation-language signal
+- Section 314: no automation-language signal
+- Section 315: no automation-language signal
+- Section 316: inventory_gain=needs-review; coverage=none
+- Section 317: no automation-language signal
+- Section 318: meal=reviewed-no-automation, route_check=needs-review; coverage=none
+- Section 319: gold=needs-review; coverage=none
+- Section 320: no automation-language signal
+- Section 321: inventory_gain=covered; coverage=loot
+- Section 322: random=covered; coverage=roll
+- Section 323: meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 324: no automation-language signal
+- Section 325: no automation-language signal
+- Section 326: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 327: random=covered; coverage=roll
+- Section 328: endurance_loss=needs-review, route_check=needs-review; coverage=none
+- Section 329: route_check=needs-review; coverage=none
+- Section 330: route_check=needs-review; coverage=none
+- Section 331: endurance_loss=reviewed-covered, meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 332: meal=needs-review, route_check=needs-review; coverage=none
+- Section 333: no automation-language signal
+- Section 334: inventory_gain=needs-review; coverage=none
+- Section 335: no automation-language signal
+- Section 336: no automation-language signal
+- Section 337: no automation-language signal
+- Section 338: no automation-language signal
+- Section 339: no automation-language signal
+- Section 340: endurance_gain=needs-review; coverage=none
+- Section 341: no automation-language signal
+- Section 342: route_check=needs-review; coverage=none
+- Section 343: combat=covered; coverage=combat
+- Section 344: route_check=needs-review; coverage=none
+- Section 345: no automation-language signal
+- Section 346: meal=reviewed-covered, random=covered, route_check=reviewed-covered; coverage=roll
+- Section 347: meal=reviewed-no-automation; coverage=none
+- Section 348: route_check=reviewed-no-automation; coverage=none
+- Section 349: inventory_gain=needs-review, route_check=needs-review; coverage=none
+- Section 350: combat=reviewed-no-automation; coverage=simple
+
 ## Review Status
 
-- All Book 3 signals are marked `needs-ledger-review` until rulings are answered and implementation begins.
-- The next pass should convert each signal into implemented automation, manual helper, reviewed no automation, or queued ambiguity.
+- `covered` means the section already has a helper matching the signal category.
+- `reviewed-covered` means a nearby helper or route outcome already handles the signal.
+- `reviewed-no-automation` means the signal is story prose or a route already visible in the book text.
+- `needs-review` means the section needs manual audit and likely needs a helper, action, or explicit no-automation ruling.
 
 ## Data Artifact
 
 - Source route shape is in `data/book3-section-flows.json`.
-- This audit is a planning report only; it does not define playable section behavior.
+- Entry effects live in `data/book3-simple-automations.json`.
+- This audit is a coverage report only; playable behavior is defined by the data artifacts above.
