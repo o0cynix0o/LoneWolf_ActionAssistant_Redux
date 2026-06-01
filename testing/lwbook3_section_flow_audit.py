@@ -111,6 +111,15 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("silver-helm", "Take Silver Helm", [{"type": "add_item", "container": "special", "name": "Silver Helm"}])
         ]
     },
+    "291": {
+        "roll": {
+            "summary": "Random next-day hazard at The Rock.",
+            "outcomes": [
+                {"test": "range", "min": 0, "max": 4, "route": 103, "label": "Baknar shelter route"},
+                {"test": "range", "min": 5, "max": 9, "route": 220, "label": "Crevasse route"},
+            ],
+        }
+    },
     "303": {
         "sourceRoutes": [
             {"Section": 127, "actions": [{"type": "remove_item", "containers": ["special"], "name": "Ornate Silver Key"}], "effectLabel": "Use Ornate Silver Key"},

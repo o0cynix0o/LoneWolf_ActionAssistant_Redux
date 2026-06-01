@@ -5233,7 +5233,26 @@
           "Section": 220
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "Random next-day hazard at The Rock.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 103,
+            "label": "Baknar shelter route"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 220,
+            "label": "Crevasse route"
+          }
+        ]
+      }
     },
     "292": {
       "auditStatus": "source-link-baseline",

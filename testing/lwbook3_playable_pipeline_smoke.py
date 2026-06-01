@@ -122,6 +122,16 @@ def test_book3_loot_and_route_checks() -> None:
     assert_equal(matched["Route"], 116, "Red Laumspur route matches")
 
 
+def test_book3_roll_helpers() -> None:
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 291)
+    flow = assistant.current_section_flow_payload()
+    roll = flow["Entry"].get("roll", {})
+    assert_equal(roll.get("summary"), "Random next-day hazard at The Rock.", "section 291 roll summary")
+    assert_equal(quiet(assistant.roll_current_section, 4)["Route"], 103, "section 291 low roll route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 220, "section 291 high roll route")
+
+
 def test_book3_combat_helpers() -> None:
     assistant = fresh_assistant(disciplines=["Camouflage", "Hunting", "Sixth Sense", "Tracking", "Mindblast"])
     assistant.inventory["SpecialItems"] = ["Sommerswerd"]
@@ -157,6 +167,7 @@ def test_book3_combat_helpers() -> None:
 def main() -> int:
     test_book3_meals_failure_and_completion()
     test_book3_loot_and_route_checks()
+    test_book3_roll_helpers()
     test_book3_combat_helpers()
     print("Book 3 playable pipeline smoke passed.")
     return 0
