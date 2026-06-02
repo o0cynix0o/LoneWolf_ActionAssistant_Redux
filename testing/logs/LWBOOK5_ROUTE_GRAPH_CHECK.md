@@ -12,6 +12,6 @@ The local Project Aon HTML files remain the source of truth. The online SVG grap
 - SVG nodes: 400
 - SVG edges: 682
 - Local nodes: 400
-- Local edges: 683
+- Local edges: 682
 - SVG edges not in local HTML: 0
-- Local HTML edges not in SVG: 1
+- Local HTML edges not in SVG: 0

@@ -240,6 +240,15 @@ def test_book3_direct_section_helpers() -> None:
     assert_true("Rope" in assistant.inventory["BackpackItems"], "section 12 adds rope")
 
     assistant = fresh_assistant()
+    assistant.inventory["HasBackpack"] = False
+    assistant.inventory["BackpackItems"] = []
+    quiet(assistant.set_section, 38)
+    quiet(assistant.apply_flow_loot, "fur-backpack")
+    quiet(assistant.apply_flow_loot, "rope")
+    assert_equal(assistant.inventory["HasBackpack"], True, "section 38 restores Backpack availability")
+    assert_true("Rope (2 spaces)" in assistant.inventory["BackpackItems"], "section 38 adds two-space Rope")
+
+    assistant = fresh_assistant()
     assistant.character["EnduranceCurrent"] = 20
     quiet(assistant.set_section, 27)
     assert_equal(assistant.character["EnduranceCurrent"], 18, "section 27 cold loss without Baknar Oil")
@@ -290,6 +299,19 @@ def test_book3_direct_section_helpers() -> None:
     assistant.inventory["SpecialItems"] = ["Ornate Silver Key"]
     quiet(assistant.set_section, 303)
     assert_true("Ornate Silver Key" not in assistant.inventory["SpecialItems"], "section 303 consumes Ornate Silver Key")
+
+    assistant = fresh_assistant()
+    assistant.inventory["SpecialItems"] = ["Glowing Crystal"]
+    assistant.inventory["BackpackItems"] = ["Red Potion of Laumspur", "Meal"]
+    quiet(assistant.set_section, 116)
+    assert_true("Glowing Crystal" not in assistant.inventory["SpecialItems"], "section 116 discards Doomstone")
+    assert_true("Red Potion of Laumspur" not in assistant.inventory["BackpackItems"], "section 116 discards Laumspur vial")
+
+    assistant = fresh_assistant()
+    assistant.inventory["SpecialItems"] = ["Glowing Crystal", "Blue Stone Disc"]
+    quiet(assistant.set_section, 267)
+    assert_true("Glowing Crystal" not in assistant.inventory["SpecialItems"], "section 267 discards Doomstone")
+    assert_true("Blue Stone Disc" in assistant.inventory["SpecialItems"], "section 267 keeps unrelated Special Items")
 
 
 def combat_route_values(value) -> list[int]:

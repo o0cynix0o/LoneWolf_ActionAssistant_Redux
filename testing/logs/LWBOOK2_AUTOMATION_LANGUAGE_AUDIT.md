@@ -35,6 +35,7 @@ This report records signal labels and section numbers only. It intentionally doe
 - Section 50: gold
 - Section 53: meal
 - Section 64: meal
+- Section 79: combat
 - Section 79: route_check
 - Section 93: gold
 - Section 97: route_check
@@ -46,6 +47,7 @@ This report records signal labels and section numbers only. It intentionally doe
 - Section 222: meal
 - Section 236: meal
 - Section 238: random, route_check
+- Section 242: combat
 - Section 264: meal
 - Section 276: gold_cost
 - Section 290: meal

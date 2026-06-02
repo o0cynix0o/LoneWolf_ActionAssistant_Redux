@@ -41,6 +41,30 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Copper Key",
+              "type": "add_item"
+            }
+          ],
+          "id": "copper-key",
+          "label": "Take Copper Key"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Prism",
+              "type": "add_item"
+            }
+          ],
+          "id": "prism",
+          "label": "Take Prism"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -56,6 +80,74 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": 4,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "id": "gold",
+          "label": "Take 4 Gold Crowns"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Dagger",
+              "type": "add_item"
+            }
+          ],
+          "id": "dagger",
+          "label": "Take Dagger"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Sword",
+              "type": "add_item"
+            }
+          ],
+          "id": "sword",
+          "label": "Take Sword"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Potion of Alether (+2 CS)",
+              "type": "add_item"
+            }
+          ],
+          "id": "alether",
+          "label": "Take Potion of Alether"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Blowpipe",
+              "type": "add_item"
+            }
+          ],
+          "id": "blowpipe",
+          "label": "Take Blowpipe"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Sleep Dart",
+              "type": "add_item"
+            }
+          ],
+          "id": "sleep-dart",
+          "label": "Take Sleep Dart"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -71,6 +163,63 @@
         "inventory"
       ],
       "incomingRouteCount": 3,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": 6,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "id": "gold",
+          "label": "Take 6 Gold Crowns"
+        },
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Gaoler's Keys",
+              "type": "add_item"
+            }
+          ],
+          "id": "gaolers-keys",
+          "label": "Take Gaoler's Keys"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Sword",
+              "type": "add_item"
+            }
+          ],
+          "id": "sword",
+          "label": "Take Sword"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Dagger",
+              "type": "add_item"
+            }
+          ],
+          "id": "dagger",
+          "label": "Take Dagger"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Warhammer",
+              "type": "add_item"
+            }
+          ],
+          "id": "warhammer",
+          "label": "Take Warhammer"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -223,6 +372,44 @@
         "meal"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "conditions": [
+                {
+                  "name": "Camouflage",
+                  "type": "power"
+                },
+                {
+                  "name": "Hunting",
+                  "type": "power"
+                }
+              ],
+              "type": "any"
+            },
+            "label": "Camouflage or Hunting",
+            "value": -2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "The desert route goes badly",
+            "max": 2,
+            "min": -2,
+            "route": 167,
+            "test": "range"
+          },
+          {
+            "label": "Reach the armourer",
+            "max": 9,
+            "min": 3,
+            "route": 190,
+            "test": "range"
+          }
+        ],
+        "summary": "Wasteland trail check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -725,6 +912,36 @@
         "combat_skill_modifier"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "label": "Door charge base",
+            "value": 10
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Door bursts open",
+            "route": 159,
+            "stat": "cs",
+            "test": "lte_stat"
+          },
+          {
+            "actions": [
+              {
+                "delta": -1,
+                "stat": "end",
+                "type": "stat"
+              }
+            ],
+            "label": "Bruised shoulder",
+            "route": 93,
+            "stat": "cs",
+            "test": "gt_stat"
+          }
+        ],
+        "summary": "Barge the locked door."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -1242,6 +1459,44 @@
         "meal"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "conditions": [
+                {
+                  "name": "Camouflage",
+                  "type": "power"
+                },
+                {
+                  "name": "Hunting",
+                  "type": "power"
+                }
+              ],
+              "type": "any"
+            },
+            "label": "Camouflage or Hunting",
+            "value": -2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Slip toward the enemy",
+            "max": 2,
+            "min": -2,
+            "route": 44,
+            "test": "range"
+          },
+          {
+            "label": "Reach the armourer",
+            "max": 9,
+            "min": 3,
+            "route": 190,
+            "test": "range"
+          }
+        ],
+        "summary": "Wasteland trail check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -1305,6 +1560,35 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "rank": "Guardian",
+              "type": "kai_rank_gte"
+            },
+            "label": "Guardian+",
+            "value": -1
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Climb safely",
+            "max": 7,
+            "min": -1,
+            "route": 151,
+            "test": "range"
+          },
+          {
+            "label": "Slip on the wall",
+            "max": 9,
+            "min": 8,
+            "route": 175,
+            "test": "range"
+          }
+        ],
+        "summary": "Palace climbing check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -1353,6 +1637,50 @@
         "meal"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": 2
+          },
+          {
+            "condition": {
+              "rank": "Savant",
+              "type": "kai_rank_gte"
+            },
+            "label": "Savant+",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Fatal approach",
+            "max": 2,
+            "min": 0,
+            "route": 5,
+            "test": "range"
+          },
+          {
+            "label": "Dangerous approach",
+            "max": 8,
+            "min": 3,
+            "route": 38,
+            "test": "range"
+          },
+          {
+            "label": "Calm approach",
+            "max": 13,
+            "min": 9,
+            "route": 87,
+            "test": "range"
+          }
+        ],
+        "summary": "Itikar approach check."
+      },
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -1399,6 +1727,104 @@
         "endurance_gain"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": -4,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Alether (+2 CS)",
+              "type": "add_item"
+            }
+          ],
+          "id": "alether",
+          "label": "Buy Potion of Alether"
+        },
+        {
+          "actions": [
+            {
+              "delta": -2,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Gallowbrush",
+              "type": "add_item"
+            }
+          ],
+          "id": "gallowbrush",
+          "label": "Buy Potion of Gallowbrush"
+        },
+        {
+          "actions": [
+            {
+              "delta": -5,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Laumspur (+4 END)",
+              "type": "add_item"
+            }
+          ],
+          "id": "laumspur",
+          "label": "Buy Potion of Laumspur"
+        },
+        {
+          "actions": [
+            {
+              "delta": -3,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Vial of Larnuma Oil (+2 END)",
+              "type": "add_item"
+            }
+          ],
+          "id": "larnuma-oil",
+          "label": "Buy Vial of Larnuma Oil"
+        },
+        {
+          "actions": [
+            {
+              "delta": -1,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Tincture of Graveweed",
+              "type": "add_item"
+            }
+          ],
+          "id": "graveweed",
+          "label": "Buy Tincture of Graveweed"
+        },
+        {
+          "actions": [
+            {
+              "delta": -2,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Tincture of Calacena",
+              "type": "add_item"
+            }
+          ],
+          "id": "calacena",
+          "label": "Buy Tincture of Calacena"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -1571,6 +1997,27 @@
         }
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "actions": [
+              {
+                "deltaFrom": "roll_total",
+                "multiplier": -1,
+                "stat": "end",
+                "type": "stat"
+              }
+            ],
+            "label": "Lose rolled END and climb past",
+            "max": 10,
+            "min": 1,
+            "route": 114,
+            "test": "range"
+          }
+        ],
+        "summary": "Steamspider nest climb if one arm is useless.",
+        "zeroAsTen": true
+      },
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -1705,6 +2152,24 @@
         "inventory"
       ],
       "incomingRouteCount": 5,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": -2,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "special",
+              "name": "Black Sash",
+              "type": "add_item"
+            }
+          ],
+          "id": "black-sash",
+          "label": "Buy Black Sash"
+        }
+      ],
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -1926,6 +2391,64 @@
         "meal"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "conditions": [
+                {
+                  "name": "Sixth Sense",
+                  "type": "power"
+                },
+                {
+                  "name": "Hunting",
+                  "type": "power"
+                }
+              ],
+              "type": "any"
+            },
+            "label": "Sixth Sense or Hunting",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "The patrol closes in",
+            "max": 5,
+            "min": 0,
+            "route": 120,
+            "test": "range"
+          },
+          {
+            "label": "Slip away",
+            "max": 12,
+            "min": 6,
+            "route": 193,
+            "test": "range"
+          }
+        ],
+        "summary": "Avoid the Vassagonian patrol without Mindblast."
+      },
+      "routeChecks": [
+        {
+          "id": "180-mindblast",
+          "label": "Mindblast route",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "name": "Mindblast",
+                  "type": "power"
+                }
+              ],
+              "label": "Mindblast available",
+              "route": 45,
+              "testLabel": "Has Mindblast"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf has Mindblast."
+        }
+      ],
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -2287,6 +2810,35 @@
         "meal"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "The climb fails",
+            "max": 6,
+            "min": 0,
+            "route": 25,
+            "test": "range"
+          },
+          {
+            "label": "Scale the wall",
+            "max": 12,
+            "min": 7,
+            "route": 141,
+            "test": "range"
+          }
+        ],
+        "summary": "Climb the palace wall."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -2465,6 +3017,25 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Fall badly",
+            "max": 4,
+            "min": 0,
+            "route": 234,
+            "test": "range"
+          },
+          {
+            "label": "Fatal fall",
+            "max": 9,
+            "min": 5,
+            "route": 293,
+            "test": "range"
+          }
+        ],
+        "summary": "Rope descent after pursuit."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -2805,6 +3376,25 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Dodge the fall",
+            "max": 2,
+            "min": 0,
+            "route": 378,
+            "test": "range"
+          },
+          {
+            "label": "Caught by the danger",
+            "max": 9,
+            "min": 3,
+            "route": 262,
+            "test": "range"
+          }
+        ],
+        "summary": "Falling timber check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -2850,6 +3440,91 @@
         "inventory"
       ],
       "incomingRouteCount": 6,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "rank": "Aspirant",
+              "type": "kai_rank_gte"
+            },
+            "label": "Aspirant+",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Fatal approach",
+            "max": 0,
+            "min": 0,
+            "route": 257,
+            "test": "range"
+          },
+          {
+            "label": "Fight the Itikar",
+            "max": 3,
+            "min": 1,
+            "route": 370,
+            "test": "range"
+          },
+          {
+            "label": "Fight from the saddle",
+            "max": 7,
+            "min": 4,
+            "route": 240,
+            "test": "range"
+          },
+          {
+            "label": "Control the Itikar",
+            "max": 11,
+            "min": 8,
+            "route": 287,
+            "test": "range"
+          }
+        ],
+        "summary": "Subdue the Itikar."
+      },
+      "routeChecks": [
+        {
+          "id": "224-animal-kinship",
+          "label": "Animal Kinship route",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "name": "Animal Kinship",
+                  "type": "power"
+                }
+              ],
+              "label": "Animal Kinship available",
+              "route": 308,
+              "testLabel": "Has Animal Kinship"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf has Animal Kinship."
+        },
+        {
+          "id": "224-onyx-medallion",
+          "label": "Onyx Medallion route",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "containers": [
+                    "special"
+                  ],
+                  "match": "exact",
+                  "name": "Onyx Medallion",
+                  "type": "item"
+                }
+              ],
+              "label": "Onyx Medallion available",
+              "route": 319,
+              "testLabel": "Has Onyx Medallion"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf has Onyx Medallion."
+        }
+      ],
       "sourceRouteCount": 6,
       "sourceRoutes": [
         {
@@ -2944,6 +3619,35 @@
         "kai_discipline_check"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Sixth Sense",
+              "type": "power"
+            },
+            "label": "Sixth Sense",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Detected by the Kraan-riders",
+            "max": 6,
+            "min": 0,
+            "route": 385,
+            "test": "range"
+          },
+          {
+            "label": "Remain hidden",
+            "max": 12,
+            "min": 7,
+            "route": 251,
+            "test": "range"
+          }
+        ],
+        "summary": "Kraan-rider detection check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -2964,6 +3668,51 @@
         "endurance_loss"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "key": "book5LostUseOfOneArm",
+              "type": "flag",
+              "value": true
+            },
+            "label": "One arm useless",
+            "value": -3
+          },
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Collapse in the heat",
+            "max": -1,
+            "min": -3,
+            "route": 77,
+            "test": "range"
+          },
+          {
+            "label": "Lose ground in the heat",
+            "max": 6,
+            "min": 0,
+            "route": 192,
+            "test": "range"
+          },
+          {
+            "label": "Push through",
+            "max": 11,
+            "min": 7,
+            "route": 114,
+            "test": "range"
+          }
+        ],
+        "summary": "Searing heat survival check."
+      },
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -3291,6 +4040,43 @@
         "kai_discipline_check"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Camouflage",
+              "type": "power"
+            },
+            "label": "Camouflage",
+            "value": 2
+          },
+          {
+            "condition": {
+              "name": "Mindshield",
+              "type": "power"
+            },
+            "label": "Mindshield",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Stay hidden",
+            "max": 6,
+            "min": 0,
+            "route": 262,
+            "test": "range"
+          },
+          {
+            "label": "The search closes in",
+            "max": 14,
+            "min": 7,
+            "route": 378,
+            "test": "range"
+          }
+        ],
+        "summary": "Hide from Haakon's Vordak."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -3392,6 +4178,25 @@
         "random"
       ],
       "incomingRouteCount": 3,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Dahir route",
+            "max": 2,
+            "min": 0,
+            "route": 337,
+            "test": "range"
+          },
+          {
+            "label": "Ikaresh route",
+            "max": 9,
+            "min": 3,
+            "route": 383,
+            "test": "range"
+          }
+        ],
+        "summary": "Skyrider route check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -3412,9 +4217,19 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
+          "Actions": [
+            {
+              "delta": -5,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "EffectLabel": "Paid 5 Gold Crowns",
+          "Label": "Buy the waistcoat",
           "Section": 328
         },
         {
+          "Label": "Decline the waistcoat",
           "Section": 274
         }
       ]
@@ -3559,6 +4374,19 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Black Crystal Cube",
+              "type": "add_item"
+            }
+          ],
+          "id": "black-crystal-cube",
+          "label": "Take Black Crystal Cube"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -3755,9 +4583,19 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
+          "Actions": [
+            {
+              "delta": -1,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "EffectLabel": "Paid 1 Gold Crown",
+          "Label": "Give her a Gold Crown",
           "Section": 397
         },
         {
+          "Label": "Decline or cannot pay",
           "Section": 256
         }
       ]
@@ -3826,6 +4664,104 @@
         "endurance_gain"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": -4,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Alether (+2 CS)",
+              "type": "add_item"
+            }
+          ],
+          "id": "alether",
+          "label": "Buy Potion of Alether"
+        },
+        {
+          "actions": [
+            {
+              "delta": -2,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Gallowbrush",
+              "type": "add_item"
+            }
+          ],
+          "id": "gallowbrush",
+          "label": "Buy Potion of Gallowbrush"
+        },
+        {
+          "actions": [
+            {
+              "delta": -5,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Potion of Laumspur (+4 END)",
+              "type": "add_item"
+            }
+          ],
+          "id": "laumspur",
+          "label": "Buy Potion of Laumspur"
+        },
+        {
+          "actions": [
+            {
+              "delta": -3,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Vial of Larnuma Oil (+2 END)",
+              "type": "add_item"
+            }
+          ],
+          "id": "larnuma-oil",
+          "label": "Buy Vial of Larnuma Oil"
+        },
+        {
+          "actions": [
+            {
+              "delta": -1,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Tincture of Graveweed",
+              "type": "add_item"
+            }
+          ],
+          "id": "graveweed",
+          "label": "Buy Tincture of Graveweed"
+        },
+        {
+          "actions": [
+            {
+              "delta": -2,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "backpack",
+              "name": "Tincture of Calacena",
+              "type": "add_item"
+            }
+          ],
+          "id": "calacena",
+          "label": "Buy Tincture of Calacena"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -3960,6 +4896,33 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Fall toward the lake",
+            "max": 4,
+            "min": 0,
+            "route": 374,
+            "test": "range"
+          },
+          {
+            "label": "Hard landing",
+            "max": 8,
+            "min": 5,
+            "route": 254,
+            "test": "range"
+          },
+          {
+            "label": "Fatal fall",
+            "route": 261,
+            "test": "values",
+            "values": [
+              9
+            ]
+          }
+        ],
+        "summary": "Itikar fall check."
+      },
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -3984,9 +4947,19 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
+          "Actions": [
+            {
+              "delta": -5,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "EffectLabel": "Paid 5 Gold Crowns",
+          "Label": "Pay Soushilla",
           "Section": 326
         },
         {
+          "Label": "Decline or cannot pay",
           "Section": 202
         }
       ]
@@ -4089,6 +5062,19 @@
         "inventory"
       ],
       "incomingRouteCount": 2,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Jewelled Mace",
+              "type": "add_item"
+            }
+          ],
+          "id": "jewelled-mace",
+          "label": "Take Jewelled Mace"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -4105,6 +5091,79 @@
         "meal"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "conditions": [
+                {
+                  "name": "Hunting",
+                  "type": "power"
+                },
+                {
+                  "name": "Camouflage",
+                  "type": "power"
+                }
+              ],
+              "type": "any"
+            },
+            "label": "Hunting or Camouflage",
+            "value": 2
+          },
+          {
+            "condition": {
+              "rank": "Warmarn",
+              "type": "kai_rank_gte"
+            },
+            "label": "Warmarn+",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Fight on the gangplank",
+            "max": 4,
+            "min": 0,
+            "route": 357,
+            "test": "range"
+          },
+          {
+            "label": "Reach the pen",
+            "max": 9,
+            "min": 5,
+            "route": 389,
+            "test": "range"
+          },
+          {
+            "label": "Avoid the sentry",
+            "max": 14,
+            "min": 10,
+            "route": 236,
+            "test": "range"
+          }
+        ],
+        "summary": "Open the door under fire."
+      },
+      "routeChecks": [
+        {
+          "id": "282-mind-over-matter",
+          "label": "Mind Over Matter route",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "name": "Mind Over Matter",
+                  "type": "power"
+                }
+              ],
+              "label": "Mind Over Matter available",
+              "route": 295,
+              "testLabel": "Has Mind Over Matter"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf has Mind Over Matter."
+        }
+      ],
       "sourceRouteCount": 4,
       "sourceRoutes": [
         {
@@ -4254,6 +5313,19 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Black Crystal Cube",
+              "type": "add_item"
+            }
+          ],
+          "id": "black-crystal-cube",
+          "label": "Take Black Crystal Cube"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -4540,6 +5612,43 @@
         "meal"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "rank": "Guardian",
+              "type": "kai_rank_gte"
+            },
+            "label": "Guardian+",
+            "value": -2
+          },
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": -1
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Clear the spikes",
+            "max": 4,
+            "min": -3,
+            "route": 363,
+            "test": "range"
+          },
+          {
+            "label": "Crossbow fire ends the mission",
+            "max": 9,
+            "min": 5,
+            "route": 259,
+            "test": "range"
+          }
+        ],
+        "summary": "Climb over the spiked door."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -4558,51 +5667,6 @@
         "endurance_gain"
       ],
       "incomingRouteCount": 1,
-      "roll": {
-        "modifiers": [
-          {
-            "condition": {
-              "type": "end_lt",
-              "value": 15
-            },
-            "label": "END below 15",
-            "value": -2
-          },
-          {
-            "condition": {
-              "type": "end_gte",
-              "value": 26
-            },
-            "label": "END above 25",
-            "value": 2
-          },
-          {
-            "condition": {
-              "rank": "Savant",
-              "type": "kai_rank_gte"
-            },
-            "label": "Savant+",
-            "value": 3
-          }
-        ],
-        "outcomes": [
-          {
-            "label": "Bor-brew wins",
-            "max": 6,
-            "min": -2,
-            "route": 364,
-            "test": "range"
-          },
-          {
-            "label": "Hold your drink",
-            "max": 14,
-            "min": 7,
-            "route": 218,
-            "test": "range"
-          }
-        ],
-        "summary": "Bor-brew check."
-      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -4642,6 +5706,25 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Fatal fall",
+            "max": 2,
+            "min": 0,
+            "route": 293,
+            "test": "range"
+          },
+          {
+            "label": "Survive the fall",
+            "max": 9,
+            "min": 3,
+            "route": 234,
+            "test": "range"
+          }
+        ],
+        "summary": "Rope descent check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -4767,6 +5850,41 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Copper Key",
+              "type": "add_item"
+            }
+          ],
+          "id": "copper-key",
+          "label": "Take Copper Key"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Canteen of Water",
+              "type": "add_item"
+            }
+          ],
+          "id": "canteen",
+          "label": "Take Canteen of Water"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Broadsword",
+              "type": "add_item"
+            }
+          ],
+          "id": "broadsword",
+          "label": "Take Broadsword"
+        }
+      ],
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -4805,6 +5923,62 @@
         "meal"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "The axe strikes",
+            "max": 4,
+            "min": 0,
+            "route": 354,
+            "test": "range"
+          },
+          {
+            "label": "The axe wounds you",
+            "max": 8,
+            "min": 5,
+            "route": 371,
+            "test": "range"
+          },
+          {
+            "label": "Fatal throw",
+            "route": 232,
+            "test": "values",
+            "values": [
+              9
+            ]
+          }
+        ],
+        "summary": "Thrown axe check."
+      },
+      "routeChecks": [
+        {
+          "id": "312-hunting-sixth-sense",
+          "label": "Hunting or Sixth Sense",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "conditions": [
+                    {
+                      "name": "Hunting",
+                      "type": "power"
+                    },
+                    {
+                      "name": "Sixth Sense",
+                      "type": "power"
+                    }
+                  ],
+                  "type": "any"
+                }
+              ],
+              "label": "Hunting or Sixth Sense",
+              "route": 210,
+              "testLabel": "Hunting or Sixth Sense"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf can anticipate the throw."
+        }
+      ],
       "sourceRouteCount": 4,
       "sourceRoutes": [
         {
@@ -5018,6 +6192,25 @@
         "inventory"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Skyship danger",
+            "max": 2,
+            "min": 0,
+            "route": 250,
+            "test": "range"
+          },
+          {
+            "label": "Thrown axe encounter",
+            "max": 9,
+            "min": 3,
+            "route": 312,
+            "test": "range"
+          }
+        ],
+        "summary": "Skyrider hazard check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -5063,6 +6256,35 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Weaponskill",
+              "type": "power"
+            },
+            "label": "Weaponskill",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Shot misses",
+            "max": 3,
+            "min": 0,
+            "route": 384,
+            "test": "range"
+          },
+          {
+            "label": "Shot hits",
+            "max": 11,
+            "min": 4,
+            "route": 398,
+            "test": "range"
+          }
+        ],
+        "summary": "Blowpipe shot."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -5302,6 +6524,33 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "outcomes": [
+          {
+            "label": "Fall toward the lake",
+            "max": 4,
+            "min": 0,
+            "route": 374,
+            "test": "range"
+          },
+          {
+            "label": "Hard landing",
+            "max": 8,
+            "min": 5,
+            "route": 254,
+            "test": "range"
+          },
+          {
+            "label": "Fatal fall",
+            "route": 261,
+            "test": "values",
+            "values": [
+              9
+            ]
+          }
+        ],
+        "summary": "Itikar fall check."
+      },
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -5401,6 +6650,41 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Copper Key",
+              "type": "add_item"
+            }
+          ],
+          "id": "copper-key",
+          "label": "Take Copper Key"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Canteen of Water",
+              "type": "add_item"
+            }
+          ],
+          "id": "canteen",
+          "label": "Take Canteen of Water"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Broadsword",
+              "type": "add_item"
+            }
+          ],
+          "id": "broadsword",
+          "label": "Take Broadsword"
+        }
+      ],
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -5535,6 +6819,30 @@
         "inventory"
       ],
       "incomingRouteCount": 1,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Jewelled Mace",
+              "type": "add_item"
+            }
+          ],
+          "id": "jewelled-mace",
+          "label": "Take Jewelled Mace"
+        },
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Copper Key",
+              "type": "add_item"
+            }
+          ],
+          "id": "copper-key",
+          "label": "Take Copper Key"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -5834,7 +7142,63 @@
         {
           "Section": 334
         }
-      ]
+      ],
+      "stagedRoll": {
+        "id": "360-guard-surprise",
+        "stages": [
+          {
+            "id": "first",
+            "label": "First surprise roll",
+            "modifiers": [
+              {
+                "condition": {
+                  "name": "Hunting",
+                  "type": "power"
+                },
+                "label": "Hunting",
+                "value": 1
+              }
+            ],
+            "outcomes": [
+              {
+                "label": "First number recorded",
+                "max": 10,
+                "min": 0,
+                "nextStage": "second",
+                "test": "range"
+              }
+            ]
+          },
+          {
+            "id": "second",
+            "label": "Second surprise roll",
+            "outcomes": [
+              {
+                "auditRoll": 0,
+                "label": "Second number is lower",
+                "route": 226,
+                "stage": "first",
+                "test": "lt_history"
+              },
+              {
+                "auditRoll": 9,
+                "label": "Second number is higher",
+                "route": 297,
+                "stage": "first",
+                "test": "gt_history"
+              },
+              {
+                "auditRoll": 1,
+                "label": "Numbers match",
+                "route": 334,
+                "stage": "first",
+                "test": "eq_history"
+              }
+            ]
+          }
+        ],
+        "summary": "Two-roll guard surprise check."
+      }
     },
     "361": {
       "auditStatus": "source-link-baseline",
@@ -5878,9 +7242,19 @@
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
+          "Actions": [
+            {
+              "delta": -1,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "EffectLabel": "Paid 1 Gold Crown",
+          "Label": "Buy a cup of jala",
           "Section": 237
         },
         {
+          "Label": "Decline or cannot pay",
           "Section": 388
         }
       ]
@@ -6060,6 +7434,55 @@
         "endurance_loss"
       ],
       "incomingRouteCount": 3,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "rank": "Aspirant",
+              "type": "kai_rank_gte"
+            },
+            "label": "Aspirant+",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Fatal exposure",
+            "max": 3,
+            "min": 0,
+            "route": 366,
+            "test": "range"
+          },
+          {
+            "label": "Open the bolt",
+            "max": 11,
+            "min": 4,
+            "route": 277,
+            "test": "range"
+          }
+        ],
+        "summary": "Open the bolt under crossbow fire."
+      },
+      "routeChecks": [
+        {
+          "id": "372-mind-over-matter",
+          "label": "Mind Over Matter route",
+          "outcomes": [
+            {
+              "conditions": [
+                {
+                  "name": "Mind Over Matter",
+                  "type": "power"
+                }
+              ],
+              "label": "Mind Over Matter available",
+              "route": 269,
+              "testLabel": "Has Mind Over Matter"
+            }
+          ],
+          "summary": "Checks whether Lone Wolf has Mind Over Matter."
+        }
+      ],
       "sourceRouteCount": 3,
       "sourceRoutes": [
         {
@@ -6228,6 +7651,35 @@
         "meal"
       ],
       "incomingRouteCount": 3,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": 2
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "The axe catches you",
+            "max": 4,
+            "min": 0,
+            "route": 368,
+            "test": "range"
+          },
+          {
+            "label": "Dodge the blow",
+            "max": 11,
+            "min": 5,
+            "route": 252,
+            "test": "range"
+          }
+        ],
+        "summary": "Palace guard axe dodge."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -6358,6 +7810,56 @@
         "inventory"
       ],
       "incomingRouteCount": 4,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": -5,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "weapon",
+              "name": "Sword",
+              "type": "add_item"
+            }
+          ],
+          "id": "sword",
+          "label": "Buy Sword"
+        },
+        {
+          "actions": [
+            {
+              "delta": -3,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "weapon",
+              "name": "Dagger",
+              "type": "add_item"
+            }
+          ],
+          "id": "dagger",
+          "label": "Buy Dagger"
+        },
+        {
+          "actions": [
+            {
+              "delta": -9,
+              "stat": "gold",
+              "type": "stat"
+            },
+            {
+              "container": "weapon",
+              "name": "Broadsword",
+              "type": "add_item"
+            }
+          ],
+          "id": "broadsword",
+          "label": "Buy Broadsword"
+        }
+      ],
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -6450,6 +7952,51 @@
         "endurance_loss"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "type": "end_lt",
+              "value": 15
+            },
+            "label": "END below 15",
+            "value": -2
+          },
+          {
+            "condition": {
+              "type": "end_gte",
+              "value": 26
+            },
+            "label": "END above 25",
+            "value": 2
+          },
+          {
+            "condition": {
+              "rank": "Savant",
+              "type": "kai_rank_gte"
+            },
+            "label": "Savant+",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Bor-brew wins",
+            "max": 6,
+            "min": -2,
+            "route": 364,
+            "test": "range"
+          },
+          {
+            "label": "Hold your drink",
+            "max": 14,
+            "min": 7,
+            "route": 218,
+            "test": "range"
+          }
+        ],
+        "summary": "Bor-brew check."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -6768,6 +8315,18 @@
         "single_route",
         "combat"
       ],
+      "combat": [
+        {
+          "enemy": {
+            "cs": 14,
+            "endurance": 24,
+            "name": "Vestibule Guard 2"
+          },
+          "id": "46-vestibule-guard-2",
+          "label": "Vestibule Guard 2",
+          "victoryRoute": 3
+        }
+      ],
       "incomingRouteCount": 1,
       "sourceRouteCount": 1,
       "sourceRoutes": [
@@ -6799,6 +8358,35 @@
         "random"
       ],
       "incomingRouteCount": 1,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "rank": "Guardian",
+              "type": "kai_rank_gte"
+            },
+            "label": "Guardian+",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "The crowd blocks the way",
+            "max": 4,
+            "min": 0,
+            "route": 34,
+            "test": "range"
+          },
+          {
+            "label": "Break through",
+            "max": 12,
+            "min": 5,
+            "route": 80,
+            "test": "range"
+          }
+        ],
+        "summary": "Fight through the gate crowd."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -6818,6 +8406,43 @@
         "meal"
       ],
       "incomingRouteCount": 2,
+      "roll": {
+        "modifiers": [
+          {
+            "condition": {
+              "name": "Hunting",
+              "type": "power"
+            },
+            "label": "Hunting",
+            "value": 1
+          },
+          {
+            "condition": {
+              "rank": "Savant",
+              "type": "kai_rank_gte"
+            },
+            "label": "Savant+",
+            "value": 3
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Ambush goes poorly",
+            "max": 5,
+            "min": 0,
+            "route": 106,
+            "test": "range"
+          },
+          {
+            "label": "Ambush succeeds",
+            "max": 13,
+            "min": 6,
+            "route": 189,
+            "test": "range"
+          }
+        ],
+        "summary": "Ambush the courier."
+      },
       "sourceRouteCount": 2,
       "sourceRoutes": [
         {
@@ -6883,6 +8508,52 @@
         "inventory"
       ],
       "incomingRouteCount": 3,
+      "loot": [
+        {
+          "actions": [
+            {
+              "delta": 4,
+              "stat": "gold",
+              "type": "stat"
+            }
+          ],
+          "id": "gold",
+          "label": "Take 4 Gold Crowns"
+        },
+        {
+          "actions": [
+            {
+              "container": "special",
+              "name": "Gaoler's Keys",
+              "type": "add_item"
+            }
+          ],
+          "id": "gaolers-keys",
+          "label": "Take Gaoler's Keys"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Dagger",
+              "type": "add_item"
+            }
+          ],
+          "id": "dagger",
+          "label": "Take Dagger"
+        },
+        {
+          "actions": [
+            {
+              "container": "weapon",
+              "name": "Sword",
+              "type": "add_item"
+            }
+          ],
+          "id": "sword",
+          "label": "Take Sword"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -7032,7 +8703,7 @@
       "classification": [
         "route_choice"
       ],
-      "incomingRouteCount": 4,
+      "incomingRouteCount": 3,
       "routeChecks": [
         {
           "id": "58-cloeasian-lock",
@@ -7245,15 +8916,11 @@
           "label": "Take Quarterstaff"
         }
       ],
-      "sourceRouteCount": 2,
+      "sourceRouteCount": 1,
       "sourceRoutes": [
         {
           "Label": "Leave the arboretum",
           "Section": 200
-        },
-        {
-          "Label": "Backtrack",
-          "Section": 58
         }
       ]
     },
@@ -7327,6 +8994,41 @@
         "inventory"
       ],
       "incomingRouteCount": 4,
+      "loot": [
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Towel",
+              "type": "add_item"
+            }
+          ],
+          "id": "towel",
+          "label": "Take Towel"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Book 5 optional Backpack Item",
+              "type": "add_item"
+            }
+          ],
+          "id": "backpack-choice-1",
+          "label": "Take Backpack Item 1"
+        },
+        {
+          "actions": [
+            {
+              "container": "backpack",
+              "name": "Book 5 optional Backpack Item",
+              "type": "add_item"
+            }
+          ],
+          "id": "backpack-choice-2",
+          "label": "Take Backpack Item 2"
+        }
+      ],
       "sourceRouteCount": 1,
       "sourceRoutes": [
         {
@@ -7828,7 +9530,7 @@
     },
     "_meta": {
       "bookNumber": 5,
-      "branchSectionCount": 231,
+      "branchSectionCount": 230,
       "expectedSectionCount": 400,
       "generatedBy": "testing/lwbook5_section_flow_audit.py",
       "invalidSectionLinkCount": 0,
@@ -7837,7 +9539,7 @@
       "schemaVersion": 1,
       "sectionCount": 400,
       "source": "books/lw/05sots/sect*.htm",
-      "sourceRouteLinkCount": 683,
+      "sourceRouteLinkCount": 682,
       "svgRouteGraphAvailable": true,
       "terminalSectionCount": 13,
       "title": "Shadow on the Sand"

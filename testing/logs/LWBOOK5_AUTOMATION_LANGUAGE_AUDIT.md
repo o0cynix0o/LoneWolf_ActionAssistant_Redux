@@ -46,6 +46,52 @@ This report records signal labels and section numbers only. It intentionally doe
 - The first Book 5 implementation slice has converted the confirmed setup rules, safekeeping, route checks, random helpers, loss-choice helpers, simple effects, loot buttons, and combat presets into app data.
 - Remaining signals should be reviewed during real-route play and converted into implemented automation, manual helper, reviewed no automation, or queued ambiguity.
 
+## Reviewed No Automation
+
+- Section 9: safekeeping
+- Section 44: inventory_loss, safekeeping
+- Section 72: combat
+- Section 79: meal
+- Section 83: inventory_loss
+- Section 111: combat
+- Section 122: inventory_gain
+- Section 140: safekeeping
+- Section 149: combat, meal
+- Section 154: combat
+- Section 161: combat
+- Section 172: meal
+- Section 180: combat
+- Section 196: meal
+- Section 200: combat
+- Section 204: combat
+- Section 212: inventory_gain
+- Section 218: meal
+- Section 221: inventory_gain
+- Section 226: combat
+- Section 228: combat
+- Section 238: combat
+- Section 247: combat
+- Section 256: gold
+- Section 268: combat
+- Section 288: inventory_gain
+- Section 289: inventory_gain
+- Section 300: inventory_gain
+- Section 307: gold
+- Section 318: gold
+- Section 319: inventory_gain
+- Section 323: combat
+- Section 329: combat
+- Section 333: inventory_gain
+- Section 341: combat
+- Section 352: combat
+- Section 378: combat
+- Section 382: inventory_gain
+- Section 395: gold
+
+## Reviewed Covered
+
+- Section 400: route_check=reviewed-covered
+
 ## Data Artifact
 
 - Source route shape is in `data/book5-section-flows.json`.

@@ -3679,7 +3679,20 @@
           "Section": 209
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "161-golden-key",
+          "label": "Take Golden Key",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Golden Key"
+            }
+          ]
+        }
+      ]
     },
     "162": {
       "auditStatus": "source-link-baseline",

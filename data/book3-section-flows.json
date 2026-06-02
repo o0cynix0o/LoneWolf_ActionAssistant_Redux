@@ -849,7 +849,30 @@
           "Section": 237
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "fur-backpack",
+          "label": "Take fur Backpack if needed",
+          "actions": [
+            {
+              "type": "backpack",
+              "available": true
+            }
+          ]
+        },
+        {
+          "id": "rope",
+          "label": "Take Rope (2 spaces)",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "backpack",
+              "name": "Rope (2 spaces)"
+            }
+          ]
+        }
+      ]
     },
     "39": {
       "auditStatus": "source-link-baseline",

@@ -261,6 +261,42 @@ def test_book2_cartwheel_minigame() -> None:
     )
 
 
+def test_book2_portholes_minigame() -> None:
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 10
+    assistant.inventory["Nobles"] = 10
+    quiet(assistant.set_section, 308)
+    payload = assistant.current_section_flow_payload()["Portholes"]
+    assert_true(payload["Available"], "section 308 exposes Portholes mini-game")
+    assert_equal(payload["Stake"], 3, "Portholes stake")
+
+    quiet(assistant.play_portholes, 1, 1, 2, 2, 9, 9)
+    assert_equal(assistant.inventory["GoldCrowns"], 16, "Portholes win adds 6 Gold")
+    assert_equal(
+        assistant.current_section_flow_payload()["Portholes"]["LastResult"]["Outcome"],
+        "Lone Wolf has the highest total",
+        "Portholes highest-total result",
+    )
+
+    quiet(assistant.play_portholes, 9, 9, 1, 1, 2, 2)
+    assert_equal(assistant.inventory["GoldCrowns"], 13, "Portholes loss removes 3 Gold")
+
+    quiet(assistant.play_portholes, 0, 0, 1, 1, 9, 9)
+    assert_equal(assistant.inventory["GoldCrowns"], 10, "Portholes opponent double-zero wins")
+
+    quiet(assistant.play_portholes, 1, 1, 2, 2, 0, 0)
+    assert_equal(assistant.inventory["GoldCrowns"], 16, "Portholes Lone Wolf double-zero wins")
+
+    quiet(assistant.play_portholes, 3, 3, 2, 4, 1, 5)
+    assert_equal(assistant.inventory["GoldCrowns"], 16, "Portholes tie leaves Gold unchanged")
+
+    assistant.inventory["GoldCrowns"] = 2
+    assistant.inventory["Nobles"] = 2
+    result = quiet(assistant.play_portholes, 1, 1, 2, 2, 9, 9)
+    assert_equal(result, None, "Portholes blocks play below stake")
+    assert_equal(assistant.inventory["GoldCrowns"], 2, "Portholes below-stake Gold unchanged")
+
+
 def test_book2_loot_and_item_effects() -> None:
     assistant = fresh_assistant()
     assistant.inventory["Weapons"] = []
@@ -455,6 +491,7 @@ def main() -> int:
     test_route_costs_and_pass_checks()
     test_section_240_recovers_combat_loss_only()
     test_book2_cartwheel_minigame()
+    test_book2_portholes_minigame()
     test_book2_loot_and_item_effects()
     test_book2_combat_helpers()
     test_book2_terminal_and_completion()

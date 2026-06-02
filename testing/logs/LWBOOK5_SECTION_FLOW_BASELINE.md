@@ -7,17 +7,17 @@ This report records section numbers, graph counts, and helper classifications on
 ## Summary
 
 - Sections found: 400 / 400
-- Source route links: 683
-- Branch sections: 231
+- Source route links: 682
+- Branch sections: 230
 - Terminal sections: 13
 - Reachable from section 1: 400 / 400
 - Missing section files: 0
 - Invalid section links: 0
 - Project Aon SVG route graph available: yes
-- Confirmed optional loot/helper sections: 7
+- Confirmed optional loot/helper sections: 22
 - Confirmed combat preset sections: 34
-- Confirmed route-check sections: 8
-- Confirmed random-roll helper sections: 6
+- Confirmed route-check sections: 13
+- Confirmed random-roll helper sections: 33
 - Confirmed loss-choice sections: 3
 
 ## Baseline Checks

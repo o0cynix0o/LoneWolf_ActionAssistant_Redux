@@ -44,6 +44,55 @@ This report records signal labels and section numbers only. It intentionally doe
 - The first Book 4 implementation slice has converted the confirmed setup rules, route checks, random helpers, loss-choice helpers, simple effects, loot buttons, and combat presets into app data.
 - Remaining signals should be reviewed during real-route play and converted into implemented automation, manual helper, reviewed no automation, or queued ambiguity.
 
+## Reviewed No Automation
+
+- Section 2: combat
+- Section 3: combat
+- Section 5: combat
+- Section 7: combat
+- Section 12: combat
+- Section 20: combat
+- Section 33: meal
+- Section 38: combat
+- Section 59: combat
+- Section 66: combat
+- Section 71: combat
+- Section 72: combat
+- Section 80: meal
+- Section 86: combat
+- Section 111: combat
+- Section 116: meal
+- Section 121: combat
+- Section 123: combat
+- Section 124: combat
+- Section 137: combat
+- Section 168: inventory_gain
+- Section 174: combat
+- Section 175: combat
+- Section 182: meal
+- Section 184: combat
+- Section 203: combat
+- Section 211: combat
+- Section 215: inventory_loss
+- Section 218: inventory_loss
+- Section 243: combat
+- Section 255: combat
+- Section 267: combat
+- Section 272: gold
+- Section 281: endurance_gain, endurance_loss
+- Section 289: combat
+- Section 295: combat
+- Section 298: endurance_gain
+- Section 307: combat
+- Section 312: combat
+- Section 323: combat
+- Section 336: inventory_loss
+
+## Reviewed Covered
+
+- Section 43: combat
+- Section 302: combat
+
 ## Data Artifact
 
 - Source route shape is in `data/book4-section-flows.json`.

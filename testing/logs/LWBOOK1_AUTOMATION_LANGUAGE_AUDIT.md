@@ -32,13 +32,17 @@ This report records signal labels and section numbers only. It intentionally doe
 - Section 78: gold, gold_cost
 - Section 115: meal
 - Section 117: route_check
+- Section 131: inventory_gain
 - Section 132: meal
 - Section 145: route_check
 - Section 150: meal
+- Section 236: combat
 - Section 237: route_check
+- Section 297: meal
 - Section 255: meal
 - Section 258: route_check
 - Section 301: route_check
+- Section 316: inventory_gain
 - Section 324: route_check
 
 ## Reviewed Covered

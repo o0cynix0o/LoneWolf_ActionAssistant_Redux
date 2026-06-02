@@ -24,6 +24,7 @@ The command means:
 - Run the rules, handoff, annotation, section-flow, route, combat, random, automation-language, achievement-candidate, and UI-readiness scans.
 - Build every clear mechanic, helper, data artifact, test, and browser-facing affordance that can be implemented safely.
 - Prove combat, random, and route helpers against the source text with semantic app tests before handing the book to the user for playtesting.
+- Run the full cross-book section audit and do not hand off while blockers, behavior failures, or unreviewed automation signals remain.
 - Stop only for true rulings, approvals, edition differences, or risky player-choice behavior.
 - Record every stop in a rulings queue so one approval session can unblock the next build session.
 - Do not package, release, or commit source book files.
@@ -64,6 +65,7 @@ Each book pass should produce or update:
 - `testing/logs/LWBOOKN_ROUTE_GAUNTLET_PLAYTEST.md`
 - `testing/logs/LWBOOKN_PLAYTEST_REPORT.md`
 - `testing/logs/LWBOOKN_ACHIEVEMENT_CANDIDATES.md`
+- `testing/logs/LW_FULL_SECTION_AUDIT.md` after the book is implemented, with the onboarded book at zero blockers, zero behavior failures, and zero unreviewed signal gaps
 - `docs/wiki/Book-N-Strategy-Guide.md` when strategy guidance is useful
 
 Reports must record mechanics, section numbers, file references, decisions, and test coverage. Do not copy long book prose into committed artifacts.
@@ -198,6 +200,7 @@ Reports must record mechanics, section numbers, file references, decisions, and 
   - manual helper
   - reviewed no automation
   - ambiguous and queued
+- The pass is not complete until a full section audit can prove the same thing mechanically. A report that merely lists signals is not enough.
 
 ## 6. Review Queue / Rulings
 
@@ -434,6 +437,7 @@ Generate or update:
 - Branch playtest.
 - Route gauntlet playtest.
 - Semantic app playtest for every non-trivial mechanic recorded in the ledger.
+- Full section audit harness that opens every section, compares automation-like source language against implemented coverage, applies simple effects, route actions, loot helpers, loss choices, roll helpers, staged rolls, mini-games, combat presets, and terminal recovery in copied saves.
 
 Tests should use copied or in-memory saves unless the user explicitly asks to modify the live campaign save.
 
@@ -447,6 +451,14 @@ Semantic app tests must drive the same app behavior a player would use. Dependin
 - Player-facing status/receipt text when it matters.
 
 Do not count a data-generation check as a playtest. Data checks prove the helper exists; semantic app tests prove it behaves correctly.
+
+The full section audit must fail the book if any of these remain:
+
+- A source signal has no implemented helper, manual helper, reviewed no-automation note, or queued ruling.
+- A helper exists but cannot be exercised through the app state path.
+- A generated random, staged-roll, route-check, or combat route points somewhere not present in the source links, unless documented as a terminal helper.
+- A terminal death/failure section lacks recovery behavior.
+- A mini-game, shop, wager, donation, paid route, or route action changes Gold/items but has no behavior test.
 
 For ruleset changes, tests must also prove:
 
@@ -464,6 +476,7 @@ For ruleset changes, tests must also prove:
 - Run all route-target certification tests.
 - Run all terminal-ending certification and recovery tests.
 - Run all semantic app playtests for special combat, random, and route-check sections.
+- Run `python testing/lw_full_section_audit.py --write` and confirm `blockers=0`, `review=0`, and every book summary has `behaviorFailureCount=0`.
 - Run `git diff --check`.
 - Confirm `books/` is not staged/tracked.
 - Start or refresh local server.
@@ -495,6 +508,7 @@ For every book, "test play" means app-level behavior tests plus representative r
 - Confirm every combat and random-number section appears in the combat/random audit.
 - Confirm every annotation and errata note was reviewed.
 - Confirm every ruleset change is recorded in `LWBOOKN_RULESET_CHANGE_AUDIT.md` and has either engine support, a manual helper, or a queued ruling.
+- Confirm the full section audit reports zero unreviewed automation-language signals for the onboarded book.
 
 ### Level 3: Automation Coverage
 
@@ -514,6 +528,9 @@ Include:
 - Status flags.
 - Discipline or item gates.
 - Random roll helpers.
+- Staged random-roll helpers, including every stage and comparison branch.
+- Mini-games, wagers, shops, paid routes, donations, and optional purchases.
+- Route actions that spend, grant, remove, restore, or flag state.
 - Combat presets.
 - Death/recovery.
 - Book completion, transition, and repeat.
@@ -531,8 +548,11 @@ Include:
 
 - Test every non-trivial mechanic outcome:
   - Every random roll result band.
+  - Every staged-roll stage and every branch inside the staged roll.
   - Every loot picker option.
+  - Every shop, mini-game, wager, paid route, and optional purchase result.
   - Every route-check outcome.
+  - Every route action with state changes.
   - Every death/failure ending style.
   - Every gear loss and gear restore path.
   - Every combat preset start.

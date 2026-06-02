@@ -1516,6 +1516,9 @@
       if (kind === 'cartwheel') {
         return `Cartwheel has player-chosen stakes, a wraparound number wheel, and a 40 Crown table limit. The mini-game keeps that math in one place while you choose how bold to be.`;
       }
+      if (kind === 'portholes') {
+        return `Portholes asks for six dice results and changes player Gold every throw. The mini-game keeps the stake, automatic double-zero win, and table result in one visible place.`;
+      }
       if (kind === 'section costs') {
         return `Manual Mode keeps the choice with you, while the guide keeps the cost visible.`;
       }
@@ -1641,6 +1644,13 @@
         details.push(receiptDetail('Why', manualGuideWhy(kind)));
         details.push(receiptDetail('Table', `Exact hit pays ${text(game.ExactMultiplier, 8)}x. Adjacent hit pays ${text(game.AdjacentMultiplier, 5)}x. Table winnings cap at ${text(game.WinLimit, 40)} Gold Crowns.`));
         details.push(receiptDetail('How to do it', 'Choose a number 0-9, choose a stake you can cover, roll 0-9, then use Gold Crowns controls to add the payout or subtract the lost stake.'));
+      } else if (kind === 'portholes') {
+        const game = flow.Portholes || {};
+        summary = 'Manual Advice - Portholes';
+        title = 'Manual Portholes';
+        details.push(receiptDetail('Why', manualGuideWhy(kind)));
+        details.push(receiptDetail('Table', `Each throw stakes ${text(game.Stake, 3)} Gold Crowns. Lone Wolf wins ${text(game.WinAmount, 6)} Gold Crowns for the highest total or a double-zero Portholes throw.`));
+        details.push(receiptDetail('How to do it', 'Roll two 0-9 dice for each other player and two for Lone Wolf. Add 6 Gold if Lone Wolf wins, subtract 3 Gold if either other player beats him, and leave ties unchanged.'));
       } else if (kind === 'healing') {
         const healing = flow.Healing || {};
         summary = 'Manual Advice - Kai Healing';
@@ -3811,6 +3821,49 @@
       `;
     }
 
+    function sectionPortholesRows() {
+      const game = currentFlow().Portholes || {};
+      if (!game.Available) return '';
+      const last = game.LastResult || null;
+      const canPlay = Boolean(game.CanPlay);
+      const pairText = (pair) => pair ? `${text(pair.Die1, '?')}+${text(pair.Die2, '?')}=${text(pair.Total, '?')}` : '?';
+      return `
+        <div class="cartwheel-game" data-portholes-game>
+          <p class="muted">${escapeHtml(text(game.Summary, 'Roll two 0-9 dice for each player.'))}</p>
+          <div class="cartwheel-fields">
+            <label>P1 Die 1
+              <input data-portholes-p1a type="number" min="0" max="9" placeholder="auto">
+            </label>
+            <label>P1 Die 2
+              <input data-portholes-p1b type="number" min="0" max="9" placeholder="auto">
+            </label>
+            <label>P2 Die 1
+              <input data-portholes-p2a type="number" min="0" max="9" placeholder="auto">
+            </label>
+            <label>P2 Die 2
+              <input data-portholes-p2b type="number" min="0" max="9" placeholder="auto">
+            </label>
+            <label>LW Die 1
+              <input data-portholes-lwa type="number" min="0" max="9" placeholder="auto">
+            </label>
+            <label>LW Die 2
+              <input data-portholes-lwb type="number" min="0" max="9" placeholder="auto">
+            </label>
+          </div>
+          <div class="controls">
+            ${canPlay ? modeActionButton('data-portholes-play', 'Play Portholes', 'portholes') : '<button type="button" disabled>No Gold Crowns</button>'}
+            <span class="muted">Stake ${escapeHtml(game.Stake || 3)} Gold</span>
+          </div>
+          ${last ? `
+            <div class="item-row">
+              <small>${escapeHtml(last.GoldDelta > 0 ? `+${last.GoldDelta}` : last.GoldDelta)}</small>
+              <span class="wrap">${escapeHtml(text(last.Outcome, 'Result'))}: P1 ${escapeHtml(pairText(last.Player1))}, P2 ${escapeHtml(pairText(last.Player2))}, Lone Wolf ${escapeHtml(pairText(last.LoneWolf))}</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function sectionGoldDistractionRows() {
       const game = currentFlow().GoldDistraction || {};
       if (!game.Available) return '';
@@ -3854,6 +3907,7 @@
       const entry = currentFlow().Entry || {};
       const groups = [
         choiceGroup('Cartwheel', sectionCartwheelRows()),
+        choiceGroup('Portholes', sectionPortholesRows()),
         choiceGroup('Gold Distraction', sectionGoldDistractionRows()),
         choiceGroup('Loot And Section Items', sectionLootRows(entry)),
         choiceGroup('Section Combat', sectionCombatRows(entry)),
@@ -4871,6 +4925,10 @@
         manualSectionAdvice('cartwheel');
         return;
       }
+      if (isManualMode() && button.dataset.portholesPlay !== undefined) {
+        manualSectionAdvice('portholes');
+        return;
+      }
       if (isManualMode() && button.dataset.goldDistractionPlay !== undefined) {
         manualSectionAdvice('gold distraction');
         return;
@@ -4916,6 +4974,18 @@
           stake: Number(game?.querySelector('[data-cartwheel-stake]')?.value || 0),
           raw: game?.querySelector('[data-cartwheel-roll]')?.value || '',
           useToken: Boolean(game?.querySelector('[data-cartwheel-token]')?.checked)
+        });
+      }
+      if (button.dataset.portholesPlay !== undefined) {
+        const game = button.closest('[data-portholes-game]');
+        await action({
+          action: 'portholes',
+          p1a: game?.querySelector('[data-portholes-p1a]')?.value || '',
+          p1b: game?.querySelector('[data-portholes-p1b]')?.value || '',
+          p2a: game?.querySelector('[data-portholes-p2a]')?.value || '',
+          p2b: game?.querySelector('[data-portholes-p2b]')?.value || '',
+          lwa: game?.querySelector('[data-portholes-lwa]')?.value || '',
+          lwb: game?.querySelector('[data-portholes-lwb]')?.value || ''
         });
       }
       if (button.dataset.goldDistractionPlay !== undefined) {

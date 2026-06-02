@@ -326,6 +326,7 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ]
     },
     "148": {"loot": [{"id": "148-warhammer", "label": "Take Warhammer", "actions": [{"type": "add_item", "container": "weapon", "name": "Warhammer"}]}]},
+    "161": {"loot": [{"id": "161-golden-key", "label": "Take Golden Key", "actions": [{"type": "add_item", "container": "special", "name": "Golden Key"}]}]},
     "164": {"loot": [{"id": "164-alether", "label": "Take Potion of Alether", "actions": [{"type": "add_item", "container": "backpack", "name": "Potion of Alether"}]}]},
     "184": {
         "loot": [

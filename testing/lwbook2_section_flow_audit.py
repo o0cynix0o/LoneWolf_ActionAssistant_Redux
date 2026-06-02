@@ -624,6 +624,15 @@ MANUAL_ROUTE_AUDIT: dict[str, dict[str, Any]] = {
         ],
     },
     "300": section_roll("Random departure from Holmgard.", [roll_range(0, 1, 224, "Sea route"), roll_range(2, 3, 316, "Distress ship"), roll_range(4, 5, 81, "Longboat"), roll_range(6, 7, 22, "Wreckage"), roll_range(8, 9, 99, "Pirate ship")]),
+    "308": {
+        "portholes": {
+            "id": "book2-section308-portholes",
+            "label": "Play Portholes",
+            "summary": "Each throw stakes 3 Gold Crowns. Roll two 0-9 dice for each of two other players, then two for Lone Wolf. Double zero calls Portholes.",
+            "stake": 3,
+            "winAmount": 6,
+        }
+    },
     "314": {
         **power_route_check(314, "Hunting", 290, None, label="Hunting poisoned food warning"),
         "sourceRoutes": [{"Section": 290}, {"Section": 36}, route_action(178, [{"type": "meal", "count": 1, "mode": "all_or_loss", "enduranceLoss": 3, "huntingExempt": False}], "Eat a Meal or lose 3 END")],

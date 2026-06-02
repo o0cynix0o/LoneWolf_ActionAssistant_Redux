@@ -78,6 +78,14 @@
       "summary": "Terminal death.",
       "actions": [{"type": "ending", "ending": "death", "cause": "Section 95 ends the mission."}]
     },
+    "116": {
+      "summary": "Discard the Doomstone and the empty Laumspur vial.",
+      "actions": [
+        {"type": "remove_item", "containers": ["special"], "name": "Glowing Crystal", "match": "contains"},
+        {"type": "remove_item", "containers": ["special"], "name": "Doomstone", "match": "contains"},
+        {"type": "remove_item", "containers": ["backpack"], "name": "Laumspur", "match": "contains"}
+      ]
+    },
     "121": {
       "summary": "Lose 1 END from the poor evening meal.",
       "actions": [{"type": "stat", "stat": "end", "delta": -1}]
@@ -195,6 +203,13 @@
     "253": {
       "summary": "Terminal death.",
       "actions": [{"type": "ending", "ending": "death", "cause": "Section 253 ends the mission."}]
+    },
+    "267": {
+      "summary": "Cast away the Glowing Crystal/Doomstone.",
+      "actions": [
+        {"type": "remove_item", "containers": ["special"], "name": "Glowing Crystal", "match": "contains"},
+        {"type": "remove_item", "containers": ["special"], "name": "Doomstone", "match": "contains"}
+      ]
     },
     "280": {
       "summary": "Lose 1 END from the corrosive acid on the key.",

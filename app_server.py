@@ -425,6 +425,17 @@ def handle_action(payload: dict) -> str:
                 payload.get("useToken", True),
             )
         )
+    if action == "portholes":
+        return capture_output(
+            lambda: ASSISTANT.play_portholes(
+                payload.get("p1a"),
+                payload.get("p1b"),
+                payload.get("p2a"),
+                payload.get("p2b"),
+                payload.get("lwa"),
+                payload.get("lwb"),
+            )
+        )
     if action == "gold_distraction":
         raw = payload.get("raw")
         raw_roll = int(raw) if str(raw or "").strip() else None

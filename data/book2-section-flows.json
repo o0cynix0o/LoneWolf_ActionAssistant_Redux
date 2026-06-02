@@ -9125,7 +9125,14 @@
           "Section": 197
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "portholes": {
+        "id": "book2-section308-portholes",
+        "label": "Play Portholes",
+        "summary": "Each throw stakes 3 Gold Crowns. Roll two 0-9 dice for each of two other players, then two for Lone Wolf. Double zero calls Portholes.",
+        "stake": 3,
+        "winAmount": 6
+      }
     },
     "309": {
       "auditStatus": "source-link-baseline",

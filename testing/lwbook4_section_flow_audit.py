@@ -299,6 +299,10 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ]
     },
     "10": {"loot": [loot_option("onyx-medallion", "Take Onyx Medallion", [{"type": "add_item", "container": "special", "name": "Onyx Medallion"}])]},
+    "11": section_roll(
+        "Dead-end tunnel return route.",
+        [roll_range(0, 4, 97, "Return by one passage"), roll_range(5, 9, 190, "Return by the other passage")],
+    ),
     "12": {
         "loot": [
             loot_option("backpack", "Accept replacement Backpack", [{"type": "backpack", "available": True}]),
@@ -309,6 +313,10 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("spear", "Take Spear", [{"type": "add_item", "container": "weapon", "name": "Spear"}]),
         ]
     },
+    "13": section_roll(
+        "Troubadour-camp dawn route.",
+        [roll_range(0, 4, 171, "Wildlands route"), roll_range(5, 9, 25, "Pass route")],
+    ),
     "15": power_route_check(15, "Tracking", 264, 134),
     "21": power_route_check(21, "Tracking", 264, None, optional=True),
     "22": {
@@ -327,6 +335,10 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     "29": combined_route_checks(
         simple_item_check(29, "Firesphere", 168, None, container="backpack", match="contains"),
         simple_item_check(29, "Firesphere", 168, None, container="special", match="contains"),
+    ),
+    "31": section_roll(
+        "White-water rapids check.",
+        [roll_range(0, 4, 272, "Survive the rapids"), roll_range(5, 9, 329, "Swept to death")],
     ),
     "35": section_roll(
         "Bridge-guard dash check.",
@@ -371,6 +383,10 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ],
     ),
     "57": {"routeChecks": [item_route_check(57, "Scroll", 279, None)["routeChecks"][0]]},
+    "59": section_roll(
+        "Warhound release route.",
+        [roll_range(0, 4, 193, "Warhounds close in"), roll_range(5, 9, 260, "Warhounds overrun the line")],
+    ),
     "63": section_roll(
         "Eshnar reply check.",
         [roll_range(0, 4, 259, "Hostile reply"), roll_range(5, 9, 95, "Suspicious but willing to talk")],
@@ -408,6 +424,9 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("tinderbox", "Take Tinderbox", [{"type": "add_item", "container": "backpack", "name": "Tinderbox"}]),
             loot_option("torch", "Take one spare Torch", [{"type": "add_item", "container": "backpack", "name": "Torch"}]),
         ]
+    },
+    "84": {
+        "loot": [loot_option("scroll", "Take prophecy Scroll", [{"type": "add_item", "container": "special", "name": "Scroll"}])]
     },
     "87": {"routeChecks": [route_check("87-sixth-sense-or-tracking", "Sixth Sense or Tracking", "Checks whether either route-reading Discipline applies.", [condition_outcome("Sixth Sense or Tracking", 60, TRACKING_OR_SIXTH_SENSE, "Sixth Sense or Tracking")])["routeChecks"][0]]},
     "92": power_route_check(92, "Sixth Sense", 210, None, optional=True),
@@ -534,6 +553,9 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             loot_option("hourglass", "Take Hourglass", [{"type": "add_item", "container": "backpack", "name": "Hourglass"}]),
         ]
     },
+    "222": {
+        "loot": [loot_option("dval-sword", "Take Captain D'Val's Sword", [{"type": "add_item", "container": "weapon", "name": "Captain D'Val's Sword"}])]
+    },
     "224": {"routeChecks": [route_check("224-sixth-sense-or-tracking", "Sixth Sense or Tracking", "Checks whether either route-reading Discipline applies.", [condition_outcome("Sixth Sense or Tracking", 60, TRACKING_OR_SIXTH_SENSE, "Sixth Sense or Tracking")])["routeChecks"][0]]},
     "225": section_roll(
         "Bandit sniper check.",
@@ -602,6 +624,16 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         [roll_range(0, 6, 9, "Bridge drops"), roll_range(7, 11, 104, "Escape the trap")],
         [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}],
     ),
+    "272": {
+        "lossChoices": [
+            {
+                "id": "rapids-weapon-loss",
+                "label": "Lose weapon in the rapids",
+                "summary": "Choose the Weapon lost during the river ordeal.",
+                "containers": ["weapon"],
+            }
+        ]
+    },
     "274": item_route_check(274, "Flask of Holy Water", 283, 325, container="backpack"),
     "279": {"routeChecks": [item_route_check(279, "Scroll", 327, None)["routeChecks"][0]]},
     "280": {

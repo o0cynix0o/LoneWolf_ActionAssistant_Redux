@@ -40,15 +40,50 @@ def combat_preset(section: int, label: str, enemy: dict[str, Any], **kwargs: Any
     return preset
 
 
-def roll_range(minimum: int, maximum: int, route: int | None, label: str) -> dict[str, Any]:
-    return {"test": "range", "min": minimum, "max": maximum, "route": route, "label": label}
+def roll_range(
+    minimum: int,
+    maximum: int,
+    route: int | None,
+    label: str,
+    actions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    outcome = {"test": "range", "min": minimum, "max": maximum, "route": route, "label": label}
+    if actions:
+        outcome["actions"] = actions
+    return outcome
 
 
-def section_roll(summary: str, outcomes: list[dict[str, Any]], modifiers: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def roll_values(values: list[int], route: int | None, label: str, actions: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    outcome = {"test": "values", "values": values, "route": route, "label": label}
+    if actions:
+        outcome["actions"] = actions
+    return outcome
+
+
+def roll_stat_compare(test: str, stat: str, route: int, label: str, actions: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    outcome = {"test": test, "stat": stat, "route": route, "label": label}
+    if actions:
+        outcome["actions"] = actions
+    return outcome
+
+
+def section_roll(
+    summary: str,
+    outcomes: list[dict[str, Any]],
+    modifiers: list[dict[str, Any]] | None = None,
+    *,
+    zero_as_ten: bool = False,
+) -> dict[str, Any]:
     roll: dict[str, Any] = {"summary": summary, "outcomes": outcomes}
     if modifiers:
         roll["modifiers"] = modifiers
+    if zero_as_ten:
+        roll["zeroAsTen"] = True
     return {"roll": roll}
+
+
+def section_staged_roll(roll_id: str, summary: str, stages: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"stagedRoll": {"id": roll_id, "summary": summary, "stages": stages}}
 
 
 def cond_power(power: str) -> dict[str, Any]:
@@ -151,12 +186,58 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         loot_option("sleep-dart", "Take Sleep Dart", add_items("backpack", "Sleep Dart", 1)),
     ]},
     "8": section_roll("Cloeasian lock insight.", [roll_range(0, 9, None, "Choose 67 or 76 after losing 2 END")]),
+    "11": section_roll(
+        "Wasteland trail check.",
+        [roll_range(-2, 2, 167, "The desert route goes badly"), roll_range(3, 9, 190, "Reach the armourer")],
+        [{"label": "Camouflage or Hunting", "value": -2, "condition": cond_any(cond_power("Camouflage"), cond_power("Hunting"))}],
+    ),
+    "15": section_roll(
+        "Palace climbing check.",
+        [roll_range(-1, 7, 151, "Climb safely"), roll_range(8, 9, 175, "Slip on the wall")],
+        [{"label": "Guardian+", "value": -1, "condition": cond_rank("Guardian")}],
+    ),
     "19": {"lossChoices": [
         {"id": "guard-payment-1", "label": "Pay guards item 1", "summary": "Give the guards one non-Meal Backpack Item.", "containers": ["backpack"], "excludeNames": ["Meal"]},
         {"id": "guard-payment-2", "label": "Pay guards item 2", "summary": "Give the guards a second non-Meal Backpack Item.", "containers": ["backpack"], "excludeNames": ["Meal"]},
     ]},
+    "23": section_roll(
+        "Searing heat survival check.",
+        [roll_range(-3, -1, 77, "Collapse in the heat"), roll_range(0, 6, 192, "Lose ground in the heat"), roll_range(7, 11, 114, "Push through")],
+        [
+            {"label": "One arm useless", "value": -3, "condition": {"type": "flag", "key": "book5LostUseOfOneArm", "value": True}},
+            {"label": "Hunting", "value": 2, "condition": cond_power("Hunting")},
+        ],
+    ),
+    "27": {"loot": [
+        loot_option("alether", "Buy Potion of Alether", [gold(-4), {"type": "add_item", "container": "backpack", "name": "Potion of Alether (+2 CS)"}]),
+        loot_option("gallowbrush", "Buy Potion of Gallowbrush", [gold(-2), {"type": "add_item", "container": "backpack", "name": "Potion of Gallowbrush"}]),
+        loot_option("laumspur", "Buy Potion of Laumspur", [gold(-5), {"type": "add_item", "container": "backpack", "name": "Potion of Laumspur (+4 END)"}]),
+        loot_option("larnuma-oil", "Buy Vial of Larnuma Oil", [gold(-3), {"type": "add_item", "container": "backpack", "name": "Vial of Larnuma Oil (+2 END)"}]),
+        loot_option("graveweed", "Buy Tincture of Graveweed", [gold(-1), {"type": "add_item", "container": "backpack", "name": "Tincture of Graveweed"}]),
+        loot_option("calacena", "Buy Tincture of Calacena", [gold(-2), {"type": "add_item", "container": "backpack", "name": "Tincture of Calacena"}]),
+    ]},
     "31": item_route_check(31, "Tinderbox", 143, 183, container="backpack"),
+    "35": {"loot": [
+        loot_option("jewelled-mace", "Take Jewelled Mace", add_items("special", "Jewelled Mace", 1)),
+        loot_option("copper-key", "Take Copper Key", add_items("special", "Copper Key", 1)),
+    ]},
     "40": {"lossChoices": [{"id": "kwaraz-pack-loss", "label": "Lose Backpack Item", "summary": "Choose one Backpack Item lost in the slime wave.", "containers": ["backpack"]}]},
+    "48": section_roll(
+        "Fight through the gate crowd.",
+        [roll_range(0, 4, 34, "The crowd blocks the way"), roll_range(5, 12, 80, "Break through")],
+        [{"label": "Guardian+", "value": 3, "condition": cond_rank("Guardian")}],
+    ),
+    "49": section_roll(
+        "Ambush the courier.",
+        [roll_range(0, 5, 106, "Ambush goes poorly"), roll_range(6, 13, 189, "Ambush succeeds")],
+        [{"label": "Hunting", "value": 1, "condition": cond_power("Hunting")}, {"label": "Savant+", "value": 3, "condition": cond_rank("Savant")}],
+    ),
+    "52": {"loot": [
+        loot_option("gold", "Take 4 Gold Crowns", [gold(4)]),
+        loot_option("gaolers-keys", "Take Gaoler's Keys", add_items("special", "Gaoler's Keys", 1)),
+        loot_option("dagger", "Take Dagger", add_items("weapon", "Dagger", 1)),
+        loot_option("sword", "Take Sword", add_items("weapon", "Sword", 1)),
+    ]},
     "56": section_roll(
         "One-shot Jakan Bow check.",
         [roll_range(0, 3, 7, "Shot fails"), roll_range(4, 11, 28, "Shot succeeds")],
@@ -166,7 +247,31 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         "sourceRoutes": [{"Section": 67, "Label": "Correct lock answer"}, {"Section": 98}, {"Section": 156}],
         "routeChecks": route_check("58-cloeasian-lock", "Cloeasian lock", "The confirmed lock answer is section 67.", [condition_outcome("Correct answer", 67, {"type": "end_gte", "value": 0}, "67")])["routeChecks"],
     },
-    "67": {"sourceRoutes": [{"Section": 200, "Label": "Leave the arboretum"}, {"Section": 58, "Label": "Backtrack"}], "loot": [loot_option("quarterstaff", "Take Quarterstaff", add_items("weapon", "Quarterstaff", 1))]},
+    "67": {"sourceRoutes": [{"Section": 200, "Label": "Leave the arboretum"}], "loot": [loot_option("quarterstaff", "Take Quarterstaff", add_items("weapon", "Quarterstaff", 1))]},
+    "71": {"loot": [
+        loot_option("towel", "Take Towel", add_items("backpack", "Towel", 1)),
+        loot_option("backpack-choice-1", "Take Backpack Item 1", add_items("backpack", "Book 5 optional Backpack Item", 1)),
+        loot_option("backpack-choice-2", "Take Backpack Item 2", add_items("backpack", "Book 5 optional Backpack Item", 1)),
+    ]},
+    "100": {"loot": [
+        loot_option("copper-key", "Take Copper Key", add_items("special", "Copper Key", 1)),
+        loot_option("prism", "Take Prism", add_items("backpack", "Prism", 1)),
+    ]},
+    "101": {"loot": [
+        loot_option("gold", "Take 4 Gold Crowns", [gold(4)]),
+        loot_option("dagger", "Take Dagger", add_items("weapon", "Dagger", 1)),
+        loot_option("sword", "Take Sword", add_items("weapon", "Sword", 1)),
+        loot_option("alether", "Take Potion of Alether", add_items("backpack", "Potion of Alether (+2 CS)", 1)),
+        loot_option("blowpipe", "Take Blowpipe", add_items("backpack", "Blowpipe", 1)),
+        loot_option("sleep-dart", "Take Sleep Dart", add_items("backpack", "Sleep Dart", 1)),
+    ]},
+    "102": {"loot": [
+        loot_option("gold", "Take 6 Gold Crowns", [gold(6)]),
+        loot_option("gaolers-keys", "Take Gaoler's Keys", add_items("special", "Gaoler's Keys", 1)),
+        loot_option("sword", "Take Sword", add_items("weapon", "Sword", 1)),
+        loot_option("dagger", "Take Dagger", add_items("weapon", "Dagger", 1)),
+        loot_option("warhammer", "Take Warhammer", add_items("weapon", "Warhammer", 1)),
+    ]},
     "111": {"loot": [loot_option("gold", "Take 3 Gold Crowns", [gold(3)]), loot_option("copper-key", "Take Copper Key", add_items("special", "Copper Key", 1))]},
     "118": section_roll(
         "Blowpipe dodge.",
@@ -175,6 +280,14 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
     ),
     "125": section_roll("Leap to the galley.", [roll_range(0, 3, 50, "Fall short"), roll_range(4, 11, 191, "Reach the oars")], [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}]),
     "126": route_check("126-camouflage-hunting", "Camouflage and Hunting", "Checks the stealth route through the north gate.", [condition_outcome("Camouflage and Hunting", 170, cond_all(cond_power("Camouflage"), cond_power("Hunting")), "Camouflage + Hunting")]),
+    "127": section_roll(
+        "Barge the locked door.",
+        [
+            roll_stat_compare("lte_stat", "cs", 159, "Door bursts open"),
+            roll_stat_compare("gt_stat", "cs", 93, "Bruised shoulder", [end(-1)]),
+        ],
+        [{"label": "Door charge base", "value": 10}],
+    ),
     "128": item_route_check(128, "Rope", 29, None, container="backpack"),
     "130": {"loot": [loot_option("herb-pad", "Take Herb Pad", add_items("special", "Herb Pad", 1))]},
     "131": {"loot": [
@@ -186,8 +299,63 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         loot_option("meals", "Take Food for 3 Meals", add_items("backpack", "Meal", 3)),
     ]},
     "137": route_check("137-tracking-sixth-sense", "Tracking or Sixth Sense", "Checks which palace entrance is useful.", [condition_outcome("Tracking or Sixth Sense", 37, TRACKING_OR_SIXTH_SENSE, "Tracking or Sixth Sense")]),
+    "146": section_roll(
+        "Wasteland trail check.",
+        [roll_range(-2, 2, 44, "Slip toward the enemy"), roll_range(3, 9, 190, "Reach the armourer")],
+        [{"label": "Camouflage or Hunting", "value": -2, "condition": cond_any(cond_power("Camouflage"), cond_power("Hunting"))}],
+    ),
+    "152": section_roll(
+        "Itikar approach check.",
+        [roll_range(0, 2, 5, "Fatal approach"), roll_range(3, 8, 38, "Dangerous approach"), roll_range(9, 13, 87, "Calm approach")],
+        [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}, {"label": "Savant+", "value": 2, "condition": cond_rank("Savant")}],
+    ),
+    "154": {"loot": [
+        loot_option("alether", "Buy Potion of Alether", [gold(-4), {"type": "add_item", "container": "backpack", "name": "Potion of Alether (+2 CS)"}]),
+        loot_option("gallowbrush", "Buy Potion of Gallowbrush", [gold(-2), {"type": "add_item", "container": "backpack", "name": "Potion of Gallowbrush"}]),
+        loot_option("laumspur", "Buy Potion of Laumspur", [gold(-5), {"type": "add_item", "container": "backpack", "name": "Potion of Laumspur (+4 END)"}]),
+        loot_option("larnuma-oil", "Buy Vial of Larnuma Oil", [gold(-3), {"type": "add_item", "container": "backpack", "name": "Vial of Larnuma Oil (+2 END)"}]),
+        loot_option("graveweed", "Buy Tincture of Graveweed", [gold(-1), {"type": "add_item", "container": "backpack", "name": "Tincture of Graveweed"}]),
+        loot_option("calacena", "Buy Tincture of Calacena", [gold(-2), {"type": "add_item", "container": "backpack", "name": "Tincture of Calacena"}]),
+    ]},
+    "162": section_roll(
+        "Steamspider nest climb if one arm is useless.",
+        [roll_range(1, 10, 114, "Lose rolled END and climb past", [{"type": "stat", "stat": "end", "deltaFrom": "roll_total", "multiplier": -1}])],
+        zero_as_ten=True,
+    ),
+    "169": {"loot": [loot_option("black-sash", "Buy Black Sash", [gold(-2), {"type": "add_item", "container": "special", "name": "Black Sash"}])]},
+    "180": {
+        **section_roll(
+            "Avoid the Vassagonian patrol without Mindblast.",
+            [roll_range(0, 5, 120, "The patrol closes in"), roll_range(6, 12, 193, "Slip away")],
+            [{"label": "Sixth Sense or Hunting", "value": 3, "condition": cond_any(cond_power("Sixth Sense"), cond_power("Hunting"))}],
+        ),
+        "routeChecks": power_route_check(180, "Mindblast", 45, None)["routeChecks"],
+    },
+    "198": section_roll(
+        "Climb the palace wall.",
+        [roll_range(0, 6, 25, "The climb fails"), roll_range(7, 12, 141, "Scale the wall")],
+        [{"label": "Hunting", "value": 3, "condition": cond_power("Hunting")}],
+    ),
+    "205": section_roll("Rope descent after pursuit.", [roll_range(0, 4, 234, "Fall badly"), roll_range(5, 9, 293, "Fatal fall")]),
     "207": {"loot": [loot_option("gold", "Take 8 Gold Crowns", [gold(8)]), loot_option("brass-whistle", "Take Brass Whistle", add_items("special", "Brass Whistle", 1))]},
     "211": {"loot": [loot_option("kourshah", "Buy Bottle of Kourshah", [gold(-5), {"type": "add_item", "container": "backpack", "name": "Bottle of Kourshah (+4 END)"}])]},
+    "222": section_roll("Falling timber check.", [roll_range(0, 2, 378, "Dodge the fall"), roll_range(3, 9, 262, "Caught by the danger")]),
+    "224": {
+        **section_roll(
+            "Subdue the Itikar.",
+            [roll_range(0, 0, 257, "Fatal approach"), roll_range(1, 3, 370, "Fight the Itikar"), roll_range(4, 7, 240, "Fight from the saddle"), roll_range(8, 11, 287, "Control the Itikar")],
+            [{"label": "Aspirant+", "value": 2, "condition": cond_rank("Aspirant")}],
+        ),
+        "routeChecks": [
+            *power_route_check(224, "Animal Kinship", 308, None)["routeChecks"],
+            *item_route_check(224, "Onyx Medallion", 319, None, container="special")["routeChecks"],
+        ],
+    },
+    "229": section_roll(
+        "Kraan-rider detection check.",
+        [roll_range(0, 6, 385, "Detected by the Kraan-riders"), roll_range(7, 12, 251, "Remain hidden")],
+        [{"label": "Sixth Sense", "value": 3, "condition": cond_power("Sixth Sense")}],
+    ),
     "239": {
         **section_roll(
             "Silence the Drakkarim sentry.",
@@ -199,12 +367,117 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
         ),
         "routeChecks": route_check("239-graveweed", "Tincture of Graveweed", "Only Tincture of Graveweed counts here.", [condition_outcome("Use Tincture of Graveweed", 260, TINCTURE_OF_GRAVEWEED, "Tincture of Graveweed")])["routeChecks"],
     },
+    "242": section_roll(
+        "Hide from Haakon's Vordak.",
+        [roll_range(0, 6, 262, "Stay hidden"), roll_range(7, 14, 378, "The search closes in")],
+        [{"label": "Camouflage", "value": 2, "condition": cond_power("Camouflage")}, {"label": "Mindshield", "value": 3, "condition": cond_power("Mindshield")}],
+    ),
+    "247": section_roll("Skyrider route check.", [roll_range(0, 2, 337, "Dahir route"), roll_range(3, 9, 383, "Ikaresh route")]),
+    "248": {"sourceRoutes": [
+        route_action(328, [gold(-5)], "Paid 5 Gold Crowns", "Buy the waistcoat"),
+        {"Section": 274, "Label": "Decline the waistcoat"},
+    ]},
+    "255": {"loot": [loot_option("black-crystal-cube", "Take Black Crystal Cube", add_items("special", "Black Crystal Cube", 1))]},
+    "265": {"sourceRoutes": [
+        route_action(397, [gold(-1)], "Paid 1 Gold Crown", "Give her a Gold Crown"),
+        {"Section": 256, "Label": "Decline or cannot pay"},
+    ]},
+    "275": section_roll("Itikar fall check.", [roll_range(0, 4, 374, "Fall toward the lake"), roll_range(5, 8, 254, "Hard landing"), roll_values([9], 261, "Fatal fall")]),
+    "276": {"sourceRoutes": [
+        route_action(326, [gold(-5)], "Paid 5 Gold Crowns", "Pay Soushilla"),
+        {"Section": 202, "Label": "Decline or cannot pay"},
+    ]},
     "264": item_route_check(264, "Sommerswerd", 315, 299, container="special"),
     "270": {"lossChoices": [
         {"id": "cave-pack-loss-1", "label": "Lose item 1", "summary": "Choose the first Backpack Item lost while fleeing. If none are available, lose a Weapon or Special Item.", "containers": ["backpack"], "fallbackContainers": ["weapon", "special"]},
         {"id": "cave-pack-loss-2", "label": "Lose item 2", "summary": "Choose the second Backpack Item lost while fleeing. If none are available, lose a Weapon or Special Item.", "containers": ["backpack"], "fallbackContainers": ["weapon", "special"]},
     ]},
-    "302": section_roll(
+    "281": {"loot": [loot_option("jewelled-mace", "Take Jewelled Mace", add_items("special", "Jewelled Mace", 1))]},
+    "282": {
+        **section_roll(
+            "Open the door under fire.",
+            [roll_range(0, 4, 357, "Fight on the gangplank"), roll_range(5, 9, 389, "Reach the pen"), roll_range(10, 14, 236, "Avoid the sentry")],
+            [{"label": "Hunting or Camouflage", "value": 2, "condition": cond_any(cond_power("Hunting"), cond_power("Camouflage"))}, {"label": "Warmarn+", "value": 3, "condition": cond_rank("Warmarn")}],
+        ),
+        "routeChecks": power_route_check(282, "Mind Over Matter", 295, None)["routeChecks"],
+    },
+    "290": {"loot": [loot_option("black-crystal-cube", "Take Black Crystal Cube", add_items("special", "Black Crystal Cube", 1))]},
+    "301": section_roll(
+        "Climb over the spiked door.",
+        [roll_range(-3, 4, 363, "Clear the spikes"), roll_range(5, 9, 259, "Crossbow fire ends the mission")],
+        [{"label": "Guardian+", "value": -2, "condition": cond_rank("Guardian")}, {"label": "Hunting", "value": -1, "condition": cond_power("Hunting")}],
+    ),
+    "305": section_roll("Rope descent check.", [roll_range(0, 2, 293, "Fatal fall"), roll_range(3, 9, 234, "Survive the fall")]),
+    "310": {"loot": [
+        loot_option("copper-key", "Take Copper Key", add_items("special", "Copper Key", 1)),
+        loot_option("canteen", "Take Canteen of Water", add_items("backpack", "Canteen of Water", 1)),
+        loot_option("broadsword", "Take Broadsword", add_items("weapon", "Broadsword", 1)),
+    ]},
+    "312": {
+        **section_roll("Thrown axe check.", [roll_range(0, 4, 354, "The axe strikes"), roll_range(5, 8, 371, "The axe wounds you"), roll_values([9], 232, "Fatal throw")]),
+        "routeChecks": route_check("312-hunting-sixth-sense", "Hunting or Sixth Sense", "Checks whether Lone Wolf can anticipate the throw.", [condition_outcome("Hunting or Sixth Sense", 210, cond_any(cond_power("Hunting"), cond_power("Sixth Sense")), "Hunting or Sixth Sense")])["routeChecks"],
+    },
+    "323": section_roll("Skyrider hazard check.", [roll_range(0, 2, 250, "Skyship danger"), roll_range(3, 9, 312, "Thrown axe encounter")]),
+    "325": section_roll(
+        "Blowpipe shot.",
+        [roll_range(0, 3, 384, "Shot misses"), roll_range(4, 11, 398, "Shot hits")],
+        [{"label": "Weaponskill", "value": 2, "condition": cond_power("Weaponskill")}],
+    ),
+    "336": section_roll("Itikar fall check.", [roll_range(0, 4, 374, "Fall toward the lake"), roll_range(5, 8, 254, "Hard landing"), roll_values([9], 261, "Fatal fall")]),
+    "341": {"loot": [
+        loot_option("copper-key", "Take Copper Key", add_items("special", "Copper Key", 1)),
+        loot_option("canteen", "Take Canteen of Water", add_items("backpack", "Canteen of Water", 1)),
+        loot_option("broadsword", "Take Broadsword", add_items("weapon", "Broadsword", 1)),
+    ]},
+    "360": section_staged_roll(
+        "360-guard-surprise",
+        "Two-roll guard surprise check.",
+        [
+            {
+                "id": "first",
+                "label": "First surprise roll",
+                "modifiers": [{"label": "Hunting", "value": 1, "condition": cond_power("Hunting")}],
+                "outcomes": [{"test": "range", "min": 0, "max": 10, "label": "First number recorded", "nextStage": "second"}],
+            },
+            {
+                "id": "second",
+                "label": "Second surprise roll",
+                "outcomes": [
+                    {"test": "lt_history", "stage": "first", "label": "Second number is lower", "route": 226, "auditRoll": 0},
+                    {"test": "gt_history", "stage": "first", "label": "Second number is higher", "route": 297, "auditRoll": 9},
+                    {"test": "eq_history", "stage": "first", "label": "Numbers match", "route": 334, "auditRoll": 1},
+                ],
+            },
+        ],
+    ),
+    "362": {"sourceRoutes": [
+        route_action(237, [gold(-1)], "Paid 1 Gold Crown", "Buy a cup of jala"),
+        {"Section": 388, "Label": "Decline or cannot pay"},
+    ]},
+    "372": {
+        **section_roll(
+            "Open the bolt under crossbow fire.",
+            [roll_range(0, 3, 366, "Fatal exposure"), roll_range(4, 11, 277, "Open the bolt")],
+            [{"label": "Aspirant+", "value": 2, "condition": cond_rank("Aspirant")}],
+        ),
+        "routeChecks": power_route_check(372, "Mind Over Matter", 269, None)["routeChecks"],
+    },
+    "381": section_roll(
+        "Palace guard axe dodge.",
+        [roll_range(0, 4, 368, "The axe catches you"), roll_range(5, 11, 252, "Dodge the blow")],
+        [{"label": "Hunting", "value": 2, "condition": cond_power("Hunting")}],
+    ),
+    "388": {"loot": [
+        loot_option("sword", "Buy Sword", [gold(-5), {"type": "add_item", "container": "weapon", "name": "Sword"}]),
+        loot_option("dagger", "Buy Dagger", [gold(-3), {"type": "add_item", "container": "weapon", "name": "Dagger"}]),
+        loot_option("broadsword", "Buy Broadsword", [gold(-9), {"type": "add_item", "container": "weapon", "name": "Broadsword"}]),
+    ]},
+    "331": {"sourceRoutes": [{"Section": 373, "Label": "Solve the map code"}], "routeChecks": route_check("331-map-code", "Map code answer", "The confirmed answer is section 373.", [condition_outcome("Correct answer", 373, {"type": "end_gte", "value": 0}, "373")])["routeChecks"]},
+    "350": {"sourceRoutes": [
+        route_action(253, [{"type": "flag", "key": "book5SommerswerdLost", "value": True}], "Sommerswerd lost", "Mindshield route"),
+        route_action(369, [{"type": "flag", "key": "book5SommerswerdLost", "value": True}], "Sommerswerd lost", "No Mindshield route"),
+    ]},
+    "392": section_roll(
         "Bor-brew check.",
         [roll_range(-2, 6, 364, "Bor-brew wins"), roll_range(7, 14, 218, "Hold your drink")],
         [
@@ -213,11 +486,6 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             {"label": "Savant+", "value": 3, "condition": cond_rank("Savant")},
         ],
     ),
-    "331": {"sourceRoutes": [{"Section": 373, "Label": "Solve the map code"}], "routeChecks": route_check("331-map-code", "Map code answer", "The confirmed answer is section 373.", [condition_outcome("Correct answer", 373, {"type": "end_gte", "value": 0}, "373")])["routeChecks"]},
-    "350": {"sourceRoutes": [
-        route_action(253, [{"type": "flag", "key": "book5SommerswerdLost", "value": True}], "Sommerswerd lost", "Mindshield route"),
-        route_action(369, [{"type": "flag", "key": "book5SommerswerdLost", "value": True}], "Sommerswerd lost", "No Mindshield route"),
-    ]},
 }
 
 
@@ -337,7 +605,7 @@ def classify_section(block: str, routes: list[int], section: int) -> list[str]:
     return classes or ["story"]
 
 
-COMBAT_RE = re.compile(r"([A-Z][A-Za-z' -]+?):\s*COMBAT SKILL\s+(\d+)\s+ENDURANCE\s+(\d+)", re.IGNORECASE)
+COMBAT_RE = re.compile(r"([A-Z][A-Za-z0-9' -]+?):\s*COMBAT SKILL\s+(\d+)\s+ENDURANCE\s+(\d+)", re.IGNORECASE)
 
 
 def infer_combat(section: int, block: str) -> list[dict[str, Any]]:

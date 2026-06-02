@@ -9,7 +9,12 @@
     },
     "2": {
       "summary": "Oede cures the Limbdeath infection.",
-      "actions": [{"type": "flag", "key": "book5BloodPoisoningActive", "value": false}]
+      "actions": [
+        {"type": "flag", "key": "book5BloodPoisoningActive", "value": false},
+        {"type": "stat", "stat": "cs", "delta": 3, "condition": {"type": "flag", "key": "book5LimbdeathCsPenaltyApplied", "value": true}},
+        {"type": "flag", "key": "book5LimbdeathCsPenaltyApplied", "value": false},
+        {"type": "flag", "key": "book5LostUseOfOneArm", "value": false}
+      ]
     },
     "5": {"summary": "Terminal death.", "actions": [{"type": "ending", "ending": "death", "cause": "Section 5 ends the mission."}]},
     "8": {"summary": "Lose 2 END from the Cloeasian lock insight.", "actions": [{"type": "stat", "stat": "end", "delta": -2}]},
@@ -37,14 +42,22 @@
     "93": {"summary": "Restore 1 END.", "actions": [{"type": "stat", "stat": "end", "delta": 1}]},
     "103": {"summary": "Larnuma oil restores 2 END.", "actions": [{"type": "stat", "stat": "end", "delta": 2}]},
     "108": {"summary": "Lose 2 END from corrosive gas.", "actions": [{"type": "stat", "stat": "end", "delta": -2}]},
-    "127": {"summary": "Lose 1 END from the bruised shoulder.", "actions": [{"type": "stat", "stat": "end", "delta": -1}]},
     "130": {"summary": "Restore 1 END after taking the Herb Pad.", "actions": [{"type": "stat", "stat": "end", "delta": 1}]},
     "137": {
       "summary": "Required Meal in the palace gardens; Hunting does not supply food here.",
       "actions": [{"type": "meal", "count": 1, "mode": "all_or_loss", "enduranceLoss": 3, "huntingExempt": true, "huntingSuppressed": true}]
     },
     "159": {"summary": "Lose 2 END from the fall into the antechamber.", "actions": [{"type": "stat", "stat": "end", "delta": -2}]},
+    "161": {"summary": "Recover half of the combat END loss from the recent fight.", "actions": [{"type": "stat", "stat": "end", "mode": "restore_combat_loss_half_floor"}]},
     "164": {"summary": "Lose 1 END in the fly-choked sewer air.", "actions": [{"type": "stat", "stat": "end", "delta": -1}]},
+    "166": {
+      "summary": "Limbdeath makes one arm useless and lowers COMBAT SKILL until Oede cures it.",
+      "actions": [
+        {"type": "stat", "stat": "cs", "delta": -3, "condition": {"type": "no_flag", "key": "book5LimbdeathCsPenaltyApplied", "value": true}},
+        {"type": "flag", "key": "book5LimbdeathCsPenaltyApplied", "value": true},
+        {"type": "flag", "key": "book5LostUseOfOneArm", "value": true}
+      ]
+    },
     "176": {"summary": "Maouk's men confiscate active gear, Gold, and Special Items.", "actions": [{"type": "gear", "available": false}]},
     "183": {"summary": "Lose 2 END.", "actions": [{"type": "stat", "stat": "end", "delta": -2}]},
     "192": {"summary": "Lose 2 END from the heat.", "actions": [{"type": "stat", "stat": "end", "delta": -2}]},

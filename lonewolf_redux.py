@@ -3466,6 +3466,14 @@ class LoneWolfReduxAssistant:
                 matched = raw % 2 == 1
             elif test == "values":
                 matched = raw in [int(value) for value in as_list(outcome.get("values"))]
+            elif test in {"lte_stat", "le_stat", "total_lte_stat"}:
+                matched = total <= self.route_check_stat_value(str(outcome.get("stat") or ""))
+            elif test in {"lt_stat", "total_lt_stat"}:
+                matched = total < self.route_check_stat_value(str(outcome.get("stat") or ""))
+            elif test in {"gte_stat", "ge_stat", "total_gte_stat"}:
+                matched = total >= self.route_check_stat_value(str(outcome.get("stat") or ""))
+            elif test in {"gt_stat", "total_gt_stat"}:
+                matched = total > self.route_check_stat_value(str(outcome.get("stat") or ""))
             if matched:
                 route = int(outcome.get("route")) if outcome.get("route") is not None else None
                 label = str(outcome.get("label") or "")
@@ -3540,22 +3548,59 @@ class LoneWolfReduxAssistant:
         state.setdefault("Complete", False)
         return state
 
-    def evaluate_staged_roll_outcome(
+    def evaluate_staged_roll_modifiers(
         self, stage: dict[str, Any], raw: int
+    ) -> tuple[int, list[dict[str, Any]]]:
+        total = 10 if raw == 0 and bool(stage.get("zeroAsTen")) else raw
+        modifiers: list[dict[str, Any]] = []
+        for modifier in as_list(stage.get("modifiers")):
+            if not isinstance(modifier, dict):
+                continue
+            applies = self.evaluate_flow_condition(modifier.get("condition"))
+            value = int(modifier.get("value") or 0) if applies else 0
+            total += value
+            modifiers.append(
+                {
+                    "Label": modifier.get("label", "Modifier"),
+                    "Value": value,
+                    "Applies": applies,
+                }
+            )
+        return total, modifiers
+
+    def evaluate_staged_roll_outcome(
+        self, stage: dict[str, Any], raw: int, total: int | None = None, history: list[Any] | None = None
     ) -> dict[str, Any]:
+        value = raw if total is None else int(total)
+        prior = [item for item in as_list(history) if isinstance(item, dict)]
         for outcome in as_list(stage.get("outcomes")):
             if not isinstance(outcome, dict):
                 continue
             test = str(outcome.get("test") or "range").lower()
             matched = False
             if test == "range":
-                matched = int(outcome.get("min", -999)) <= raw <= int(outcome.get("max", 999))
+                matched = int(outcome.get("min", -999)) <= value <= int(outcome.get("max", 999))
             elif test == "values":
-                matched = raw in [int(value) for value in as_list(outcome.get("values"))]
+                matched = value in [int(item) for item in as_list(outcome.get("values"))]
             elif test == "even":
-                matched = raw % 2 == 0
+                matched = value % 2 == 0
             elif test == "odd":
-                matched = raw % 2 == 1
+                matched = value % 2 == 1
+            elif test in {"lt_history", "gt_history", "eq_history"}:
+                compare_stage = str(outcome.get("stage") or outcome.get("compareStage") or "")
+                compare = None
+                for item in reversed(prior):
+                    if compare_stage and str(item.get("Stage") or "") != compare_stage:
+                        continue
+                    compare = int(item.get("Total", item.get("Raw", 0)) or 0)
+                    break
+                if compare is not None:
+                    if test == "lt_history":
+                        matched = value < compare
+                    elif test == "gt_history":
+                        matched = value > compare
+                    else:
+                        matched = value == compare
             if matched:
                 return outcome
         return {}
@@ -3589,7 +3634,9 @@ class LoneWolfReduxAssistant:
                 "Complete": True,
             }
 
-        outcome = self.evaluate_staged_roll_outcome(stage, raw)
+        total, modifiers = self.evaluate_staged_roll_modifiers(stage, raw)
+        history = as_list(state.get("History"))
+        outcome = self.evaluate_staged_roll_outcome(stage, raw, total, history)
         route = int(outcome.get("route")) if outcome.get("route") is not None else None
         next_stage = str(outcome.get("nextStage") or "")
         ending = str(outcome.get("ending") or "")
@@ -3606,8 +3653,8 @@ class LoneWolfReduxAssistant:
         result = {
             "Section": int(self.state["CurrentSection"]),
             "Raw": raw,
-            "Total": raw,
-            "Modifiers": [],
+            "Total": total,
+            "Modifiers": modifiers,
             "Route": route,
             "Outcome": str(outcome.get("label") or ""),
             "Summary": str(staged.get("summary") or "Staged roll"),
@@ -3620,12 +3667,13 @@ class LoneWolfReduxAssistant:
             "Ending": ending,
         }
 
-        history = as_list(state.get("History"))
         history.append(
             {
                 "Stage": result["Stage"],
                 "StageLabel": result["StageLabel"],
                 "Raw": raw,
+                "Total": total,
+                "Modifiers": modifiers,
                 "Outcome": result["Outcome"],
                 "Route": route,
                 "NextStage": next_stage,
@@ -3790,6 +3838,35 @@ class LoneWolfReduxAssistant:
     def gold_distraction_session_key(self) -> str:
         return f"goldDistraction:{self.current_visit_key()}"
 
+    def portholes_session_key(self) -> str:
+        return f"portholes:{self.current_visit_key()}"
+
+    def current_portholes_payload(self, entry: dict[str, Any]) -> dict[str, Any] | None:
+        game = entry.get("portholes") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            return None
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.portholes_session_key()
+        last_result = stored.get(f"{session_key}:last")
+        if not isinstance(last_result, dict) or last_result.get("VisitKey") != self.current_visit_key():
+            last_result = None
+        stake = max(1, int(game.get("stake") or 3))
+        gold = int(self.inventory.get("GoldCrowns") or 0)
+        return {
+            "Available": True,
+            "Id": str(game.get("id") or "portholes"),
+            "Label": str(game.get("label") or "Play Portholes"),
+            "Summary": str(game.get("summary") or ""),
+            "Stake": stake,
+            "WinAmount": max(0, int(game.get("winAmount") or 6)),
+            "CanPlay": gold >= stake,
+            "Gold": gold,
+            "LastResult": json_clone(last_result) if last_result else None,
+        }
+
     def current_gold_distraction_payload(self, entry: dict[str, Any]) -> dict[str, Any] | None:
         game = entry.get("goldDistraction") if isinstance(entry, dict) else None
         if not isinstance(game, dict):
@@ -3883,6 +3960,100 @@ class LoneWolfReduxAssistant:
             self.set_section(route)
         else:
             self.autosave()
+        return result
+
+    def play_portholes(
+        self,
+        player1_die1: Any | None = None,
+        player1_die2: Any | None = None,
+        player2_die1: Any | None = None,
+        player2_die2: Any | None = None,
+        lone_wolf_die1: Any | None = None,
+        lone_wolf_die2: Any | None = None,
+    ) -> dict[str, Any] | None:
+        entry = self.current_section_flow_entry() or {}
+        game = entry.get("portholes") if isinstance(entry, dict) else None
+        if not isinstance(game, dict):
+            print("Portholes is not available in this section.")
+            return None
+
+        stake = max(1, int(game.get("stake") or 3))
+        win_amount = max(0, int(game.get("winAmount") or 6))
+        gold_before = int(self.inventory.get("GoldCrowns") or 0)
+        if gold_before < stake:
+            print(f"Portholes needs {stake} Gold Crowns to stake, but only {gold_before} are carried.")
+            return None
+
+        def roll_pair(first: Any | None, second: Any | None) -> dict[str, Any]:
+            die1 = coerce_random_digit(first)
+            die2 = coerce_random_digit(second)
+            return {"Die1": die1, "Die2": die2, "Total": die1 + die2, "Portholes": die1 == 0 and die2 == 0}
+
+        player1 = roll_pair(player1_die1, player1_die2)
+        player2 = roll_pair(player2_die1, player2_die2)
+        lone_wolf = roll_pair(lone_wolf_die1, lone_wolf_die2)
+        other_portholes = bool(player1["Portholes"] or player2["Portholes"])
+
+        if lone_wolf["Portholes"] and not other_portholes:
+            outcome = "Lone Wolf calls Portholes"
+            gold_delta = win_amount
+        elif other_portholes:
+            outcome = "Another player calls Portholes"
+            gold_delta = -stake
+        elif int(lone_wolf["Total"]) > max(int(player1["Total"]), int(player2["Total"])):
+            outcome = "Lone Wolf has the highest total"
+            gold_delta = win_amount
+        elif int(player1["Total"]) > int(lone_wolf["Total"]) or int(player2["Total"]) > int(lone_wolf["Total"]):
+            outcome = "Another player beats Lone Wolf"
+            gold_delta = -stake
+        else:
+            outcome = "Tie; stake returned"
+            gold_delta = 0
+
+        self.inventory["GoldCrowns"] = max(0, min(50, gold_before + gold_delta))
+        self.inventory["Nobles"] = int(self.inventory["GoldCrowns"])
+
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            stored = {}
+            self.automation["Stored"] = stored
+        session_key = self.portholes_session_key()
+        result = {
+            "Game": "Portholes",
+            "VisitKey": self.current_visit_key(),
+            "Player1": player1,
+            "Player2": player2,
+            "LoneWolf": lone_wolf,
+            "Outcome": outcome,
+            "GoldDelta": int(self.inventory["GoldCrowns"]) - gold_before,
+            "GoldBefore": gold_before,
+            "GoldAfter": int(self.inventory["GoldCrowns"]),
+            "Stake": stake,
+            "WinAmount": win_amount,
+        }
+        stored[f"{session_key}:last"] = result
+        journal = as_list(self.automation.get("Journal"))
+        journal.append(
+            {
+                "Kind": "portholes",
+                "AppliedAt": datetime.now().isoformat(timespec="seconds"),
+                "BookNumber": int(self.character["BookNumber"]),
+                "Section": int(self.state["CurrentSection"]),
+                "VisitKey": self.current_visit_key(),
+                "Summary": f"Portholes {outcome}",
+                "Result": json_clone(result),
+            }
+        )
+        self.automation["Journal"] = journal[-100:]
+        self.autosave()
+
+        print(
+            "Portholes: "
+            f"P1 {player1['Die1']}+{player1['Die2']}={player1['Total']}, "
+            f"P2 {player2['Die1']}+{player2['Die2']}={player2['Total']}, "
+            f"Lone Wolf {lone_wolf['Die1']}+{lone_wolf['Die2']}={lone_wolf['Total']} - {outcome}."
+        )
+        print(f"Gold Crowns {gold_before}->{self.inventory['GoldCrowns']}")
         return result
 
     def play_cartwheel(
@@ -4286,6 +4457,7 @@ class LoneWolfReduxAssistant:
             "RouteChecks": self.evaluate_route_checks(entry, automation),
             "StagedRoll": self.current_staged_roll_payload(entry),
             "Cartwheel": self.current_cartwheel_payload(entry),
+            "Portholes": self.current_portholes_payload(entry),
             "GoldDistraction": self.current_gold_distraction_payload(entry),
             "Healing": self.current_healing_payload(),
             "LossChoices": self.current_loss_choices_payload(entry),

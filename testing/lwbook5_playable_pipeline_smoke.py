@@ -355,6 +355,93 @@ def test_book5_semantic_combat_helpers() -> None:
     assert_true(assistant.can_evade_combat_now(), "section 393 can evade after three rounds")
 
 
+def test_book5_reviewed_section_helpers() -> None:
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 46)
+    preset = assistant.flow_combat_entries()[0]
+    assert_equal(preset["enemy"]["name"], "Vestibule Guard 2", "section 46 digit enemy combat detected")
+
+    assistant = fresh_assistant()
+    assistant.character["CombatSkillCurrent"] = 14
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 127)
+    result = quiet(assistant.roll_current_section, 4)
+    assert_equal(result["Route"], 159, "section 127 successful door charge route")
+    assert_equal(assistant.character["EnduranceCurrent"], 20, "section 127 success does not lose END")
+
+    assistant = fresh_assistant()
+    assistant.character["CombatSkillCurrent"] = 14
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 127)
+    result = quiet(assistant.roll_current_section, 5)
+    assert_equal(result["Route"], 93, "section 127 failed door charge route")
+    assert_equal(assistant.character["EnduranceCurrent"], 19, "section 127 failure loses 1 END")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 15
+    assistant.state["CombatHistory"] = [{"BookNumber": 5, "Rounds": [{"PlayerLoss": 7}]}]
+    quiet(assistant.set_section, 161)
+    assert_equal(assistant.character["EnduranceCurrent"], 18, "section 161 restores half combat END loss")
+
+    assistant = fresh_assistant()
+    assistant.character["CombatSkillCurrent"] = 17
+    quiet(assistant.set_section, 166)
+    assert_equal(assistant.character["CombatSkillCurrent"], 14, "section 166 applies Limbdeath CS penalty")
+    assert_true(assistant.automation_flags["book5LostUseOfOneArm"], "section 166 sets one-arm flag")
+    quiet(assistant.set_section, 166)
+    assert_equal(assistant.character["CombatSkillCurrent"], 14, "section 166 does not double-apply CS penalty")
+    quiet(assistant.set_section, 2)
+    assert_equal(assistant.character["CombatSkillCurrent"], 17, "section 2 restores Limbdeath CS penalty")
+    assert_equal(assistant.automation_flags["book5LostUseOfOneArm"], False, "section 2 clears one-arm flag")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 20
+    assistant.inventory["Nobles"] = 20
+    quiet(assistant.set_section, 248)
+    quiet(assistant.follow_route, 328)
+    assert_equal(assistant.inventory["GoldCrowns"], 15, "section 248 paid route costs 5 Gold")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 20
+    assistant.inventory["Nobles"] = 20
+    quiet(assistant.set_section, 265)
+    quiet(assistant.follow_route, 397)
+    assert_equal(assistant.inventory["GoldCrowns"], 19, "section 265 paid route costs 1 Gold")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 20
+    assistant.inventory["Nobles"] = 20
+    quiet(assistant.set_section, 276)
+    quiet(assistant.follow_route, 326)
+    assert_equal(assistant.inventory["GoldCrowns"], 15, "section 276 paid route costs 5 Gold")
+
+    assistant = fresh_assistant()
+    assistant.inventory["GoldCrowns"] = 20
+    assistant.inventory["Nobles"] = 20
+    quiet(assistant.set_section, 362)
+    quiet(assistant.follow_route, 237)
+    assert_equal(assistant.inventory["GoldCrowns"], 19, "section 362 jala route costs 1 Gold")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 360)
+    first = quiet(assistant.roll_current_section, 0)
+    assert_equal(first["NextStage"], "second", "section 360 first roll advances to comparison")
+    result = quiet(assistant.roll_current_section, 0)
+    assert_equal(result["Route"], 226, "section 360 lower second roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 360)
+    quiet(assistant.roll_current_section, 0)
+    result = quiet(assistant.roll_current_section, 9)
+    assert_equal(result["Route"], 297, "section 360 higher second roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 360)
+    quiet(assistant.roll_current_section, 0)
+    result = quiet(assistant.roll_current_section, 1)
+    assert_equal(result["Route"], 334, "section 360 equal second roll route")
+
+
 def main() -> int:
     test_book5_confiscation_restore_and_safekeeping()
     test_book5_meals_blood_poisoning_and_loss_choices()
@@ -362,6 +449,7 @@ def main() -> int:
     test_book5_combat_route_targets_match_source()
     test_book5_combat_route_semantics()
     test_book5_semantic_combat_helpers()
+    test_book5_reviewed_section_helpers()
     print("Book 5 playable pipeline smoke passed.")
     return 0
 

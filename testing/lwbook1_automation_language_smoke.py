@@ -95,6 +95,11 @@ def smoke_clear_loot_helpers() -> None:
     assert_true("Crystal Star Pendant" in assistant.inventory["SpecialItems"], "section 349 Pendant loot")
 
     assistant = fresh_assistant()
+    quiet(assistant.set_section, 161)
+    quiet(assistant.apply_flow_loot, "161-golden-key")
+    assert_true("Golden Key" in assistant.inventory["SpecialItems"], "section 161 Golden Key loot")
+
+    assistant = fresh_assistant()
     quiet(assistant.set_section, 193)
     quiet(assistant.apply_flow_loot, "193-scroll")
     assert_true("Scroll" in assistant.inventory["BackpackItems"], "section 193 Scroll Backpack Item")

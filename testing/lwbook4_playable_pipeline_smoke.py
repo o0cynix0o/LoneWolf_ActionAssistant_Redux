@@ -152,6 +152,63 @@ def test_book4_underwater_and_special_combat() -> None:
     )
 
 
+def test_book4_reviewed_section_helpers() -> None:
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 11)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Route"], 97, "section 11 low roll route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 190, "section 11 high roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 13)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Route"], 171, "section 13 low roll route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 25, "section 13 high roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 31)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Route"], 272, "section 31 low roll route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 329, "section 31 high roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 59)
+    assert_equal(quiet(assistant.roll_current_section, 0)["Route"], 193, "section 59 low roll route")
+    assert_equal(quiet(assistant.roll_current_section, 5)["Route"], 260, "section 59 high roll route")
+
+    assistant = fresh_assistant()
+    quiet(assistant.set_section, 84)
+    quiet(assistant.apply_flow_loot, "scroll")
+    assert_true("Scroll" in assistant.inventory["SpecialItems"], "section 84 adds prophecy Scroll")
+
+    assistant = fresh_assistant()
+    assistant.inventory["Weapons"] = []
+    quiet(assistant.set_section, 222)
+    quiet(assistant.apply_flow_loot, "dval-sword")
+    assert_true("Captain D'Val's Sword" in assistant.inventory["Weapons"], "section 222 adds Captain D'Val's Sword")
+
+    assistant = fresh_assistant()
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 157)
+    assert_equal(assistant.character["EnduranceCurrent"], 21, "section 157 restores 1 END")
+
+    for section, expected_end in [(159, 18), (236, 16), (263, 16), (275, 19), (283, 17)]:
+        assistant = fresh_assistant()
+        assistant.character["EnduranceCurrent"] = 20
+        quiet(assistant.set_section, section)
+        assert_equal(assistant.character["EnduranceCurrent"], expected_end, f"section {section} END effect")
+
+    assistant = fresh_assistant()
+    assistant.inventory["Weapons"] = ["Sword", "Spear"]
+    assistant.character["EnduranceCurrent"] = 20
+    quiet(assistant.set_section, 272)
+    assert_equal(assistant.character["EnduranceCurrent"], 15, "section 272 loses 5 END")
+    quiet(assistant.apply_section_loss, "rapids-weapon-loss", "weapon", "Spear")
+    assert_equal(assistant.inventory["Weapons"], ["Sword"], "section 272 removes chosen weapon")
+
+    assistant = fresh_assistant()
+    assistant.inventory["Weapons"] = ["Sword", "Captain D'Val's Sword"]
+    quiet(assistant.set_section, 327)
+    assert_equal(assistant.inventory["Weapons"], ["Sword"], "section 327 returns Captain D'Val's Sword")
+
+
 def test_book4_completion() -> None:
     assistant = fresh_assistant()
     quiet(assistant.set_section, 350)
@@ -212,6 +269,7 @@ def main() -> int:
     test_book4_meals_hunting_and_mines()
     test_book4_loss_and_backpack_replacement()
     test_book4_underwater_and_special_combat()
+    test_book4_reviewed_section_helpers()
     test_book4_completion()
     test_book4_combat_route_targets_match_source()
     print("Book 4 playable pipeline smoke passed.")

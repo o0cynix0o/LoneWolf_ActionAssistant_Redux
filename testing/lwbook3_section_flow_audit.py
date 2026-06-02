@@ -216,6 +216,12 @@ MANUAL_FLOW_AUDIT: dict[str, dict[str, Any]] = {
             roll_range(5, 9, 266, "Leap clear"),
         ],
     ),
+    "38": {
+        "loot": [
+            loot_option("fur-backpack", "Take fur Backpack if needed", [{"type": "backpack", "available": True}]),
+            loot_option("rope", "Take Rope (2 spaces)", [{"type": "add_item", "container": "backpack", "name": "Rope (2 spaces)"}]),
+        ]
+    },
     "54": section_roll(
         "Glass stem handling check.",
         [

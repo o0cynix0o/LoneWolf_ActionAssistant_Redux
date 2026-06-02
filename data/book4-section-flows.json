@@ -276,7 +276,26 @@
           "Section": 190
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Dead-end tunnel return route.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 97,
+            "label": "Return by one passage"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 190,
+            "label": "Return by the other passage"
+          }
+        ]
+      }
     },
     "12": {
       "auditStatus": "source-link-baseline",
@@ -387,7 +406,26 @@
           "Section": 25
         }
       ],
-      "incomingRouteCount": 1
+      "incomingRouteCount": 1,
+      "roll": {
+        "summary": "Troubadour-camp dawn route.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 171,
+            "label": "Wildlands route"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 25,
+            "label": "Pass route"
+          }
+        ]
+      }
     },
     "14": {
       "auditStatus": "source-link-baseline",
@@ -867,7 +905,26 @@
           "Section": 329
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "roll": {
+        "summary": "White-water rapids check.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 272,
+            "label": "Survive the rapids"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 329,
+            "label": "Swept to death"
+          }
+        ]
+      }
     },
     "32": {
       "auditStatus": "source-link-baseline",
@@ -1635,7 +1692,26 @@
           "Section": 260
         }
       ],
-      "incomingRouteCount": 4
+      "incomingRouteCount": 4,
+      "roll": {
+        "summary": "Warhound release route.",
+        "outcomes": [
+          {
+            "test": "range",
+            "min": 0,
+            "max": 4,
+            "route": 193,
+            "label": "Warhounds close in"
+          },
+          {
+            "test": "range",
+            "min": 5,
+            "max": 9,
+            "route": 260,
+            "label": "Warhounds overrun the line"
+          }
+        ]
+      }
     },
     "60": {
       "auditStatus": "source-link-baseline",
@@ -2350,7 +2426,20 @@
           "Section": 273
         }
       ],
-      "incomingRouteCount": 3
+      "incomingRouteCount": 3,
+      "loot": [
+        {
+          "id": "scroll",
+          "label": "Take prophecy Scroll",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "special",
+              "name": "Scroll"
+            }
+          ]
+        }
+      ]
     },
     "85": {
       "auditStatus": "source-link-baseline",
@@ -5773,7 +5862,20 @@
           "Section": 165
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "loot": [
+        {
+          "id": "dval-sword",
+          "label": "Take Captain D'Val's Sword",
+          "actions": [
+            {
+              "type": "add_item",
+              "container": "weapon",
+              "name": "Captain D'Val's Sword"
+            }
+          ]
+        }
+      ]
     },
     "223": {
       "auditStatus": "source-link-baseline",
@@ -7175,7 +7277,17 @@
           "Section": 79
         }
       ],
-      "incomingRouteCount": 2
+      "incomingRouteCount": 2,
+      "lossChoices": [
+        {
+          "id": "rapids-weapon-loss",
+          "label": "Lose weapon in the rapids",
+          "summary": "Choose the Weapon lost during the river ordeal.",
+          "containers": [
+            "weapon"
+          ]
+        }
+      ]
     },
     "273": {
       "auditStatus": "source-link-baseline",
