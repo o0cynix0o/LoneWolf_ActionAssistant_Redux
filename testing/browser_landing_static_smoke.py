@@ -47,6 +47,10 @@ def main() -> int:
         "Settings" in index_source and "settingsModal" in index_source,
         "index.html should expose the settings modal from the Reader panel.",
     )
+    assert_true(
+        "grid-template-columns: repeat(5" in index_source,
+        "index.html should keep the Kai books on one five-card row.",
+    )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
         "assistant.html?book=${book.number}" in index_source,

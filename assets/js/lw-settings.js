@@ -577,7 +577,7 @@
         grid-template-rows: auto auto auto !important;
       }
       .lw-cover-art-off .books {
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+        grid-template-columns: repeat(5, minmax(120px, 1fr)) !important;
       }
       .lw-cover-art-off .list .book {
         grid-template-columns: 1fr !important;
