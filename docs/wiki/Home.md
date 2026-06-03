@@ -14,8 +14,8 @@ It helps with:
 
 - Book 1 character creation
 - Book 2 setup, checked routes, section helpers, combat presets, deaths, completion, and achievements
-- Book 3 setup, source routes, first section helpers, first combat presets, failure/death recovery, and completion
-- Book 4 and Book 5 onboarding helper builds with setup, source routes, first helpers, combat presets, completion, and repeat-book replay
+- Book 3 setup, source routes, first section helpers, first combat presets, failure/death recovery, completion, achievements, and strategy guide
+- Book 4 and Book 5 onboarding helper builds with setup, source routes, first helpers, combat presets, completion, achievements, strategy guides, and repeat-book replay
 - Combat Skill, Endurance, Kai Disciplines, Weapons, Backpack Items, Special Items, Meals, and Gold Crowns
 - random number rolls from 0 to 9
 - route checks for Kai Disciplines, items, Gold Crowns, and Endurance
@@ -53,9 +53,9 @@ Book 1 is the current playable release candidate. Character creation, sheet fiel
 
 Book 2 now has the playable helper set in place. The app can prepare the campaign handoff or a fresh start, handle the new Kai Discipline, starting Gold, carry-over inventory, mandatory items, Royal Armoury choices, checked routes, section effects, combat presets, deaths, completion, and achievements. We still want more real-route time before calling it a public release candidate.
 
-Book 3 has its first onboarding helper build. It can set up a fresh or continued Book 3 run, carry forward the campaign, handle the first confirmed Book 3 item/rule helpers, and complete/repeat the book. It still needs more route work and playtesting before we would talk about release-candidate status.
+Book 3 has its first onboarding helper build. It can set up a fresh or continued Book 3 run, carry forward the campaign, handle the first confirmed Book 3 item/rule helpers, unlock first-pass achievements, and complete/repeat the book. It still needs more route work and playtesting before we would talk about release-candidate status.
 
-Books 4 and 5 have their first onboarding helper builds. Book 5 also introduces safekeeping, so selected Special Items can be stored away from the active Action Chart and carried forward later. Book 6 and later will be added one at a time through the book pipeline so new rules, carry-over choices, powers, gear, and section logic get proper attention.
+Books 4 and 5 have their first onboarding helper builds plus first-pass achievements and strategy guides. Book 5 also introduces safekeeping, so selected Special Items can be stored away from the active Action Chart and carried forward later. Book 6 and later will be added one at a time through the book pipeline so new rules, carry-over choices, powers, gear, and section logic get proper attention.
 
 ## Project Rule
 

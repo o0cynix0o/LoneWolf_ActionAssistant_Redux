@@ -45,6 +45,8 @@ Book 2 achievements can be tied to:
 - dangerous forged-paper outcomes
 - broad exploration
 
+Books 3 through 5 now have first-pass achievement sets as well. They cover completion, major carry-forward items, important combat milestones, unusual failure states, and broad exploration. The app keeps these tied to reliable save evidence: visited sections, item history, combat history, completion records, and recorded deaths or failures.
+
 ## Unlock Alerts
 
 When an achievement unlocks, the app shows a browser notification-style alert so you notice it during play.
@@ -71,4 +73,4 @@ Use **Repeat Book 1** when you want another run at routes or achievements. The a
 
 Achievement history and combat history stay in the save, so a replay feels like a fresh run without erasing what you already proved.
 
-Book 2 achievements work the same way: once the save has durable evidence, the app can keep the unlock even if a later replay takes a different path.
+Book 2 and later achievements work the same way: once the save has durable evidence, the app can keep the unlock even if a later replay takes a different path.

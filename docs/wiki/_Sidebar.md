@@ -15,5 +15,8 @@
   - [Full Campaign Story Run](Full-Campaign-Story-Run)
   - [Book 1 Strategy Guide](Book-1-Strategy-Guide)
   - [Book 2 Strategy Guide](Book-2-Strategy-Guide)
+  - [Book 3 Strategy Guide](Book-3-Strategy-Guide)
+  - [Book 4 Strategy Guide](Book-4-Strategy-Guide)
+  - [Book 5 Strategy Guide](Book-5-Strategy-Guide)
   - [100 Percent Achievement Guide](Achievement-100-Percent-Guide)
 - [FAQ](FAQ)

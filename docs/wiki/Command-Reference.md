@@ -43,7 +43,7 @@ Use **Eat Meal** and **Missed Meal** for normal food bookkeeping. Hunting can ex
 - **Combat**: active fight controls and combat log.
 - **Saves**: save/load/import/export controls.
 - **Notes**: player notes.
-- **Achievements**: unlocked, locked, recent, and Book 1 achievement progress.
+- **Achievements**: unlocked, locked, recent, and current-book achievement progress.
 
 ## Death Screen
 

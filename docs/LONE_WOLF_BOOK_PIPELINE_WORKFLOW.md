@@ -65,6 +65,7 @@ Each book pass should produce or update:
 - `testing/logs/LWBOOKN_ROUTE_GAUNTLET_PLAYTEST.md`
 - `testing/logs/LWBOOKN_PLAYTEST_REPORT.md`
 - `testing/logs/LWBOOKN_ACHIEVEMENT_CANDIDATES.md`
+- `testing/logs/LWBOOKN_FANDOM_POLISH_REVIEW.md` when a fan-wiki polish pass is useful
 - `testing/logs/LW_FULL_SECTION_AUDIT.md` after the book is implemented, with the onboarded book at zero blockers, zero behavior failures, and zero unreviewed signal gaps
 - `docs/wiki/Book-N-Strategy-Guide.md` when strategy guidance is useful
 
@@ -413,6 +414,20 @@ Every visible control must read like something a player understands.
 - Avoid triggers that require copied story text, exact prose matching, or a manual rebuild button.
 - Draft or update player-facing strategy guides only after route/support knowledge changes enough to help players.
 - Strategy guides should be warm, practical, spoiler-conscious when possible, and not written like technical audit reports.
+
+## 12A. Fan-Wiki Polish Pass
+
+- Treat fan-wiki pages as secondary polish context, never as the gameplay authority.
+- Prefer book pages, walkthrough pages, guide pages, and major item/location pages.
+- Extract only useful signals:
+  - player-facing guide advice
+  - carry-forward item warnings
+  - replay and achievement candidates
+  - route-risk reminders
+  - theme, tooltip, and UI-label ideas
+- Cross-check any rule or mechanic claim against local Project Aon source before implementation.
+- Do not copy long wiki prose into app or docs. Summarize, paraphrase, and record links in `testing/logs/LWBOOKN_FANDOM_POLISH_REVIEW.md`.
+- If the wiki suggests a mechanic that Project Aon does not clearly support, queue it as a question instead of implementing it.
 
 ## 13. Generate Tests
 

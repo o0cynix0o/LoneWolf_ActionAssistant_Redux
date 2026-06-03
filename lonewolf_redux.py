@@ -396,7 +396,190 @@ LONE_WOLF_BOOK2_ACHIEVEMENTS = [
     },
 ]
 
-LONE_WOLF_ACHIEVEMENTS = LONE_WOLF_BOOK1_ACHIEVEMENTS + LONE_WOLF_BOOK2_ACHIEVEMENTS
+LONE_WOLF_BOOK3_ACHIEVEMENTS = [
+    {
+        "Id": "lw3_complete",
+        "Name": "The Caverns of Kalte",
+        "BookNumber": 3,
+        "Category": "Story",
+        "Description": "Complete Book 3.",
+    },
+    {
+        "Id": "lw3_capture_vonotar",
+        "Name": "Traitor in Chains",
+        "BookNumber": 3,
+        "Category": "Story",
+        "Description": "Bring Vonotar back from Kalte.",
+    },
+    {
+        "Id": "lw3_mission_failed",
+        "Name": "Cold Comfort",
+        "BookNumber": 3,
+        "Category": "Failure",
+        "Description": "Record the Book 3 mission-failure ending.",
+    },
+    {
+        "Id": "lw3_firesphere",
+        "Name": "Warm Hands, Clear Head",
+        "BookNumber": 3,
+        "Category": "Item",
+        "Description": "Take the Firesphere.",
+    },
+    {
+        "Id": "lw3_silver_helm",
+        "Name": "Helm of Ikaya",
+        "BookNumber": 3,
+        "Category": "Item",
+        "Description": "Take the Silver Helm.",
+    },
+    {
+        "Id": "lw3_baknar_oil",
+        "Name": "Field-Proven Ointment",
+        "BookNumber": 3,
+        "Category": "Item",
+        "Description": "Take Baknar Oil.",
+    },
+    {
+        "Id": "lw3_crystal_frostwyrm",
+        "Name": "Frostwyrm Breaker",
+        "BookNumber": 3,
+        "Category": "Combat",
+        "Description": "Win the recorded Crystal Frostwyrm combat.",
+    },
+    {
+        "Id": "lw3_long_road",
+        "Name": "Across the Ice",
+        "BookNumber": 3,
+        "Category": "Exploration",
+        "Description": "Visit 90 or more unique Book 3 sections.",
+    },
+]
+
+LONE_WOLF_BOOK4_ACHIEVEMENTS = [
+    {
+        "Id": "lw4_complete",
+        "Name": "The Chasm of Doom",
+        "BookNumber": 4,
+        "Category": "Story",
+        "Description": "Complete Book 4.",
+    },
+    {
+        "Id": "lw4_dagger_vashna",
+        "Name": "Dagger of Vashna",
+        "BookNumber": 4,
+        "Category": "Item",
+        "Description": "Carry forward the Dagger of Vashna.",
+    },
+    {
+        "Id": "lw4_onyx_medallion",
+        "Name": "Black Stone, Bright Idea",
+        "BookNumber": 4,
+        "Category": "Item",
+        "Description": "Take the Onyx Medallion.",
+    },
+    {
+        "Id": "lw4_mine_treasure",
+        "Name": "Mine-Cart Accounting",
+        "BookNumber": 4,
+        "Category": "Item",
+        "Description": "Recover the Maaken mine treasure cache.",
+    },
+    {
+        "Id": "lw4_barraka_victory",
+        "Name": "Cult Breaker",
+        "BookNumber": 4,
+        "Category": "Combat",
+        "Description": "Win a recorded Barraka combat.",
+    },
+    {
+        "Id": "lw4_holy_water",
+        "Name": "Bottle Service",
+        "BookNumber": 4,
+        "Category": "Item",
+        "Description": "Take a Flask of Holy Water.",
+    },
+    {
+        "Id": "lw4_bad_key",
+        "Name": "Iron Key, Bad Feeling",
+        "BookNumber": 4,
+        "Category": "Danger",
+        "Description": "Take the dangerous Iron Key.",
+    },
+    {
+        "Id": "lw4_long_road",
+        "Name": "Ruanon Investigator",
+        "BookNumber": 4,
+        "Category": "Exploration",
+        "Description": "Visit 90 or more unique Book 4 sections.",
+    },
+]
+
+LONE_WOLF_BOOK5_ACHIEVEMENTS = [
+    {
+        "Id": "lw5_complete",
+        "Name": "Shadow on the Sand",
+        "BookNumber": 5,
+        "Category": "Story",
+        "Description": "Complete Book 5.",
+    },
+    {
+        "Id": "lw5_book_magnakai",
+        "Name": "Book of the Magnakai",
+        "BookNumber": 5,
+        "Category": "Story",
+        "Description": "Claim the Book of the Magnakai.",
+    },
+    {
+        "Id": "lw5_kai_master",
+        "Name": "Kai Master",
+        "BookNumber": 5,
+        "Category": "Story",
+        "Description": "Complete the Kai series and become a Kai Master.",
+    },
+    {
+        "Id": "lw5_black_sash",
+        "Name": "Dressed for Barrakeesh",
+        "BookNumber": 5,
+        "Category": "Item",
+        "Description": "Buy the Black Sash.",
+    },
+    {
+        "Id": "lw5_recover_gear",
+        "Name": "Nothing Missing. Probably.",
+        "BookNumber": 5,
+        "Category": "Inventory",
+        "Description": "Recover confiscated gear in the palace.",
+    },
+    {
+        "Id": "lw5_jewelled_mace",
+        "Name": "Diplomatic Weight",
+        "BookNumber": 5,
+        "Category": "Item",
+        "Description": "Take the Jewelled Mace.",
+    },
+    {
+        "Id": "lw5_itikar_rider",
+        "Name": "Updraft Negotiations",
+        "BookNumber": 5,
+        "Category": "Combat",
+        "Description": "Win a recorded Itikar combat.",
+    },
+    {
+        "Id": "lw5_long_road",
+        "Name": "Across Vassagonia",
+        "BookNumber": 5,
+        "Category": "Exploration",
+        "Description": "Visit 100 or more unique Book 5 sections.",
+    },
+]
+
+LONE_WOLF_ACHIEVEMENTS = (
+    LONE_WOLF_BOOK1_ACHIEVEMENTS
+    + LONE_WOLF_BOOK2_ACHIEVEMENTS
+    + LONE_WOLF_BOOK3_ACHIEVEMENTS
+    + LONE_WOLF_BOOK4_ACHIEVEMENTS
+    + LONE_WOLF_BOOK5_ACHIEVEMENTS
+)
 
 LW1_STORY_ROUTE = [
     1,
@@ -2592,6 +2775,70 @@ class LoneWolfReduxAssistant:
             return 126 in sections or self.death_history_has_section(2, 126)
         if achievement_id == "lw2_long_road":
             return max(len(sections), self.summary_metric_for_book(2, "UniqueSectionsVisited")) >= 90
+        if achievement_id == "lw3_complete":
+            return self.book_completed(3)
+        if achievement_id == "lw3_capture_vonotar":
+            return 350 in sections or self.book_completed(3)
+        if achievement_id == "lw3_mission_failed":
+            return 61 in sections or self.death_history_has_section(3, 61)
+        if achievement_id == "lw3_firesphere":
+            return "firesphere" in items
+        if achievement_id == "lw3_silver_helm":
+            return "silver helm" in items
+        if achievement_id == "lw3_baknar_oil":
+            return "baknar oil" in items
+        if achievement_id == "lw3_crystal_frostwyrm":
+            return any(
+                "crystal frostwyrm" in str(entry.get("EnemyName") or "").lower()
+                or int(entry.get("Section") or 0) == 265
+                for entry in victories
+            )
+        if achievement_id == "lw3_long_road":
+            return max(len(sections), self.summary_metric_for_book(3, "UniqueSectionsVisited")) >= 90
+        if achievement_id == "lw4_complete":
+            return self.book_completed(4)
+        if achievement_id == "lw4_dagger_vashna":
+            return "dagger of vashna" in items
+        if achievement_id == "lw4_onyx_medallion":
+            return "onyx medallion" in items
+        if achievement_id == "lw4_mine_treasure":
+            return 302 in sections and (
+                "flask of holy water" in items
+                or "potion of alether (+2 cs)" in items
+                or "potion of laumspur (+4 end)" in items
+            )
+        if achievement_id == "lw4_barraka_victory":
+            return any(
+                "barraka" in str(entry.get("EnemyName") or "").lower()
+                or int(entry.get("Section") or 0) in {122, 325}
+                for entry in victories
+            )
+        if achievement_id == "lw4_holy_water":
+            return "flask of holy water" in items
+        if achievement_id == "lw4_bad_key":
+            return "iron key" in items
+        if achievement_id == "lw4_long_road":
+            return max(len(sections), self.summary_metric_for_book(4, "UniqueSectionsVisited")) >= 90
+        if achievement_id == "lw5_complete":
+            return self.book_completed(5)
+        if achievement_id == "lw5_book_magnakai":
+            return "book of the magnakai" in items
+        if achievement_id == "lw5_kai_master":
+            return self.book_completed(5) and "book of the magnakai" in items
+        if achievement_id == "lw5_black_sash":
+            return "black sash" in items
+        if achievement_id == "lw5_recover_gear":
+            return 14 in sections
+        if achievement_id == "lw5_jewelled_mace":
+            return "jewelled mace" in items
+        if achievement_id == "lw5_itikar_rider":
+            return any(
+                "itikar" in str(entry.get("EnemyName") or "").lower()
+                or int(entry.get("Section") or 0) in {240, 370}
+                for entry in victories
+            )
+        if achievement_id == "lw5_long_road":
+            return max(len(sections), self.summary_metric_for_book(5, "UniqueSectionsVisited")) >= 100
 
         return False
 

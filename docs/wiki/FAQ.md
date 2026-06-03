@@ -8,7 +8,7 @@ You can create a Book 1 character, use the Book 1 Action Chart, follow section r
 
 Book 2 is also playable as a helper build. You can prepare a fresh Book 2 character or continue a completed Book 1 run into the Book 2 starting state, then use checked routes, section helpers, combat presets, death recovery, completion, and achievements. It still needs more real-route time before we package it as a public release candidate.
 
-Books 3, 4, and 5 are playable onboarding helper builds. They support campaign handoff, fresh starts, source routes, first section helpers, combat presets, death/failure recovery, completion, and repeat-book replay. They are ready to try, but we still expect playtesting to find polish work.
+Books 3, 4, and 5 are playable onboarding helper builds. They support campaign handoff, fresh starts, source routes, first section helpers, combat presets, death/failure recovery, completion, repeat-book replay, first-pass achievements, and strategy guides. They are ready to try, but we still expect playtesting to find polish work.
 
 ## Which Book Is Supported First?
 

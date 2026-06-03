@@ -61,10 +61,55 @@ These are better replay targets than first-run chores.
 
 For a first Book 2 clear, we recommend focusing on the mission first: keep the Seal safe, reach Durenor, claim the Sommerswerd, and get home. The riskier unlocks make better replay targets.
 
+## Book 3 Achievement List
+
+|Achievement|How to approach it|
+|-----------|------------------|
+|The Caverns of Kalte|Complete Book 3.|
+|Traitor in Chains|Bring Vonotar back from Kalte.|
+|Cold Comfort|Record the Book 3 mission-failure ending.|
+|Warm Hands, Clear Head|Take the Firesphere.|
+|Helm of Ikaya|Take the Silver Helm.|
+|Field-Proven Ointment|Take Baknar Oil.|
+|Frostwyrm Breaker|Win the Crystal Frostwyrm fight.|
+|Across the Ice|Visit 90 or more unique Book 3 sections.|
+
+Book 3 has one special wrinkle: failure and death are not always the same thing. Let the app record the failure ending if you find it, then use replay tools when you want another run at Vonotar.
+
+## Book 4 Achievement List
+
+|Achievement|How to approach it|
+|-----------|------------------|
+|The Chasm of Doom|Complete Book 4.|
+|Dagger of Vashna|Carry forward the Dagger of Vashna.|
+|Black Stone, Bright Idea|Take the Onyx Medallion.|
+|Mine-Cart Accounting|Recover the Maaken mine treasure cache.|
+|Cult Breaker|Win a recorded Barraka combat.|
+|Bottle Service|Take a Flask of Holy Water.|
+|Iron Key, Bad Feeling|Take the dangerous Iron Key.|
+|Ruanon Investigator|Visit 90 or more unique Book 4 sections.|
+
+Book 4 cleanup is best after one calm clear. The dangerous key and mine-treasure routes are more fun when you already know the investigation can be finished.
+
+## Book 5 Achievement List
+
+|Achievement|How to approach it|
+|-----------|------------------|
+|Shadow on the Sand|Complete Book 5.|
+|Book of the Magnakai|Claim the Book of the Magnakai.|
+|Kai Master|Complete the Kai series and carry the Book of the Magnakai.|
+|Dressed for Barrakeesh|Buy the Black Sash.|
+|Nothing Missing. Probably.|Recover confiscated gear in the palace.|
+|Diplomatic Weight|Take the Jewelled Mace.|
+|Updraft Negotiations|Win a recorded Itikar combat.|
+|Across Vassagonia|Visit 100 or more unique Book 5 sections.|
+
+Book 5 is a campaign handoff book. Finish the story first, then use replays to clean up city routes, palace recovery, and the Itikar branch.
+
 ## Backfill
 
 The app backfills achievements automatically from save history when it has reliable evidence. If a route or item never happened in the save, the achievement should stay locked until you actually do it.
 
 ## Later Books
 
-Later-book achievements should be added here only after each book's achievement pass is implemented.
+Book 6 and later achievements should be added here only after each book's ruleset and achievement pass is implemented.

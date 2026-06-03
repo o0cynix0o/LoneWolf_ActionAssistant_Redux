@@ -749,6 +749,15 @@
     .item-row span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .item-row span.wrap { overflow: visible; text-overflow: clip; white-space: normal; }
     .item-row small { color: #aeb091; }
+    .item-note {
+      border: 1px solid rgba(var(--accent-rgb), .45);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: .68rem;
+      line-height: 1;
+      padding: .18rem .42rem;
+      white-space: nowrap;
+    }
     .achievement-row {
       align-items: flex-start;
     }
@@ -4659,13 +4668,32 @@
         toggle ? `<button data-status-flag="${toggle.key}:${toggle.value}">${toggle.label}</button>` : ''
       ].join('');
     }
+    function keyItemNote(item) {
+      const name = text(item).toLowerCase();
+      const notes = [
+        ['crystal star pendant', 'Series item', 'Rare lore item and occasional later check.'],
+        ['sommerswerd', 'Campaign weapon', 'Major carry-forward Special Item and combat weapon.'],
+        ['magic spear', 'Special weapon', 'Weapon-like Special Item for specific Book 2 routes.'],
+        ['shield', 'Carry-forward', 'Useful defensive Special Item across the Kai books.'],
+        ['silver helm', 'Carry-forward', 'Important Kalte reward and Combat Skill helper.'],
+        ['firesphere', 'Carry-forward', 'Important Kalte Special Item with later route value.'],
+        ['onyx medallion', 'Route item', 'Important route item after the Ruanon investigation.'],
+        ['dagger of vashna', 'Series item', 'Major Book 4 reward with later-series value.'],
+        ['black sash', 'Local pass', 'Useful Barrakeesh disguise item.'],
+        ['jewelled mace', 'Route item', 'Heavy Special Item with Book 5 route/combat value.'],
+        ['book of the magnakai', 'Series item', 'Major campaign transition item.']
+      ];
+      const match = notes.find(([needle]) => name.includes(needle));
+      if (!match) return '';
+      return `<small class="item-note" title="${escapeHtml(match[2])}">${escapeHtml(match[1])}</small>`;
+    }
     function statButtons(stat, label, compact = false) {
       const labelClass = compact ? 'quick-stat-label' : '';
       const labelStyle = compact ? '' : 'style="min-width:94px"';
       return `<div class="controls" style="margin-bottom:.45rem"><span class="${labelClass}" ${labelStyle}>${label}</span><button data-adjust="${stat}:-1">-1</button><button data-adjust="${stat}:1">+1</button><input data-set="${stat}" type="number" placeholder="Set"><button data-set-button="${stat}">Set</button></div>`;
     }
     function itemList(title, type, items) {
-      const rows = arr(items).map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span>${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`).join('');
+      const rows = arr(items).map((item, index) => `<div class="item-row"><small>${index + 1}</small><span>${escapeHtml(item)}</span>${keyItemNote(item)}${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`).join('');
       return `<div class="panel"><h2>${title}</h2>${rows || '<div class="item-row"><span>Empty</span></div>'}</div>`;
     }
     function quickDropRows(inv) {
@@ -4675,7 +4703,7 @@
         ['S', 'special', inv.SpecialItems]
       ];
       const rows = groups.flatMap(([label, type, items]) => arr(items).map((item) => (
-        `<div class="item-row"><small>${label}</small><span>${escapeHtml(item)}</span>${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`
+        `<div class="item-row"><small>${label}</small><span>${escapeHtml(item)}</span>${keyItemNote(item)}${itemActionButtons(type, item)}<button class="danger" data-drop="${type}:${encodeURIComponent(item)}">Drop</button></div>`
       )));
       return rows.join('') || '<div class="item-row"><span>Inventory empty.</span></div>';
     }

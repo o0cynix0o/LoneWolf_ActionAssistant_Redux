@@ -8,6 +8,9 @@ The strategy guides are written for someone who is actually playing the book. Th
 
 - [Book 1 Strategy Guide](Book-1-Strategy-Guide)
 - [Book 2 Strategy Guide](Book-2-Strategy-Guide)
+- [Book 3 Strategy Guide](Book-3-Strategy-Guide)
+- [Book 4 Strategy Guide](Book-4-Strategy-Guide)
+- [Book 5 Strategy Guide](Book-5-Strategy-Guide)
 - [Full Campaign Story Run](Full-Campaign-Story-Run)
 - [100 Percent Achievement Guide](Achievement-100-Percent-Guide)
 
@@ -22,4 +25,4 @@ Each guide should give you:
 - combat and inventory tips
 - achievement and replay advice
 
-Book 2 has a first strategy guide because its automation, combat, and achievement passes are in place. Books 3, 4, and 5 are playable helper builds now, but their full strategy pages should wait until playtesting gives us enough route feel to write advice instead of just repeating audit notes.
+Books 1 through 5 now have first-pass strategy guides. Books 1 and 2 have the most lived-in route advice; Books 3, 4, and 5 are lighter helper-build guides that focus on known carry-forward items, dangerous patterns, and achievement cleanup. We will keep tightening those pages as real playtesting turns rough edges into better advice.

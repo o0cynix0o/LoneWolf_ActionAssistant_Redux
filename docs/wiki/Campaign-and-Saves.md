@@ -37,7 +37,7 @@ Book 1 can continue into the Book 2 starting setup. The assistant keeps the comp
 
 Book 2 adventure helpers are now in place, including section effects, combat presets, death recovery, completion, and achievements.
 
-Books 3, 4, and 5 can now be played as onboarding helper builds. The assistant supports the campaign handoff, one new Kai Discipline, book-start gear choices, source routes, first section helpers, combat presets, death/failure handling, completion, and repeat-book replay. We still expect real playtesting to find rough edges before those books graduate toward release-candidate status.
+Books 3, 4, and 5 can now be played as onboarding helper builds. The assistant supports the campaign handoff, one new Kai Discipline, book-start gear choices, source routes, first section helpers, combat presets, death/failure handling, completion, repeat-book replay, first-pass achievements, and strategy guides. We still expect real playtesting to find rough edges before those books graduate toward release-candidate status.
 
 Book 5 introduces safekeeping. When a book lets Lone Wolf leave selected Special Items somewhere safe, the assistant stores those items away from the active Action Chart and records where they were left. They are not available during the adventure, but they are protected from ordinary item-loss effects and can be brought forward later when the campaign calls for them.
 

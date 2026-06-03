@@ -44,6 +44,8 @@ Special Items often matter for route checks. Do not drop them casually unless th
 
 The Sommerswerd and Magic Spear are Special Items, but the combat helper also treats them as weapon-like choices when a fight calls for them.
 
+Some carried items now show a small note in the Inventory tab when they are especially important for later routes, combat, or campaign handoff. These notes are reminders, not new rules. Current marked items include the Crystal Star Pendant, Shield, Sommerswerd, Magic Spear, Firesphere, Silver Helm, Onyx Medallion, Dagger of Vashna, Black Sash, Jewelled Mace, and Book of the Magnakai.
+
 Book 5 adds **safekeeping**. If the story lets you leave Special Items somewhere safe before the adventure, the app moves those items out of the active Action Chart and into a safekeeping record. They are not available during the book, but they are protected from ordinary item loss and stay attached to the campaign for later.
 
 ## Gold Crowns

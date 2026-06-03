@@ -1,6 +1,6 @@
 # Getting Started
 
-This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Book 2 now available as a playable helper build. We are keeping the app local, practical, and faithful to the book text.
+This project is the Book 1 release-candidate build of Lone Wolf Action Assistant Redux, with Books 2-5 now available as playable helper builds. We are keeping the app local, practical, and faithful to the book text.
 
 ## Requirements
 
@@ -8,7 +8,7 @@ This project is the Book 1 release-candidate build of Lone Wolf Action Assistant
 - A modern browser
 - The project files from the repository
 - Your own Project Aon Book 1 HTML files
-- Your own Project Aon Book 2 HTML files if you want to continue into Fire on the Water
+- Your own Project Aon Book 2-5 HTML files if you want to continue through the Kai series
 
 Install Python dependencies from the project folder if needed:
 
@@ -52,6 +52,14 @@ For Book 2, use:
 books\lw\02fotw
 ```
 
+For Books 3-5, use:
+
+```text
+books\lw\03tcok
+books\lw\04tcod
+books\lw\05sots
+```
+
 The local guide page is:
 
 ```text
@@ -85,6 +93,8 @@ Book 2 has setup, checked routes, section helpers, combat presets, death recover
 The setup handles the new Kai Discipline, starting Gold with the 50 Crown cap, carry-over inventory from Book 1, the Seal of Hammerdal, the map, and Royal Armoury choices.
 
 We still want more real-route time before calling Book 2 a public release candidate, so please treat it as ready to play and ready to report rough edges.
+
+Books 3, 4, and 5 are playable onboarding helper builds with first-pass achievements and strategy pages. They are ready for real runs, but we still expect normal play to uncover labels, edge cases, and route polish we can improve.
 
 ## Choose A Play Mode
 
