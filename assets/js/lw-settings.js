@@ -684,6 +684,7 @@
     Object.entries(theme.vars).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value);
     });
+    document.documentElement.dataset.lwTheme = theme.id;
     document.body.dataset.lwTheme = theme.id;
   }
 
@@ -691,6 +692,9 @@
     const clean = normalize(settings);
     ensureRuntimeStyle();
     applyTheme(clean);
+    document.documentElement.classList.toggle('lw-cover-art-off', clean.coverArt === 'off');
+    document.documentElement.dataset.lwCoverArt = clean.coverArt;
+    document.documentElement.dataset.lwReaderTheme = clean.readerTheme;
     document.body.classList.toggle('lw-cover-art-off', clean.coverArt === 'off');
     document.body.dataset.lwCoverArt = clean.coverArt;
     document.body.dataset.lwReaderTheme = clean.readerTheme;
