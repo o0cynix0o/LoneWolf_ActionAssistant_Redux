@@ -16,8 +16,8 @@
   const themes = [
     {
       id: 'kai-gold',
-      name: 'Kai Gold',
-      note: 'The default Sommerlund desk.',
+      name: 'Classic Kai Gold',
+      note: 'The first-start classic look.',
       vars: {
         '--lw-bg': '#10130e',
         '--lw-bg-soft': '#12160f',

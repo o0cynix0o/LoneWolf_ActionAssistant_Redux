@@ -12,6 +12,7 @@ INDEX_HTML = ROOT / "index.html"
 LIBRARY_HTML = ROOT / "library.html"
 INSTALL_HTML = ROOT / "install-books.html"
 SETTINGS_JS = ROOT / "assets" / "js" / "lw-settings.js"
+EARLY_APPEARANCE_JS = ROOT / "assets" / "js" / "lw-appearance-early.js"
 APP_SERVER = ROOT / "app_server.py"
 
 
@@ -26,6 +27,7 @@ def main() -> int:
     library = LIBRARY_HTML.read_text(encoding="utf-8")
     install = INSTALL_HTML.read_text(encoding="utf-8")
     settings = SETTINGS_JS.read_text(encoding="utf-8")
+    early = EARLY_APPEARANCE_JS.read_text(encoding="utf-8")
     server = APP_SERVER.read_text(encoding="utf-8")
 
     for source_name, source in (
@@ -38,6 +40,10 @@ def main() -> int:
             'assets/js/lw-settings.js' in source,
             f"{source_name} should load the shared settings script.",
         )
+        assert_true(
+            'assets/js/lw-appearance-early.js' in source,
+            f"{source_name} should load saved appearance before first paint.",
+        )
 
     for key in (
         "titleBanner",
@@ -48,6 +54,21 @@ def main() -> int:
         "appearanceStorageKeys",
     ):
         assert_true(key in settings, f"lw-settings.js should define {key}.")
+
+    for source_name, source in (
+        ("lw-settings.js", settings),
+        ("lw-appearance-early.js", early),
+    ):
+        assert_true("titleBanner: 'title1'" in source, f"{source_name} should default to the classic title banner.")
+        assert_true("theme: 'kai-gold'" in source, f"{source_name} should default to classic Kai gold colors.")
+        assert_true("coverArt: 'on'" in source, f"{source_name} should show cover art by default.")
+        assert_true("readerStyleEnabled: 'off'" in source, f"{source_name} should keep Project Aon reader styling by default.")
+
+    assert_true("Classic Kai Gold" in settings, "default theme should be labeled as the classic first-start look.")
+    assert_true(
+        "window.LoneWolfReduxEarlyAppearance" in early and "applyRoot()" in early,
+        "early appearance loader should expose and apply first-paint defaults.",
+    )
 
     for theme in (
         "kai-gold",
