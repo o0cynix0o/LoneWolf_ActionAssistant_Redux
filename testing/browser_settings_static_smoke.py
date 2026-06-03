@@ -94,6 +94,10 @@ def main() -> int:
         assert_true(reader_selector in settings, f"reader themes should style {reader_selector}.")
     assert_true("data-lw-title-banner" in index, "home page should expose the swappable title banner.")
     assert_true("settingsModal" in index, "home page should include the settings modal.")
+    assert_true(
+        "${book.status}" not in index and "Requires local Project Aon book files.</span>" not in index,
+        "home book cards should not show internal build/status footer text.",
+    )
     assert_true("renderAppearanceSettings" in assistant, "assistant settings should include appearance controls.")
     assert_true("renderSaveSlotRows" in assistant, "assistant should render save slot rows.")
     assert_true("data-slot-save" in assistant, "assistant should support saving to a slot.")
