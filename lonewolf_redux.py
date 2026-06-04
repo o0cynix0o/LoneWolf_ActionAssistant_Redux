@@ -4817,6 +4817,24 @@ class LoneWolfReduxAssistant:
             restored.append(f"{stored_gold} Gold Crown(s)")
         return "gear restored: " + "; ".join(restored)
 
+    def has_unavailable_gear_stored(self) -> bool:
+        stored = self.automation.get("Stored")
+        if not isinstance(stored, dict):
+            return False
+        equipment = stored.get("confiscatedEquipment")
+        if isinstance(equipment, dict):
+            for key in ("Weapons", "BackpackItems", "SpecialItems"):
+                if as_list(equipment.get(key)):
+                    return True
+            if int(equipment.get("GoldCrowns") or 0) > 0:
+                return True
+        return bool(as_list(stored.get("confiscatedBackpackItems")))
+
+    def restore_stored_gear_for_book_transition(self) -> str:
+        if not self.has_unavailable_gear_stored():
+            return ""
+        return self.restore_unavailable_gear()
+
     def store_unavailable_weapons(self) -> str:
         stored = self.automation["Stored"]
         current_weapons = as_list(self.inventory.get("Weapons"))
@@ -7936,6 +7954,9 @@ class LoneWolfReduxAssistant:
         else:
             choice_ids = clean_book5_equipment_choices(book5_equipment_choices)
         messages: list[str] = []
+        restored_gear_message = self.restore_stored_gear_for_book_transition()
+        if restored_gear_message:
+            messages.append(f"Recovered temporarily stored gear: {restored_gear_message}")
 
         self.character["BookNumber"] = next_book
         self.character["KaiDisciplines"] = existing_disciplines + [selected_discipline]

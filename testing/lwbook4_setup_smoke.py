@@ -29,8 +29,10 @@ def reset_saves() -> None:
 
 
 def quiet(callable_obj, *args, **kwargs):
-    with contextlib.redirect_stdout(io.StringIO()):
-        return callable_obj(*args, **kwargs)
+    buffer = io.StringIO()
+    with contextlib.redirect_stdout(buffer):
+        callable_obj(*args, **kwargs)
+    return buffer.getvalue().strip()
 
 
 def assert_equal(actual, expected, label: str) -> None:
@@ -68,6 +70,14 @@ BOOK4_CHOICES = [
     "two-potions-of-laumspur",
     "five-special-rations",
     "chainmail-waistcoat",
+    "shield",
+]
+BOOK4_CHOICES_WITHOUT_CHAINMAIL = [
+    "dagger",
+    "spear",
+    "warhammer",
+    "two-potions-of-laumspur",
+    "five-special-rations",
     "shield",
 ]
 
@@ -108,6 +118,62 @@ def test_book3_to_book4_campaign_setup() -> None:
     assert_equal(assistant.state["CurrentBookStats"]["BookNumber"], 4, "Book 4 stats started")
 
 
+def test_book3_to_book4_carries_prior_chainmail_without_reselecting_it() -> None:
+    assistant = fresh_book3_assistant()
+    assistant.inventory["SpecialItems"] = lonewolf_redux.add_unique_item(
+        assistant.inventory["SpecialItems"], "Chainmail Waistcoat"
+    )
+    assistant.character["EnduranceMax"] = int(assistant.character["EnduranceMax"]) + 4
+    assistant.character["EnduranceCurrent"] = int(assistant.character["EnduranceCurrent"]) + 4
+    start_max_endurance = int(assistant.character["EnduranceMax"])
+    quiet(assistant.set_section, 350)
+    quiet(assistant.ensure_book_completed, 3)
+
+    quiet(
+        assistant.continue_completed_book,
+        kai_discipline="Weaponskill",
+        weaponskill_roll=6,
+        book4_gold_roll=0,
+        book4_equipment_choices=BOOK4_CHOICES_WITHOUT_CHAINMAIL,
+        book4_weapon_exchanges=["Axe", "Dagger"],
+    )
+
+    assert_true("Padded Leather Waistcoat" in assistant.inventory["SpecialItems"], "Book 3 Padded Leather carried")
+    assert_true("Chainmail Waistcoat" in assistant.inventory["SpecialItems"], "prior Chainmail carried")
+    assert_equal(assistant.character["EnduranceMax"], start_max_endurance, "prior Chainmail does not add duplicate END")
+
+
+def test_book3_to_book4_restores_stored_chainmail_before_transition() -> None:
+    assistant = fresh_book3_assistant()
+    assistant.inventory["SpecialItems"] = lonewolf_redux.add_unique_item(
+        assistant.inventory["SpecialItems"], "Chainmail Waistcoat"
+    )
+    assistant.character["EnduranceMax"] = int(assistant.character["EnduranceMax"]) + 4
+    assistant.character["EnduranceCurrent"] = int(assistant.character["EnduranceCurrent"]) + 4
+    start_max_endurance = int(assistant.character["EnduranceMax"])
+    quiet(assistant.set_section, 350)
+    quiet(assistant.ensure_book_completed, 3)
+    assistant.store_unavailable_gear()
+
+    output = quiet(
+        assistant.continue_completed_book,
+        kai_discipline="Weaponskill",
+        weaponskill_roll=6,
+        book4_gold_roll=0,
+        book4_equipment_choices=BOOK4_CHOICES_WITHOUT_CHAINMAIL,
+        book4_weapon_exchanges=["Axe", "Dagger"],
+    )
+
+    assert_true("Recovered temporarily stored gear" in output, "transition reports restored gear")
+    assert_true("Padded Leather Waistcoat" in assistant.inventory["SpecialItems"], "stored Padded Leather restored")
+    assert_true("Chainmail Waistcoat" in assistant.inventory["SpecialItems"], "stored Chainmail restored")
+    assert_true(
+        "confiscatedEquipment" not in assistant.automation.get("Stored", {}),
+        "temporary stored gear cleared after transition",
+    )
+    assert_equal(assistant.character["EnduranceMax"], start_max_endurance, "restored Chainmail does not add duplicate END")
+
+
 def test_standalone_book4_creation() -> None:
     state = lonewolf_redux.create_book4_character_state(
         name="Fresh Book Four",
@@ -141,6 +207,8 @@ def test_book4_setup_validation() -> None:
 
 def main() -> int:
     test_book3_to_book4_campaign_setup()
+    test_book3_to_book4_carries_prior_chainmail_without_reselecting_it()
+    test_book3_to_book4_restores_stored_chainmail_before_transition()
     test_standalone_book4_creation()
     test_book4_setup_validation()
     print("Book 4 setup smoke passed.")
