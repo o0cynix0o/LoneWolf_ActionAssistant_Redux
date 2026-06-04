@@ -3980,7 +3980,7 @@
           ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
           ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
           ${field('Meals', arr(inv.BackpackItems).filter((item) => text(item).toLowerCase() === 'meal').length)}
-          ${field('Kai Disciplines', list(c.KaiDisciplines))}
+          ${field('Kai Rank', kaiRankForDisciplines(c.KaiDisciplines))}
           ${field('Weaponskill', c.WeaponskillWeapon || 'None')}
           ${field('Completed Books', list(c.CompletedBooks))}
         </div>
@@ -4060,7 +4060,7 @@
             ${field('Combat Skill', `${c.CombatSkillCurrent} (base ${c.CombatSkillBase})`)}
             ${field('Endurance', `${c.EnduranceCurrent}/${c.EnduranceMax}`)}
             ${field('Meals', arr(inv.BackpackItems).filter((item) => text(item).toLowerCase() === 'meal').length)}
-            ${field('Kai Disciplines', list(c.KaiDisciplines))}
+            ${field('Kai Rank', kaiRankForDisciplines(c.KaiDisciplines))}
             ${field('Weaponskill', c.WeaponskillWeapon || 'None')}
             ${field('Completed Books', list(c.CompletedBooks))}
           </div>
@@ -4644,6 +4644,19 @@
     }
     function arr(value) { return Array.isArray(value) ? value : (value ? [value] : []); }
     function list(value) { const values = arr(value); return values.length ? values.join(', ') : 'None'; }
+    function kaiRankForDisciplines(value) {
+      const count = arr(value).length;
+      const ranks = [
+        [10, 'Kai Master'],
+        [9, 'Savant'],
+        [8, 'Warmarn'],
+        [7, 'Guardian'],
+        [6, 'Aspirant'],
+        [5, 'Initiate']
+      ];
+      const rank = ranks.find(([threshold]) => count >= threshold)?.[1] || 'Novice';
+      return `${rank} (${count} disciplines)`;
+    }
     function itemUseHelp(item) {
       const name = text(item).toLowerCase();
       if (name.includes('potion of healing') || name.includes('healing potion')) return 'Use: restore 4 Endurance.';
