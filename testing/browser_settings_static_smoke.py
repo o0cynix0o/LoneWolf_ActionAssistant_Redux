@@ -103,6 +103,9 @@ def main() -> int:
     assert_true("footer: '&nbsp;&nbsp;'" in index, "Kai cards should carry a blank footer spacer.")
     assert_true("grid-template-rows: auto auto auto auto" in index, "book cover rows should not stretch from short titles.")
     assert_true("min-height: 2.35em" in index, "book titles should reserve consistent row height.")
+    assert_true("border: 1px solid #050807" in index, "home cover art should use only a dark inner outline.")
+    assert_true("border-top: 1px solid var(--lw-border" not in index, "home card footers should not draw a divider over cover art.")
+    assert_true("border-color: #050807 !important" in settings and "border-color: #050807 !important" in early, "shared themes should preserve the dark cover outline.")
     assert_true(
         "${book.status}" not in index and "Requires local Project Aon book files.</span>" not in index,
         "home book cards should not show internal build/status footer text.",

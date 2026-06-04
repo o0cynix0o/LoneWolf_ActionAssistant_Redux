@@ -269,7 +269,11 @@
       .menu-heading, .stat-card span, .book small, .book span, .book-link span {
         color: var(--lw-muted-2) !important;
       }
-      .cover-frame, .book img, .cover-fallback, #cliTerminalContainer {
+      .cover-frame {
+        background-color: #050807 !important;
+        border-color: #050807 !important;
+      }
+      .book img, .cover-fallback, #cliTerminalContainer {
         background-color: var(--lw-bg) !important;
         border-color: var(--lw-border) !important;
       }
