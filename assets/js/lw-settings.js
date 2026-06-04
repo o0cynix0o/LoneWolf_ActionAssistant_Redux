@@ -605,7 +605,13 @@
       }
       .settings-option.active {
         border-color: var(--lw-accent);
+        background: var(--lw-accent);
+        color: var(--lw-bg);
         box-shadow: 0 0 0 1px var(--lw-accent);
+      }
+      .settings-option.active strong,
+      .settings-option.active small {
+        color: var(--lw-bg);
       }
       .settings-option strong {
         color: var(--lw-accent);

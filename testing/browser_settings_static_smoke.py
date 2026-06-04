@@ -66,6 +66,12 @@ def main() -> int:
 
     assert_true("Classic Kai Gold" in settings, "default theme should be labeled as the classic first-start look.")
     assert_true(
+        ".settings-option.active strong," in settings
+        and ".settings-option.active small" in settings
+        and "color: var(--lw-bg)" in settings,
+        "selected settings cards should keep label and note text readable on the highlight background.",
+    )
+    assert_true(
         "window.LoneWolfReduxEarlyAppearance" in early and "applyRoot()" in early,
         "early appearance loader should expose and apply first-paint defaults.",
     )
