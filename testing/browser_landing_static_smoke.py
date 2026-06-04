@@ -75,6 +75,45 @@ def main() -> int:
         "index.html should generate assistant links for book cards.",
     )
     assert_true(
+        "data-book-href" in index_source and "role', 'link'" in index_source,
+        "index.html should make playable book cards clickable without nesting buttons inside links.",
+    )
+    assert_true(
+        "bookDetailsModal" in index_source
+        and "bookDetailsContent" in index_source
+        and "book-modal" in index_source,
+        "index.html should include the large book details modal.",
+    )
+    assert_true(
+        "book-details-button" in index_source
+        and "data-book-details" in index_source
+        and "Book details" in index_source,
+        "index.html should add a details dot to each book card.",
+    )
+    assert_true(
+        ".book-details-button::before" in index_source
+        and "border-radius: 999px" in index_source,
+        "home book detail controls should use the shared small round dot style.",
+    )
+    assert_true(
+        "openBookDetails" in index_source
+        and "event.stopPropagation()" in index_source
+        and "event.preventDefault()" in index_source,
+        "book details buttons should open the modal without triggering card navigation.",
+    )
+    assert_true(
+        "Lone Wolf #${escapeHtml(book.number)}" in index_source
+        and "book-detail-grid" in index_source
+        and "book-tag-list" in index_source,
+        "book details should show a Goodreads-style title, metadata, and tag presentation.",
+    )
+    assert_true(
+        "Playable release candidate" in index_source
+        and "Playable helper build" in index_source
+        and "Coming</button>" in index_source,
+        "book details should distinguish playable books from future Coming books.",
+    )
+    assert_true(
         "<strong>${book.title}</strong>" in index_source
         and "<strong>${book.number}. ${book.title}</strong>" not in index_source,
         "index.html should not repeat the book number before home card titles.",

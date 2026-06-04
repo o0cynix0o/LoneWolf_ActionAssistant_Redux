@@ -29,6 +29,7 @@ def main() -> int:
     settings = SETTINGS_JS.read_text(encoding="utf-8")
     early = EARLY_APPEARANCE_JS.read_text(encoding="utf-8")
     server = APP_SERVER.read_text(encoding="utf-8")
+    book_footer_rule = index.split(".book-footer {", 1)[1].split("}", 1)[0]
 
     for source_name, source in (
         ("assistant.html", assistant),
@@ -121,7 +122,7 @@ def main() -> int:
     assert_true("grid-template-rows: auto auto auto auto" in index, "book cover rows should not stretch from short titles.")
     assert_true("min-height: 2.35em" in index, "book titles should reserve consistent row height.")
     assert_true("border: 1px solid #050807" in index, "home cover art should use only a dark inner outline.")
-    assert_true("border-top: 1px solid var(--lw-border" not in index, "home card footers should not draw a divider over cover art.")
+    assert_true("border-top" not in book_footer_rule, "home card footers should not draw a divider over cover art.")
     assert_true("border-color: #050807 !important" in settings and "border-color: #050807 !important" in early, "shared themes should preserve the dark cover outline.")
     assert_true(
         "${book.status}" not in index and "Requires local Project Aon book files.</span>" not in index,
@@ -137,6 +138,24 @@ def main() -> int:
         and ".tabs.dashboard-card > .card-collapse-button" in assistant
         and "place-items: center" in assistant,
         "quick/top/tab card controls should use the shared centered round icon button style.",
+    )
+    for source_name, source, expected_bg in (
+        ("assistant.html", assistant, "color-mix(in srgb, #d5e8ea 14%, transparent)"),
+        ("lw-settings.js", settings, "color-mix(in srgb, var(--lw-muted-2) 14%, transparent)"),
+        ("lw-appearance-early.js", early, "color-mix(in srgb, var(--lw-muted-2) 14%, transparent)"),
+    ):
+        assert_true(
+            ".app-menu-button" in source
+            and ".card-collapse-button" in source
+            and ".card-menu-button" in source
+            and "border-radius: 999px" in source
+            and expected_bg in source,
+            f"{source_name} should preserve the shared small round triangle/dot controls across themes.",
+        )
+    assert_true(
+        ".book-details-button" in settings
+        and ".book-details-button" in early,
+        "shared appearance scripts should keep home book detail dots in the same icon-control style.",
     )
     assert_true(
         ".top-dashboard .dashboard-card::before" not in assistant

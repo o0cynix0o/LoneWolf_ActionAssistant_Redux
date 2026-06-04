@@ -101,6 +101,7 @@
     .book {
       display: grid;
       grid-template-rows: auto auto auto auto;
+      position: relative;
       min-width: 0;
       padding: clamp(10px, 0.7vw, 14px);
       border: 1px solid var(--lw-border, #5d5130);
@@ -109,12 +110,53 @@
       color: inherit;
       text-decoration: none;
       overflow: hidden;
+      cursor: pointer;
       transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
     }
     .book:hover, .reader-panel a:hover, .reader-panel button:hover { border-color: var(--lw-accent-2, #d1b865); color: var(--lw-accent, #ffe08a); }
     .book:hover {
       transform: translateY(-2px);
       background: var(--lw-panel-2, #202417);
+    }
+    .book:focus-visible {
+      outline: 2px solid var(--lw-accent, #f2d27a);
+      outline-offset: 3px;
+    }
+    .book-details-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      min-width: 20px;
+      height: 20px;
+      min-height: 20px;
+      padding: 0;
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--lw-muted-2, #d8d0b8) 14%, transparent);
+      color: var(--lw-muted-2, #d8d0b8);
+      display: grid;
+      place-items: center;
+      font-size: 0;
+      line-height: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .book-details-button::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+    .book-details-button:hover {
+      background: color-mix(in srgb, var(--lw-muted-2, #d8d0b8) 22%, transparent);
+      color: var(--lw-text, #f0ead8);
+    }
+    .book-details-button:focus-visible {
+      outline: 1px solid var(--lw-muted-2, #d8d0b8);
+      outline-offset: 2px;
     }
     .book.disabled {
       cursor: default;
@@ -219,6 +261,158 @@
       font: clamp(0.68rem, 0.56vw, 0.84rem) Arial, sans-serif;
       line-height: 1.45;
     }
+    .book-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      padding: clamp(16px, 3vw, 42px);
+      background: rgba(0, 0, 0, 0.68);
+    }
+    .book-modal[hidden] {
+      display: none;
+    }
+    .book-dialog {
+      width: min(1080px, 100%);
+      max-height: min(86vh, 860px);
+      overflow: auto;
+      border: 1px solid var(--lw-border-strong, #6d5f35);
+      border-radius: 8px;
+      background: var(--lw-bg-soft, #12160f);
+      color: var(--lw-text, #f0ead8);
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.55);
+    }
+    .book-dialog-inner {
+      display: grid;
+      grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+      gap: clamp(18px, 3vw, 34px);
+      padding: clamp(18px, 3vw, 34px);
+    }
+    .book-dialog-cover {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+    .book-dialog-cover img {
+      width: 100%;
+      border: 1px solid #050807;
+      border-radius: 6px;
+      background: #050807;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.42);
+    }
+    .book-dialog-cover .fallback-cover {
+      aspect-ratio: 2 / 3;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      border: 1px solid #050807;
+      border-radius: 6px;
+      background: #050807;
+      color: var(--lw-accent, #f2d27a);
+      text-align: center;
+      font: 700 1.2rem Georgia, serif;
+    }
+    .book-dialog-actions {
+      display: grid;
+      gap: 10px;
+    }
+    .book-dialog-actions a,
+    .book-dialog-actions button {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--lw-border-strong, #6d5f35);
+      border-radius: 5px;
+      background: var(--lw-panel-2, #202417);
+      color: var(--lw-accent, #f2d27a);
+      text-decoration: none;
+      text-align: left;
+      font: 0.92rem Arial, sans-serif;
+      cursor: pointer;
+    }
+    .book-dialog-main {
+      min-width: 0;
+    }
+    .book-dialog-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .book-kicker {
+      color: var(--lw-muted-2, #d8d0b8);
+      font: italic clamp(1rem, 1.4vw, 1.35rem) Georgia, serif;
+    }
+    .book-dialog h2 {
+      margin: 2px 0 4px;
+      color: var(--lw-accent, #f2d27a);
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+    }
+    .book-byline {
+      margin: 0;
+      color: var(--lw-muted-2, #d8d0b8);
+      font-size: clamp(1rem, 1.3vw, 1.25rem);
+    }
+    .book-close-button {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--lw-border-strong, #6d5f35);
+      border-radius: 999px;
+      background: var(--lw-panel-2, #202417);
+      color: var(--lw-accent, #f2d27a);
+      cursor: pointer;
+    }
+    .book-status-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0;
+    }
+    .book-pill {
+      border: 1px solid var(--lw-border, #5d5130);
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--lw-panel, #1a1d14);
+      color: var(--lw-muted-2, #d8d0b8);
+      font: 0.82rem Arial, sans-serif;
+    }
+    .book-description {
+      max-width: 78ch;
+      color: var(--lw-text, #f0ead8);
+      font: clamp(0.98rem, 1vw, 1.08rem)/1.55 Arial, sans-serif;
+    }
+    .book-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0;
+    }
+    .book-tag {
+      color: var(--lw-accent, #f2d27a);
+      border-bottom: 1px solid var(--lw-accent-2, #d1b865);
+      font: 0.92rem Arial, sans-serif;
+    }
+    .book-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px 16px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--lw-border, #5d5130);
+    }
+    .book-detail-grid dt {
+      color: var(--lw-muted, #a9a088);
+      font: 0.78rem Arial, sans-serif;
+      text-transform: uppercase;
+    }
+    .book-detail-grid dd {
+      margin: 3px 0 0;
+      color: var(--lw-text, #f0ead8);
+      font: 0.96rem Arial, sans-serif;
+    }
     @media (max-width: 820px) {
       header { min-height: 30vh; background-size: 560px auto; }
       .hero-inner { grid-template-columns: 1fr; }
@@ -226,6 +420,8 @@
       main { grid-template-columns: 1fr; }
       .reader-panel { margin-top: 0; }
       .books { grid-template-columns: repeat(var(--book-count, 5), minmax(148px, 1fr)); }
+      .book-dialog-inner { grid-template-columns: 1fr; }
+      .book-dialog-cover { max-width: 260px; }
     }
   </style>
 </head>
@@ -294,6 +490,12 @@
     </section>
   </div>
 
+  <div class="book-modal" id="bookDetailsModal" hidden>
+    <section class="book-dialog" aria-label="Book details" role="dialog" aria-modal="true">
+      <div class="book-dialog-inner" id="bookDetailsContent"></div>
+    </section>
+  </div>
+
   <script src="assets/js/lw-settings.js"></script>
   <script>
     const loreLines = [
@@ -317,6 +519,69 @@
       enabled: false,
       footer: 'Coming'
     });
+
+    const seriesNames = {
+      kai: 'Kai Series',
+      magnakai: 'Magnakai Series',
+      grandMaster: 'Grand Master Series',
+      newOrder: 'New Order Series'
+    };
+
+    const bookDetails = {
+      1: {
+        series: 'kai',
+        authors: 'Joe Dever',
+        illustrator: 'Gary Chalk',
+        published: '1984',
+        status: 'Playable release candidate',
+        summary: 'The monastery lies in ruins and Sommerlund has one surviving Kai initiate left to carry warning to the King. Flight from the Dark is the survival run that starts the saga: harsh roads, tight supplies, and a first lesson in choosing when to fight.',
+        tags: ['Fantasy', 'Gamebook', 'Kai', 'Sommerlund', 'Survival']
+      },
+      2: {
+        series: 'kai',
+        authors: 'Joe Dever',
+        illustrator: 'Gary Chalk',
+        published: '1984',
+        status: 'Playable helper build',
+        summary: 'The quest crosses the sea to Durenor in search of the Sommerswerd. Fire on the Water leans into travel, intrigue, and the first big campaign handoff from a surviving Book 1 character.',
+        tags: ['Fantasy', 'Gamebook', 'Durenor', 'Sommerswerd', 'Campaign']
+      },
+      3: {
+        series: 'kai',
+        authors: 'Joe Dever',
+        illustrator: 'Gary Chalk',
+        published: '1984',
+        status: 'Playable helper build',
+        summary: 'The trail turns north into Kalte, where cold, hunger, and sudden violence make every route choice matter. This book is where the assistant starts tracking more edge-case rolls, mission failures, and gear finds.',
+        tags: ['Fantasy', 'Gamebook', 'Kalte', 'Exploration', 'Survival']
+      },
+      4: {
+        series: 'kai',
+        authors: 'Joe Dever',
+        illustrator: 'Gary Chalk',
+        published: '1985',
+        status: 'Playable helper build',
+        summary: 'A mission through the wild borderlands pulls Lone Wolf toward a civil war, hidden enemies, and the uneasy feeling that every road is somebody else’s trap.',
+        tags: ['Fantasy', 'Gamebook', 'Ruanon', 'Investigation', 'Kai']
+      },
+      5: {
+        series: 'kai',
+        authors: 'Joe Dever',
+        illustrator: 'Gary Chalk',
+        published: '1985',
+        status: 'Playable helper build',
+        summary: 'The Kai series closes under desert heat and Darklord pressure. Shadow on the Sand is a major rules and story handoff book, with campaign carry-forward choices that matter later.',
+        tags: ['Fantasy', 'Gamebook', 'Vassagonia', 'Darklords', 'Kai Finale']
+      },
+      default: {
+        authors: 'Joe Dever',
+        illustrator: 'Various illustrators',
+        published: 'Project Aon edition',
+        status: 'Coming',
+        summary: 'This book is installed locally and waiting for its full onboarding pass. The cover and source files are here; the assistant will need rules scanning, automation review, testing, and player-facing polish before it becomes playable.',
+        tags: ['Fantasy', 'Gamebook', 'Installed', 'Coming']
+      }
+    };
 
     const kaiBooks = [
       {
@@ -400,6 +665,8 @@
     ];
 
     const books = kaiBooks;
+    const allBookCards = [...kaiBooks, ...magnakaiBooks, ...grandMasterBooks, ...newOrderBooks];
+    const bookByNumber = new Map(allBookCards.map((book) => [book.number, book]));
 
     const quoteEl = document.getElementById('loreQuote');
     quoteEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
@@ -412,14 +679,18 @@
     });
 
     function renderBookCard(book) {
-      const card = document.createElement(book.enabled === false ? 'article' : 'a');
+      const card = document.createElement('article');
       card.className = `book${book.enabled === false ? ' disabled' : ''}`;
+      card.dataset.bookNumber = book.number;
       if (book.enabled === false) {
         card.setAttribute('aria-disabled', 'true');
       } else {
-        card.href = `assistant.html?book=${book.number}`;
+        card.dataset.bookHref = `assistant.html?book=${book.number}`;
+        card.setAttribute('role', 'link');
+        card.tabIndex = 0;
       }
       card.innerHTML = `
+        <button type="button" class="book-details-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}" title="Book details"></button>
         <small>Book ${book.number}</small>
         <strong>${book.title}</strong>
         <figure class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
@@ -445,6 +716,100 @@
     renderSeries('magnakaiBooks', magnakaiBooks);
     renderSeries('grandMasterBooks', grandMasterBooks);
     renderSeries('newOrderBooks', newOrderBooks);
+
+    document.querySelectorAll('[data-book-href]').forEach((card) => {
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('[data-book-details]')) return;
+        window.location.href = card.dataset.bookHref;
+      });
+      card.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        window.location.href = card.dataset.bookHref;
+      });
+    });
+
+    document.querySelectorAll('[data-book-details]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openBookDetails(button.dataset.bookDetails);
+      });
+    });
+
+    const bookDetailsModal = document.getElementById('bookDetailsModal');
+    const bookDetailsContent = document.getElementById('bookDetailsContent');
+
+    function detailForBook(book) {
+      const detail = bookDetails[book.number] || {};
+      const fallback = bookDetails.default;
+      const series = detail.series || (
+        book.number <= 5 ? 'kai' :
+        book.number <= 12 ? 'magnakai' :
+        book.number <= 20 ? 'grandMaster' : 'newOrder'
+      );
+      return { ...fallback, ...detail, series };
+    }
+
+    function renderDetailItem(label, value) {
+      return `
+        <div>
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `;
+    }
+
+    function openBookDetails(bookNumber) {
+      const book = bookByNumber.get(Number(bookNumber));
+      if (!book) return;
+      const detail = detailForBook(book);
+      const seriesName = seriesNames[detail.series] || 'Lone Wolf';
+      const status = book.enabled === false ? detail.status : (detail.status || 'Playable');
+      const byline = `${detail.authors}${detail.illustrator ? `, ${detail.illustrator} (Illustrator)` : ''}`;
+      const actionLink = book.enabled === false
+        ? '<button type="button" disabled>Coming</button>'
+        : `<a href="assistant.html?book=${book.number}">Open Reader</a>`;
+      bookDetailsContent.innerHTML = `
+        <aside class="book-dialog-cover">
+          ${book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Cover art for ${escapeHtml(book.title)}">` : `<div class="fallback-cover">Book ${escapeHtml(book.number)}:<br>${escapeHtml(book.title)}</div>`}
+          <div class="book-dialog-actions">
+            ${actionLink}
+            <button type="button" data-book-close>Close</button>
+          </div>
+        </aside>
+        <article class="book-dialog-main">
+          <div class="book-dialog-top">
+            <div>
+              <div class="book-kicker">Lone Wolf #${escapeHtml(book.number)}</div>
+              <h2>${escapeHtml(book.title)}</h2>
+              <p class="book-byline">${escapeHtml(byline)}</p>
+            </div>
+            <button type="button" class="book-close-button" data-book-close aria-label="Close book details">x</button>
+          </div>
+          <div class="book-status-line">
+            <span class="book-pill">${escapeHtml(status)}</span>
+            <span class="book-pill">${escapeHtml(seriesName)}</span>
+            <span class="book-pill">${escapeHtml(book.sections)} sections</span>
+          </div>
+          <p class="book-description">${escapeHtml(detail.summary)}</p>
+          <div class="book-tag-list">
+            ${(detail.tags || []).map((tag) => `<span class="book-tag">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+          <dl class="book-detail-grid">
+            ${renderDetailItem('Series', seriesName)}
+            ${renderDetailItem('Folder', `books\\lw\\${book.folder}`)}
+            ${renderDetailItem('First Published', detail.published)}
+            ${renderDetailItem('Assistant Status', status)}
+          </dl>
+        </article>
+      `;
+      bookDetailsModal.hidden = false;
+    }
+
+    function closeBookDetails() {
+      bookDetailsModal.hidden = true;
+    }
 
     async function getCurrentPosition() {
       try {
@@ -587,6 +952,17 @@
     });
     settingsModal.addEventListener('click', (event) => {
       if (event.target === settingsModal) settingsModal.hidden = true;
+    });
+    bookDetailsModal.addEventListener('click', (event) => {
+      if (event.target === bookDetailsModal || event.target.closest('[data-book-close]')) {
+        closeBookDetails();
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        if (!bookDetailsModal.hidden) closeBookDetails();
+        if (!settingsModal.hidden) settingsModal.hidden = true;
+      }
     });
     settingsContent.addEventListener('click', async (event) => {
       const button = event.target.closest('button');

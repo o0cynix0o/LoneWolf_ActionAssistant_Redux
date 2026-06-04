@@ -174,17 +174,20 @@
     .card-collapse-button,
     .card-menu-button {
       width: 20px;
+      min-width: 20px;
       height: 20px;
       min-height: 20px;
       padding: 0;
+      appearance: none;
       display: grid;
       place-items: center;
       border: 0;
       border-radius: 999px;
-      background: transparent;
+      background: color-mix(in srgb, #d5e8ea 14%, transparent);
       color: #ffffff;
       font-size: 0;
       line-height: 0;
+      text-align: center;
     }
     .app-menu-button::before,
     .card-menu-button::before {
@@ -205,8 +208,14 @@
     .app-menu-button:hover,
     .card-collapse-button:hover,
     .card-menu-button:hover {
-      background: #26301b;
+      background: color-mix(in srgb, #d5e8ea 22%, transparent);
       color: #ffffff;
+    }
+    .app-menu-button:focus-visible,
+    .card-collapse-button:focus-visible,
+    .card-menu-button:focus-visible {
+      outline: 1px solid #d5e8ea;
+      outline-offset: 2px;
     }
     .app-menu-button {
       position: absolute;
@@ -468,10 +477,13 @@
       height: 20px;
       min-height: 20px;
       padding: 0;
+      appearance: none;
       display: grid;
       place-items: center;
       border: 0;
       border-radius: 999px;
+      background: color-mix(in srgb, #d5e8ea 14%, transparent);
+      color: #ffffff;
       font-size: 0;
       line-height: 0;
       text-align: center;

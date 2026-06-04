@@ -542,6 +542,31 @@
         background-color: var(--lw-panel-3) !important;
         color: var(--lw-accent) !important;
       }
+      .app-menu-button,
+      .card-collapse-button,
+      .card-menu-button,
+      .book-details-button {
+        width: 20px !important;
+        min-width: 20px !important;
+        height: 20px !important;
+        min-height: 20px !important;
+        padding: 0 !important;
+        display: grid !important;
+        place-items: center !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background-color: color-mix(in srgb, var(--lw-muted-2) 14%, transparent) !important;
+        color: var(--lw-muted-2) !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+      }
+      .app-menu-button:hover,
+      .card-collapse-button:hover,
+      .card-menu-button:hover,
+      .book-details-button:hover {
+        background-color: color-mix(in srgb, var(--lw-muted-2) 22%, transparent) !important;
+        color: var(--lw-text) !important;
+      }
       button.active {
         background-color: var(--lw-accent) !important;
         border-color: var(--lw-accent) !important;
