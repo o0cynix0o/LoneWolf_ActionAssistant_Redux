@@ -58,6 +58,11 @@ def main() -> int:
         "assistant.html?book=${book.number}" in index_source,
         "index.html should generate assistant links for book cards.",
     )
+    assert_true(
+        "<strong>${book.title}</strong>" in index_source
+        and "<strong>${book.number}. ${book.title}</strong>" not in index_source,
+        "index.html should not repeat the book number before home card titles.",
+    )
     assert_true("assistant.html?book=1" in library_source, "library.html should link Book 1 to the assistant.")
     assert_true("assistant.html?book=2" in library_source, "library.html should link Book 2 to the assistant.")
     assert_true("assistant.html?book=3" in library_source, "library.html should link Book 3 to the assistant.")
