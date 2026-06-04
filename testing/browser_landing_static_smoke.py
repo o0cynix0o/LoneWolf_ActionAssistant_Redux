@@ -48,8 +48,9 @@ def main() -> int:
         "index.html should expose the settings modal from the Reader panel.",
     )
     assert_true(
-        "grid-template-columns: repeat(5" in index_source,
-        "index.html should keep the Kai books on one five-card row.",
+        "data-reader-card" in index_source
+        and "seriesBooks.length + readerOffset" in index_source,
+        "index.html should keep the Reader tools aligned as a same-grid first-row card.",
     )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(

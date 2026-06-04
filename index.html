@@ -68,10 +68,6 @@
     main {
       width: min(2240px, calc(100% - clamp(24px, 4vw, 96px)));
       margin: 24px auto 72px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) clamp(260px, 16vw, 340px);
-      gap: clamp(16px, 1.2vw, 28px);
-      align-items: start;
     }
     .series-board {
       display: grid;
@@ -111,7 +107,7 @@
       overflow: hidden;
       transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
     }
-    .book:hover, .panel a:hover, .panel button:hover { border-color: var(--lw-accent-2, #d1b865); color: var(--lw-accent, #ffe08a); }
+    .book:hover, .reader-card a:hover, .reader-card button:hover { border-color: var(--lw-accent-2, #d1b865); color: var(--lw-accent, #ffe08a); }
     .book:hover {
       transform: translateY(-2px);
       background: var(--lw-panel-2, #202417);
@@ -176,42 +172,56 @@
     .book-footer.spacer {
       color: transparent;
     }
-    .panel {
-      border: 1px solid var(--lw-border, #5d5130);
-      border-radius: 6px;
-      background: var(--lw-panel, #171a12);
-      padding: 16px;
-      height: fit-content;
+    .reader-card {
+      grid-template-rows: auto auto 1fr auto;
+      cursor: default;
     }
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 1.05rem;
+    .reader-card:hover {
+      transform: none;
+      background: var(--lw-panel, #1a1d14);
+      border-color: var(--lw-border, #5d5130);
+      color: inherit;
+    }
+    .reader-card h2 {
+      margin: 0;
+      min-height: 2.35em;
+      font-size: 1.12rem;
+      line-height: 1.12;
       color: var(--lw-accent, #f2d27a);
     }
-    .panel a, .panel button {
+    .reader-body {
+      display: grid;
+      align-content: start;
+      gap: clamp(8px, 0.55vw, 12px);
+      margin-top: 12px;
+    }
+    .reader-actions {
+      display: grid;
+      gap: clamp(7px, 0.5vw, 10px);
+    }
+    .reader-card a, .reader-card button {
       display: block;
       width: 100%;
-      margin-top: 10px;
-      padding: 10px 12px;
+      padding: clamp(7px, 0.55vw, 10px) clamp(8px, 0.6vw, 12px);
       border: 1px solid var(--lw-border, #5d5130);
       border-radius: 4px;
       background: var(--lw-panel-2, #202417);
       color: var(--lw-text, #f0ead8);
       text-align: left;
       text-decoration: none;
-      font: 0.9rem Arial, sans-serif;
+      font: clamp(0.72rem, 0.6vw, 0.9rem) Arial, sans-serif;
       cursor: pointer;
     }
-    .panel .muted {
+    .reader-card .muted {
+      margin: 0;
       color: var(--lw-muted, #a9a088);
-      font: 0.84rem Arial, sans-serif;
+      font: clamp(0.68rem, 0.56vw, 0.84rem) Arial, sans-serif;
       line-height: 1.45;
     }
     @media (max-width: 820px) {
       header { min-height: 30vh; background-size: 560px auto; }
       .hero-inner { grid-template-columns: 1fr; }
       .series-mark { justify-self: start; width: min(100%, clamp(240px, 62vw, 360px)); }
-      main { grid-template-columns: 1fr; }
       .books { grid-template-columns: repeat(var(--book-count, 5), minmax(148px, 1fr)); }
     }
   </style>
@@ -240,23 +250,29 @@
     <section class="series-board" aria-label="Lone Wolf books">
       <section class="series-section" aria-labelledby="kaiSeriesHeading">
         <h2 class="series-heading" id="kaiSeriesHeading">Kai Series</h2>
-        <div class="books" id="kaiBooks"></div>
+        <div class="books" id="kaiBooks">
+          <aside class="book reader-card" data-reader-card>
+            <small>Reader</small>
+            <h2>Reader</h2>
+            <div class="reader-body">
+              <p class="muted">Read the book on the left while using the web assistant on the right.</p>
+              <div class="reader-actions">
+                <a href="assistant.html">Open Reader</a>
+                <button id="currentBtn" type="button">Open Current Section</button>
+                <a href="library.html">Simple Book List</a>
+                <a href="install-books.html">Install Project Aon Books</a>
+                <button id="settingsBtn" type="button">Settings</button>
+              </div>
+            </div>
+            <p class="muted">Book files are not included in the release package. Download the standard Lone Wolf HTML ZIPs from Project Aon and extract them into <code>books\lw</code>.</p>
+          </aside>
+        </div>
       </section>
       <section class="series-section" aria-labelledby="magnakaiSeriesHeading">
         <h2 class="series-heading" id="magnakaiSeriesHeading">Magnakai Series</h2>
         <div class="books" id="magnakaiBooks"></div>
       </section>
     </section>
-    <aside class="panel">
-      <h2>Reader</h2>
-      <p class="muted">Read the book on the left while using the web assistant on the right.</p>
-      <a href="assistant.html">Open Reader</a>
-      <button id="currentBtn" type="button">Open Current Section</button>
-      <a href="library.html">Simple Book List</a>
-      <a href="install-books.html">Install Project Aon Books</a>
-      <button id="settingsBtn" type="button">Settings</button>
-      <p class="muted">Book files are not included in the release package. Download the standard Lone Wolf HTML ZIPs from Project Aon and extract them into <code>books\lw</code>.</p>
-    </aside>
   </main>
 
   <div class="settings-modal" id="settingsModal" hidden>
@@ -433,8 +449,10 @@
 
     function renderSeries(containerId, seriesBooks) {
       const container = document.getElementById(containerId);
-      container.style.setProperty('--book-count', seriesBooks.length);
-      seriesBooks.forEach((book) => container.appendChild(renderBookCard(book)));
+      const readerCard = container.querySelector('[data-reader-card]');
+      const readerOffset = readerCard ? 1 : 0;
+      container.style.setProperty('--book-count', seriesBooks.length + readerOffset);
+      seriesBooks.forEach((book) => container.insertBefore(renderBookCard(book), readerCard));
     }
 
     renderSeries('kaiBooks', kaiBooks);

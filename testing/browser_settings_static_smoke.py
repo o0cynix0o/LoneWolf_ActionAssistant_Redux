@@ -96,6 +96,8 @@ def main() -> int:
     assert_true("settingsModal" in index, "home page should include the settings modal.")
     assert_true("Kai Series" in index, "home page should label the Kai Series row.")
     assert_true("Magnakai Series" in index, "home page should label the Magnakai Series row.")
+    assert_true("data-reader-card" in index, "home page Reader tools should live inside the Kai row grid.")
+    assert_true("seriesBooks.length + readerOffset" in index, "home page Reader card should scale with the book-card grid.")
     assert_true("const magnakaiBooks" in index, "home page should define Magnakai preview cards.")
     assert_true("The Kingdoms of Terror" in index and "The Masters of Darkness" in index, "home page should preview Books 6-12.")
     assert_true("Coming Soon" in index and "aria-disabled" in index, "Magnakai preview cards should be disabled coming-soon cards.")
