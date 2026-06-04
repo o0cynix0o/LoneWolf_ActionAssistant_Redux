@@ -273,6 +273,14 @@
         <h2 class="series-heading" id="magnakaiSeriesHeading">Magnakai Series</h2>
         <div class="books" id="magnakaiBooks"></div>
       </section>
+      <section class="series-section" aria-labelledby="grandMasterSeriesHeading">
+        <h2 class="series-heading" id="grandMasterSeriesHeading">Grand Master Series</h2>
+        <div class="books" id="grandMasterBooks"></div>
+      </section>
+      <section class="series-section" aria-labelledby="newOrderSeriesHeading">
+        <h2 class="series-heading" id="newOrderSeriesHeading">New Order Series</h2>
+        <div class="books" id="newOrderBooks"></div>
+      </section>
     </section>
   </main>
 
@@ -298,13 +306,25 @@
       'When the road forks, check the pack, check the map, then trust the discipline.'
     ];
 
+    const coverBase = 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers';
+    const coverUrl = (fileName) => fileName ? `${coverBase}/${fileName}` : '';
+    const comingBook = (number, title, folder, sections, coverFile) => ({
+      number,
+      title,
+      folder,
+      sections,
+      cover: coverUrl(coverFile),
+      enabled: false,
+      footer: 'Coming'
+    });
+
     const kaiBooks = [
       {
         number: 1,
         title: 'Flight from the Dark',
         folder: '01fftd',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago.jpg',
+        cover: coverUrl('LW01_Mongoose_Alberto_Del_Lago.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -313,7 +333,7 @@
         title: 'Fire on the Water',
         folder: '02fotw',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago.jpg',
+        cover: coverUrl('LW02_Mongoose_Alberto_Del_Lago.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -322,7 +342,7 @@
         title: 'The Caverns of Kalte',
         folder: '03tcok',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago.jpg',
+        cover: coverUrl('LW03_Mongoose_Alberto_Del_Lago.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -331,7 +351,7 @@
         title: 'The Chasm of Doom',
         folder: '04tcod',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW04_Mongoose_Alberto_Del_Lago.jpg',
+        cover: coverUrl('LW04_Mongoose_Alberto_Del_Lago.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -340,76 +360,43 @@
         title: 'Shadow on the Sand',
         folder: '05sots',
         sections: 400,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW05_Mongoose_Alberto_Del_Lago.jpg',
+        cover: coverUrl('LW05_Mongoose_Alberto_Del_Lago.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       }
     ];
 
     const magnakaiBooks = [
-      {
-        number: 6,
-        title: 'The Kingdoms of Terror',
-        folder: '06tkot',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW06_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 7,
-        title: 'Castle of Death',
-        folder: '07cd',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW07_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 8,
-        title: 'The Jungle of Horrors',
-        folder: '08tjoh',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW08_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 9,
-        title: 'The Cauldron of Fear',
-        folder: '09tcof',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW09_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 10,
-        title: 'The Dungeons of Torgar',
-        folder: '10tdot',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW10_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 11,
-        title: 'The Prisoners of Time',
-        folder: '11tpot',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW11_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      },
-      {
-        number: 12,
-        title: 'The Masters of Darkness',
-        folder: '12tmod',
-        sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW12_Mongoose_Alberto_Del_Lago.jpg',
-        enabled: false,
-        footer: 'Coming Soon'
-      }
+      comingBook(6, 'The Kingdoms of Terror', '06tkot', 350, 'LW06_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(7, 'Castle of Death', '07cd', 350, 'LW07_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(8, 'The Jungle of Horrors', '08tjoh', 350, 'LW08_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(9, 'The Cauldron of Fear', '09tcof', 350, 'LW09_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(10, 'The Dungeons of Torgar', '10tdot', 350, 'LW10_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(11, 'The Prisoners of Time', '11tpot', 350, 'LW11_Mongoose_Alberto_Del_Lago.jpg'),
+      comingBook(12, 'The Masters of Darkness', '12tmod', 350, 'LW12_Mongoose_Alberto_Del_Lago.jpg')
+    ];
+
+    const grandMasterBooks = [
+      comingBook(13, 'The Plague Lords of Ruel', '13tplor', 350, 'LW13_Mongoose_Pascal_Quidault.jpg'),
+      comingBook(14, 'The Captives of Kaag', '14tcok', 350, 'LW14_Mongoose_Pascal_Quidault_2010.jpg'),
+      comingBook(15, 'The Darke Crusade', '15tdc', 350, 'LW15_Mongoose_Pascal_Quidault_2011.jpg'),
+      comingBook(16, 'The Legacy of Vashna', '16tlov', 350, 'LW16_Mongoose_Pascal_Quidault_2011.jpg'),
+      comingBook(17, 'The Deathlord of Ixia', '17tdoi', 350, 'LW17_Mongoose_Pascal_Quidault_2011.jpg'),
+      comingBook(18, 'Dawn of the Dragons', '18dotd', 350, 'LW18_Red_Fox_Peter_Andrew_Jones.jpg'),
+      comingBook(19, "Wolf's Bane", '19wb', 350, 'LW19_Red_Fox_Peter_Andrew_Jones.jpg'),
+      comingBook(20, 'The Curse of Naar', '20tcon', 350, 'LW20_Red_Fox_Peter_Andrew_Jones.jpg')
+    ];
+
+    const newOrderBooks = [
+      comingBook(21, 'Voyage of the Moonstone', '21votm', 350, 'LW21_Red_Fox_Brian_Williams.jpg'),
+      comingBook(22, 'The Buccaneers of Shadaki', '22tbos', 350, 'LW22_Red_Fox_Brian_Williams.jpg'),
+      comingBook(23, "Mydnight's Hero", '23mh', 350, 'LW23_Red_Fox_Brian_Williams.jpg'),
+      comingBook(24, 'Rune War', '24rw', 350, 'LW24_Red_Fox_Brian_Williams.jpg'),
+      comingBook(25, 'Trail of the Wolf', '25totw', 350, 'LW25_Red_Fox_Brian_Williams.jpg'),
+      comingBook(26, 'The Fall of Blood Mountain', '26tfobm', 350, 'LW26_Red_Fox_Brian_Williams.jpg'),
+      comingBook(27, 'Vampirium', '27v', 350, 'LW27_Red_Fox_Brian_Williams.jpg'),
+      comingBook(28, 'The Hunger of Sejanoz', '28thos', 350, 'LW28_Red_Fox_Brian_Williams.jpg'),
+      comingBook(29, 'The Storms of Chai', '29tsoc', 350, '')
     ];
 
     const books = kaiBooks;
@@ -435,13 +422,13 @@
       card.innerHTML = `
         <small>Book ${book.number}</small>
         <strong>${book.title}</strong>
-        <figure class="cover-frame" data-fallback="Book ${book.number}: ${book.title}">
-          <img
-            src="${book.cover}"
-            alt="Cover art for ${book.title}"
-            loading="lazy"
-            onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
-          >
+        <figure class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
+          ${book.cover ? `<img
+              src="${book.cover}"
+              alt="Cover art for ${book.title}"
+              loading="lazy"
+              onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
+            >` : ''}
         </figure>
         ${book.footer ? `<footer class="book-footer ${book.footerSpacer ? 'spacer' : ''}">${book.footer}</footer>` : ''}
       `;
@@ -456,6 +443,8 @@
 
     renderSeries('kaiBooks', kaiBooks);
     renderSeries('magnakaiBooks', magnakaiBooks);
+    renderSeries('grandMasterBooks', grandMasterBooks);
+    renderSeries('newOrderBooks', newOrderBooks);
 
     async function getCurrentPosition() {
       try {

@@ -31,6 +31,11 @@ def main() -> int:
     assert_true("number: 1" in index_source, "index.html should include Book 1 in its card data.")
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")
     assert_true("number: 3" in index_source, "index.html should include Book 3 in its card data.")
+    assert_true("Grand Master Series" in index_source, "index.html should list the Grand Master preview row.")
+    assert_true("New Order Series" in index_source, "index.html should list the New Order preview row.")
+    assert_true("The Plague Lords of Ruel" in index_source, "index.html should include Book 13.")
+    assert_true("The Storms of Chai" in index_source, "index.html should include Book 29.")
+    assert_true("footer: 'Coming'" in index_source and "Coming Soon" not in index_source, "index.html should use the short Coming footer.")
     assert_true(
         "assets/images/title-banners/title1.png" in index_source,
         "index.html should include the default local Lone Wolf title banner.",
