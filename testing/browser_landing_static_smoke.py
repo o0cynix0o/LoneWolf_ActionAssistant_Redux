@@ -48,9 +48,10 @@ def main() -> int:
         "index.html should expose the settings modal from the Reader panel.",
     )
     assert_true(
-        "data-reader-card" in index_source
-        and "seriesBooks.length + readerOffset" in index_source,
-        "index.html should keep the Reader tools aligned as a same-grid first-row card.",
+        "reader-panel" in index_source
+        and "grid-template-columns: clamp(260px, 16vw, 340px) minmax(0, 1fr)" in index_source
+        and "container.style.setProperty('--book-count', seriesBooks.length)" in index_source,
+        "index.html should keep Reader tools in their own left column while the Kai row stays book-only.",
     )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
