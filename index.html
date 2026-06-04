@@ -100,7 +100,7 @@
     }
     .book {
       display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      grid-template-rows: auto auto auto auto;
       min-width: 0;
       padding: clamp(10px, 0.7vw, 14px);
       border: 1px solid var(--lw-border, #5d5130);
@@ -154,7 +154,9 @@
     }
     .book strong {
       display: block;
+      min-height: 2.35em;
       font-size: 1.12rem;
+      line-height: 1.12;
       color: var(--lw-accent, #f2d27a);
     }
     .book small {
@@ -171,6 +173,9 @@
       color: var(--lw-muted-2, #d8d0b8);
       font: 0.78rem Arial, sans-serif;
       text-transform: uppercase;
+    }
+    .book-footer.spacer {
+      color: transparent;
     }
     .panel {
       border: 1px solid var(--lw-border, #5d5130);
@@ -283,35 +288,45 @@
         title: 'Flight from the Dark',
         folder: '01fftd',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW01_Mongoose_Alberto_Del_Lago.jpg',
+        footer: '&nbsp;&nbsp;',
+        footerSpacer: true
       },
       {
         number: 2,
         title: 'Fire on the Water',
         folder: '02fotw',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW02_Mongoose_Alberto_Del_Lago.jpg',
+        footer: '&nbsp;&nbsp;',
+        footerSpacer: true
       },
       {
         number: 3,
         title: 'The Caverns of Kalte',
         folder: '03tcok',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW03_Mongoose_Alberto_Del_Lago.jpg',
+        footer: '&nbsp;&nbsp;',
+        footerSpacer: true
       },
       {
         number: 4,
         title: 'The Chasm of Doom',
         folder: '04tcod',
         sections: 350,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW04_Mongoose_Alberto_Del_Lago.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW04_Mongoose_Alberto_Del_Lago.jpg',
+        footer: '&nbsp;&nbsp;',
+        footerSpacer: true
       },
       {
         number: 5,
         title: 'Shadow on the Sand',
         folder: '05sots',
         sections: 400,
-        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW05_Mongoose_Alberto_Del_Lago.jpg'
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW05_Mongoose_Alberto_Del_Lago.jpg',
+        footer: '&nbsp;&nbsp;',
+        footerSpacer: true
       }
     ];
 
@@ -412,7 +427,7 @@
             onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
           >
         </figure>
-        ${book.footer ? `<footer class="book-footer">${book.footer}</footer>` : ''}
+        ${book.footer ? `<footer class="book-footer ${book.footerSpacer ? 'spacer' : ''}">${book.footer}</footer>` : ''}
       `;
       return card;
     }

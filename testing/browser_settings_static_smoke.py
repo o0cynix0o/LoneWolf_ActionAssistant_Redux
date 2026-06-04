@@ -100,6 +100,9 @@ def main() -> int:
     assert_true("The Kingdoms of Terror" in index and "The Masters of Darkness" in index, "home page should preview Books 6-12.")
     assert_true("Coming Soon" in index and "aria-disabled" in index, "Magnakai preview cards should be disabled coming-soon cards.")
     assert_true("clamp(280px, 24vw, 620px)" in index, "home page logo should scale with the viewport.")
+    assert_true("footer: '&nbsp;&nbsp;'" in index, "Kai cards should carry a blank footer spacer.")
+    assert_true("grid-template-rows: auto auto auto auto" in index, "book cover rows should not stretch from short titles.")
+    assert_true("min-height: 2.35em" in index, "book titles should reserve consistent row height.")
     assert_true(
         "${book.status}" not in index and "Requires local Project Aon book files.</span>" not in index,
         "home book cards should not show internal build/status footer text.",
