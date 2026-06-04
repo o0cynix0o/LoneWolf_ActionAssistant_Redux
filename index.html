@@ -10,6 +10,7 @@
     body {
       margin: 0;
       min-height: 100vh;
+      padding-bottom: clamp(28px, 4vh, 72px);
       background: var(--lw-bg, #12150f);
       color: var(--lw-text, #f0ead8);
       font-family: Georgia, "Times New Roman", serif;
@@ -27,13 +28,13 @@
     }
     .hero-inner {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(220px, 360px);
+      grid-template-columns: minmax(0, 1fr) clamp(280px, 24vw, 620px);
       align-items: end;
       gap: 28px;
     }
     .series-mark {
       justify-self: end;
-      width: min(100%, 420px);
+      width: min(100%, clamp(280px, 24vw, 620px));
       filter: drop-shadow(0 16px 18px rgba(0,0,0,0.42));
     }
     .series-mark img {
@@ -66,25 +67,40 @@
     }
     main {
       width: min(2240px, calc(100% - clamp(24px, 4vw, 96px)));
-      margin: 24px auto 42px;
+      margin: 24px auto 72px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) clamp(260px, 16vw, 340px);
       gap: clamp(16px, 1.2vw, 28px);
       align-items: start;
     }
+    .series-board {
+      display: grid;
+      gap: clamp(26px, 3vw, 46px);
+      min-width: 0;
+      padding-bottom: clamp(48px, 6vh, 110px);
+    }
+    .series-section {
+      min-width: 0;
+    }
+    .series-heading {
+      margin: 0 0 10px;
+      color: var(--lw-accent, #f2d27a);
+      font-size: clamp(1rem, 1.4vw, 1.45rem);
+      line-height: 1.1;
+    }
     .books {
       display: grid;
-      grid-template-columns: repeat(5, minmax(132px, 1fr));
+      grid-template-columns: repeat(var(--book-count, 5), minmax(132px, 1fr));
       gap: clamp(10px, 0.8vw, 16px);
       align-items: stretch;
       min-width: 0;
       overflow-x: auto;
-      padding-bottom: 6px;
+      padding-bottom: 14px;
       scrollbar-gutter: stable;
     }
     .book {
       display: grid;
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
       min-width: 0;
       padding: clamp(10px, 0.7vw, 14px);
       border: 1px solid var(--lw-border, #5d5130);
@@ -99,6 +115,15 @@
     .book:hover {
       transform: translateY(-2px);
       background: var(--lw-panel-2, #202417);
+    }
+    .book.disabled {
+      cursor: default;
+    }
+    .book.disabled:hover {
+      transform: none;
+      background: var(--lw-panel, #1a1d14);
+      border-color: var(--lw-border, #5d5130);
+      color: inherit;
     }
     .cover-frame {
       display: grid;
@@ -139,6 +164,14 @@
       font: 0.78rem Arial, sans-serif;
       text-transform: uppercase;
     }
+    .book-footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--lw-border, rgba(123,106,59,0.38));
+      color: var(--lw-muted-2, #d8d0b8);
+      font: 0.78rem Arial, sans-serif;
+      text-transform: uppercase;
+    }
     .panel {
       border: 1px solid var(--lw-border, #5d5130);
       border-radius: 6px;
@@ -173,9 +206,9 @@
     @media (max-width: 820px) {
       header { min-height: 30vh; background-size: 560px auto; }
       .hero-inner { grid-template-columns: 1fr; }
-      .series-mark { justify-self: start; width: min(100%, 300px); }
+      .series-mark { justify-self: start; width: min(100%, clamp(240px, 62vw, 360px)); }
       main { grid-template-columns: 1fr; }
-      .books { grid-template-columns: repeat(5, minmax(148px, 1fr)); }
+      .books { grid-template-columns: repeat(var(--book-count, 5), minmax(148px, 1fr)); }
     }
   </style>
 </head>
@@ -200,7 +233,16 @@
   </header>
 
   <main>
-    <section class="books" id="books"></section>
+    <section class="series-board" aria-label="Lone Wolf books">
+      <section class="series-section" aria-labelledby="kaiSeriesHeading">
+        <h2 class="series-heading" id="kaiSeriesHeading">Kai Series</h2>
+        <div class="books" id="kaiBooks"></div>
+      </section>
+      <section class="series-section" aria-labelledby="magnakaiSeriesHeading">
+        <h2 class="series-heading" id="magnakaiSeriesHeading">Magnakai Series</h2>
+        <div class="books" id="magnakaiBooks"></div>
+      </section>
+    </section>
     <aside class="panel">
       <h2>Reader</h2>
       <p class="muted">Read the book on the left while using the web assistant on the right.</p>
@@ -235,7 +277,7 @@
       'When the road forks, check the pack, check the map, then trust the discipline.'
     ];
 
-    const books = [
+    const kaiBooks = [
       {
         number: 1,
         title: 'Flight from the Dark',
@@ -273,6 +315,74 @@
       }
     ];
 
+    const magnakaiBooks = [
+      {
+        number: 6,
+        title: 'The Kingdoms of Terror',
+        folder: '06tkot',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW06_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 7,
+        title: 'Castle of Death',
+        folder: '07cd',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW07_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 8,
+        title: 'The Jungle of Horrors',
+        folder: '08tjoh',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW08_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 9,
+        title: 'The Cauldron of Fear',
+        folder: '09tcof',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW09_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 10,
+        title: 'The Dungeons of Torgar',
+        folder: '10tdot',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW10_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 11,
+        title: 'The Prisoners of Time',
+        folder: '11tpot',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW11_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      },
+      {
+        number: 12,
+        title: 'The Masters of Darkness',
+        folder: '12tmod',
+        sections: 350,
+        cover: 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers/LW12_Mongoose_Alberto_Del_Lago.jpg',
+        enabled: false,
+        footer: 'Coming Soon'
+      }
+    ];
+
+    const books = kaiBooks;
+
     const quoteEl = document.getElementById('loreQuote');
     quoteEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
 
@@ -283,12 +393,15 @@
       renderSettingsContent();
     });
 
-    const booksEl = document.getElementById('books');
-    books.forEach((book) => {
-      const a = document.createElement('a');
-      a.className = 'book';
-      a.href = `assistant.html?book=${book.number}`;
-      a.innerHTML = `
+    function renderBookCard(book) {
+      const card = document.createElement(book.enabled === false ? 'article' : 'a');
+      card.className = `book${book.enabled === false ? ' disabled' : ''}`;
+      if (book.enabled === false) {
+        card.setAttribute('aria-disabled', 'true');
+      } else {
+        card.href = `assistant.html?book=${book.number}`;
+      }
+      card.innerHTML = `
         <small>Book ${book.number}</small>
         <strong>${book.number}. ${book.title}</strong>
         <figure class="cover-frame" data-fallback="Book ${book.number}: ${book.title}">
@@ -299,9 +412,19 @@
             onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
           >
         </figure>
+        ${book.footer ? `<footer class="book-footer">${book.footer}</footer>` : ''}
       `;
-      booksEl.appendChild(a);
-    });
+      return card;
+    }
+
+    function renderSeries(containerId, seriesBooks) {
+      const container = document.getElementById(containerId);
+      container.style.setProperty('--book-count', seriesBooks.length);
+      seriesBooks.forEach((book) => container.appendChild(renderBookCard(book)));
+    }
+
+    renderSeries('kaiBooks', kaiBooks);
+    renderSeries('magnakaiBooks', magnakaiBooks);
 
     async function getCurrentPosition() {
       try {

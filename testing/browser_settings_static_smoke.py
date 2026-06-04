@@ -94,6 +94,12 @@ def main() -> int:
         assert_true(reader_selector in settings, f"reader themes should style {reader_selector}.")
     assert_true("data-lw-title-banner" in index, "home page should expose the swappable title banner.")
     assert_true("settingsModal" in index, "home page should include the settings modal.")
+    assert_true("Kai Series" in index, "home page should label the Kai Series row.")
+    assert_true("Magnakai Series" in index, "home page should label the Magnakai Series row.")
+    assert_true("const magnakaiBooks" in index, "home page should define Magnakai preview cards.")
+    assert_true("The Kingdoms of Terror" in index and "The Masters of Darkness" in index, "home page should preview Books 6-12.")
+    assert_true("Coming Soon" in index and "aria-disabled" in index, "Magnakai preview cards should be disabled coming-soon cards.")
+    assert_true("clamp(280px, 24vw, 620px)" in index, "home page logo should scale with the viewport.")
     assert_true(
         "${book.status}" not in index and "Requires local Project Aon book files.</span>" not in index,
         "home book cards should not show internal build/status footer text.",
