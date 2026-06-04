@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_HTML = ROOT / "index.html"
 LIBRARY_HTML = ROOT / "library.html"
+COVER_DIR = ROOT / "assets" / "images" / "book-covers"
 
 
 def assert_true(value: bool, label: str) -> None:
@@ -24,9 +25,17 @@ def main() -> int:
         assert_true("Flight from the Dark" in source, f"{source_name} should list Book 1.")
         assert_true("Fire on the Water" in source, f"{source_name} should list Book 2.")
         assert_true("The Caverns of Kalte" in source, f"{source_name} should list Book 3.")
-        assert_true("LW01_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 1 cover art.")
-        assert_true("LW02_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 2 cover art.")
-        assert_true("LW03_Mongoose_Alberto_Del_Lago" in source, f"{source_name} should show Book 3 cover art.")
+
+    assert_true("'assets/images/book-covers'" in index_source, "index.html should use the local cover art folder.")
+    for number in (1, 2, 3):
+        assert_true(f"lw{number:02}.jpg" in index_source, f"index.html should show local Book {number} cover art.")
+        assert_true(
+            f"assets/images/book-covers/lw{number:02}.jpg" in library_source,
+            f"library.html should show local Book {number} cover art.",
+        )
+
+    for number in range(1, 30):
+        assert_true((COVER_DIR / f"lw{number:02}.jpg").exists(), f"local cover art should exist for Book {number}.")
 
     assert_true("number: 1" in index_source, "index.html should include Book 1 in its card data.")
     assert_true("number: 2" in index_source, "index.html should include Book 2 in its card data.")
@@ -35,6 +44,8 @@ def main() -> int:
     assert_true("New Order Series" in index_source, "index.html should list the New Order preview row.")
     assert_true("The Plague Lords of Ruel" in index_source, "index.html should include Book 13.")
     assert_true("The Storms of Chai" in index_source, "index.html should include Book 29.")
+    assert_true("lw29.jpg" in index_source, "index.html should use the local Book 29 cover.")
+    assert_true("projectaon.org/staff/otoole/Covers" not in index_source, "index.html should not depend on remote cover art.")
     assert_true("footer: 'Coming'" in index_source and "Coming Soon" not in index_source, "index.html should use the short Coming footer.")
     assert_true(
         "assets/images/title-banners/title1.png" in index_source,

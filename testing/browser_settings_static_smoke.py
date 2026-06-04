@@ -113,6 +113,8 @@ def main() -> int:
     assert_true("The Kingdoms of Terror" in index and "The Masters of Darkness" in index, "home page should preview Books 6-12.")
     assert_true("The Plague Lords of Ruel" in index and "The Curse of Naar" in index, "home page should preview Books 13-20.")
     assert_true("Voyage of the Moonstone" in index and "The Storms of Chai" in index, "home page should preview Books 21-29.")
+    assert_true("'assets/images/book-covers'" in index and "lw29.jpg" in index, "home page should use the local Book 29 cover art.")
+    assert_true("projectaon.org/staff/otoole/Covers" not in index, "home page should use local cover art assets.")
     assert_true("footer: 'Coming'" in index and "Coming Soon" not in index and "aria-disabled" in index, "future-book preview cards should be disabled Coming cards.")
     assert_true("clamp(280px, 24vw, 620px)" in index, "home page logo should scale with the viewport.")
     assert_true("footer: '&nbsp;&nbsp;'" in index, "Kai cards should carry a blank footer spacer.")

@@ -306,7 +306,7 @@
       'When the road forks, check the pack, check the map, then trust the discipline.'
     ];
 
-    const coverBase = 'https://www.projectaon.org/staff/otoole/Covers/LW_Covers';
+    const coverBase = 'assets/images/book-covers';
     const coverUrl = (fileName) => fileName ? `${coverBase}/${fileName}` : '';
     const comingBook = (number, title, folder, sections, coverFile) => ({
       number,
@@ -324,7 +324,7 @@
         title: 'Flight from the Dark',
         folder: '01fftd',
         sections: 350,
-        cover: coverUrl('LW01_Mongoose_Alberto_Del_Lago.jpg'),
+        cover: coverUrl('lw01.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -333,7 +333,7 @@
         title: 'Fire on the Water',
         folder: '02fotw',
         sections: 350,
-        cover: coverUrl('LW02_Mongoose_Alberto_Del_Lago.jpg'),
+        cover: coverUrl('lw02.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -342,7 +342,7 @@
         title: 'The Caverns of Kalte',
         folder: '03tcok',
         sections: 350,
-        cover: coverUrl('LW03_Mongoose_Alberto_Del_Lago.jpg'),
+        cover: coverUrl('lw03.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -351,7 +351,7 @@
         title: 'The Chasm of Doom',
         folder: '04tcod',
         sections: 350,
-        cover: coverUrl('LW04_Mongoose_Alberto_Del_Lago.jpg'),
+        cover: coverUrl('lw04.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       },
@@ -360,43 +360,43 @@
         title: 'Shadow on the Sand',
         folder: '05sots',
         sections: 400,
-        cover: coverUrl('LW05_Mongoose_Alberto_Del_Lago.jpg'),
+        cover: coverUrl('lw05.jpg'),
         footer: '&nbsp;&nbsp;',
         footerSpacer: true
       }
     ];
 
     const magnakaiBooks = [
-      comingBook(6, 'The Kingdoms of Terror', '06tkot', 350, 'LW06_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(7, 'Castle of Death', '07cd', 350, 'LW07_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(8, 'The Jungle of Horrors', '08tjoh', 350, 'LW08_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(9, 'The Cauldron of Fear', '09tcof', 350, 'LW09_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(10, 'The Dungeons of Torgar', '10tdot', 350, 'LW10_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(11, 'The Prisoners of Time', '11tpot', 350, 'LW11_Mongoose_Alberto_Del_Lago.jpg'),
-      comingBook(12, 'The Masters of Darkness', '12tmod', 350, 'LW12_Mongoose_Alberto_Del_Lago.jpg')
+      comingBook(6, 'The Kingdoms of Terror', '06tkot', 350, 'lw06.jpg'),
+      comingBook(7, 'Castle of Death', '07cd', 350, 'lw07.jpg'),
+      comingBook(8, 'The Jungle of Horrors', '08tjoh', 350, 'lw08.jpg'),
+      comingBook(9, 'The Cauldron of Fear', '09tcof', 350, 'lw09.jpg'),
+      comingBook(10, 'The Dungeons of Torgar', '10tdot', 350, 'lw10.jpg'),
+      comingBook(11, 'The Prisoners of Time', '11tpot', 350, 'lw11.jpg'),
+      comingBook(12, 'The Masters of Darkness', '12tmod', 350, 'lw12.jpg')
     ];
 
     const grandMasterBooks = [
-      comingBook(13, 'The Plague Lords of Ruel', '13tplor', 350, 'LW13_Mongoose_Pascal_Quidault.jpg'),
-      comingBook(14, 'The Captives of Kaag', '14tcok', 350, 'LW14_Mongoose_Pascal_Quidault_2010.jpg'),
-      comingBook(15, 'The Darke Crusade', '15tdc', 350, 'LW15_Mongoose_Pascal_Quidault_2011.jpg'),
-      comingBook(16, 'The Legacy of Vashna', '16tlov', 350, 'LW16_Mongoose_Pascal_Quidault_2011.jpg'),
-      comingBook(17, 'The Deathlord of Ixia', '17tdoi', 350, 'LW17_Mongoose_Pascal_Quidault_2011.jpg'),
-      comingBook(18, 'Dawn of the Dragons', '18dotd', 350, 'LW18_Red_Fox_Peter_Andrew_Jones.jpg'),
-      comingBook(19, "Wolf's Bane", '19wb', 350, 'LW19_Red_Fox_Peter_Andrew_Jones.jpg'),
-      comingBook(20, 'The Curse of Naar', '20tcon', 350, 'LW20_Red_Fox_Peter_Andrew_Jones.jpg')
+      comingBook(13, 'The Plague Lords of Ruel', '13tplor', 350, 'lw13.jpg'),
+      comingBook(14, 'The Captives of Kaag', '14tcok', 350, 'lw14.jpg'),
+      comingBook(15, 'The Darke Crusade', '15tdc', 350, 'lw15.jpg'),
+      comingBook(16, 'The Legacy of Vashna', '16tlov', 350, 'lw16.jpg'),
+      comingBook(17, 'The Deathlord of Ixia', '17tdoi', 350, 'lw17.jpg'),
+      comingBook(18, 'Dawn of the Dragons', '18dotd', 350, 'lw18.jpg'),
+      comingBook(19, "Wolf's Bane", '19wb', 350, 'lw19.jpg'),
+      comingBook(20, 'The Curse of Naar', '20tcon', 350, 'lw20.jpg')
     ];
 
     const newOrderBooks = [
-      comingBook(21, 'Voyage of the Moonstone', '21votm', 350, 'LW21_Red_Fox_Brian_Williams.jpg'),
-      comingBook(22, 'The Buccaneers of Shadaki', '22tbos', 350, 'LW22_Red_Fox_Brian_Williams.jpg'),
-      comingBook(23, "Mydnight's Hero", '23mh', 350, 'LW23_Red_Fox_Brian_Williams.jpg'),
-      comingBook(24, 'Rune War', '24rw', 350, 'LW24_Red_Fox_Brian_Williams.jpg'),
-      comingBook(25, 'Trail of the Wolf', '25totw', 350, 'LW25_Red_Fox_Brian_Williams.jpg'),
-      comingBook(26, 'The Fall of Blood Mountain', '26tfobm', 350, 'LW26_Red_Fox_Brian_Williams.jpg'),
-      comingBook(27, 'Vampirium', '27v', 350, 'LW27_Red_Fox_Brian_Williams.jpg'),
-      comingBook(28, 'The Hunger of Sejanoz', '28thos', 350, 'LW28_Red_Fox_Brian_Williams.jpg'),
-      comingBook(29, 'The Storms of Chai', '29tsoc', 350, '')
+      comingBook(21, 'Voyage of the Moonstone', '21votm', 350, 'lw21.jpg'),
+      comingBook(22, 'The Buccaneers of Shadaki', '22tbos', 350, 'lw22.jpg'),
+      comingBook(23, "Mydnight's Hero", '23mh', 350, 'lw23.jpg'),
+      comingBook(24, 'Rune War', '24rw', 350, 'lw24.jpg'),
+      comingBook(25, 'Trail of the Wolf', '25totw', 350, 'lw25.jpg'),
+      comingBook(26, 'The Fall of Blood Mountain', '26tfobm', 350, 'lw26.jpg'),
+      comingBook(27, 'Vampirium', '27v', 350, 'lw27.jpg'),
+      comingBook(28, 'The Hunger of Sejanoz', '28thos', 350, 'lw28.jpg'),
+      comingBook(29, 'The Storms of Chai', '29tsoc', 350, 'lw29.jpg')
     ];
 
     const books = kaiBooks;
