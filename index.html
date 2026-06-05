@@ -100,7 +100,7 @@
     }
     .book {
       display: grid;
-      grid-template-rows: auto auto auto auto auto;
+      grid-template-rows: auto auto auto auto;
       position: relative;
       min-width: 0;
       padding: clamp(10px, 0.7vw, 14px);
@@ -185,12 +185,14 @@
     .cover-frame {
       display: grid;
       place-items: center;
+      position: relative;
       aspect-ratio: 2 / 3;
       min-height: 0;
-      margin: 12px 0;
+      margin: 0;
       border: 1px solid #050807;
       border-radius: 4px;
       background: #050807;
+      overflow: hidden;
     }
     .cover-frame img {
       width: 100%;
@@ -219,16 +221,19 @@
     }
     .book-read-badge {
       display: none;
-      justify-self: start;
-      margin-top: 8px;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 1;
       padding: 4px 9px;
       border: 1px solid var(--lw-accent-2, #d1b865);
       border-radius: 999px;
       color: var(--lw-accent, #f2d27a);
-      background: color-mix(in srgb, var(--lw-bg, #12150f) 78%, transparent);
+      background: color-mix(in srgb, #050807 88%, transparent);
       font: 700 0.68rem Arial, sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.02em;
+      pointer-events: none;
     }
     .book-read-badge.is-read {
       display: inline-block;
@@ -773,9 +778,9 @@
         <button type="button" class="book-details-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}" title="Book details"></button>
         <small>Book ${book.number}</small>
         <strong>${book.title}</strong>
-        <span class="book-read-badge ${isBookRead(book.number) ? 'is-read' : ''}" data-book-read-badge="${book.number}" aria-hidden="${isBookRead(book.number) ? 'false' : 'true'}">Read</span>
         <button type="button" class="cover-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}">
           <span class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
+            <span class="book-read-badge ${isBookRead(book.number) ? 'is-read' : ''}" data-book-read-badge="${book.number}" aria-hidden="${isBookRead(book.number) ? 'false' : 'true'}">Read</span>
             ${book.cover ? `<img
                 src="${book.cover}"
                 alt="Cover art for ${book.title}"

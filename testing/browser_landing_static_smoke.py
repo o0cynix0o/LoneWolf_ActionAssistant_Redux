@@ -90,6 +90,18 @@ def main() -> int:
         "home cover art should not show theme-colored padding bars.",
     )
     assert_true(
+        "grid-template-rows: auto auto auto auto;" in index_source
+        and "margin: 0;" in index_source
+        and "position: relative;" in index_source,
+        "home cover cards should not reserve a separate theme-colored read-badge row.",
+    )
+    assert_true(
+        "data-book-read-badge" in index_source
+        and "pointer-events: none;" in index_source
+        and "<span class=\"cover-frame" in index_source,
+        "home read badges should render as cover overlays.",
+    )
+    assert_true(
         "data-open-current-section" in index_source and "openCurrentSection" in index_source,
         "index.html should expose current-section navigation as an explicit button.",
     )
