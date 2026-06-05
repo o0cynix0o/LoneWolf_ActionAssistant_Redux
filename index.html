@@ -217,21 +217,20 @@
       color: var(--lw-accent, #f2d27a);
     }
     .book-read-badge {
+      display: none;
       justify-self: start;
-      min-height: 1.45em;
-      margin-top: 7px;
-      padding: 3px 8px;
-      border: 1px solid var(--lw-border, #5d5130);
+      margin-top: 8px;
+      padding: 4px 9px;
+      border: 1px solid var(--lw-accent-2, #d1b865);
       border-radius: 999px;
-      color: var(--lw-bg, #12150f);
-      background: var(--lw-accent, #f2d27a);
-      font: 0.68rem Arial, sans-serif;
+      color: var(--lw-accent, #f2d27a);
+      background: color-mix(in srgb, var(--lw-bg, #12150f) 78%, transparent);
+      font: 700 0.68rem Arial, sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.02em;
-      opacity: 0;
     }
     .book-read-badge.is-read {
-      opacity: 1;
+      display: inline-block;
     }
     .book small {
       display: block;
