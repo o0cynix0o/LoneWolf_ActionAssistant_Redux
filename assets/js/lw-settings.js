@@ -590,6 +590,8 @@
         border-color: var(--lw-border) !important;
       }
       .cover-frame img {
+        display: block !important;
+        height: auto !important;
         padding: 0 !important;
         background-color: #050807 !important;
         border-color: #050807 !important;

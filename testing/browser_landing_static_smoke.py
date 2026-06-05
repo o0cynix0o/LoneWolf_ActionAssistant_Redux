@@ -17,9 +17,20 @@ def assert_true(value: bool, label: str) -> None:
         raise AssertionError(label)
 
 
+def css_block(source: str, selector: str) -> str:
+    marker = f"{selector} {{"
+    start = source.find(marker)
+    if start < 0:
+        return ""
+    end = source.find("}", start)
+    return source[start:end] if end >= 0 else source[start:]
+
+
 def main() -> int:
     index_source = INDEX_HTML.read_text(encoding="utf-8")
     library_source = LIBRARY_HTML.read_text(encoding="utf-8")
+    cover_frame_block = css_block(index_source, ".cover-frame")
+    cover_frame_image_block = css_block(index_source, ".cover-frame img")
 
     for source_name, source in (("index.html", index_source), ("library.html", library_source)):
         assert_true("Flight from the Dark" in source, f"{source_name} should list Book 1.")
@@ -84,10 +95,16 @@ def main() -> int:
         "index.html should make the cover open book details.",
     )
     assert_true(
-        ".cover-frame img" in index_source
-        and "padding: 0;" in index_source
-        and "background: #050807;" in index_source,
+        cover_frame_image_block
+        and "padding: 0;" in cover_frame_image_block
+        and "background: #050807;" in cover_frame_image_block,
         "home cover art should not show theme-colored padding bars.",
+    )
+    assert_true(
+        "aspect-ratio" not in cover_frame_block
+        and "height: auto;" in cover_frame_image_block
+        and "display: block;" in cover_frame_image_block,
+        "home cover art should keep the full source image visible instead of cropping to a fixed frame.",
     )
     assert_true(
         "grid-template-rows: auto auto auto auto;" in index_source
