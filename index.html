@@ -110,17 +110,12 @@
       color: inherit;
       text-decoration: none;
       overflow: hidden;
-      cursor: pointer;
+      cursor: default;
       transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
     }
     .book:hover, .reader-panel a:hover, .reader-panel button:hover { border-color: var(--lw-accent-2, #d1b865); color: var(--lw-accent, #ffe08a); }
     .book:hover {
-      transform: translateY(-2px);
       background: var(--lw-panel-2, #202417);
-    }
-    .book:focus-visible {
-      outline: 2px solid var(--lw-accent, #f2d27a);
-      outline-offset: 3px;
     }
     .book-details-button {
       position: absolute;
@@ -162,10 +157,30 @@
       cursor: default;
     }
     .book.disabled:hover {
-      transform: none;
       background: var(--lw-panel, #1a1d14);
       border-color: var(--lw-border, #5d5130);
       color: inherit;
+    }
+    .cover-button {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: inherit;
+      cursor: pointer;
+    }
+    .cover-button:focus-visible {
+      outline: 2px solid var(--lw-accent, #f2d27a);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    .cover-button:hover .cover-frame,
+    .cover-button:focus-visible .cover-frame {
+      border-color: var(--lw-accent-2, #d1b865);
     }
     .cover-frame {
       display: grid;
@@ -684,23 +699,21 @@
       card.dataset.bookNumber = book.number;
       if (book.enabled === false) {
         card.setAttribute('aria-disabled', 'true');
-      } else {
-        card.dataset.bookHref = `assistant.html?book=${book.number}`;
-        card.setAttribute('role', 'link');
-        card.tabIndex = 0;
       }
       card.innerHTML = `
         <button type="button" class="book-details-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}" title="Book details"></button>
         <small>Book ${book.number}</small>
         <strong>${book.title}</strong>
-        <figure class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
-          ${book.cover ? `<img
-              src="${book.cover}"
-              alt="Cover art for ${book.title}"
-              loading="lazy"
-              onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
-            >` : ''}
-        </figure>
+        <button type="button" class="cover-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}">
+          <span class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
+            ${book.cover ? `<img
+                src="${book.cover}"
+                alt="Cover art for ${book.title}"
+                loading="lazy"
+                onerror="this.closest('.cover-frame').classList.add('cover-missing'); this.remove();"
+              >` : ''}
+          </span>
+        </button>
         ${book.footer ? `<footer class="book-footer ${book.footerSpacer ? 'spacer' : ''}">${book.footer}</footer>` : ''}
       `;
       return card;
@@ -716,18 +729,6 @@
     renderSeries('magnakaiBooks', magnakaiBooks);
     renderSeries('grandMasterBooks', grandMasterBooks);
     renderSeries('newOrderBooks', newOrderBooks);
-
-    document.querySelectorAll('[data-book-href]').forEach((card) => {
-      card.addEventListener('click', (event) => {
-        if (event.target.closest('[data-book-details]')) return;
-        window.location.href = card.dataset.bookHref;
-      });
-      card.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        window.location.href = card.dataset.bookHref;
-      });
-    });
 
     document.querySelectorAll('[data-book-details]').forEach((button) => {
       button.addEventListener('click', (event) => {
@@ -770,11 +771,15 @@
       const actionLink = book.enabled === false
         ? '<button type="button" disabled>Coming</button>'
         : `<a href="assistant.html?book=${book.number}">Open Reader</a>`;
+      const currentSectionButton = book.enabled === false
+        ? ''
+        : '<button type="button" data-open-current-section>Open Current Section</button>';
       bookDetailsContent.innerHTML = `
         <aside class="book-dialog-cover">
           ${book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Cover art for ${escapeHtml(book.title)}">` : `<div class="fallback-cover">Book ${escapeHtml(book.number)}:<br>${escapeHtml(book.title)}</div>`}
           <div class="book-dialog-actions">
             ${actionLink}
+            ${currentSectionButton}
             <button type="button" data-book-close>Close</button>
           </div>
         </aside>
@@ -821,7 +826,7 @@
       }
     }
 
-    document.getElementById('currentBtn').addEventListener('click', async () => {
+    async function openCurrentSection() {
       const position = await getCurrentPosition();
       if (!position) {
         window.location.href = 'assistant.html';
@@ -834,6 +839,15 @@
         return;
       }
       window.location.href = `assistant.html?book=${book.number}&section=${section}`;
+    }
+
+    document.getElementById('currentBtn').addEventListener('click', openCurrentSection);
+
+    bookDetailsModal.addEventListener('click', (event) => {
+      if (event.target.closest('[data-open-current-section]')) {
+        event.preventDefault();
+        openCurrentSection();
+      }
     });
 
     const settingsModal = document.getElementById('settingsModal');

@@ -72,11 +72,20 @@ def main() -> int:
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
         "assistant.html?book=${book.number}" in index_source,
-        "index.html should generate assistant links for book cards.",
+        "index.html should generate assistant links from the book details modal.",
     )
     assert_true(
-        "data-book-href" in index_source and "role', 'link'" in index_source,
-        "index.html should make playable book cards clickable without nesting buttons inside links.",
+        "data-book-href" not in index_source and "role', 'link'" not in index_source,
+        "index.html should not make the whole book card a hidden reader/current-section link.",
+    )
+    assert_true(
+        "cover-button" in index_source
+        and "class=\"cover-button\" data-book-details" in index_source,
+        "index.html should make the cover open book details.",
+    )
+    assert_true(
+        "data-open-current-section" in index_source and "openCurrentSection" in index_source,
+        "index.html should expose current-section navigation as an explicit button.",
     )
     assert_true(
         "bookDetailsModal" in index_source
