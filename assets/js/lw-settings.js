@@ -589,6 +589,11 @@
         background-color: var(--lw-bg) !important;
         border-color: var(--lw-border) !important;
       }
+      .cover-frame img {
+        padding: 0 !important;
+        background-color: #050807 !important;
+        border-color: #050807 !important;
+      }
       .achievement-toast {
         background-color: var(--lw-panel-2) !important;
         border-color: var(--lw-accent-2) !important;

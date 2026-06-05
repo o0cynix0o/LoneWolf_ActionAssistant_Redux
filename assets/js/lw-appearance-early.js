@@ -302,6 +302,11 @@
         background-color: var(--lw-bg) !important;
         border-color: var(--lw-border) !important;
       }
+      .cover-frame img {
+        padding: 0 !important;
+        background-color: #050807 !important;
+        border-color: #050807 !important;
+      }
       .lw-cover-art-off .cover-frame,
       .lw-cover-art-off .book > img,
       .lw-cover-art-off .book > .cover-fallback {

@@ -84,6 +84,12 @@ def main() -> int:
         "index.html should make the cover open book details.",
     )
     assert_true(
+        ".cover-frame img" in index_source
+        and "padding: 0;" in index_source
+        and "background: #050807;" in index_source,
+        "home cover art should not show theme-colored padding bars.",
+    )
+    assert_true(
         "data-open-current-section" in index_source and "openCurrentSection" in index_source,
         "index.html should expose current-section navigation as an explicit button.",
     )
