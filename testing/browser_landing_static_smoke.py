@@ -82,8 +82,10 @@ def main() -> int:
     )
     assert_true("const loreLines" in index_source, "index.html should rotate the hero lore line.")
     assert_true(
-        "assistant.html?book=${book.number}" in index_source,
-        "index.html should generate assistant links from the book details modal.",
+        "assistant.html?browse=1&book=${book.number}" in index_source
+        and "Browse Book" in index_source
+        and "Read this book without changing your current save." in index_source,
+        "index.html should use a read-only Browse Book link from the book details modal.",
     )
     assert_true(
         "data-book-href" not in index_source and "role', 'link'" not in index_source,

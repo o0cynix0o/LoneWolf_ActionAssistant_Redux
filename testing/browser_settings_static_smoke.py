@@ -129,6 +129,20 @@ def main() -> int:
         "home book cards should not show internal build/status footer text.",
     )
     assert_true("renderAppearanceSettings" in assistant, "assistant settings should include appearance controls.")
+    assert_true(
+        "const browseMode" in assistant
+        and "syncBrowseBook" in assistant
+        and "Browse Mode" in assistant
+        and "Reading Only" in assistant,
+        "assistant should support read-only Browse Book mode.",
+    )
+    assert_true(
+        "if (browseMode) return;" in assistant
+        and "Browse Book - save is not affected" in assistant
+        and "Assistant play controls are disabled while browsing." in assistant
+        and "window.location.href = 'assistant.html'" in assistant,
+        "Browse Book mode should avoid save-mutating route/actions and provide a Current-section escape.",
+    )
     assert_true("renderSaveSlotRows" in assistant, "assistant should render save slot rows.")
     assert_true("data-slot-save" in assistant, "assistant should support saving to a slot.")
     assert_true("data-slot-load" in assistant, "assistant should support loading from a slot.")

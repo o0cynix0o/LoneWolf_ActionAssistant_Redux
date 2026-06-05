@@ -1265,6 +1265,10 @@
     let bookFiles = { Installed: true, Books: [] };
     let currentReceipt = { summary: 'Ready.', details: [] };
     let receiptExpanded = false;
+    const pageParams = new URLSearchParams(window.location.search);
+    const browseMode = pageParams.get('browse') === '1' || pageParams.get('mode') === 'browse';
+    const requestedBrowseBook = Number(pageParams.get('book') || 1);
+    const requestedBrowseSection = pageParams.has('section') ? Number(pageParams.get('section')) : null;
     const playModeKey = 'lonewolf_redux.mode';
     const playModes = ['auto', 'manual', 'cli'];
     let playMode = normalizePlayMode(localStorage.getItem(playModeKey));
@@ -1335,7 +1339,7 @@
     function isCliMode() { return playMode === 'cli'; }
 
     function setModeIndicator() {
-      if (modeIndicator) modeIndicator.textContent = playModeLabel();
+      if (modeIndicator) modeIndicator.textContent = browseMode ? 'Browse Mode' : playModeLabel();
     }
 
     function statControlName(stat) {
@@ -2314,7 +2318,8 @@
 
     function renderReaderTitle() {
       const book = bookByNumber(activeBook);
-      readerTitle.textContent = activeSection ? `${book.number}. ${book.title} - Section ${activeSection}` : `${book.number}. ${book.title}`;
+      const title = activeSection ? `${book.number}. ${book.title} - Section ${activeSection}` : `${book.number}. ${book.title}`;
+      readerTitle.textContent = browseMode ? `${title} - Reading Only` : title;
       document.querySelectorAll('.book-button').forEach((button) => {
         button.classList.toggle('active', Number(button.dataset.book) === activeBook);
       });
@@ -2338,13 +2343,38 @@
       app = await response.json();
       if (bookResponse?.ok) bookFiles = await bookResponse.json();
       syncUiPreferences(app.uiPreferences);
-      serverStatus.textContent = 'Connected';
-      syncBookToState();
-      setReceipt(sectionStatusReceipt());
+      serverStatus.textContent = browseMode ? 'Reading Only' : 'Connected';
+      if (browseMode) {
+        syncBrowseBook();
+        setReceipt({
+          summary: 'Browse Book - save is not affected',
+          title: 'Reading Only',
+          details: [
+            receiptDetail('Mode', 'Browse Book'),
+            receiptDetail('Save', 'Your current campaign save will not move while browsing.'),
+            receiptDetail('Links', 'Book links navigate the reader only; assistant automation is not applied.')
+          ]
+        });
+      } else {
+        syncBookToState();
+        setReceipt(sectionStatusReceipt());
+      }
       render();
     }
 
     async function action(payload) {
+      if (browseMode) {
+        setReceipt({
+          summary: 'Browse Book - save is not affected',
+          title: 'Reading Only',
+          details: [
+            receiptDetail('Blocked Action', 'Assistant play controls are disabled while browsing.'),
+            receiptDetail('Why', 'Browse Book is for reading and lookup only. Use Current to return to your campaign before making play decisions.')
+          ]
+        });
+        render();
+        return;
+      }
       const beforeAction = cloneAppSnapshot(app);
       const response = await fetch('/api/action', {
         method: 'POST',
@@ -2356,7 +2386,7 @@
       syncUiPreferences(app.uiPreferences);
       setReceipt(withSectionStatus(buildActionReceipt(payload, beforeAction, app)));
       showAchievementUnlocks(app.achievementUnlocks);
-      syncBookToState();
+      if (!browseMode) syncBookToState();
       render();
     }
 
@@ -2383,6 +2413,12 @@
       if (activeBook !== Number(character.BookNumber) || activeSection !== section) {
         loadBook(Number(character.BookNumber), section);
       }
+    }
+
+    function syncBrowseBook() {
+      const book = bookByNumber(requestedBrowseBook);
+      const section = Number.isInteger(requestedBrowseSection) ? requestedBrowseSection : null;
+      loadBook(book.number, section);
     }
 
     function render() {
@@ -5249,7 +5285,13 @@
     document.querySelectorAll('.book-button').forEach((button) => {
       button.addEventListener('click', () => loadBook(Number(button.dataset.book), null));
     });
-    document.getElementById('currentBtn').addEventListener('click', () => syncBookToState());
+    document.getElementById('currentBtn').addEventListener('click', () => {
+      if (browseMode) {
+        window.location.href = 'assistant.html';
+        return;
+      }
+      syncBookToState();
+    });
     document.getElementById('titleBtn').addEventListener('click', () => loadBook(activeBook, null));
 
     function refreshAssistantAppearance(settings = settingsApi.readLocal()) {
@@ -5292,6 +5334,7 @@
           if (!link) return;
           const target = sectionTargetFromUrl(new URL(link.href, bookFrame.contentWindow.location.href));
           if (!target) return;
+          if (browseMode) return;
           event.preventDefault();
           if (target.book === Number(currentCharacter().BookNumber || 1)) {
             await action({ action: 'route', section: target.section });

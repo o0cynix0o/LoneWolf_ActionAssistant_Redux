@@ -843,7 +843,7 @@
       const byline = `${detail.authors}${detail.illustrator ? `, ${detail.illustrator} (Illustrator)` : ''}`;
       const actionLink = book.enabled === false
         ? '<button type="button" disabled>Coming</button>'
-        : `<a href="assistant.html?book=${book.number}">Open Reader</a>`;
+        : `<a href="assistant.html?browse=1&book=${book.number}" title="Read this book without changing your current save.">Browse Book</a>`;
       const currentSectionButton = book.enabled === false
         ? ''
         : '<button type="button" data-open-current-section>Open Current Section</button>';
