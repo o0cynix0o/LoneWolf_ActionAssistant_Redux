@@ -100,7 +100,7 @@
     }
     .book {
       display: grid;
-      grid-template-rows: auto auto auto auto;
+      grid-template-rows: auto auto auto auto auto;
       position: relative;
       min-width: 0;
       padding: clamp(10px, 0.7vw, 14px);
@@ -215,6 +215,23 @@
       font-size: 1.12rem;
       line-height: 1.12;
       color: var(--lw-accent, #f2d27a);
+    }
+    .book-read-badge {
+      justify-self: start;
+      min-height: 1.45em;
+      margin-top: 7px;
+      padding: 3px 8px;
+      border: 1px solid var(--lw-border, #5d5130);
+      border-radius: 999px;
+      color: var(--lw-bg, #12150f);
+      background: var(--lw-accent, #f2d27a);
+      font: 0.68rem Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      opacity: 0;
+    }
+    .book-read-badge.is-read {
+      opacity: 1;
     }
     .book small {
       display: block;
@@ -345,6 +362,9 @@
       text-align: left;
       font: 0.92rem Arial, sans-serif;
       cursor: pointer;
+    }
+    .book-dialog-actions button.read-toggle {
+      border-color: var(--lw-accent-2, #d1b865);
     }
     .book-dialog-main {
       min-width: 0;
@@ -682,6 +702,7 @@
     const books = kaiBooks;
     const allBookCards = [...kaiBooks, ...magnakaiBooks, ...grandMasterBooks, ...newOrderBooks];
     const bookByNumber = new Map(allBookCards.map((book) => [book.number, book]));
+    const readBooksStorageKey = 'lonewolf_redux.library.readBooks.v1';
 
     const quoteEl = document.getElementById('loreQuote');
     quoteEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
@@ -692,6 +713,54 @@
       homeSettings = settings;
       renderSettingsContent();
     });
+
+    function readBookReadList() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(readBooksStorageKey) || '[]');
+        return new Set(Array.isArray(parsed) ? parsed.map((item) => Number(item)).filter(Number.isFinite) : []);
+      } catch {
+        return new Set();
+      }
+    }
+
+    let readBooks = readBookReadList();
+
+    function writeBookReadList() {
+      localStorage.setItem(readBooksStorageKey, JSON.stringify([...readBooks].sort((a, b) => a - b)));
+    }
+
+    function isBookRead(bookNumber) {
+      return readBooks.has(Number(bookNumber));
+    }
+
+    function syncBookReadStatus(bookNumber) {
+      const number = Number(bookNumber);
+      const read = isBookRead(number);
+      document.querySelectorAll(`[data-book-read-badge="${number}"]`).forEach((badge) => {
+        badge.classList.toggle('is-read', read);
+        badge.setAttribute('aria-hidden', read ? 'false' : 'true');
+      });
+      document.querySelectorAll(`[data-book-read-status="${number}"]`).forEach((status) => {
+        status.textContent = read ? 'Read' : 'Unread';
+      });
+      document.querySelectorAll(`[data-book-read-toggle="${number}"]`).forEach((button) => {
+        button.textContent = read ? 'Mark as Unread' : 'Mark as Read';
+        button.setAttribute('aria-pressed', read ? 'true' : 'false');
+      });
+    }
+
+    function setBookRead(bookNumber, read) {
+      const number = Number(bookNumber);
+      if (!Number.isFinite(number)) return;
+      readBooks = readBookReadList();
+      if (read) {
+        readBooks.add(number);
+      } else {
+        readBooks.delete(number);
+      }
+      writeBookReadList();
+      syncBookReadStatus(number);
+    }
 
     function renderBookCard(book) {
       const card = document.createElement('article');
@@ -704,6 +773,7 @@
         <button type="button" class="book-details-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}" title="Book details"></button>
         <small>Book ${book.number}</small>
         <strong>${book.title}</strong>
+        <span class="book-read-badge ${isBookRead(book.number) ? 'is-read' : ''}" data-book-read-badge="${book.number}" aria-hidden="${isBookRead(book.number) ? 'false' : 'true'}">Read</span>
         <button type="button" class="cover-button" data-book-details="${book.number}" aria-label="Details for ${escapeHtml(book.title)}">
           <span class="cover-frame ${book.cover ? '' : 'cover-missing'}" data-fallback="Book ${book.number}: ${book.title}">
             ${book.cover ? `<img
@@ -774,12 +844,14 @@
       const currentSectionButton = book.enabled === false
         ? ''
         : '<button type="button" data-open-current-section>Open Current Section</button>';
+      const read = isBookRead(book.number);
       bookDetailsContent.innerHTML = `
         <aside class="book-dialog-cover">
           ${book.cover ? `<img src="${escapeHtml(book.cover)}" alt="Cover art for ${escapeHtml(book.title)}">` : `<div class="fallback-cover">Book ${escapeHtml(book.number)}:<br>${escapeHtml(book.title)}</div>`}
           <div class="book-dialog-actions">
             ${actionLink}
             ${currentSectionButton}
+            <button type="button" class="read-toggle" data-book-read-toggle="${book.number}" aria-pressed="${read ? 'true' : 'false'}">${read ? 'Mark as Unread' : 'Mark as Read'}</button>
             <button type="button" data-book-close>Close</button>
           </div>
         </aside>
@@ -795,6 +867,7 @@
           <div class="book-status-line">
             <span class="book-pill">${escapeHtml(status)}</span>
             <span class="book-pill">${escapeHtml(seriesName)}</span>
+            <span class="book-pill" data-book-read-status="${book.number}">${read ? 'Read' : 'Unread'}</span>
             <span class="book-pill">${escapeHtml(book.sections)} sections</span>
           </div>
           <p class="book-description">${escapeHtml(detail.summary)}</p>
@@ -847,6 +920,12 @@
       if (event.target.closest('[data-open-current-section]')) {
         event.preventDefault();
         openCurrentSection();
+      }
+      const readToggle = event.target.closest('[data-book-read-toggle]');
+      if (readToggle) {
+        event.preventDefault();
+        const bookNumber = Number(readToggle.dataset.bookReadToggle);
+        setBookRead(bookNumber, !isBookRead(bookNumber));
       }
     });
 
@@ -1001,6 +1080,10 @@
     window.addEventListener('focus', refreshHomeAppearance);
     window.addEventListener('storage', (event) => {
       if (settingsApi.appearanceStorageKeys().includes(event.key)) refreshHomeAppearance();
+      if (event.key === readBooksStorageKey) {
+        readBooks = readBookReadList();
+        allBookCards.forEach((book) => syncBookReadStatus(book.number));
+      }
     });
   </script>
 </body>

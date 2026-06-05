@@ -117,6 +117,19 @@ def main() -> int:
         "book details should show a Goodreads-style title, metadata, and tag presentation.",
     )
     assert_true(
+        "readBooksStorageKey" in index_source
+        and "lonewolf_redux.library.readBooks.v1" in index_source
+        and "data-book-read-badge" in index_source,
+        "index.html should persist and show per-book read status.",
+    )
+    assert_true(
+        "data-book-read-toggle" in index_source
+        and "data-book-read-status" in index_source
+        and "Mark as Read" in index_source
+        and "Mark as Unread" in index_source,
+        "book details should let readers mark books read or unread.",
+    )
+    assert_true(
         "Playable release candidate" in index_source
         and "Playable helper build" in index_source
         and "Coming</button>" in index_source,
